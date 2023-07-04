@@ -104,11 +104,7 @@ import { defineComponent, defineAsyncComponent } from "vue";
 
 export default defineComponent({
   name: "AddOrEditQuestion",
-  components: {
-    SimpleHierarchy: defineAsyncComponent(() =>
-      import("components/SimpleHierarchy.vue")
-    ),
-  },
+  components: {},
   data() {
     return {
       pageName: "Add/Edit Question",
