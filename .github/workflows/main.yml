@@ -20,11 +20,9 @@ jobs:
 
       - name: Install Quasar CLI
         run: npm install -g @quasar/cli  
-      - name: Install app-vite  
-        run: npm install @quasar/app-vite --force
 
       - name: Install dependencies
-        run: npm install && npm install --only=dev
+        run: npm install
         
       - name: Update Quasar Cli
         run: npm update -g @quasar/cli
