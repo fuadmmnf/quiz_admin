@@ -1,0 +1,33 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+
+      - name: Install Quasar CLI
+        run: npm install -g @quasar/cli  
+      - name: Install app-vite  
+        run: npm install @quasar/app-vite --force
+
+      - name: Install dependencies
+        run: npm install && npm install --only=dev
+        
+      - name: Update Quasar Cli
+        run: npm update -g @quasar/cli
+
+      - name: Build the app
+        run: quasar build
