@@ -1,63 +1,94 @@
-# Nuxt 3 Minimal Starter
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 
-## Setup
+## Quasar Admin Premium Demo: [https://quasar-admin-premium.netlify.app/](https://quasar-admin-premium.netlify.app/)
 
-Make sure to install the dependencies:
 
+# Looking for beautiful premium Quasar admin template for Vue 3? Please drop me an [email](mailto:pratikpatelpp802@gmail.com). Buy only at <b>$69</b>!
+
+### Good News 🎉🎉 I want to let you know that I recently made some updates to my Quasar Admin Premium template, and it's now also available for Typescript with Composition API and <script setup>. 
+
+## Looking for minimalist Quasar template? I have the perfect solution for you. Simply sponsor me $49 a month for once [Sponsor](https://github.com/sponsors/pratik227) and you will gain access to the repo.
+
+Check out the website at https://quasar-minimalist-design.netlify.app/.
+
+
+# Quasar Admin Template
+
+[![MadeWithVueJs.com shield](https://madewithvuejs.com/storage/repo-shields/2604-shield.svg)](https://madewithvuejs.com/p/quasar-admin/shield-link)
+
+Free Quasar Admin Template based on Vue.js and used Quasar Framework.
+
+## Site: [https://next-quasar-admin.netlify.app/](https://next-quasar-admin.netlify.app/)
+
+# Support
+
+If this helped you in any way, you can contribute to this project for long term survival by supporting me:
+
+### [💜 Support my open-source work on GitHub](https://github.com/sponsors/pratik227)
+
+Be sure to check out my sponsor page.
+
+Thank you so much!!!
+
+## Install the dependencies
 ```bash
-# npm
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
 ```
 
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
+### Start the app in development mode (hot-code reloading, error reporting, etc.)
 ```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm run dev
-
-# yarn
-yarn dev
+quasar dev
 ```
 
-## Production
 
-Build the application for production:
-
+### Build the app for production
 ```bash
-# npm
-npm run build
-
-# pnpm
-pnpm run build
-
-# yarn
-yarn build
+quasar build
 ```
 
-Locally preview production build:
+## Screens UI
+**Login**
 
-```bash
-# npm
-npm run preview
+![Alt text](src/assets/Login.png?raw=true "Screenshot")
 
-# pnpm
-pnpm run preview
+**Dashboard**
 
-# yarn
-yarn preview
-```
+![Alt text](src/assets/Dashboard.png?raw=true "Screenshot")
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+[comment]: <> (**CRM Dashboard**)
+
+[comment]: <> (![Alt text]&#40;src/assets/CRMDashboard.png?raw=true "Screenshot"&#41;)
+
+**Mail**
+
+![Alt text](src/assets/Mail.png?raw=true "Screenshot")
+
+**Lock Screen 1**
+
+![Alt text](src/assets/Lock-1.png?raw=true "Screenshot")
+
+
+**Lock Screen 2**
+
+![Alt text](src/assets/Lock-2.png?raw=true "Screenshot")
+
+
+**Pricing**
+
+![Alt text](src/assets/Pricing.png?raw=true "Screenshot")
+
+
+### Customize the configuration
+See [Configuring quasar.conf.js](https://quasar.dev/quasar-cli/quasar-conf-js).
+
+### Sponsors  
+  
+<p align="center">
+  <a href="https://github.com/pratik227/static/blob/main/sponsors.svg">
+    <img src='https://github.com/pratik227/static/blob/main/sponsors.svg'/>
+  </a>
+</p>
+  
+## License
+
+[MIT](http://opensource.org/licenses/MIT)
