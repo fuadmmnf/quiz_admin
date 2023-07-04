@@ -19,7 +19,7 @@ jobs:
           node-version: 18
 
       - name: Install Quasar CLI
-        run: npm install -g @quasar/cli
+        run: npm install -g @quasar/cli &&  npm install -g @quasar/app-vite
 
       - name: Install dependencies
         run: npm install && npm install --only=dev
