@@ -20,6 +20,22 @@ const routes = [
         path: "/Question/:id",
         component: () => import("pages/Question/AddOrEdit.vue"),
       },
+      {
+        path: "/Exam",
+        component: () => import("pages/Exam/index.vue"),
+      },
+      {
+        path: "/Exam/add",
+        component: () => import("pages/Exam/AddOrEdit.vue"),
+      },
+      {
+        path: "/Exam/:id",
+        component: () => import("pages/Exam/AddOrEdit.vue"),
+      },
+      {
+        path: "/Exam/:id/EditQuestions",
+        component: () => import("pages/Exam/EditQuestions.vue"),
+      },
       { path: "/Dashboard2", component: () => import("pages/Dashboard2.vue") },
       { path: "/Profile", component: () => import("pages/UserProfile.vue") },
       { path: "/Map", component: () => import("pages/Map.vue") },

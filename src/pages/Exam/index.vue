@@ -2,8 +2,8 @@
   <q-page class="q-pa-sm">
     <q-card class="no-shadow" bordered>
       <q-card-section>
-        <div class="text-h6 text-indigo-8">Questions</div>
-        <div class="text-subtitle2">List of all questions are shown here</div>
+        <div class="text-h6 text-indigo-8">Exams</div>
+        <div class="text-subtitle2">List of all Exams are shown here</div>
       </q-card-section>
     </q-card>
 
@@ -14,7 +14,7 @@
         <div class="col-12">
           <q-card>
             <q-card-section>
-              <!-- List of Questions -->
+              <!-- List of Exams -->
               <q-table
                 :columns="columns"
                 :rows="rows"
@@ -26,9 +26,9 @@
                 <template v-slot:top>
                   <q-btn
                     color="primary"
-                    label="Add Question"
+                    label="Add Exam"
                     icon="add"
-                    to="/Question/add"
+                    to="/Exam/add"
                   />
                 </template>
                 <!-- table data -->
@@ -52,17 +52,25 @@
                     <q-td key="actions" :props="props">
                       <q-btn
                         color="primary"
-                        size="sm"
+                        size="md"
                         icon="edit"
                         round
                         dense
                         flat
-                        to="/Question/edit"
+                        to="/Exam/edit"
                       />
-
+                      <q-btn
+                        color="secondary"
+                        size="md"
+                        icon="edit_square"
+                        round
+                        dense
+                        flat
+                        :to="`/Exam/${props.row.id}/EditQuestions`"
+                      />
                       <q-btn
                         color="negative"
-                        size="sm"
+                        size="md"
                         icon="delete"
                         round
                         dense
@@ -81,100 +89,104 @@
 </template>
 
 <script>
-import { defineComponent, defineAsyncComponent } from "vue";
+import { defineComponent } from "vue";
+
 export default defineComponent({
-  name: "Question",
+  name: "Exam",
   data() {
     return {
-      name: "Question",
-      //table header
       columns: [
         {
           name: "name",
-          label: "Question Name",
-          field: "name",
+          required: true,
+          label: "Name",
           align: "left",
+          field: (row) => row.name,
+          format: (val) => `${val}`,
           sortable: true,
         },
         {
           name: "category",
-          label: "Category",
-          field: "category",
           align: "left",
+          label: "Category",
+          field: (row) => row.category,
           sortable: true,
         },
         {
           name: "subcategory",
-          label: "Subcategory",
-          field: "subcategory",
           align: "left",
+          label: "Subcategory",
+          field: (row) => row.subcategory,
           sortable: true,
         },
         {
           name: "subject",
-          label: "Subject",
-          field: "subject",
           align: "left",
+          label: "Subject",
+          field: (row) => row.subject,
           sortable: true,
         },
         {
           name: "chapter",
-          label: "Chapter",
-          field: "chapter",
           align: "left",
+          label: "Chapter",
+          field: (row) => row.chapter,
           sortable: true,
         },
         {
           name: "actions",
           label: "Actions",
-          field: "actions",
-          align: "left",
-          sortable: false,
+          field: (row) => row.actions,
         },
       ],
-      //table data
       rows: [
         {
-          name: "Question 1",
+          id: 1,
+          name: "Exam 1",
           category: "Category 1",
           subcategory: "Subcategory 1",
           subject: "Subject 1",
           chapter: "Chapter 1",
+          actions: "",
         },
         {
-          name: "Question 2",
+          id: 2,
+          name: "Exam 2",
           category: "Category 2",
           subcategory: "Subcategory 2",
           subject: "Subject 2",
           chapter: "Chapter 2",
+          actions: "",
         },
         {
-          name: "Question 3",
+          id: 3,
+          name: "Exam 3",
           category: "Category 3",
           subcategory: "Subcategory 3",
           subject: "Subject 3",
           chapter: "Chapter 3",
+          actions: "",
+        },
+        {
+          id: 4,
+          name: "Exam 4",
+          category: "Category 4",
+          subcategory: "Subcategory 4",
+          subject: "Subject 4",
+          chapter: "Chapter 4",
+          actions: "",
+        },
+        {
+          id: 5,
+          name: "Exam 5",
+          category: "Category 5",
+          subcategory: "Subcategory 5",
+          subject: "Subject 5",
+          chapter: "Chapter 5",
+          actions: "",
         },
       ],
     };
-  },
-  components: {
-    TableActions: defineAsyncComponent(() =>
-      import("components/tables/TableActions.vue")
-    ),
-  },
-  methods: {
-    onEdit() {
-      this.$router.push({ name: "question-edit" });
-    },
-    onDelete() {
-      this.$q.dialog({
-        title: "Delete",
-        message: "Are you sure you want to delete this question?",
-        cancel: true,
-        persistent: true,
-      });
-    },
   },
 });
 </script>

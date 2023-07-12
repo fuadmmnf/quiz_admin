@@ -126,6 +126,15 @@
             <q-item-label>Question</q-item-label>
           </q-item-section>
         </q-item>
+        <!-- Exam -->
+        <q-item to="/Exam" active-class="q-item-no-link-highlighting">
+          <q-item-section avatar>
+            <q-icon name="question_answer" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Exam</q-item-label>
+          </q-item-section>
+        </q-item>
         <q-item to="/TreeTable" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
             <q-icon name="list" />
