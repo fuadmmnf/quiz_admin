@@ -121,143 +121,271 @@
         <div class="row q-col-gutter-md">
           <div class="col-12">
             <!-- card with two columns-->
-            <q-card class="no-shadow" bordered>
-              <!-- heading -->
-              <q-card-section class="row items-center justify-between">
-                <div class="text-h6">Exam Details</div>
-              </q-card-section>
+            <div class="row q-col-gutter-md">
+              <div class="col-5">
+                <q-card class="no-shadow" bordered>
+                  <!-- heading -->
+                  <q-card-section class="row items-center justify-between">
+                    <div class="text-h6">Exam Details</div>
+                  </q-card-section>
 
-              <q-card-section>
-                <div class="row q-col-gutter-md">
-                  <!-- title, code, faculty, subject category, duration, start time, end time, start message , end message two columns -->
-                  <div class="col-6">
-                    <q-input filled v-model="name" :label="`Title`" />
-
-                    <q-input filled v-model="name" :label="`Code`" />
-
-                    <q-select
-                      filled
-                      v-model="model"
-                      :options="options"
-                      :label="`Faculty`"
-                      lazy-rules
-                    />
-                    <q-select
-                      filled
-                      v-model="model"
-                      :options="options"
-                      :label="`Category`"
-                      lazy-rules
-                    />
-
-                    <q-select
-                      filled
-                      v-model="model"
-                      :options="options"
-                      :label="`Subject`"
-                      lazy-rules
-                    />
-                  </div>
-                  <div class="col-6">
-                    <!-- duration in minutes -->
-                    <q-input filled v-model="name" :label="`Duration`" />
-
-                    <q-input filled v-model="date" :label="`Start Time`">
-                      <template v-slot:append>
-                        <q-icon name="event" class="cursor-pointer q-ma-md">
-                          <q-popup-proxy
-                            cover
-                            transition-show="scale"
-                            transition-hide="scale"
-                          >
-                            <q-date v-model="date" mask="YYYY-MM-DD HH:mm">
-                              <div class="row items-center justify-end">
-                                <q-btn
-                                  v-close-popup
-                                  label="Close"
-                                  color="primary"
-                                  flat
-                                />
-                              </div>
-                            </q-date>
-                          </q-popup-proxy>
-                        </q-icon>
-                        <q-icon name="access_time" class="cursor-pointer">
-                          <q-popup-proxy
-                            cover
-                            transition-show="scale"
-                            transition-hide="scale"
-                          >
-                            <q-time
-                              v-model="date"
-                              mask="YYYY-MM-DD HH:mm"
-                              format24h
-                            >
-                              <div class="row items-center justify-end">
-                                <q-btn
-                                  v-close-popup
-                                  label="Close"
-                                  color="primary"
-                                  flat
-                                />
-                              </div>
-                            </q-time>
-                          </q-popup-proxy>
-                        </q-icon>
-                      </template>
-                    </q-input>
-
-                    <q-input filled v-model="date" :label="`End Time`">
-                      <template v-slot:append>
-                        <q-icon name="event" class="cursor-pointer q-ma-md">
-                          <q-popup-proxy
-                            cover
-                            transition-show="scale"
-                            transition-hide="scale"
-                          >
-                            <q-date v-model="date" mask="YYYY-MM-DD HH:mm">
-                              <div class="row items-center justify-end">
-                                <q-btn
-                                  v-close-popup
-                                  label="Close"
-                                  color="primary"
-                                  flat
-                                />
-                              </div>
-                            </q-date>
-                          </q-popup-proxy>
-                        </q-icon>
-                        <q-icon name="access_time" class="cursor-pointer">
-                          <q-popup-proxy
-                            cover
-                            transition-show="scale"
-                            transition-hide="scale"
-                          >
-                            <q-time
-                              v-model="date"
-                              mask="YYYY-MM-DD HH:mm"
-                              format24h
-                            >
-                              <div class="row items-center justify-end">
-                                <q-btn
-                                  v-close-popup
-                                  label="Close"
-                                  color="primary"
-                                  flat
-                                />
-                              </div>
-                            </q-time>
-                          </q-popup-proxy>
-                        </q-icon>
-                      </template>
-                    </q-input>
-                    <q-input filled v-model="name" :label="`Start Message`" />
-
-                    <q-input filled v-model="name" :label="`End Message`" />
-                  </div>
-                </div>
-              </q-card-section>
-            </q-card>
+                  <q-card-section>
+                    <div class="row q-col-gutter-md">
+                      <!-- title, code, faculty, subject category, duration, start time, end time, start message , end message two columns -->
+                      <div class="col-6">
+                        <q-input filled v-model="name" :label="`Title`" />
+                      </div>
+                      <div class="col-6">
+                        <!-- duration in minutes -->
+                        <q-input filled v-model="name" :label="`Code`" />
+                      </div>
+                    </div>
+                    <div class="row q-col-gutter-md q-mt-auto">
+                      <!-- 3 coloumn -->
+                      <div class="col-4">
+                        <q-select filled v-model="name" :label="`Faculty`" />
+                      </div>
+                      <div class="col-4">
+                        <q-select filled v-model="name" :label="`Discipline`" />
+                      </div>
+                      <div class="col-4">
+                        <q-select filled v-model="name" :label="`Subject`" />
+                      </div>
+                    </div>
+                    <div class="row q-col-gutter-md q-mt-auto">
+                      <div class="col-12">
+                        <q-input filled v-model="date" :label="`Start Time`">
+                          <template v-slot:append>
+                            <q-icon name="event" class="cursor-pointer q-ma-md">
+                              <q-popup-proxy
+                                cover
+                                transition-show="scale"
+                                transition-hide="scale"
+                              >
+                                <q-date v-model="date" mask="YYYY-MM-DD HH:mm">
+                                  <div class="row items-center justify-end">
+                                    <q-btn
+                                      v-close-popup
+                                      label="Close"
+                                      color="primary"
+                                      flat
+                                    />
+                                  </div>
+                                </q-date>
+                              </q-popup-proxy>
+                            </q-icon>
+                            <q-icon name="access_time" class="cursor-pointer">
+                              <q-popup-proxy
+                                cover
+                                transition-show="scale"
+                                transition-hide="scale"
+                              >
+                                <q-time
+                                  v-model="date"
+                                  mask="YYYY-MM-DD HH:mm"
+                                  format24h
+                                >
+                                  <div class="row items-center justify-end">
+                                    <q-btn
+                                      v-close-popup
+                                      label="Close"
+                                      color="primary"
+                                      flat
+                                    />
+                                  </div>
+                                </q-time>
+                              </q-popup-proxy>
+                            </q-icon>
+                          </template>
+                        </q-input>
+                      </div>
+                    </div>
+                    <div class="row q-col-gutter-md q-mt-auto">
+                      <div class="col-12">
+                        <q-input filled v-model="date" :label="`End Time`">
+                          <template v-slot:append>
+                            <q-icon name="event" class="cursor-pointer q-ma-md">
+                              <q-popup-proxy
+                                cover
+                                transition-show="scale"
+                                transition-hide="scale"
+                              >
+                                <q-date v-model="date" mask="YYYY-MM-DD HH:mm">
+                                  <div class="row items-center justify-end">
+                                    <q-btn
+                                      v-close-popup
+                                      label="Close"
+                                      color="primary"
+                                      flat
+                                      size="sm"
+                                    />
+                                  </div>
+                                </q-date>
+                              </q-popup-proxy>
+                            </q-icon>
+                            <q-icon name="access_time" class="cursor-pointer">
+                              <q-popup-proxy
+                                cover
+                                transition-show="scale"
+                                transition-hide="scale"
+                              >
+                                <q-time
+                                  v-model="date"
+                                  mask="YYYY-MM-DD HH:mm"
+                                  format24h
+                                >
+                                  <div class="row items-center justify-end">
+                                    <q-btn
+                                      v-close-popup
+                                      label="Close"
+                                      color="primary"
+                                      flat
+                                      size="sm"
+                                    />
+                                  </div>
+                                </q-time>
+                              </q-popup-proxy>
+                            </q-icon>
+                          </template>
+                        </q-input>
+                      </div>
+                    </div>
+                    <div class="row q-col-gutter-md q-mt-auto">
+                      <div class="col-12">
+                        <q-input
+                          filled
+                          v-model="name"
+                          :label="`Start Message`"
+                        />
+                      </div>
+                    </div>
+                    <div class="row q-col-gutter-md q-mt-auto">
+                      <div class="col-12">
+                        <q-input filled v-model="name" :label="`End Message`" />
+                      </div>
+                    </div>
+                    <!-- status -> draft, ongoing, finished, upcoming, checking and duration two column -->
+                    <div class="row q-col-gutter-md q-mt-auto">
+                      <div class="col-6">
+                        <q-select filled v-model="name" :label="`Status`" />
+                      </div>
+                      <div class="col-6">
+                        <q-input filled v-model="name" :label="`Duration`" />
+                      </div>
+                    </div>
+                  </q-card-section>
+                </q-card>
+              </div>
+              <div class="col-7">
+                <q-card class="no-shadow" bordered>
+                  <!-- heading -->
+                  <q-card-section class="row items-center justify-between">
+                    <div class="text-h6">Exam Configuration</div>
+                  </q-card-section>
+                  <q-card-section>
+                    <!-- Visbility , answer script visibility, marks visibility, merits visibility select-->
+                    <div class="row q-col-gutter-md q-mt-auto">
+                      <div class="col-6">
+                        <q-select
+                          filled
+                          v-model="name"
+                          :label="`Visibility`"
+                          :options="visibility_option"
+                        />
+                      </div>
+                      <div class="col-6">
+                        <q-select
+                          filled
+                          v-model="name"
+                          :label="`Answer Script Visibility`"
+                          :options="answer_script_visibility_option"
+                        />
+                      </div>
+                    </div>
+                    <div class="row q-col-gutter-md q-mt-auto">
+                      <div class="col-6">
+                        <q-select
+                          filled
+                          v-model="name"
+                          :label="`Marks Visibility`"
+                          :options="marks_visibility_option"
+                        />
+                      </div>
+                      <div class="col-6">
+                        <q-select
+                          filled
+                          v-model="name"
+                          :label="`Merits Visibility`"
+                          :options="merits_visibility_option"
+                        />
+                      </div>
+                    </div>
+                    <!-- question display type - vertical or horizontal, if horizontal, can skip horizontal -->
+                    <div class="row q-col-gutter-md q-mt-auto">
+                      <div class="col-12">
+                        <q-select
+                          filled
+                          v-model="name"
+                          :label="`Question Display Type`"
+                          :options="question_display_type_option"
+                        />
+                      </div>
+                    </div>
+                    <!-- if horizontal, "can skip horizontal questions" and "show answer between horizontal question" -->
+                    <div class="row q-col-gutter-md q-mt-auto">
+                      <div class="col-6">
+                        <q-toggle
+                          v-model="name"
+                          :label="`Can Skip Horizontal Questions`"
+                        />
+                      </div>
+                      <div class="col-6">
+                        <q-toggle
+                          v-model="name"
+                          :label="`Show Answer Between Horizontal Question`"
+                        />
+                      </div>
+                    </div>
+                    <!-- can change answer, can retake after exam, show merit list -->
+                    <div class="row q-col-gutter-md q-mt-auto">
+                      <div class="col-6">
+                        <q-toggle v-model="name" :label="`Can Change Answer`" />
+                      </div>
+                      <div class="col-6">
+                        <q-toggle
+                          v-model="name"
+                          :label="`Can Retake After Exam`"
+                        />
+                      </div>
+                    </div>
+                    <div class="row q-col-gutter-md q-mt-auto">
+                      <div class="col-6">
+                        <q-toggle v-model="name" :label="`Show Merit List`" />
+                      </div>
+                    </div>
+                    <!-- multi-select dropdown for merit list excluded attributes
+                    individual name
+                    c. Position
+                    d. Correct answer,
+                    e. Neg marking
+                    f. final score
+                    g. time needed -->
+                    <div class="row q-col-gutter-md q-mt-auto">
+                      <div class="col-12">
+                        <q-select
+                          filled
+                          use-chips
+                          v-model="exam_data.merit_list_excluded_attributes"
+                          :label="`Merit List Excluded Attributes`"
+                          :options="merit_list_excluded_attributes_option"
+                          multiple
+                        />
+                      </div>
+                    </div>
+                  </q-card-section>
+                </q-card>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -285,47 +413,47 @@ export default defineComponent({
       model: "",
       expanded: false,
       date: ref("2021-01-01 12:00"),
-      options: [
-        {
-          label: "Option 1",
-          value: "option1",
-          options: [
-            { label: "Suboption 1", value: "suboption1" },
-            { label: "Suboption 2", value: "suboption2" },
-          ],
-        },
-        {
-          label: "Option 2",
-          value: "option2",
-          options: [
-            { label: "Suboption 3", value: "suboption3" },
-            {
-              label: "Suboption 4",
-              value: "suboption4",
-              options: [
-                { label: "Nested Suboption 1", value: "nested1" },
-                { label: "Nested Suboption 2", value: "nested2" },
-              ],
-            },
-          ],
-        },
+      visibility_option: [
+        { label: "Public", value: "Public" },
+        { label: "Private", value: "Private" },
       ],
-      question_types: [
-        { label: "Single Choice", value: "single_choice" },
-        { label: "Multiple Choice", value: "multiple_choice" },
-        { label: "True/False", value: "true_false" },
+      answer_script_visibility_option: [
+        { label: "After Attempt", value: "After Attempt" },
+        { label: "After Exam", value: "After Exam" },
       ],
-      question_type: "",
-      questionData: {
-        options: [
-          {
-            description: "This is an options data",
-            is_correct: false,
-            visible: true,
-            hint: " This is demo hint",
-            explanation: "This is demo explanation",
-          },
-        ],
+      marks_visibility_option: [
+        { label: "After Attempt", value: "After Attempt" },
+        { label: "After Exam", value: "After Exam" },
+      ],
+      merits_visibility_option: [
+        { label: "After Attempt", value: "After Attempt" },
+        { label: "After Exam", value: "After Exam" },
+      ],
+      question_display_type_option: [
+        { label: "Vertical", value: "Vertical" },
+        { label: "Horizontal", value: "Horizontal" },
+      ],
+      merit_list_excluded_attributes_option: [
+        { label: "Individual Name", value: "Individual Name" },
+        { label: "Position", value: "Position" },
+        { label: "Correct Answer", value: "Correct Answer" },
+        { label: "Neg Marking", value: "Neg Marking" },
+        { label: "Final Score", value: "Final Score" },
+        { label: "Time Needed", value: "Time Needed" },
+      ],
+
+      exam_data: {
+        visibility: "Public",
+        answer_script_visibility: "After Attempt",
+        marks_visibility: "After Attempt",
+        merits_visibility: "After Attempt",
+        question_display_type: "Vertical",
+        can_skip_horizontal_questions: false,
+        show_answer_between_horizontal_question: false,
+        can_change_answer: false,
+        can_retake_after_exam: false,
+        show_merit_list: false,
+        merit_list_excluded_attributes: [],
       },
     };
   },
