@@ -1,6 +1,6 @@
 <template>
   <span>
-    <q-hierarchy :columns="columns" classes="no-shadow" :data="data">
+    <q-hierarchy :columns="columns" classes="no-shadow" :data="tableData">
       <template v-slot:body="props">
         <td data-th="Name">
           <div
@@ -15,7 +15,7 @@
               dense
             >
             </q-btn>
-            <span class="q-ml-sm">{{ props.item.label }}</span>
+            <span class="q-ml-sm">{{ props.item.name }}</span>
           </div>
         </td>
         <td class="text-center">
@@ -67,47 +67,26 @@ const columns = [
     filterable: false,
   },
 ];
-const data = [
-  {
-    label: "Node 1",
-
-    // id: 1,
-    children: [
-      {
-        label: "Node 1.1",
-        // id: 2
-      },
-      {
-        label: "Node 1.2",
-        // id: 3,
-      },
-    ],
-  },
-];
-export default defineComponent({
+export default {
   props: {
     page: String,
+    tableData: Array,
   },
   name: "SimpleHierarchy",
-  setup() {
-    const editItem = (row) => {
-      // Implement edit logic here
-      console.log("Edit item:", row);
-    };
-
-    const deleteItem = (row) => {
+  methods: {
+    editItem(row) {
+      this.$emit("editItem", row); 
+    },
+    deleteItem(row) {
       // Implement delete logic here
-      console.log("Delete item:", row);
-    };
-
-    return {
-      columns,
-      data,
-      editItem,
-      deleteItem,
-    };
+      this.tableData.map((item, index) => {
+        if (item.name === row.name) {
+          this.tableData.splice(index, 1);
+        }
+      });
+    },
   },
-});
+};
 </script>
 
 <style scoped></style>

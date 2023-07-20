@@ -27,7 +27,7 @@
               <!-- List of Questions -->
               <q-table
                 :columns="columns"
-                :rows="rows"
+                :rows="questions"
                 row-key="name"
                 wrap-cells
                 no-data-label="No data available"
@@ -69,6 +69,7 @@
                         round
                         dense
                         flat
+                        @click="onDelete(props.row)"
                       />
                     </q-td>
                   </q-tr>
@@ -84,8 +85,15 @@
 
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
+import { useCounterStore } from "src/stores/example-store";
+
 export default defineComponent({
   name: "Question",
+  setup() {
+    const counterStore = useCounterStore();
+    const questions = counterStore.questions;
+    return { questions };
+  },
   data() {
     return {
       name: "Question",
@@ -169,12 +177,11 @@ export default defineComponent({
     onEdit() {
       this.$router.push({ name: "question-edit" });
     },
-    onDelete() {
-      this.$q.dialog({
-        title: "Delete",
-        message: "Are you sure you want to delete this question?",
-        cancel: true,
-        persistent: true,
+    onDelete(row) {
+      this.questions.map((question, index) => {
+        if (question.name === row.name) {
+          this.questions.splice(index, 1);
+        }
       });
     },
   },

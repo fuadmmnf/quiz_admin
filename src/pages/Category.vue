@@ -13,7 +13,11 @@
         <div class="col-7">
           <q-card>
             <q-card-section>
-              <simple-hierarchy :page="pageName"></simple-hierarchy>
+              <simple-hierarchy
+                :page="pageName"
+                :tableData="tableData"
+                @editItem="editItem"
+              ></simple-hierarchy>
             </q-card-section>
           </q-card>
         </div>
@@ -33,19 +37,14 @@
                   stack-label
                   :label="`Category name *`"
                   :hint="`Category name must be unique`"
-                  lazy-rules
-                  :rules="[
-                    (val) => (val && val.length > 0) || 'Please type something',
-                  ]"
+                  :rules="[(val) => !!val || 'Field is required']"
                 />
 
                 <q-select
                   filled
-                  stack-label
-                  v-model="model"
-                  :options="options"
+                  v-model="selectedParentCategory"
+                  :options="parentCategoryOptions"
                   :label="`Parent Category`"
-                  lazy-rules
                 />
                 <div>
                   <q-btn label="Submit" type="submit" color="primary" />
@@ -68,13 +67,43 @@
 
 <script>
 import TableActions from "components/tables/TableActions.vue";
-import { defineComponent, defineAsyncComponent } from "vue";
+import { defineComponent, defineAsyncComponent, ref } from "vue";
 
 export default defineComponent({
   name: "Category",
   data() {
     return {
+      name: ref(""),
       pageName: "Category",
+      tableData: [
+        {
+          name: "Category 1",
+          children: [
+            {
+              name: "Sub Category 1",
+            },
+          ],
+        },
+        {
+          name: "Category 2",
+          children: [
+            {
+              name: "Sub Category 2",
+            },
+          ],
+        },
+      ],
+      selectedParentCategory: ref(null),
+      parentCategoryOptions: [
+        {
+          label: "Category 1",
+          value: "Category 1",
+        },
+        {
+          label: "Category 2",
+          value: "Category 2",
+        },
+      ],
     };
   },
   components: {
@@ -90,11 +119,29 @@ export default defineComponent({
   },
   methods: {
     onSubmit(evt) {
-      console.log("@submit - do something here", evt);
-      evt.target.submit();
+      if (this.selectedParentCategory) {
+        this.tableData.map((item) => {
+          if (item.name === this.selectedParentCategory.value) {
+            console.log("matched");
+            item.children.push({
+              name: this.name,
+            });
+          }
+        });
+      } else {
+        this.tableData.push({
+          name: this.name,
+          children: [],
+        });
+      }
+      console.log(this.tableData);
     },
     onReset(evt) {
-      console.log("@reset - do something here", evt);
+      this.name = "";
+      this.selectedParentCategory = null;
+    },
+    editItem(row) {
+      this.name = row.name;
     },
   },
 });

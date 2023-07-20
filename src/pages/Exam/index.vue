@@ -22,29 +22,46 @@
               <!-- List of Exams -->
               <q-table
                 :columns="columns"
-                :rows="rows"
+                :rows="exams"
                 row-key="name"
                 wrap-cells
                 no-data-label="No data available"
                 class="shadow-0"
               >
+                <template v-slot:top-right>
+                  <q-input
+                    borderless
+                    dense
+                    debounce="300"
+                    v-model="filter"
+                    placeholder="Search"
+                  >
+                    <template v-slot:append>
+                      <q-icon name="search" />
+                    </template>
+                  </q-input>
+                </template>
                 <!-- table data -->
                 <template v-slot:body="props">
                   <q-tr :props="props">
+                    <!-- serial -->
+                    <q-td key="id" :props="props">
+                      {{ props.row.id }}
+                    </q-td>
                     <q-td key="name" :props="props">
                       {{ props.row.name }}
                     </q-td>
-                    <q-td key="category" :props="props">
-                      {{ props.row.category }}
+                    <q-td key="faculty" :props="props">
+                      {{ props.row.faculty }}
                     </q-td>
-                    <q-td key="subcategory" :props="props">
-                      {{ props.row.subcategory }}
+                    <q-td key="discipline" :props="props">
+                      {{ props.row.discipline }}
                     </q-td>
                     <q-td key="subject" :props="props">
                       {{ props.row.subject }}
                     </q-td>
-                    <q-td key="chapter" :props="props">
-                      {{ props.row.chapter }}
+                    <q-td key="duration" :props="props">
+                      {{ props.row.duration }}
                     </q-td>
                     <q-td key="actions" :props="props">
                       <q-btn
@@ -87,12 +104,27 @@
 
 <script>
 import { defineComponent } from "vue";
+import { useCounterStore } from "src/stores/example-store";
 
-export default defineComponent({
+export default {
   name: "Exam",
+  setup() {
+    const counterStore = useCounterStore();
+    const exams = counterStore.exams;
+    return { exams };
+  },
   data() {
     return {
       columns: [
+        {
+          name: "id",
+          required: true,
+          label: "S.No.",
+          align: "left",
+          field: (row) => row.id,
+          format: (val) => `${val}`,
+          sortable: true,
+        },
         {
           name: "name",
           required: true,
@@ -103,17 +135,17 @@ export default defineComponent({
           sortable: true,
         },
         {
-          name: "category",
+          name: "faculty",
           align: "left",
-          label: "Category",
-          field: (row) => row.category,
+          label: "Faculty",
+          field: (row) => row.faculty,
           sortable: true,
         },
         {
-          name: "subcategory",
+          name: "discipline",
           align: "left",
-          label: "Subcategory",
-          field: (row) => row.subcategory,
+          label: "Discipline",
+          field: (row) => row.discipline,
           sortable: true,
         },
         {
@@ -124,10 +156,10 @@ export default defineComponent({
           sortable: true,
         },
         {
-          name: "chapter",
+          name: "duration",
           align: "left",
-          label: "Chapter",
-          field: (row) => row.chapter,
+          label: "Duration",
+          field: (row) => row.duration,
           sortable: true,
         },
         {
@@ -136,56 +168,9 @@ export default defineComponent({
           field: (row) => row.actions,
         },
       ],
-      rows: [
-        {
-          id: 1,
-          name: "Exam 1",
-          category: "Category 1",
-          subcategory: "Subcategory 1",
-          subject: "Subject 1",
-          chapter: "Chapter 1",
-          actions: "",
-        },
-        {
-          id: 2,
-          name: "Exam 2",
-          category: "Category 2",
-          subcategory: "Subcategory 2",
-          subject: "Subject 2",
-          chapter: "Chapter 2",
-          actions: "",
-        },
-        {
-          id: 3,
-          name: "Exam 3",
-          category: "Category 3",
-          subcategory: "Subcategory 3",
-          subject: "Subject 3",
-          chapter: "Chapter 3",
-          actions: "",
-        },
-        {
-          id: 4,
-          name: "Exam 4",
-          category: "Category 4",
-          subcategory: "Subcategory 4",
-          subject: "Subject 4",
-          chapter: "Chapter 4",
-          actions: "",
-        },
-        {
-          id: 5,
-          name: "Exam 5",
-          category: "Category 5",
-          subcategory: "Subcategory 5",
-          subject: "Subject 5",
-          chapter: "Chapter 5",
-          actions: "",
-        },
-      ],
     };
   },
-});
+};
 </script>
 
 <style></style>
