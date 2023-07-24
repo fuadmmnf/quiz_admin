@@ -462,7 +462,7 @@
 import OptionCard from "src/components/question/OptionCard.vue";
 import { defineComponent, defineAsyncComponent } from "vue";
 import { ref } from "@vue/reactivity";
-import { useCounterStore } from "src/stores/example-store";
+import { useStore } from "src/stores/store";
 
 export default defineComponent({
   name: "AddOrEditEzam",
@@ -472,8 +472,8 @@ export default defineComponent({
     ),
   },
   setup() {
-    const counterStore = useCounterStore();
-    const exams = counterStore.exams;
+    const store = useStore();
+    const exams = store.exams;
     return {
       exams,
     };

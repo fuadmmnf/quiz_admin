@@ -71,7 +71,7 @@
                         round
                         dense
                         flat
-                        to="/Exam/edit"
+                        :to="`/Exam/${props.row.id}`"
                       />
                       <q-btn
                         color="secondary"
@@ -104,13 +104,13 @@
 
 <script>
 import { defineComponent } from "vue";
-import { useCounterStore } from "src/stores/example-store";
+import { useStore } from "src/stores/store";
 
 export default {
   name: "Exam",
   setup() {
-    const counterStore = useCounterStore();
-    const exams = counterStore.exams;
+    const store = useStore();
+    const exams = store.exams;
     return { exams };
   },
   data() {

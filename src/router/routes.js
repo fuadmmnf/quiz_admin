@@ -60,6 +60,9 @@ const routes = [
       // Not completed yet
       // {path: '/Taskboard', component: () => import('pages/TaskBoard.vue')},
     ],
+    meta: {
+      requiresAuth: true, // This route requires authentication
+    },
   },
 
   // Always leave this as last one,
@@ -81,8 +84,9 @@ const routes = [
     component: () => import("pages/Pricing.vue"),
   },
   {
-    path: "/Login-1",
-    component: () => import("pages/Login-1.vue"),
+    path: "/Login",
+    name: "Login",
+    component: () => import("src/pages/Login.vue"),
   },
   {
     path: "/Lock",

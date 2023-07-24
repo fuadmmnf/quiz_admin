@@ -140,10 +140,6 @@ export default {
     deleteItem(index) {
       this.$emit("deleteItem", index);
     },
-    onDescriptionChange(value) {
-      console.log("onDescriptionChange", value);
-      this.option.description = value;
-    },
   },
 };
 </script>

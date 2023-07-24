@@ -85,13 +85,14 @@
 
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
-import { useCounterStore } from "src/stores/example-store";
+import { useStore } from "src/stores/store";
+import { api } from "boot/axios";
 
 export default defineComponent({
   name: "Question",
   setup() {
-    const counterStore = useCounterStore();
-    const questions = counterStore.questions;
+    const store = useStore();
+    const questions = store.questions;
     return { questions };
   },
   data() {
@@ -184,7 +185,18 @@ export default defineComponent({
         }
       });
     },
+    getQuestions() {
+      api
+        .get("/questions")
+        .then((response) => {
+          this.questions = response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
   },
+  mounted() {},
 });
 </script>
 

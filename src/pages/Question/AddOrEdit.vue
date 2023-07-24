@@ -143,13 +143,13 @@
                   <q-card-section>
                     <q-input
                       filled
-                      v-model="questionData.name"
-                      :label="`Question Name*`"
+                      v-model="questionData.content"
+                      :label="`Question Content*`"
                       readonly
                     >
                       <template v-slot:append>
                         <tiny-mce-modal
-                          :content="questionData.name"
+                          :content="questionData.content"
                           @save="onDescriptionChange"
                         />
                       </template>
@@ -217,12 +217,32 @@
                         />
                       </div>
                     </div>
+                    <!-- score and negative marks -->
+                    <div class="row q-col-gutter-md q-mt-sm">
+                      <div class="col-6">
+                        <q-input
+                          filled
+                          v-model="questionData.score"
+                          :label="`Score`"
+                          lazy-rules
+                        />
+                      </div>
+                      <div class="col-6">
+                        <q-input
+                          filled
+                          v-model="questionData.unit_negative_mark"
+                          :label="`Negative Marks`"
+                          lazy-rules
+                        />
+                      </div>
+                    </div>
+
                     <!-- question type -->
                     <q-select
                       class="q-mt-md"
                       filled
-                      v-model="questionData.question_type"
-                      :options="question_types"
+                      v-model="questionData.type"
+                      :options="types"
                       :label="`Question Type`"
                       lazy-rules
                     />
@@ -235,13 +255,98 @@
                     <div class="text-h6">Options</div>
                   </q-card-section>
                   <q-card-section>
-                    <option-card
+                    <!-- <option-card
                       v-for="(option, index) in questionData.options"
                       :key="index"
                       :option="option"
                       :index="index"
-                      :question_type="question_type"
-                    ></option-card>
+                      :type="type"
+                    ></option-card> -->
+                    <q-expansion-item
+                      v-for="(option, index) in questionData.options"
+                      class="q-ma-md"
+                      :label="`Option ${index + 1}`"
+                      :key="index"
+                      :value="index"
+                      :expand-separator="true"
+                      :default-open="true"
+                    >
+                      <q-card>
+                        <q-card-section>
+                          <!-- inputr -->
+                          <q-input
+                            filled
+                            label="Content"
+                            v-model="option.content"
+                            :key="index"
+                            :name="`content${index}`"
+                            :id="`content${index}`"
+                            readonly
+                          >
+                            <template v-slot:append>
+                              <tiny-mce-modal
+                                :content="option.content"
+                                :index="index"
+                                @save="onContentChange"
+                              />
+                            </template>
+                          </q-input>
+                          <q-input
+                            filled
+                            label="Hint"
+                            v-model="option.hint"
+                            :key="index"
+                            :name="`hint${index}`"
+                            :id="`hint${index}`"
+                          />
+                          <q-input
+                            filled
+                            label="Explanation"
+                            v-model="option.explanation"
+                            :key="index"
+                            :name="`explanation${index}`"
+                            :id="`explanation${index}`"
+                            readonly
+                          >
+                            <template v-slot:append>
+                              <tiny-mce-modal
+                                :content="option.explanation"
+                                :index="index"
+                                @save="onExplanationChange"
+                              />
+                            </template>
+                          </q-input>
+                          <!-- same row + delete button-->
+                          <div class="row">
+                            <q-checkbox
+                              v-model="option.visibility"
+                              :key="index"
+                              :name="`visibility${index}`"
+                              :id="`visibility${index}`"
+                              label="visibility"
+                              class="q-ma-md"
+                            />
+                            <q-checkbox
+                              v-model="option.isCorrect"
+                              :key="index"
+                              :name="`isCorrect${index}`"
+                              :id="`isCorrect${index}`"
+                              label="Correct"
+                              class="q-ma-md"
+                            />
+                            <q-btn
+                              @click="deleteItem(index)"
+                              icon="delete"
+                              size="sm"
+                              color="negative"
+                              class="q-ma-lg"
+                            >
+                              Delete
+                            </q-btn>
+                          </div>
+                        </q-card-section>
+                      </q-card>
+                    </q-expansion-item>
                     <div class="q-mt-md">
                       <q-btn
                         label="Add Option"
@@ -264,8 +369,9 @@
 <script>
 import OptionCard from "src/components/question/OptionCard.vue";
 import { defineComponent, defineAsyncComponent } from "vue";
-import { useCounterStore } from "src/stores/example-store";
-
+import { useStore } from "src/stores/store";
+import { api } from "boot/axios";
+import { useQuasar } from "quasar";
 export default defineComponent({
   name: "AddOrEditQuestion",
   components: {
@@ -277,10 +383,12 @@ export default defineComponent({
     ),
   },
   setup() {
-    const counterStore = useCounterStore();
-    const questions = counterStore.questions;
+    const store = useStore();
+    const { $q } = useQuasar();
+    const questions = store.questions;
     return {
       questions,
+      $q,
     };
   },
   data() {
@@ -288,19 +396,22 @@ export default defineComponent({
       pageName: "Add/Edit Question",
       dense: true,
       questionData: {
-        name: "Question 1",
-        category: "Category 1",
-        subcategory: "Subcategory 1",
-        subject: "Subject 1",
-        chapter: "Chapter 2",
-        faculty: "Faculty 1",
-        discipline: "Discipline 2",
-        question_type: "MCQ",
+        content: "Demo content",
+        category_id: null,
+        subcategory: "",
+        subject: "",
+        chapter: "",
+        faculty: "",
+        discipline: "",
+        parent_id: null,
+        score: 0,
+        unit_negative_mark: 0,
+        type: "",
         options: [
           {
-            description: "This is an options data",
+            content: "This is an options data",
             is_correct: false,
-            visible: true,
+            visibility: true,
             hint: " This is demo hint",
             explanation: "This is demo explanation",
           },
@@ -308,75 +419,171 @@ export default defineComponent({
       },
       model: "",
       expanded: false,
-      categoryOptions: [
-        { label: "Category 1", value: "category_1" },
-        { label: "Category 2", value: "category_2" },
-        { label: "Category 3", value: "category_3" },
-      ],
-      subcategoryOptions: [
-        { label: "Subcategory 1", value: "subcategory_1" },
-        { label: "Subcategory 2", value: "subcategory_2" },
-        { label: "Subcategory 3", value: "subcategory_3" },
-      ],
-      subjectOptions: [
-        { label: "Subject 1", value: "subject_1" },
-        { label: "Subject 2", value: "subject_2" },
-        { label: "Subject 3", value: "subject_3" },
-      ],
-      chapterOptions: [
-        { label: "Chapter 1", value: "chapter_1" },
-        { label: "Chapter 2", value: "chapter_2" },
-        { label: "Chapter 3", value: "chapter_3" },
-      ],
-      facultyOptions: [
-        { label: "Faculty 1", value: "faculty_1" },
-        { label: "Faculty 2", value: "faculty_2" },
-        { label: "Faculty 3", value: "faculty_3" },
-      ],
-      disciplineOptions: [
-        { label: "Discipline 1", value: "discipline_1" },
-        { label: "Discipline 2", value: "discipline_2" },
-        { label: "Discipline 3", value: "discipline_3" },
-      ],
-      question_types: [
-        { label: "Single Choice", value: "single_choice" },
-        { label: "Multiple Choice", value: "multiple_choice" },
-        { label: "True/False", value: "true_false" },
+      categoryOptions: [],
+      subcategoryOptions: [],
+      subjectOptions: [],
+      chapterOptions: [],
+      facultyOptions: [],
+      disciplineOptions: [],
+      types: [
+        { label: "Single Best Answer", value: "single-best-answer" },
+        { label: "Multiple Answer", value: "multiple-answer" },
+        { label: "Multiple True/False", value: "multiple-true-false" },
+        { label: "Fill in the blanks", value: "written" },
+        { label: "Essay", value: "written" },
       ],
     };
   },
   methods: {
     onSubmit() {
       console.log("Submitted");
-      this.questions.push(this.questionData);
-      this.$router.push("/Question");
+      console.log(this.questionData);
+      this.questionData.type = this.questionData.type.value;
+      api.post("/questions", this.questionData).then((response) => {
+        console.log(response);
+        this.$q.notify({
+          message: "Question Added Successfully",
+          color: "positive",
+          icon: "check",
+        });
+      });
     },
     onReset() {
       console.log("Reset");
       this.questionData = {
-        name: "",
+        content: "",
         category: "",
         subcategory: "",
         subject: "",
         chapter: "",
         faculty: "",
         discipline: "",
-        question_type: "",
+        score: 0,
+        unit_negative_mark: 0,
+        type: "",
         options: [],
       };
     },
     addOption() {
       this.questionData.options.push({
-        option: "",
+        content: "",
         is_correct: false,
-        visible: true,
+        visibility: true,
         hint: "",
         explanation: "",
       });
     },
     onDescriptionChange(value) {
-      this.name = value;
+      this.questionData.content = value;
     },
+    onContentChange(value, index) {
+      this.questionData.options[index].content = value;
+    },
+    onExplanationChange(value, index) {
+      this.questionData.options[index].explanation = value;
+    },
+    deleteItem(index) {
+      this.questionData.options.splice(index, 1);
+    },
+
+    getCategories() {
+      api.get("/categories/category").then((response) => {
+        response.data.data.map(
+          (category) => {
+            this.categoryOptions.push({
+              label: category.name,
+              value: category.real_id,
+            });
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+      });
+    },
+    getSubcategories() {
+      api.get("/categories/subcategory").then((response) => {
+        response.data.data.map(
+          (subcategory) => {
+            this.subcategoryOptions.push({
+              label: subcategory.name,
+              value: subcategory.real_id,
+            });
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+      });
+    },
+    getSubjects() {
+      api.get("/categories/subject").then((response) => {
+        response.data.data.map(
+          (subject) => {
+            this.subjectOptions.push({
+              label: subject.name,
+              value: subject.real_id,
+            });
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+      });
+    },
+    getChapters() {
+      api.get("/categories/chapter").then((response) => {
+        response.data.data.map(
+          (chapter) => {
+            this.chapterOptions.push({
+              label: chapter.name,
+              value: chapter.real_id,
+            });
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+      });
+    },
+    getFaculties() {
+      api.get("/categories/faculty").then((response) => {
+        response.data.data.map(
+          (faculty) => {
+            this.facultyOptions.push({
+              label: faculty.name,
+              value: faculty.real_id,
+            });
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+      });
+    },
+    getDisciplines() {
+      api.get("/categories/discipline").then((response) => {
+        response.data.data.map(
+          (discipline) => {
+            this.disciplineOptions.push({
+              label: discipline.name,
+              value: discipline.real_id,
+            });
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+      });
+    },
+  },
+  mounted() {
+    this.getCategories();
+    this.getSubcategories();
+    this.getSubjects();
+    this.getChapters();
+    this.getFaculties();
+    this.getDisciplines();
   },
 });
 </script>

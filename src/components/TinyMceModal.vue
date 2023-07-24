@@ -31,9 +31,9 @@
             <q-tooltip class="bg-white text-primary">Close</q-tooltip>
           </q-btn>
         </q-bar>
-        <q-card-section align="center" v-if="content">
+        <q-card-section align="center" v-if="description">
           <editor
-            v-model="content"
+            v-model="description"
             api-key="nn1oy7fxz6slcu516a4moosd888g0nx0c88bm0jhwg1fib22"
             :init="{
               height: 500,
@@ -62,18 +62,19 @@
   </div>
 </template>
 
-<script
-  rc="https://cdn.tiny.cloud/1/nn1oy7fxz6slcu516a4moosd888g0nx0c88bm0jhwg1fib22/tinymce/6/tinymce.min.js"
-  referrerpolicy="origin"
->
+<script>
 import { defineComponent, ref } from "vue";
 import { defineAsyncComponent } from "vue";
-export default defineComponent({
+export default {
   name: "TinyMceModal",
   props: {
     content: {
       type: String,
       default: "",
+    },
+    index: {
+      type: Number,
+      default: 0,
     },
   },
   components: {
@@ -90,17 +91,18 @@ export default defineComponent({
           "undo redo | bold italic | alignleft aligncenter alignright | code",
       },
       maximizedToggle: ref(true),
+      description: this.content,
     };
   },
   methods: {
     onSave() {
       this.show = false;
       console.log("save");
-      //this.$emit("save", this.$refs.editor.editor.getContent());
-      console.log(this.content);
+      this.$emit("save", this.description, this.index);
+      console.log(this.description);
     },
   },
-});
+};
 </script>
 
 <style>
