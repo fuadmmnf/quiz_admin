@@ -23,7 +23,7 @@
               <q-table
                 :columns="columns"
                 :rows="exams"
-                row-key="name"
+                row-key="real_id"
                 wrap-cells
                 no-data-label="No data available"
                 class="shadow-0"
@@ -45,23 +45,17 @@
                 <template v-slot:body="props">
                   <q-tr :props="props">
                     <!-- serial -->
-                    <q-td key="id" :props="props">
-                      {{ props.row.id }}
+                    <q-td key="real_id" :props="props">
+                      {{ props.row.real_id }}
                     </q-td>
-                    <q-td key="name" :props="props">
-                      {{ props.row.name }}
+                    <q-td key="title" :props="props">
+                      {{ props.row.title }}
                     </q-td>
-                    <q-td key="faculty" :props="props">
-                      {{ props.row.faculty }}
+                    <q-td key="code" :props="props">
+                      {{ props.row.code }}
                     </q-td>
-                    <q-td key="discipline" :props="props">
-                      {{ props.row.discipline }}
-                    </q-td>
-                    <q-td key="subject" :props="props">
-                      {{ props.row.subject }}
-                    </q-td>
-                    <q-td key="duration" :props="props">
-                      {{ props.row.duration }}
+                    <q-td key="duration_in_minutes" :props="props">
+                      {{ props.row.duration_in_minutes }}
                     </q-td>
                     <q-td key="actions" :props="props">
                       <q-btn
@@ -71,7 +65,7 @@
                         round
                         dense
                         flat
-                        :to="`/Exam/${props.row.id}`"
+                        :to="`/Exam/${props.row.real_id}`"
                       />
                       <q-btn
                         color="secondary"
@@ -105,61 +99,53 @@
 <script>
 import { defineComponent } from "vue";
 import { useStore } from "src/stores/store";
+import { api } from "boot/axios";
 
 export default {
   name: "Exam",
   setup() {
     const store = useStore();
-    const exams = store.exams;
-    return { exams };
+    return { store };
+  },
+  mounted() {
+    api.get("/exams?include=subject").then((response) => {
+      this.exams = response.data.data;
+    });
   },
   data() {
     return {
+      exams: [],
       columns: [
         {
-          name: "id",
+          name: "real_id",
           required: true,
           label: "S.No.",
           align: "left",
-          field: (row) => row.id,
+          field: (row) => row.real_id,
           format: (val) => `${val}`,
           sortable: true,
         },
         {
-          name: "name",
+          name: "title",
           required: true,
-          label: "Name",
+          label: "Title",
           align: "left",
-          field: (row) => row.name,
+          field: (row) => row.title,
           format: (val) => `${val}`,
           sortable: true,
         },
         {
-          name: "faculty",
+          name: "code",
           align: "left",
-          label: "Faculty",
-          field: (row) => row.faculty,
+          label: "Code",
+          field: (row) => row.code,
           sortable: true,
         },
         {
-          name: "discipline",
+          name: "duration_in_minutes",
           align: "left",
-          label: "Discipline",
-          field: (row) => row.discipline,
-          sortable: true,
-        },
-        {
-          name: "subject",
-          align: "left",
-          label: "Subject",
-          field: (row) => row.subject,
-          sortable: true,
-        },
-        {
-          name: "duration",
-          align: "left",
-          label: "Duration",
-          field: (row) => row.duration,
+          label: "Duration (In Minutes)",
+          field: (row) => row.duration_in_minutes,
           sortable: true,
         },
         {

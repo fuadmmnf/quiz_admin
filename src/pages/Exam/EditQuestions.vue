@@ -30,13 +30,18 @@
         <q-card-section>
           <div class="row q-col-gutter-md">
             <div class="col-12">
-              <q-input filled v-model="name" :label="`Search Questions to add`">
+              <q-input
+                filled
+                v-model="searchText"
+                :label="`Search Questions to add`"
+              >
                 <template v-slot:append>
                   <!-- filter icon -->
 
                   <q-btn
                     flat
                     round
+                    @click="searchQuestions()"
                     dense
                     icon="search"
                     class="bg-grey-3"
@@ -56,9 +61,9 @@
                   <div class="col-2">
                     <q-select
                       filled
-                      v-model="model"
-                      :options="options"
-                      :label="`Category`"
+                      v-model="type"
+                      :options="type_options"
+                      :label="`Question Type`"
                       lazy-rules
                     />
                   </div>
@@ -112,17 +117,56 @@
             </div>
           </div>
         </q-card-section>
+        <q-card-section>
+          <!-- for loop of div for search results of questions, and a button to add a question -->
+          <div v-for="(item, index) in searchResults" :key="index">
+            <div class="row items-center">
+              <div class="col-10">
+                <!-- content , type and score -->
+                <div class="row items-center">
+                  <div class="col-1">
+                    <div class="text">{{ index + 1 }}.</div>
+                  </div>
+                  <div class="col-5">
+                    <div class="">
+                      {{ item.content.substring(0, 50) + "..." }}
+                    </div>
+                    <div class="text-grey-6">{{ item.type }}</div>
+                  </div>
+                  <!-- col for negative marks -->
+                  <div class="col-3">
+                    <div class="text">
+                      Negative Marks : {{ item.unit_negative_mark }}
+                    </div>
+                  </div>
+                  <div class="col-3">
+                    <div class="text">Score : {{ item.score }}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-2">
+                <q-btn
+                  size="sm"
+                  color="primary"
+                  outline
+                  label="Add"
+                  icon="add"
+                  @click="addQuestion(item)"
+                />
+              </div>
+            </div>
+            <q-separator />
+          </div>
+        </q-card-section>
       </q-card>
     </q-expansion-item>
     <!-- questions table with serial, type, name, cateogry, actions -->
     <q-table
-      :rows="rows"
+      :rows="examQuestions"
       :columns="columns"
-      row-key="name"
+      row-key="real_id"
       class="q-mt-md"
       :filter="filter"
-      :selected="selected"
-      selection="multiple"
     >
       <template v-slot:top-right>
         <q-input
@@ -139,33 +183,19 @@
       </template>
       <template v-slot:body="props">
         <q-tr :props="props">
-          <q-td key="name" :props="props">
-            <q-checkbox v-model="props.selected" />
-          </q-td>
-          <q-td key="name" :props="props">
-            {{ props.row.name }}
+          <q-td key="content" :props="props">
+            {{ props.row.content.substring(0, 50) + "..." }}
           </q-td>
           <q-td key="type" :props="props">
             {{ props.row.type }}
           </q-td>
-          <q-td key="category" :props="props">
-            {{ props.row.category }}
+          <q-td key="score" :props="props">
+            {{ props.row.score }}
           </q-td>
-          <q-td key="negative_marks" :props="props">
-            {{ props.row.negative_marks }}
+          <q-td key="unit_negative_mark" :props="props">
+            {{ props.row.unit_negative_mark }}
           </q-td>
           <q-td key="actions" :props="props" class="">
-            <!-- add negative marks -->
-            <q-btn
-              dense
-              flat
-              size="sm"
-              color="success"
-              label="Add Negative Marks"
-              icon="add"
-              @click="show = true"
-            />
-
             <q-btn
               dense
               flat
@@ -215,25 +245,38 @@
 
 <script>
 import { defineComponent } from "vue";
+import { api } from "boot/axios";
 
 export default defineComponent({
   name: "AddEditQuestions",
   data() {
     return {
       selected: [],
+      searchText: "",
+      expanded: true,
+      examQuestions: [],
+      type: "",
+      type_options: [
+        { label: "Single Best Answer", value: "single-best-answer" },
+        { label: "Multiple Answer", value: "multiple-answer" },
+        { label: "Multiple True/False", value: "multiple-true-false" },
+        { label: "Fill in the blanks", value: "written" },
+        { label: "Essay", value: "written" },
+      ],
       pagination: {
         sortBy: "name",
       },
+      searchResults: [],
       filter: "",
       loading: false,
       show: false,
       columns: [
         {
-          name: "name",
+          name: "content",
           required: true,
-          label: "Name",
+          label: "Content",
           align: "left",
-          field: "name",
+          field: "content",
           sortable: true,
         },
         {
@@ -245,19 +288,19 @@ export default defineComponent({
           sortable: true,
         },
         {
-          name: "category",
+          name: "score",
           required: true,
-          label: "Category",
+          label: "Score",
           align: "left",
-          field: "category",
+          field: "score",
           sortable: true,
         },
         {
-          name: "negative_marks",
+          name: "unit_negative_mark",
           required: true,
           label: "Negative Marks",
           align: "left",
-          field: "negative_marks",
+          field: "unit_negative_mark",
           sortable: true,
         },
         {
@@ -293,6 +336,67 @@ export default defineComponent({
         persistent: true,
       });
     },
+    searchQuestions() {
+      this.loading = true;
+      api
+        .get("/questions", {
+          params: {
+            search: this.searchText,
+            type: this.type,
+          },
+        })
+        .then((res) => {
+          this.searchResults = res.data.data;
+          this.loading = false;
+          console.log(res.data.data);
+        })
+        .catch((err) => {
+          this.loading = false;
+          console.log(err);
+        });
+    },
+    addQuestion(item) {
+      api
+        .post("/exam-questions", {
+          exam_id: this.$route.params.id,
+          question_ids: [item.id],
+        })
+        .then((res) => {
+          this.$q.notify({
+            color: "positive",
+            message: "Question Added Successfully",
+            icon: "check",
+          });
+          this.getExamQuestions();
+          console.log(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    getExamQuestions() {
+      api
+        .get(
+          "/exam-questions/" +
+            this.$route.params.id +
+            "?include=question,question.options&page=0"
+        )
+        .then((res) => {
+          if (res.data.data.length > 0) {
+            res.data.data.map((item) => {
+              this.examQuestions.push(item.question.data);
+            });
+          }
+
+          console.log(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+  },
+  mounted() {
+    this.getExamQuestions();
   },
 });
 </script>

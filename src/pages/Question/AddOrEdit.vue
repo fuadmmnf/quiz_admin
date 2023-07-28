@@ -584,6 +584,14 @@ export default defineComponent({
     this.getChapters();
     this.getFaculties();
     this.getDisciplines();
+    if (this.$route.params.id) {
+      api.get(`/questions/${this.$route.params.id}`).then((response) => {
+        this.questionData = response.data.data;
+        this.questionData.type = this.types.find(
+          (type) => type.value === this.questionData.type
+        );
+      });
+    }
   },
 });
 </script>

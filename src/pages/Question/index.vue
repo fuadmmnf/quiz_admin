@@ -28,7 +28,7 @@
               <q-table
                 :columns="columns"
                 :rows="questions"
-                row-key="name"
+                row-key="real_id"
                 wrap-cells
                 no-data-label="No data available"
                 class="shadow-0"
@@ -36,20 +36,21 @@
                 <!-- table data -->
                 <template v-slot:body="props">
                   <q-tr :props="props">
-                    <q-td key="name" :props="props">
-                      {{ props.row.name }}
+                    <!-- serial -->
+                    <q-td key="real_id" :props="props">
+                      {{ props.row.real_id }}
                     </q-td>
-                    <q-td key="category" :props="props">
-                      {{ props.row.category }}
+                    <q-td key="content" :props="props">
+                      {{ props.row.content.substring(0, 50) + "..." }}
                     </q-td>
-                    <q-td key="subcategory" :props="props">
-                      {{ props.row.subcategory }}
+                    <q-td key="type" :props="props">
+                      {{ props.row.type }}
                     </q-td>
-                    <q-td key="subject" :props="props">
-                      {{ props.row.subject }}
+                    <q-td key="score" :props="props">
+                      {{ props.row.score }}
                     </q-td>
-                    <q-td key="chapter" :props="props">
-                      {{ props.row.chapter }}
+                    <q-td key="unit_negative_mark" :props="props">
+                      {{ props.row.unit_negative_mark }}
                     </q-td>
                     <q-td key="actions" :props="props">
                       <q-btn
@@ -92,46 +93,46 @@ export default defineComponent({
   name: "Question",
   setup() {
     const store = useStore();
-    const questions = store.questions;
-    return { questions };
+    return { store };
   },
   data() {
     return {
       name: "Question",
+      questions: [],
       //table header
       columns: [
         {
-          name: "name",
-          label: "Question Name",
-          field: "name",
+          name: "real_id",
+          label: "Id",
+          field: "real_id",
           align: "left",
           sortable: true,
         },
         {
-          name: "category",
-          label: "Category",
-          field: "category",
+          name: "content",
+          label: "Content",
+          field: "content",
           align: "left",
           sortable: true,
         },
         {
-          name: "subcategory",
-          label: "Subcategory",
-          field: "subcategory",
+          name: "type",
+          label: "Type",
+          field: "type",
           align: "left",
           sortable: true,
         },
         {
-          name: "subject",
-          label: "Subject",
-          field: "subject",
+          name: "score",
+          label: "Score",
+          field: "score",
           align: "left",
           sortable: true,
         },
         {
-          name: "chapter",
-          label: "Chapter",
-          field: "chapter",
+          name: "unit_negative_mark",
+          label: "Unit Negative Mark",
+          field: "unit_negative_mark",
           align: "left",
           sortable: true,
         },
@@ -144,29 +145,7 @@ export default defineComponent({
         },
       ],
       //table data
-      rows: [
-        {
-          name: "Question 1",
-          category: "Category 1",
-          subcategory: "Subcategory 1",
-          subject: "Subject 1",
-          chapter: "Chapter 1",
-        },
-        {
-          name: "Question 2",
-          category: "Category 2",
-          subcategory: "Subcategory 2",
-          subject: "Subject 2",
-          chapter: "Chapter 2",
-        },
-        {
-          name: "Question 3",
-          category: "Category 3",
-          subcategory: "Subcategory 3",
-          subject: "Subject 3",
-          chapter: "Chapter 3",
-        },
-      ],
+      rows: [],
     };
   },
   components: {
@@ -189,14 +168,16 @@ export default defineComponent({
       api
         .get("/questions")
         .then((response) => {
-          this.questions = response.data;
+          this.questions = response.data.data;
         })
         .catch((error) => {
           console.log(error);
         });
     },
   },
-  mounted() {},
+  mounted() {
+    this.getQuestions();
+  },
 });
 </script>
 
