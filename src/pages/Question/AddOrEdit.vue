@@ -141,6 +141,15 @@
                     <div class="text-h6">Question Details</div>
                   </q-card-section>
                   <q-card-section>
+                    <!-- question type -->
+                    <q-select
+                      class="q-mt-md"
+                      filled
+                      v-model="questionData.type"
+                      :options="types"
+                      :label="`Question Type`"
+                      lazy-rules
+                    />
                     <q-input
                       filled
                       v-model="questionData.content"
@@ -236,16 +245,6 @@
                         />
                       </div>
                     </div>
-
-                    <!-- question type -->
-                    <q-select
-                      class="q-mt-md"
-                      filled
-                      v-model="questionData.type"
-                      :options="types"
-                      :label="`Question Type`"
-                      lazy-rules
-                    />
                   </q-card-section>
                 </q-card>
               </div>
@@ -323,14 +322,14 @@
                               :key="index"
                               :name="`visibility${index}`"
                               :id="`visibility${index}`"
-                              label="visibility"
+                              label="Visibility"
                               class="q-ma-md"
                             />
                             <q-checkbox
-                              v-model="option.isCorrect"
+                              v-model="option.is_correct"
                               :key="index"
-                              :name="`isCorrect${index}`"
-                              :id="`isCorrect${index}`"
+                              :name="`is_correct${index}`"
+                              :id="`is_correct${index}`"
                               label="Correct"
                               class="q-ma-md"
                             />
@@ -410,7 +409,7 @@ export default defineComponent({
         options: [
           {
             content: "This is an options data",
-            is_correct: false,
+            is_correct: true,
             visibility: true,
             hint: " This is demo hint",
             explanation: "This is demo explanation",

@@ -319,16 +319,7 @@
                     </div>
                     <!-- status -> draft, ongoing, finished, upcoming, checking and duration two column -->
                     <div class="row q-col-gutter-md q-mt-auto">
-                      <div class="col-6">
-                        <q-select
-                          filled
-                          v-model="examData.status"
-                          :label="`Status`"
-                          emit-value
-                          map-options
-                        />
-                      </div>
-                      <div class="col-6">
+                      <div class="col-12">
                         <q-input
                           filled
                           v-model="examData.duration_in_minutes"
@@ -407,9 +398,7 @@
                     <!-- if horizontal, "can skip horizontal questions" and "show answer between horizontal question" -->
                     <div
                       class="row q-col-gutter-md q-mt-auto"
-                      v-if="
-                        examData.question_display_type.value === 'horizontal'
-                      "
+                      v-if="examData.question_display_type === 'horizontal'"
                     >
                       <div class="col-6">
                         <q-toggle
@@ -588,7 +577,7 @@ export default defineComponent({
       this.examData = {
         id: "",
         title: "",
-        parent_id: "",
+        parent_id: null,
         code: "",
         faculty_id: "",
         category_id: "",
@@ -611,15 +600,6 @@ export default defineComponent({
         show_merit_list: false,
         merit_list_excluded_attributes: [],
       };
-    },
-    addOption() {
-      this.questionData.options.push({
-        option: "",
-        is_correct: false,
-        visible: true,
-        hint: "",
-        explanation: "",
-      });
     },
     getFaculties() {
       api.get("/categories/faculty").then((response) => {

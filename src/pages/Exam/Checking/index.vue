@@ -70,11 +70,11 @@
                       <q-btn
                         color="secondary"
                         size="md"
-                        icon="edit_square"
+                        icon="file_open"
                         round
                         dense
                         flat
-                        :to="`/Exam/${props.row.id}/${props.row.real_id}/EditQuestions`"
+                        :to="`/Exam/Checking/${props.row.id}/${props.row.real_id}/questions`"
                       />
                       <q-btn
                         color="negative"
@@ -102,15 +102,17 @@ import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 
 export default {
-  name: "Exam",
+  name: "Checking",
   setup() {
     const store = useStore();
     return { store };
   },
   mounted() {
-    api.get("/exams?include=subject").then((response) => {
-      this.exams = response.data.data;
-    });
+    api
+      .get("/exams?include=subject&search=status:checking")
+      .then((response) => {
+        this.exams = response.data.data;
+      });
   },
   data() {
     return {

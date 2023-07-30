@@ -62,10 +62,15 @@
               </q-list>
             </q-menu>
           </q-btn>
-          <q-btn round flat>
-            <q-avatar size="26px">
-              <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
-            </q-avatar>
+          <!-- logout button -->
+          <q-btn
+            round
+            dense
+            flat
+            color="white"
+            icon="power_settings_new"
+            @click="logout"
+          >
           </q-btn>
         </div>
       </q-toolbar>
@@ -127,14 +132,54 @@
           </q-item-section>
         </q-item>
         <!-- Exam -->
-        <q-item to="/Exam" active-class="q-item-no-link-highlighting">
-          <q-item-section avatar>
-            <q-icon name="question_answer" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Exam</q-item-label>
-          </q-item-section>
-        </q-item>
+
+        <q-expansion-item icon="menu_open" label="Exams">
+          <q-item
+            to="/Exam"
+            class="q-ml-xl"
+            active-class="q-item-no-link-highlighting"
+          >
+            <q-item-section>
+              <q-item-label>Upcoming Exams</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item
+            to="/Exam"
+            class="q-ml-xl"
+            active-class="q-item-no-link-highlighting"
+          >
+            <q-item-section>
+              <q-item-label>Ongoing Exams</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item
+            to="/Exam/Checking"
+            class="q-ml-xl"
+            active-class="q-item-no-link-highlighting"
+          >
+            <q-item-section>
+              <q-item-label>Checking Exams</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item
+            to="/Exam/Checking"
+            class="q-ml-xl"
+            active-class="q-item-no-link-highlighting"
+          >
+            <q-item-section>
+              <q-item-label>Completed Exams</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item
+            to="/Exam"
+            class="q-ml-xl"
+            active-class="q-item-no-link-highlighting"
+          >
+            <q-item-section>
+              <q-item-label>Draft Exams</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-expansion-item>
         <q-item to="/TreeTable" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
             <q-icon name="list" />
@@ -178,6 +223,15 @@ export default defineComponent({
         leftDrawerOpen.value = !leftDrawerOpen.value;
       },
     };
+  },
+  methods: {
+    logout() {
+      localStorage.removeItem("iuser");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+
+      this.$router.push("/login");
+    },
   },
 });
 </script>

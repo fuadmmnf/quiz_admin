@@ -4,16 +4,6 @@
       <!-- add edit header with submit and reset buttons on right -->
       <q-card-section class="row items-center justify-between">
         <div class="text-h6">Add/Edit Questions in Exam</div>
-        <div class="row">
-          <q-btn label="Submit" type="submit" color="primary" />
-          <q-btn
-            label="Reset"
-            type="reset"
-            color="primary"
-            flat
-            class="q-ml-sm"
-          />
-        </div>
       </q-card-section>
     </q-card>
 
@@ -65,6 +55,8 @@
                       :options="type_options"
                       :label="`Question Type`"
                       lazy-rules
+                      emit-value
+                      map-options
                     />
                   </div>
                   <div class="col-2">
@@ -74,6 +66,8 @@
                       :options="options"
                       :label="`Subcategory`"
                       lazy-rules
+                      emit-value
+                      map-options
                     />
                   </div>
                   <div class="col-2">
@@ -83,6 +77,8 @@
                       :options="options"
                       :label="`Subject`"
                       lazy-rules
+                      emit-value
+                      map-options
                     />
                   </div>
                   <div class="col-2">
@@ -92,6 +88,8 @@
                       :options="options"
                       :label="`Chapter`"
                       lazy-rules
+                      emit-value
+                      map-options
                     />
                   </div>
                   <div class="col-2">
@@ -101,6 +99,8 @@
                       :options="options"
                       :label="`Faculty`"
                       lazy-rules
+                      emit-value
+                      map-options
                     />
                   </div>
                   <div class="col-2">
@@ -110,6 +110,8 @@
                       :options="options"
                       :label="`Discipline`"
                       lazy-rules
+                      emit-value
+                      map-options
                     />
                   </div>
                 </div>
@@ -341,8 +343,8 @@ export default defineComponent({
       api
         .get("/questions", {
           params: {
-            search: this.searchText,
-            type: this.type,
+            searchJoin: "and",
+            search: "type:" + this.type + " ;content: " + this.searchText,
           },
         })
         .then((res) => {
@@ -358,8 +360,8 @@ export default defineComponent({
     addQuestion(item) {
       api
         .post("/exam-questions", {
-          exam_id: this.$route.params.id,
-          question_ids: [item.id],
+          exam_id: this.$route.params.real_id,
+          question_ids: [item.real_id],
         })
         .then((res) => {
           this.$q.notify({
@@ -367,6 +369,7 @@ export default defineComponent({
             message: "Question Added Successfully",
             icon: "check",
           });
+          this.searchResults.splice(this.searchResults.indexOf(item), 1);
           this.getExamQuestions();
           console.log(res.data);
         })

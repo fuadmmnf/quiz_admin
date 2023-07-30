@@ -25,15 +25,27 @@ const routes = [
         component: () => import("pages/Exam/index.vue"),
       },
       {
+        path: "/Exam/Checking",
+        component: () => import("pages/Exam/Checking/index.vue"),
+      },
+      {
+        path: "/Exam/Checking/:id/:real_id/questions",
+        component: () => import("pages/Exam/Checking/questions.vue"),
+      },
+      {
+        path: "/Exam/Checking/:id/:real_id/questions/:id/:real_id/answers",
+        component: () => import("pages/Exam/Checking/answers.vue"),
+      },
+      {
         path: "/Exam/add",
         component: () => import("pages/Exam/AddOrEdit.vue"),
       },
       {
-        path: "/Exam/:id",
+        path: "/Exam/:id/:real_id",
         component: () => import("pages/Exam/AddOrEdit.vue"),
       },
       {
-        path: "/Exam/:id/EditQuestions",
+        path: "/Exam/:id/:real_id/EditQuestions",
         component: () => import("pages/Exam/EditQuestions.vue"),
       },
       { path: "/Dashboard2", component: () => import("pages/Dashboard2.vue") },

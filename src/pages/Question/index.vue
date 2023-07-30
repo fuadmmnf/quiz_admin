@@ -75,6 +75,49 @@
                     </q-td>
                   </q-tr>
                 </template>
+                <template v-slot:pagination="scope">
+                  <q-btn
+                    v-if="scope.pagesNumber > 2"
+                    icon="first_page"
+                    color="grey-8"
+                    round
+                    dense
+                    flat
+                    :disable="scope.isFirstPage"
+                    @click="scope.firstPage"
+                  />
+
+                  <q-btn
+                    icon="chevron_left"
+                    color="grey-8"
+                    round
+                    dense
+                    flat
+                    :disable="scope.isFirstPage"
+                    @click="scope.prevPage"
+                  />
+
+                  <q-btn
+                    icon="chevron_right"
+                    color="grey-8"
+                    round
+                    dense
+                    flat
+                    :disable="scope.isLastPage"
+                    @click="scope.nextPage"
+                  />
+
+                  <q-btn
+                    v-if="scope.pagesNumber > 2"
+                    icon="last_page"
+                    color="grey-8"
+                    round
+                    dense
+                    flat
+                    :disable="scope.isLastPage"
+                    @click="scope.lastPage"
+                  />
+                </template>
               </q-table>
             </q-card-section>
           </q-card>
@@ -85,7 +128,7 @@
 </template>
 
 <script>
-import { defineComponent, defineAsyncComponent } from "vue";
+import { defineComponent, defineAsyncComponent, ref, computed } from "vue";
 import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 
@@ -93,13 +136,25 @@ export default defineComponent({
   name: "Question",
   setup() {
     const store = useStore();
-    return { store };
+    const pagination = ref({
+      descending: false,
+      page: 2,
+      rowsPerPage: 10,
+    });
+
+    return {
+      store,
+      pagination,
+      pagesNumber: computed(() => {
+        return Math.ceil(rows.length / pagination.value.rowsPerPage);
+      }),
+    };
   },
   data() {
     return {
       name: "Question",
-      questions: [],
       //table header
+
       columns: [
         {
           name: "real_id",
@@ -145,7 +200,7 @@ export default defineComponent({
         },
       ],
       //table data
-      rows: [],
+      questions: [],
     };
   },
   components: {

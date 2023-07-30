@@ -1,8 +1,8 @@
 {
-  "name": "Quasar Admin",
+  "name": "Education Aid Admin",
   "version": "0.0.1",
-  "description": "Quasar Admin",
-  "productName": "Quasar Admin",
+  "description": "Education Aid Admin",
+  "productName": "Education Aid Admin",
   "author": "pratikpatelpp802@gmail.com",
   "private": true,
   "scripts": {

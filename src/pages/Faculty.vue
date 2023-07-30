@@ -13,7 +13,11 @@
         <div class="col-7">
           <q-card>
             <q-card-section>
-              <simple-hierarchy :page="pageName"></simple-hierarchy>
+              <simple-hierarchy
+                :page="pageName"
+                :tableData="tableData"
+                @editItem="editItem"
+              ></simple-hierarchy>
             </q-card-section>
           </q-card>
         </div>
@@ -42,10 +46,12 @@
                 <q-select
                   filled
                   stack-label
-                  v-model="model"
+                  v-model="selectedParentCategory"
                   :options="options"
                   :label="`Discipline`"
                   lazy-rules
+                  map-options
+                  emit-value
                 />
                 <div>
                   <q-btn label="Submit" type="submit" color="primary" />
@@ -68,15 +74,25 @@
 
 <script>
 import TableActions from "components/tables/TableActions.vue";
-import { defineComponent, defineAsyncComponent } from "vue";
+import { api } from "src/boot/axios";
+import { defineComponent, defineAsyncComponent, ref } from "vue";
+import { useQuasar } from "quasar";
 
 export default defineComponent({
   name: "Faculty",
+  setup() {
+    const { $q } = useQuasar();
+    return {
+      $q,
+    };
+  },
   data() {
     return {
       pageName: "Faculty",
       name: "",
       model: "",
+      tableData: [],
+      selectedParentCategory: ref(0),
       options: [
         { label: "None", value: "" },
         { label: "Faculty of Engineering", value: "Faculty of Engineering" },
@@ -134,11 +150,66 @@ export default defineComponent({
   methods: {
     onSubmit(evt) {
       console.log("@submit - do something here", evt);
-      evt.target.submit();
+      if (this.name.length > 0 && this.model.length > 0) {
+        api
+          .post("/categories", {
+            name: this.name,
+            parent_id: this.selectedParentCategory,
+            type: "faculty",
+          })
+          .then((res) => {
+            console.log(res.data);
+            this.$q.notify({
+              color: "green-4",
+              textColor: "white",
+              icon: "cloud_done",
+              message: "Faculty added successfully",
+            });
+            this.name = "";
+            this.model = "";
+            this.tableData = [];
+            this.getFaculty();
+          })
+          .catch((err) => {
+            console.log(err);
+            this.$q.notify({
+              color: "red-4",
+              textColor: "white",
+              icon: "cloud_done",
+              message: "Error adding faculty",
+            });
+          });
+      }
     },
     onReset(evt) {
       console.log("@reset - do something here", evt);
     },
+    editItem(item) {
+      console.log("editItem", item);
+      this.name = item.name;
+      this.model = item.model;
+    },
+    getFaculty() {
+      api
+        .get("/categories/faculty")
+        .then((res) => {
+          console.log(res.data);
+          res.data.data.map((item) => {
+            this.tableData.push({
+              name: item.name,
+              id: item.id,
+              real_id: item.real_id,
+              parent_id: item.parent_id,
+            });
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+  },
+  mounted() {
+    this.getFaculty();
   },
 });
 </script>

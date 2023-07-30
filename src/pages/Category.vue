@@ -45,6 +45,8 @@
                   v-model="selectedParentCategory"
                   :options="parentCategoryOptions"
                   :label="`Parent Category`"
+                  map-options
+                  emit-value
                 />
                 <div>
                   <q-btn label="Submit" type="submit" color="primary" />
@@ -67,33 +69,22 @@
 
 <script>
 import TableActions from "components/tables/TableActions.vue";
+import { api } from "src/boot/axios";
 import { defineComponent, defineAsyncComponent, ref } from "vue";
+import { useQuasar } from "quasar";
 
 export default defineComponent({
   name: "Category",
+  setup() {
+    const { $q } = useQuasar();
+    return {};
+  },
   data() {
     return {
       name: ref(""),
       pageName: "Category",
-      tableData: [
-        {
-          name: "Category 1",
-          children: [
-            {
-              name: "Sub Category 1",
-            },
-          ],
-        },
-        {
-          name: "Category 2",
-          children: [
-            {
-              name: "Sub Category 2",
-            },
-          ],
-        },
-      ],
-      selectedParentCategory: ref(null),
+      tableData: [],
+      selectedParentCategory: ref(0),
       parentCategoryOptions: [
         {
           label: "Category 1",
@@ -119,21 +110,23 @@ export default defineComponent({
   },
   methods: {
     onSubmit(evt) {
-      if (this.selectedParentCategory) {
-        this.tableData.map((item) => {
-          if (item.name === this.selectedParentCategory.value) {
-            console.log("matched");
-            item.children.push({
-              name: this.name,
-            });
-          }
-        });
-      } else {
-        this.tableData.push({
+      evt.preventDefault();
+      api
+        .post("/categories", {
           name: this.name,
-          children: [],
+          parent_id: this.selectedParentCategory,
+          type: "category",
+        })
+        .then((res) => {
+          this.$q.notify({
+            message: "Category Added Successfully",
+            color: "positive",
+            icon: "check",
+          });
+          this.name = "";
+          this.tableData = [];
+          this.getCategories();
         });
-      }
       console.log(this.tableData);
     },
     onReset(evt) {
@@ -143,6 +136,22 @@ export default defineComponent({
     editItem(row) {
       this.name = row.name;
     },
+    getCategories() {
+      api.get("/categories/category").then((res) => {
+        res.data.data.map((item) => {
+          this.tableData.push({
+            name: item.name,
+            real_id: item.real_id,
+            id: item.id,
+            children: [],
+          });
+        });
+      });
+    },
+  },
+
+  mounted() {
+    this.getCategories();
   },
 });
 </script>

@@ -13,7 +13,11 @@
         <div class="col-7">
           <q-card>
             <q-card-section>
-              <simple-hierarchy :page="pageName"></simple-hierarchy>
+              <simple-hierarchy
+                :page="pageName"
+                :tableData="tableData"
+                @editItem="editItem"
+              ></simple-hierarchy>
             </q-card-section>
           </q-card>
         </div>
@@ -42,7 +46,7 @@
                 <q-select
                   filled
                   stack-label
-                  v-model="model"
+                  v-model="selectedParentCategory"
                   :options="options"
                   :label="`Chapter`"
                   lazy-rules
@@ -67,15 +71,25 @@
 </template>
 
 <script>
-import { defineComponent, defineAsyncComponent } from "vue";
+import { defineComponent, defineAsyncComponent, ref } from "vue";
+import { api } from "boot/axios";
+import { useQuasar } from "quasar";
 
 export default {
   name: "Subject",
+  setup() {
+    const { $q } = useQuasar();
+    return {
+      $q,
+    };
+  },
   data() {
     return {
       pageName: "Subject",
       name: "",
       model: "",
+      tableData: [],
+      selectedParentCategory: ref(0),
       options: [
         { label: "Chapter", value: "" },
         { label: "Chapter 1", value: "1" },
@@ -99,12 +113,49 @@ export default {
   },
   methods: {
     onSubmit(evt) {
-      console.log("@submit - do something here", evt);
-      evt.target.submit();
+      api
+        .post("/categories", {
+          name: this.name,
+          parent_id: this.selectedParentCategory,
+          type: "subject",
+        })
+        .then((res) => {
+          this.$q.notify({
+            color: "positive",
+            message: "Subject added successfully",
+          });
+          this.name = "";
+          this.tableData = [];
+          this.getSubject();
+        });
     },
     onReset(evt) {
       console.log("@reset - do something here", evt);
     },
+    editItem(item) {
+      console.log("editItem", item);
+    },
+    getSubject() {
+      api
+        .get("/categories/subject")
+        .then((res) => {
+          res.data.data.map((item) => {
+            this.tableData.push({
+              id: item.id,
+              name: item.name,
+              parent_id: item.parent_id,
+              real_id: item.real_id,
+              children: [],
+            });
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+  },
+  mounted() {
+    this.getSubject();
   },
 };
 </script>
