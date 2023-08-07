@@ -4,6 +4,18 @@ const routes = [
     component: () => import("layouts/MainLayout.vue"),
     children: [
       { path: "", component: () => import("pages/Dashboard.vue") },
+      {
+        path: "/Roles/Admin",
+        component: () => import("pages/Roles/Admin.vue"),
+      },
+      {
+        path: "/Roles/Moderator",
+        component: () => import("pages/Roles/Moderator.vue"),
+      },
+      {
+        path: "/Roles/Mentor",
+        component: () => import("pages/Roles/Mentor.vue"),
+      },
       { path: "/Category", component: () => import("pages/Category.vue") },
       { path: "/Faculty", component: () => import("pages/Faculty.vue") },
       //faculty path with id and edit
@@ -21,19 +33,31 @@ const routes = [
         component: () => import("pages/Question/AddOrEdit.vue"),
       },
       {
-        path: "/Exam",
-        component: () => import("pages/Exam/index.vue"),
+        path: "Exam/Draft",
+        component: () => import("pages/Exam/Draft/index.vue"),
+      },
+      {
+        path: "Exam/Upcoming",
+        component: () => import("pages/Exam/Upcoming/index.vue"),
+      },
+      {
+        path: "Exam/Completed",
+        component: () => import("pages/Exam/Completed/index.vue"),
+      },
+      {
+        path: "Exam/Ongoing",
+        component: () => import("pages/Exam/Ongoing/index.vue"),
       },
       {
         path: "/Exam/Checking",
         component: () => import("pages/Exam/Checking/index.vue"),
       },
       {
-        path: "/Exam/Checking/:id/:real_id/questions",
+        path: "/Exam/Checking/:id/questions",
         component: () => import("pages/Exam/Checking/questions.vue"),
       },
       {
-        path: "/Exam/Checking/:id/:real_id/questions/:id/:real_id/answers",
+        path: "/Exam/Checking/:exam_id/questions/:id/answers",
         component: () => import("pages/Exam/Checking/answers.vue"),
       },
       {
@@ -41,11 +65,15 @@ const routes = [
         component: () => import("pages/Exam/AddOrEdit.vue"),
       },
       {
-        path: "/Exam/:id/:real_id",
+        path: "/Exam/:id",
         component: () => import("pages/Exam/AddOrEdit.vue"),
       },
       {
-        path: "/Exam/:id/:real_id/EditQuestions",
+        path: "/Exam/:type/:id/AttemptedUsers",
+        component: () => import("pages/Exam/AttemptUserList.vue"),
+      },
+      {
+        path: "/Exam/:id/EditQuestions",
         component: () => import("pages/Exam/EditQuestions.vue"),
       },
       { path: "/Dashboard2", component: () => import("pages/Dashboard2.vue") },

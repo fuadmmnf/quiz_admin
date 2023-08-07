@@ -414,6 +414,34 @@ export default defineComponent({
             hint: " This is demo hint",
             explanation: "This is demo explanation",
           },
+          {
+            content: "This is an options data",
+            is_correct: false,
+            visibility: true,
+            hint: " This is demo hint",
+            explanation: "This is demo explanation",
+          },
+          {
+            content: "This is an options data",
+            is_correct: false,
+            visibility: true,
+            hint: " This is demo hint",
+            explanation: "This is demo explanation",
+          },
+          {
+            content: "This is an options data",
+            is_correct: false,
+            visibility: true,
+            hint: " This is demo hint",
+            explanation: "This is demo explanation",
+          },
+          {
+            content: "This is an options data",
+            is_correct: false,
+            visibility: true,
+            hint: " This is demo hint",
+            explanation: "This is demo explanation",
+          },
         ],
       },
       model: "",
@@ -445,31 +473,41 @@ export default defineComponent({
           color: "positive",
           icon: "check",
         });
+        this.onReset();
       });
     },
     onReset() {
       console.log("Reset");
       this.questionData = {
         content: "",
-        category: "",
+        category_id: null,
         subcategory: "",
         subject: "",
         chapter: "",
         faculty: "",
         discipline: "",
+        parent_id: null,
         score: 0,
         unit_negative_mark: 0,
         type: "",
-        options: [],
+        options: [
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+          },
+        ],
       };
     },
     addOption() {
       this.questionData.options.push({
-        content: "",
+        content: "This is another demo option",
         is_correct: false,
         visibility: true,
-        hint: "",
-        explanation: "",
+        hint: " This is demo hint",
+        explanation: " This is demo explanation",
       });
     },
     onDescriptionChange(value) {

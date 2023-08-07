@@ -28,10 +28,13 @@
               <q-table
                 :columns="columns"
                 :rows="questions"
+                :loading="loading"
                 row-key="real_id"
                 wrap-cells
                 no-data-label="No data available"
                 class="shadow-0"
+                @request="onRequest"
+                v-model:pagination="pagination"
               >
                 <!-- table data -->
                 <template v-slot:body="props">
@@ -75,49 +78,6 @@
                     </q-td>
                   </q-tr>
                 </template>
-                <template v-slot:pagination="scope">
-                  <q-btn
-                    v-if="scope.pagesNumber > 2"
-                    icon="first_page"
-                    color="grey-8"
-                    round
-                    dense
-                    flat
-                    :disable="scope.isFirstPage"
-                    @click="scope.firstPage"
-                  />
-
-                  <q-btn
-                    icon="chevron_left"
-                    color="grey-8"
-                    round
-                    dense
-                    flat
-                    :disable="scope.isFirstPage"
-                    @click="scope.prevPage"
-                  />
-
-                  <q-btn
-                    icon="chevron_right"
-                    color="grey-8"
-                    round
-                    dense
-                    flat
-                    :disable="scope.isLastPage"
-                    @click="scope.nextPage"
-                  />
-
-                  <q-btn
-                    v-if="scope.pagesNumber > 2"
-                    icon="last_page"
-                    color="grey-8"
-                    round
-                    dense
-                    flat
-                    :disable="scope.isLastPage"
-                    @click="scope.lastPage"
-                  />
-                </template>
               </q-table>
             </q-card-section>
           </q-card>
@@ -136,18 +96,46 @@ export default defineComponent({
   name: "Question",
   setup() {
     const store = useStore();
+    const questions = ref([]);
     const pagination = ref({
-      descending: false,
-      page: 2,
+      page: 1,
       rowsPerPage: 10,
+      rowsNumber: 0,
     });
+    const fetchQuestions = (page = 1) => {
+      loading.value = true;
+      api
+        .get("/questions?page=" + page)
+        .then((response) => {
+          questions.value = response.data.data;
+          const meta = response.data.meta.pagination;
+          console.log(meta.current_page);
+          pagination.value = {
+            page: meta.current_page,
+            rowsPerPage: meta.per_page,
+            rowsNumber: meta.total,
+          };
+        })
+        .finally(() => {
+          loading.value = false;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+    const loading = ref(true);
+
+    const onRequest = (props) => {
+      fetchQuestions(props.pagination.page);
+    };
 
     return {
       store,
       pagination,
-      pagesNumber: computed(() => {
-        return Math.ceil(rows.length / pagination.value.rowsPerPage);
-      }),
+      loading,
+      fetchQuestions,
+      onRequest,
+      questions,
     };
   },
   data() {
@@ -200,7 +188,6 @@ export default defineComponent({
         },
       ],
       //table data
-      questions: [],
     };
   },
   components: {
@@ -219,19 +206,9 @@ export default defineComponent({
         }
       });
     },
-    getQuestions() {
-      api
-        .get("/questions")
-        .then((response) => {
-          this.questions = response.data.data;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
   },
   mounted() {
-    this.getQuestions();
+    this.fetchQuestions();
   },
 });
 </script>

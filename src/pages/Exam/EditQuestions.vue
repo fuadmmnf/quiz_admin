@@ -4,6 +4,15 @@
       <!-- add edit header with submit and reset buttons on right -->
       <q-card-section class="row items-center justify-between">
         <div class="text-h6">Add/Edit Questions in Exam</div>
+        <div class="row">
+          <q-btn
+            label="Create Question"
+            color="primary"
+            icon="add"
+            class="q-ml-sm"
+            to="/Question/add"
+          />
+        </div>
       </q-card-section>
     </q-card>
 
@@ -166,9 +175,14 @@
     <q-table
       :rows="examQuestions"
       :columns="columns"
+      :loading="loading"
+      rows-per-page-options="[10]"
       row-key="real_id"
+      wrap-cells
       class="q-mt-md"
       :filter="filter"
+      v-model:pagination="pagination"
+      @request="onRequest"
     >
       <template v-slot:top-right>
         <q-input
@@ -205,10 +219,9 @@
               color="primary"
               label="edit"
               icon="edit"
-              @click="edit"
+              @click="edit(props.row.id)"
             />
             <q-btn
-              round
               dense
               flat
               size="sm"
@@ -221,42 +234,75 @@
         </q-tr>
       </template>
     </q-table>
-    <!-- modal for adding negative marks -->
-    <q-dialog
-      v-model="show"
-      transition-show="slide-up"
-      transition-hide="slide-down"
-    >
-      <q-card>
-        <q-card-section>
-          <div class="row q-col-gutter-md">
-            <div class="col-12">
-              <q-input filled v-model="name" :label="`Negative Marks`">
-              </q-input>
-            </div>
-          </div>
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn label="Cancel" color="primary" flat v-close-popup />
-          <q-btn label="Save" color="primary" flat v-close-popup />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
   </q-page>
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import { api } from "boot/axios";
+import { useRoute } from "vue-router";
 
 export default defineComponent({
   name: "AddEditQuestions",
+  setup() {
+    const pagination = ref({
+      page: 1,
+      rowsPerPage: 10,
+      rowsNumber: 0,
+    });
+    const filter = ref("");
+    const loading = ref(true);
+    const examQuestions = ref([]);
+    const route = useRoute();
+    const fetchExamQuestions = (page = 1) => {
+      loading.value = true;
+      api
+        .get(
+          "/exam-questions/" +
+            route.params.id +
+            "?include=question&page=" +
+            page
+        )
+        .then((res) => {
+          examQuestions.value = [];
+          if (res.data.data.length > 0) {
+            res.data.data.forEach((item) => {
+              examQuestions.value.push(item.question.data);
+            });
+          }
+          const meta = res.data.meta.pagination;
+          pagination.value = {
+            page: meta.current_page,
+            rowsPerPage: meta.per_page,
+            rowsNumber: meta.total,
+          };
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          loading.value = false;
+        });
+    };
+
+    const onRequest = (props) => {
+      fetchExamQuestions(props.pagination.page);
+    };
+
+    return {
+      pagination,
+      filter,
+      loading,
+      fetchExamQuestions,
+      examQuestions,
+      onRequest,
+    };
+  },
   data() {
     return {
       selected: [],
       searchText: "",
       expanded: true,
-      examQuestions: [],
       type: "",
       type_options: [
         { label: "Single Best Answer", value: "single-best-answer" },
@@ -314,21 +360,11 @@ export default defineComponent({
           sortable: true,
         },
       ],
-      rows: [
-        {
-          id: 1,
-          name: "Question 1",
-          type: "MCQ",
-          category: "Physics",
-          negative_marks: "0.25",
-          actions: "",
-        },
-      ],
     };
   },
   methods: {
-    edit() {
-      this.$router.push("/Question/:id");
+    edit(id) {
+      this.$router.push(`/Question/` + id);
     },
     deleteRow() {
       this.$q.dialog({
@@ -360,7 +396,7 @@ export default defineComponent({
     addQuestion(item) {
       api
         .post("/exam-questions", {
-          exam_id: this.$route.params.real_id,
+          exam_id: this.$route.params.id,
           question_ids: [item.real_id],
         })
         .then((res) => {
@@ -377,29 +413,9 @@ export default defineComponent({
           console.log(err);
         });
     },
-    getExamQuestions() {
-      api
-        .get(
-          "/exam-questions/" +
-            this.$route.params.id +
-            "?include=question,question.options&page=0"
-        )
-        .then((res) => {
-          if (res.data.data.length > 0) {
-            res.data.data.map((item) => {
-              this.examQuestions.push(item.question.data);
-            });
-          }
-
-          console.log(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
   },
   mounted() {
-    this.getExamQuestions();
+    this.fetchExamQuestions();
   },
 });
 </script>

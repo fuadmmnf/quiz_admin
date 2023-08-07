@@ -3,7 +3,7 @@
     <q-card class="no-shadow" bordered>
       <!-- add edit header with submit and reset buttons on right -->
       <q-card-section class="row items-center justify-between">
-        <div class="text-h6">Questions in Exam</div>
+        <div class="text-h6">Written Questions in Exam</div>
       </q-card-section>
     </q-card>
     <!-- questions table with serial, type, name, cateogry, actions -->
@@ -13,6 +13,12 @@
       row-key="real_id"
       class="q-mt-md"
       :filter="filter"
+      rows-per-page-options="[10]"
+      no-data-label="No data available"
+      :loading="loading"
+      wrap-cells
+      v-model:pagination="pagination"
+      @request="onRequest"
     >
       <template v-slot:top-right>
         <q-input
@@ -30,10 +36,7 @@
       <template v-slot:body="props">
         <q-tr :props="props">
           <q-td key="content" :props="props">
-            {{ props.row.content.substring(0, 50) + "..." }}
-          </q-td>
-          <q-td key="type" :props="props">
-            {{ props.row.type }}
+            {{ props.row.content.substring(0, 70) + "..." }}
           </q-td>
           <q-td key="score" :props="props">
             {{ props.row.score }}
@@ -48,7 +51,7 @@
               color="primary"
               label="Answers"
               icon="edit"
-              :to="`/Exam/Checking/${exam_id}/${exam_real_id}/questions/${props.row.id}/${props.row.real_id}/answers`"
+              :to="`/Exam/Checking/${exam_id}/questions/${props.row.id}/answers`"
             ></q-btn>
           </q-td>
         </q-tr>
@@ -58,12 +61,66 @@
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
+import { useRoute } from "vue-router";
+import { api } from "src/boot/axios";
+
 export default defineComponent({
   name: "ExamQuestions",
+  setup() {
+    const pagination = ref({
+      page: 1,
+      rowsPerPage: 10,
+      rowsNumber: 0,
+    });
+    const loading = ref(false);
+    const filter = ref("");
+    const route = useRoute();
+    const exam_id = route.params.id;
+    const examQuestions = ref([]);
+
+    const fetchExamQuestions = (page = 1) => {
+      loading.value = true;
+      api
+        .get(
+          `/exam-questions/${exam_id}?include=question&search=question.type:written&searchJoin=and&random=false&page=${page}`
+        )
+        .then((res) => {
+          examQuestions.value = [];
+          if (res.data.data.length > 0) {
+            res.data.data.forEach((item) => {
+              examQuestions.value.push(item.question.data);
+            });
+          }
+          const meta = res.data.meta.pagination;
+          pagination.value = {
+            page: meta.current_page,
+            rowsPerPage: meta.per_page,
+            rowsNumber: meta.total,
+          };
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          loading.value = false;
+        });
+    };
+
+    const onRequest = (props) => {
+      fetchExamQuestions(props.pagination.page);
+    };
+    return {
+      pagination,
+      loading,
+      filter,
+      examQuestions,
+      fetchExamQuestions,
+      onRequest,
+    };
+  },
   data() {
     return {
-      filter: "",
       exam_id: this.$route.params.id,
       exam_real_id: this.$route.params.real_id,
       columns: [
@@ -71,13 +128,6 @@ export default defineComponent({
           name: "content",
           label: "Question",
           field: "content",
-          align: "center",
-          sortable: true,
-        },
-        {
-          name: "type",
-          label: "Type",
-          field: "type",
           align: "center",
           sortable: true,
         },
@@ -100,56 +150,6 @@ export default defineComponent({
           label: "Actions",
           field: "actions",
           align: "center",
-        },
-      ],
-      examQuestions: [
-        {
-          id: 1,
-          real_id: 1,
-          content: "What is the capital of India?",
-          type: "MCQ",
-          score: 1,
-          unit_negative_mark: 0.25,
-        },
-        {
-          id: 2,
-          real_id: 2,
-          content: "What is the capital of India?",
-          type: "MCQ",
-          score: 1,
-          unit_negative_mark: 0.25,
-        },
-        {
-          id: 3,
-          real_id: 3,
-          content: "What is the capital of India?",
-          type: "MCQ",
-          score: 1,
-          unit_negative_mark: 0.25,
-        },
-        {
-          id: 4,
-          real_id: 4,
-          content: "What is the capital of India?",
-          type: "MCQ",
-          score: 1,
-          unit_negative_mark: 0.25,
-        },
-        {
-          id: 5,
-          real_id: 5,
-          content: "What is the capital of India?",
-          type: "MCQ",
-          score: 1,
-          unit_negative_mark: 0.25,
-        },
-        {
-          id: 6,
-          real_id: 6,
-          content: "What is the capital of India?",
-          type: "MCQ",
-          score: 1,
-          unit_negative_mark: 0.25,
         },
       ],
     };
@@ -185,10 +185,8 @@ export default defineComponent({
       );
     },
   },
-  computed: {
-    examQuestions() {
-      return this.$store.state.examQuestions;
-    },
+  mounted() {
+    this.fetchExamQuestions();
   },
 });
 </script>

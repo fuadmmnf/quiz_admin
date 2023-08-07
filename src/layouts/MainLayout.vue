@@ -99,6 +99,35 @@
             <q-item-label>CRM Dashboard</q-item-label>
           </q-item-section>
         </q-item>
+        <q-expansion-item icon="people" label="Roles">
+          <q-item
+            to="/Roles/Admin"
+            class="q-ml-xl"
+            active-class="q-item-no-link-highlighting"
+          >
+            <q-item-section>
+              <q-item-label>Admins</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item
+            to="/Roles/Moderator"
+            class="q-ml-xl"
+            active-class="q-item-no-link-highlighting"
+          >
+            <q-item-section>
+              <q-item-label>Moderators</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item
+            to="/Roles/Mentor"
+            class="q-ml-xl"
+            active-class="q-item-no-link-highlighting"
+          >
+            <q-item-section>
+              <q-item-label>Mentors</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-expansion-item>
         <q-item to="/Category" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
             <q-icon name="category" />
@@ -135,7 +164,16 @@
 
         <q-expansion-item icon="menu_open" label="Exams">
           <q-item
-            to="/Exam"
+            to="/Exam/Draft"
+            class="q-ml-xl"
+            active-class="q-item-no-link-highlighting"
+          >
+            <q-item-section>
+              <q-item-label>Draft Exams</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item
+            to="/Exam/Upcoming"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -144,7 +182,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            to="/Exam"
+            to="/Exam/Ongoing"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -162,21 +200,12 @@
             </q-item-section>
           </q-item>
           <q-item
-            to="/Exam/Checking"
+            to="/Exam/Completed"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
             <q-item-section>
               <q-item-label>Completed Exams</q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item
-            to="/Exam"
-            class="q-ml-xl"
-            active-class="q-item-no-link-highlighting"
-          >
-            <q-item-section>
-              <q-item-label>Draft Exams</q-item-label>
             </q-item-section>
           </q-item>
         </q-expansion-item>
