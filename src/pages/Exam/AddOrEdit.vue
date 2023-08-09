@@ -501,7 +501,6 @@ export default defineComponent({
       model: "",
       expanded: false,
       examData: {
-        id: "",
         title: "Demo Exam",
         code: "EXM",
         faculty_id: "",
@@ -637,9 +636,38 @@ export default defineComponent({
     this.getCategories();
     this.getSubjects();
     if (this.$route.params.id) {
-      api.get("/exams/" + this.$route.params.id).then((response) => {
-        this.examData = response.data.data;
-      });
+      api
+        .get("/exams/" + this.$route.params.id + "?include=examConfiguration")
+        .then((response) => {
+          this.examData = response.data.data;
+          const examConfiguration = response.data.data.examConfiguration.data;
+          this.examData.visibility = examConfiguration.visibility;
+          this.examData.answer_script_visibility_time =
+            examConfiguration.answer_script_visibility_time;
+          this.examData.marks_visibility_time =
+            examConfiguration.marks_visibility_time;
+          this.examData.merit_visibility_time =
+            examConfiguration.merit_visibility_time;
+          this.examData.question_display_type =
+            examConfiguration.question_display_type;
+          this.examData.can_skip_horizontal_question = Boolean(
+            examConfiguration.can_skip_horizontal_question
+          );
+          this.examData.show_answer_between_horizontal_question = Boolean(
+            examConfiguration.show_answer_between_horizontal_question
+          );
+          this.examData.can_change_answer = Boolean(
+            examConfiguration.can_change_answer
+          );
+          this.examData.can_retake_after_exam = Boolean(
+            examConfiguration.can_retake_after_exam
+          );
+          this.examData.show_merit_list = Boolean(
+            examConfiguration.show_merit_list
+          );
+          this.examData.merit_list_excluded_attributes =
+            examConfiguration.merit_list_excluded_attributes;
+        });
     }
   },
 });

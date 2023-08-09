@@ -63,7 +63,7 @@
                         round
                         dense
                         flat
-                        to="/Question/edit"
+                        :to="`/Question/${props.row.id}`"
                       />
 
                       <q-btn

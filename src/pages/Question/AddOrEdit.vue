@@ -463,8 +463,6 @@ export default defineComponent({
   },
   methods: {
     onSubmit() {
-      console.log("Submitted");
-      console.log(this.questionData);
       this.questionData.type = this.questionData.type.value;
       api.post("/questions", this.questionData).then((response) => {
         console.log(response);
@@ -622,12 +620,15 @@ export default defineComponent({
     this.getFaculties();
     this.getDisciplines();
     if (this.$route.params.id) {
-      api.get(`/questions/${this.$route.params.id}`).then((response) => {
-        this.questionData = response.data.data;
-        this.questionData.type = this.types.find(
-          (type) => type.value === this.questionData.type
-        );
-      });
+      api
+        .get(`/questions/${this.$route.params.id}?include=category`)
+        .then((response) => {
+          this.questionData = response.data.data;
+          this.questionData.options = response.data.data.options.data;
+          this.questionData.type = this.types.find(
+            (type) => type.value === this.questionData.type
+          );
+        });
     }
   },
 });
