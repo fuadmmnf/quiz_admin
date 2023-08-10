@@ -133,249 +133,269 @@
         <div class="row q-col-gutter-md">
           <div class="col-12">
             <!-- two columns -->
-            <div
-              class="row q-col-gutter-md"
-              v-for="(question, index) in questions"
-              :key="index"
-            >
-              <div class="col-5">
-                <q-card>
-                  <!-- card header -->
-                  <q-card-section>
-                    <div class="text-h6">Question Details</div>
-                  </q-card-section>
-                  <q-card-section>
-                    <!-- question type -->
-                    <q-select
-                      class="q-mt-md"
-                      filled
-                      v-model="question.type"
-                      :options="types"
-                      :label="`Question Type`"
-                      lazy-rules
-                      emit-value
-                      map-options
-                    />
-                    <q-input
-                      filled
-                      v-model="question.content"
-                      :label="`Question Content*`"
-                      readonly
-                    >
-                      <template v-slot:append>
-                        <tiny-mce-modal
-                          :content="question.content"
-                          @save="onDescriptionChange"
-                        />
-                      </template>
-                    </q-input>
-                    <!-- category and subcategory in the same row -->
-                    <div class="row q-col-gutter-md q-mt-sm">
-                      <div class="col-6">
-                        <q-select
-                          filled
-                          v-model="question.category"
-                          :options="categoryOptions"
-                          :label="`Category`"
-                          lazy-rules
-                        />
-                      </div>
-                      <div class="col-6">
-                        <q-select
-                          filled
-                          v-model="question.subcategory"
-                          :options="subcategoryOptions"
-                          :label="`Subcategory`"
-                          lazy-rules
-                        />
-                      </div>
+            <div v-for="(question, index) in questions" :key="index">
+              <!-- question content -->
+              <q-expansion-item
+                expand-separator
+                icon="edit"
+                :label="index > 0 ? `Question ${index}` : `Question`"
+                class="q-card q-mt-md"
+                header-class=" text-h6"
+              >
+                <q-card class="no-shadow">
+                  <q-card-section class="row q-col-gutter-md">
+                    <div class="col-5">
+                      <q-card>
+                        <!-- card header -->
+                        <q-card-section>
+                          <div class="text-h6">Question Details</div>
+                        </q-card-section>
+                        <q-card-section>
+                          <!-- question type -->
+                          <q-select
+                            class="q-mt-md"
+                            filled
+                            v-model="question.type"
+                            :options="types"
+                            :label="`Question Type`"
+                            lazy-rules
+                            emit-value
+                            map-options
+                            v-if="index === 0"
+                          />
+                          <q-input
+                            filled
+                            v-model="question.content"
+                            :label="`Question Content*`"
+                            readonly
+                          >
+                            <template v-slot:append>
+                              <tiny-mce-modal
+                                :content="question.content"
+                                @save="onDescriptionChange"
+                              />
+                            </template>
+                          </q-input>
+                          <!-- category and subcategory in the same row -->
+                          <div class="row q-col-gutter-md q-mt-sm">
+                            <div class="col-6">
+                              <q-select
+                                filled
+                                v-model="question.category"
+                                :options="categoryOptions"
+                                :label="`Category`"
+                                lazy-rules
+                                v-if="index === 0"
+                              />
+                            </div>
+                            <div class="col-6">
+                              <q-select
+                                filled
+                                v-model="question.subcategory"
+                                :options="subcategoryOptions"
+                                :label="`Subcategory`"
+                                lazy-rules
+                                v-if="index === 0"
+                              />
+                            </div>
+                          </div>
+                          <!-- score and negative marks -->
+                          <div class="row q-col-gutter-md q-mt-sm">
+                            <div class="col-6">
+                              <q-input
+                                filled
+                                v-model="question.score"
+                                :label="`Score`"
+                                lazy-rules
+                              />
+                            </div>
+                            <div class="col-6">
+                              <q-input
+                                filled
+                                v-model="question.unit_negative_mark"
+                                :label="`Negative Marks`"
+                                lazy-rules
+                              />
+                            </div>
+                          </div>
+                        </q-card-section>
+                      </q-card>
                     </div>
-                    <!-- score and negative marks -->
-                    <div class="row q-col-gutter-md q-mt-sm">
-                      <div class="col-6">
-                        <q-input
-                          filled
-                          v-model="question.score"
-                          :label="`Score`"
-                          lazy-rules
-                        />
-                      </div>
-                      <div class="col-6">
-                        <q-input
-                          filled
-                          v-model="question.unit_negative_mark"
-                          :label="`Negative Marks`"
-                          lazy-rules
-                        />
-                      </div>
-                    </div>
-                  </q-card-section>
-                </q-card>
-              </div>
-              <div class="col-7">
-                <!-- button add questions -->
-                <q-btn
-                  v-if="questions[0].type === 'multilayered-type-1'"
-                  label="Add Question"
-                  type="submit"
-                  color="primary"
-                  @click="addQuestion"
-                />
-                <q-card v-if="questions[0].type != 'multilayered-type-1'">
-                  <q-card-section>
-                    <div class="text-h6">Options</div>
-                  </q-card-section>
-                  <q-card-section>
-                    <!-- <option-card
+                    <div class="col-7">
+                      <!-- button add questions -->
+                      <q-btn
+                        v-if="
+                          index === 0 &&
+                          questions[0].type === 'multilayered-type-1'
+                        "
+                        label="Add Question"
+                        type="submit"
+                        color="primary"
+                        @click="addQuestion"
+                      />
+                      <q-card
+                        v-if="
+                          index > 0 ||
+                          questions[0].type != 'multilayered-type-1'
+                        "
+                      >
+                        <q-card-section>
+                          <div class="text-h6">Options</div>
+                        </q-card-section>
+                        <q-card-section>
+                          <!-- <option-card
                       v-for="(option, index) in questionData.options"
                       :key="index"
                       :option="option"
                       :index="index"
                       :type="type"
                     ></option-card> -->
-                    <q-expansion-item
-                      v-for="(option, index) in question.options"
-                      class="q-ma-md"
-                      :label="`Option ${index + 1}`"
-                      :key="index"
-                      :value="index"
-                      :expand-separator="true"
-                      :default-open="true"
-                    >
-                      <q-card>
-                        <q-card-section>
-                          <!-- inputr -->
-                          <q-input
-                            filled
-                            label="Content"
-                            v-model="option.content"
+                          <q-expansion-item
+                            v-for="(option, index) in question.options"
+                            class="q-ma-md"
+                            :label="`Option ${index + 1}`"
                             :key="index"
-                            :name="`content${index}`"
-                            :id="`content${index}`"
-                            readonly
+                            :value="index"
+                            :expand-separator="true"
+                            :default-open="true"
                           >
-                            <template v-slot:append>
-                              <tiny-mce-modal
-                                :content="option.content"
-                                :index="index"
-                                @save="onContentChange"
-                              />
-                            </template>
-                          </q-input>
-                          <q-input
-                            filled
-                            label="Explanation"
-                            v-model="option.explanation"
-                            :key="index"
-                            :name="`explanation${index}`"
-                            :id="`explanation${index}`"
-                            readonly
-                          >
-                            <template v-slot:append>
-                              <tiny-mce-modal
-                                :content="option.explanation"
-                                :index="index"
-                                @save="onExplanationChange"
-                              />
-                            </template>
-                          </q-input>
-                          <!-- same row + delete button-->
-                          <div class="row">
-                            <q-checkbox
-                              v-model="option.is_correct"
-                              :key="index"
-                              :name="`is_correct${index}`"
-                              :id="`is_correct${index}`"
-                              label="Correct"
-                              class="q-ma-md"
+                            <q-card>
+                              <q-card-section>
+                                <!-- inputr -->
+                                <q-input
+                                  filled
+                                  label="Content"
+                                  v-model="option.content"
+                                  :key="index"
+                                  :name="`content${index}`"
+                                  :id="`content${index}`"
+                                  readonly
+                                >
+                                  <template v-slot:append>
+                                    <tiny-mce-modal
+                                      :content="option.content"
+                                      :index="index"
+                                      @save="onContentChange"
+                                    />
+                                  </template>
+                                </q-input>
+                                <q-input
+                                  filled
+                                  label="Explanation"
+                                  v-model="option.explanation"
+                                  :key="index"
+                                  :name="`explanation${index}`"
+                                  :id="`explanation${index}`"
+                                  readonly
+                                >
+                                  <template v-slot:append>
+                                    <tiny-mce-modal
+                                      :content="option.explanation"
+                                      :index="index"
+                                      @save="onExplanationChange"
+                                    />
+                                  </template>
+                                </q-input>
+                                <!-- same row + delete button-->
+                                <div class="row">
+                                  <q-checkbox
+                                    v-model="option.is_correct"
+                                    :key="index"
+                                    :name="`is_correct${index}`"
+                                    :id="`is_correct${index}`"
+                                    label="Correct"
+                                    class="q-ma-md"
+                                  />
+                                  <q-btn
+                                    @click="deleteItem(index)"
+                                    icon="delete"
+                                    size="sm"
+                                    color="negative"
+                                    class="q-ma-lg"
+                                  >
+                                    Delete
+                                  </q-btn>
+                                </div>
+                              </q-card-section>
+                            </q-card>
+                          </q-expansion-item>
+                          <div class="q-mt-md">
+                            <q-btn
+                              label="Add Option"
+                              type="submit"
+                              color="primary"
+                              @click="addOption($event, index)"
                             />
-                            <q-btn
-                              @click="deleteItem(index)"
-                              icon="delete"
-                              size="sm"
-                              color="negative"
-                              class="q-ma-lg"
-                            >
-                              Delete
-                            </q-btn>
                           </div>
                         </q-card-section>
                       </q-card>
-                    </q-expansion-item>
-                    <div class="q-mt-md">
-                      <q-btn
-                        label="Add Option"
-                        type="submit"
-                        color="primary"
-                        @click="addOption"
-                      />
-                    </div>
-                  </q-card-section>
-                </q-card>
-                <q-card
-                  id="hint-card"
-                  class="q-mt-md"
-                  v-if="questions[0].type === 'multilayered-type-2'"
-                >
-                  <q-card-section>
-                    <div class="text-h6">Hints</div>
-                  </q-card-section>
-                  <q-card-section>
-                    <q-expansion-item
-                      v-for="(option, index) in question.options"
-                      class="q-ma-md"
-                      :label="`Hint ${index + 1}`"
-                      :key="index"
-                      :value="index"
-                      :expand-separator="true"
-                      :default-open="true"
-                    >
-                      <q-card>
+                      <q-card
+                        id="hint-card"
+                        class="q-mt-md"
+                        v-if="question.type === 'multilayered-type-2'"
+                      >
                         <q-card-section>
-                          <!-- inputr -->
-                          <q-input
-                            filled
-                            label="Content"
-                            v-model="option.content"
+                          <div class="text-h6">Hints</div>
+                        </q-card-section>
+                        <q-card-section>
+                          <q-expansion-item
+                            v-for="(option, index) in question.options"
+                            class="q-ma-md"
+                            :label="`Hint ${index + 1}`"
                             :key="index"
-                            :name="`content${index}`"
-                            :id="`content${index}`"
-                            readonly
+                            :value="index"
+                            :expand-separator="true"
+                            :default-open="true"
                           >
-                            <template v-slot:append>
-                              <tiny-mce-modal
-                                :content="option.content"
-                                :index="index"
-                                @save="onContentChange"
-                              />
-                            </template>
-                          </q-input>
-                          <!-- same row + delete button-->
-                          <div class="row">
+                            <q-card>
+                              <q-card-section>
+                                <!-- inputr -->
+                                <q-input
+                                  filled
+                                  label="Content"
+                                  v-model="option.content"
+                                  :key="index"
+                                  :name="`content${index}`"
+                                  :id="`content${index}`"
+                                  readonly
+                                >
+                                  <template v-slot:append>
+                                    <tiny-mce-modal
+                                      :content="option.content"
+                                      :index="index"
+                                      @save="onContentChange"
+                                    />
+                                  </template>
+                                </q-input>
+                                <!-- same row + delete button-->
+                                <div class="row">
+                                  <q-btn
+                                    @click="deleteItem(index)"
+                                    icon="delete"
+                                    size="sm"
+                                    color="negative"
+                                    class="q-ma-lg"
+                                  >
+                                    Delete
+                                  </q-btn>
+                                </div>
+                              </q-card-section>
+                            </q-card>
+                          </q-expansion-item>
+                          <div class="q-mt-md">
                             <q-btn
-                              @click="deleteItem(index)"
-                              icon="delete"
-                              size="sm"
-                              color="negative"
-                              class="q-ma-lg"
-                            >
-                              Delete
-                            </q-btn>
+                              label="Add Option"
+                              type="submit"
+                              color="primary"
+                              @click="addHint"
+                            />
                           </div>
                         </q-card-section>
                       </q-card>
-                    </q-expansion-item>
-                    <div class="q-mt-md">
-                      <q-btn
-                        label="Add Option"
-                        type="submit"
-                        color="primary"
-                        @click="addHint"
-                      />
                     </div>
                   </q-card-section>
                 </q-card>
-              </div>
+              </q-expansion-item>
             </div>
           </div>
         </div>
@@ -522,7 +542,7 @@ export default defineComponent({
     onSubmit() {
       console.log("Submit");
       if (this.questions[0].type === "multilayered-type-2") {
-        this.questionData.options.concat(this.questionData.hints);
+        this.questions[0].options.concat(this.questions[0].hints);
       }
       api.post("/questions", this.questions[0]).then((response) => {
         console.log(response);
@@ -536,8 +556,28 @@ export default defineComponent({
     },
     addQuestion(event) {
       event.preventDefault();
-      console.log(this.questionData);
-      this.questions.push(this.questionData);
+      this.questions.push({
+        content: "",
+        category_id: null,
+        subcategory: "",
+        subject: "",
+        chapter: "",
+        faculty: "",
+        discipline: "",
+        parent_id: null,
+        score: 0,
+        unit_negative_mark: 0,
+        type: "",
+        options: [
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+          },
+        ],
+      });
     },
     onReset() {
       console.log("Reset");
@@ -564,8 +604,10 @@ export default defineComponent({
         ],
       };
     },
-    addOption() {
-      this.questionData.options.push({
+    addOption(event, index) {
+      event.preventDefault();
+
+      this.questions[index].options.push({
         content: "This is another demo option",
         is_correct: false,
         visibility: true,
