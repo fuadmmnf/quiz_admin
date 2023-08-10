@@ -133,7 +133,11 @@
         <div class="row q-col-gutter-md">
           <div class="col-12">
             <!-- two columns -->
-            <div class="row q-col-gutter-md">
+            <div
+              class="row q-col-gutter-md"
+              v-for="(question, index) in questions"
+              :key="index"
+            >
               <div class="col-5">
                 <q-card>
                   <!-- card header -->
@@ -145,20 +149,22 @@
                     <q-select
                       class="q-mt-md"
                       filled
-                      v-model="questionData.type"
+                      v-model="question.type"
                       :options="types"
                       :label="`Question Type`"
                       lazy-rules
+                      emit-value
+                      map-options
                     />
                     <q-input
                       filled
-                      v-model="questionData.content"
+                      v-model="question.content"
                       :label="`Question Content*`"
                       readonly
                     >
                       <template v-slot:append>
                         <tiny-mce-modal
-                          :content="questionData.content"
+                          :content="question.content"
                           @save="onDescriptionChange"
                         />
                       </template>
@@ -168,7 +174,7 @@
                       <div class="col-6">
                         <q-select
                           filled
-                          v-model="questionData.category"
+                          v-model="question.category"
                           :options="categoryOptions"
                           :label="`Category`"
                           lazy-rules
@@ -177,51 +183,9 @@
                       <div class="col-6">
                         <q-select
                           filled
-                          v-model="questionData.subcategory"
+                          v-model="question.subcategory"
                           :options="subcategoryOptions"
                           :label="`Subcategory`"
-                          lazy-rules
-                        />
-                      </div>
-                    </div>
-                    <!-- input subject and chapter two select same row-->
-                    <div class="row q-col-gutter-md q-mt-sm">
-                      <div class="col-6">
-                        <q-select
-                          filled
-                          v-model="questionData.subject"
-                          :options="subjectOptions"
-                          :label="`Subject`"
-                          lazy-rules
-                        />
-                      </div>
-                      <div class="col-6">
-                        <q-select
-                          filled
-                          v-model="questionData.chapter"
-                          :options="chapterOptions"
-                          :label="`Chapter`"
-                          lazy-rules
-                        />
-                      </div>
-                    </div>
-                    <!-- input faculty and discipline two select same row -->
-                    <div class="row q-col-gutter-md q-mt-sm">
-                      <div class="col-6">
-                        <q-select
-                          filled
-                          v-model="questionData.faculty"
-                          :options="facultyOptions"
-                          :label="`Faculty`"
-                          lazy-rules
-                        />
-                      </div>
-                      <div class="col-6">
-                        <q-select
-                          filled
-                          v-model="questionData.discipline"
-                          :options="disciplineOptions"
-                          :label="`Discipline`"
                           lazy-rules
                         />
                       </div>
@@ -231,7 +195,7 @@
                       <div class="col-6">
                         <q-input
                           filled
-                          v-model="questionData.score"
+                          v-model="question.score"
                           :label="`Score`"
                           lazy-rules
                         />
@@ -239,7 +203,7 @@
                       <div class="col-6">
                         <q-input
                           filled
-                          v-model="questionData.unit_negative_mark"
+                          v-model="question.unit_negative_mark"
                           :label="`Negative Marks`"
                           lazy-rules
                         />
@@ -249,7 +213,15 @@
                 </q-card>
               </div>
               <div class="col-7">
-                <q-card>
+                <!-- button add questions -->
+                <q-btn
+                  v-if="questions[0].type === 'multilayered-type-1'"
+                  label="Add Question"
+                  type="submit"
+                  color="primary"
+                  @click="addQuestion"
+                />
+                <q-card v-if="questions[0].type != 'multilayered-type-1'">
                   <q-card-section>
                     <div class="text-h6">Options</div>
                   </q-card-section>
@@ -262,7 +234,7 @@
                       :type="type"
                     ></option-card> -->
                     <q-expansion-item
-                      v-for="(option, index) in questionData.options"
+                      v-for="(option, index) in question.options"
                       class="q-ma-md"
                       :label="`Option ${index + 1}`"
                       :key="index"
@@ -292,14 +264,6 @@
                           </q-input>
                           <q-input
                             filled
-                            label="Hint"
-                            v-model="option.hint"
-                            :key="index"
-                            :name="`hint${index}`"
-                            :id="`hint${index}`"
-                          />
-                          <q-input
-                            filled
                             label="Explanation"
                             v-model="option.explanation"
                             :key="index"
@@ -317,14 +281,6 @@
                           </q-input>
                           <!-- same row + delete button-->
                           <div class="row">
-                            <q-checkbox
-                              v-model="option.visibility"
-                              :key="index"
-                              :name="`visibility${index}`"
-                              :id="`visibility${index}`"
-                              label="Visibility"
-                              class="q-ma-md"
-                            />
                             <q-checkbox
                               v-model="option.is_correct"
                               :key="index"
@@ -352,6 +308,69 @@
                         type="submit"
                         color="primary"
                         @click="addOption"
+                      />
+                    </div>
+                  </q-card-section>
+                </q-card>
+                <q-card
+                  id="hint-card"
+                  class="q-mt-md"
+                  v-if="questions[0].type === 'multilayered-type-2'"
+                >
+                  <q-card-section>
+                    <div class="text-h6">Hints</div>
+                  </q-card-section>
+                  <q-card-section>
+                    <q-expansion-item
+                      v-for="(option, index) in question.options"
+                      class="q-ma-md"
+                      :label="`Hint ${index + 1}`"
+                      :key="index"
+                      :value="index"
+                      :expand-separator="true"
+                      :default-open="true"
+                    >
+                      <q-card>
+                        <q-card-section>
+                          <!-- inputr -->
+                          <q-input
+                            filled
+                            label="Content"
+                            v-model="option.content"
+                            :key="index"
+                            :name="`content${index}`"
+                            :id="`content${index}`"
+                            readonly
+                          >
+                            <template v-slot:append>
+                              <tiny-mce-modal
+                                :content="option.content"
+                                :index="index"
+                                @save="onContentChange"
+                              />
+                            </template>
+                          </q-input>
+                          <!-- same row + delete button-->
+                          <div class="row">
+                            <q-btn
+                              @click="deleteItem(index)"
+                              icon="delete"
+                              size="sm"
+                              color="negative"
+                              class="q-ma-lg"
+                            >
+                              Delete
+                            </q-btn>
+                          </div>
+                        </q-card-section>
+                      </q-card>
+                    </q-expansion-item>
+                    <div class="q-mt-md">
+                      <q-btn
+                        label="Add Option"
+                        type="submit"
+                        color="primary"
+                        @click="addHint"
                       />
                     </div>
                   </q-card-section>
@@ -384,9 +403,7 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const { $q } = useQuasar();
-    const questions = store.questions;
     return {
-      questions,
       $q,
     };
   },
@@ -394,6 +411,7 @@ export default defineComponent({
     return {
       pageName: "Add/Edit Question",
       dense: true,
+      questions: [],
       questionData: {
         content: "Demo content",
         category_id: null,
@@ -410,37 +428,74 @@ export default defineComponent({
           {
             content: "This is an options data",
             is_correct: true,
-            visibility: true,
-            hint: " This is demo hint",
             explanation: "This is demo explanation",
+            is_hint: false,
+            visibility: true,
           },
           {
             content: "This is an options data",
             is_correct: false,
-            visibility: true,
-            hint: " This is demo hint",
             explanation: "This is demo explanation",
+            is_hint: false,
+            visibility: true,
           },
           {
             content: "This is an options data",
             is_correct: false,
-            visibility: true,
-            hint: " This is demo hint",
             explanation: "This is demo explanation",
+            is_hint: false,
+            visibility: true,
           },
           {
             content: "This is an options data",
             is_correct: false,
-            visibility: true,
-            hint: " This is demo hint",
             explanation: "This is demo explanation",
+            is_hint: false,
+            visibility: true,
           },
           {
             content: "This is an options data",
             is_correct: false,
-            visibility: true,
-            hint: " This is demo hint",
             explanation: "This is demo explanation",
+            is_hint: false,
+            visibility: true,
+          },
+        ],
+        hints: [
+          {
+            content: "This is an hints data",
+            is_correct: true,
+            explanation: "",
+            is_hint: true,
+            visibility: true,
+          },
+          {
+            content: "This is an hints data",
+            is_correct: false,
+            explanation: "",
+            is_hint: true,
+            visibility: true,
+          },
+          {
+            content: "This is an hints data",
+            is_correct: false,
+            explanation: "",
+            is_hint: true,
+            visibility: true,
+          },
+          {
+            content: "This is an hints data",
+            is_correct: false,
+            explanation: "",
+            is_hint: true,
+            visibility: true,
+          },
+          {
+            content: "This is an hints data",
+            is_correct: false,
+            explanation: "",
+            is_hint: true,
+            visibility: true,
           },
         ],
       },
@@ -458,13 +513,18 @@ export default defineComponent({
         { label: "Multiple True/False", value: "multiple-true-false" },
         { label: "Fill in the blanks", value: "written" },
         { label: "Essay", value: "written" },
+        { label: "Multilayered Type 1", value: "multilayered-type-1" },
+        { label: "Multilayered Type 2", value: "multilayered-type-2" },
       ],
     };
   },
   methods: {
     onSubmit() {
-      this.questionData.type = this.questionData.type.value;
-      api.post("/questions", this.questionData).then((response) => {
+      console.log("Submit");
+      if (this.questions[0].type === "multilayered-type-2") {
+        this.questionData.options.concat(this.questionData.hints);
+      }
+      api.post("/questions", this.questions[0]).then((response) => {
         console.log(response);
         this.$q.notify({
           message: "Question Added Successfully",
@@ -473,6 +533,11 @@ export default defineComponent({
         });
         this.onReset();
       });
+    },
+    addQuestion(event) {
+      event.preventDefault();
+      console.log(this.questionData);
+      this.questions.push(this.questionData);
     },
     onReset() {
       console.log("Reset");
@@ -527,7 +592,7 @@ export default defineComponent({
           (category) => {
             this.categoryOptions.push({
               label: category.name,
-              value: category.real_id,
+              value: category.id,
             });
           },
           (error) => {
@@ -542,7 +607,7 @@ export default defineComponent({
           (subcategory) => {
             this.subcategoryOptions.push({
               label: subcategory.name,
-              value: subcategory.real_id,
+              value: subcategory.id,
             });
           },
           (error) => {
@@ -557,7 +622,7 @@ export default defineComponent({
           (subject) => {
             this.subjectOptions.push({
               label: subject.name,
-              value: subject.real_id,
+              value: subject.id,
             });
           },
           (error) => {
@@ -572,7 +637,7 @@ export default defineComponent({
           (chapter) => {
             this.chapterOptions.push({
               label: chapter.name,
-              value: chapter.real_id,
+              value: chapter.id,
             });
           },
           (error) => {
@@ -587,7 +652,7 @@ export default defineComponent({
           (faculty) => {
             this.facultyOptions.push({
               label: faculty.name,
-              value: faculty.real_id,
+              value: faculty.id,
             });
           },
           (error) => {
@@ -602,7 +667,7 @@ export default defineComponent({
           (discipline) => {
             this.disciplineOptions.push({
               label: discipline.name,
-              value: discipline.real_id,
+              value: discipline.id,
             });
           },
           (error) => {
@@ -613,12 +678,9 @@ export default defineComponent({
     },
   },
   mounted() {
+    this.questions.push(this.questionData);
     this.getCategories();
     this.getSubcategories();
-    this.getSubjects();
-    this.getChapters();
-    this.getFaculties();
-    this.getDisciplines();
     if (this.$route.params.id) {
       api
         .get(`/questions/${this.$route.params.id}?include=category`)
