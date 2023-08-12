@@ -1,20 +1,60 @@
 <template>
   <div>
     <q-table
-      :data="roles"
       :columns="columns"
-      row-key="id"
-      :pagination="pagination"
+      :rows="roles"
+      row-key="real_id"
+      rows-per-page-options="[10]"
       :loading="loading"
-      :filter="filter"
+      wrap-cells
+      no-data-label="No data available"
+      class="shadow-0"
+      v-model:pagination="pagination"
       @request="onRequest"
     >
+      <template v-slot:top-right>
+        <q-input
+          borderless
+          dense
+          debounce="300"
+          v-model="filter"
+          placeholder="Search"
+        >
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+      </template>
+      <!-- table data -->
+      <template v-slot:body="props">
+        <q-tr :props="props">
+          <q-td key="name" :props="props">
+            {{ props.row.name }}
+          </q-td>
+          <q-td key="mobile" :props="props">
+            {{ props.row.mobile }}
+          </q-td>
+          <q-td key="actions" :props="props">
+            <q-btn
+              color="red"
+              size="md"
+              icon="delete"
+              round
+              dense
+              flat
+              @click="deleteUser(props.row.id)"
+            />
+          </q-td>
+        </q-tr>
+      </template>
     </q-table>
   </div>
 </template>
 
 <script>
 import { defineComponent, ref } from "vue";
+import { api } from "src/boot/axios";
+import { useQuasar } from "quasar";
 
 export default {
   name: "RoleList",
@@ -22,6 +62,7 @@ export default {
     role: String,
   },
   setup(props) {
+    const { $q } = useQuasar();
     const pagination = ref({
       page: 1,
       rowsPerPage: 10,
@@ -36,22 +77,31 @@ export default {
         label: "Name",
         field: "name",
         align: "left",
+        sortable: false,
+      },
+      {
+        name: "mobile",
+        label: "Mobile",
+        field: "mobile",
+        align: "left",
         sortable: true,
       },
       {
         name: "actions",
         label: "Actions",
         field: "actions",
-        align: "left",
+        align: "right",
         sortable: false,
       },
     ]);
     const fetchRoles = (page = 1) => {
       loading.value = true;
       api
-        .get("/roles")
+        .get(
+          `/users?search=roles.name:${props.role}&include=roles&page=${page}`
+        )
         .then((response) => {
-          roles.value = response.data;
+          roles.value = response.data.data;
           const meta = response.data.meta.pagination;
           pagination.value = {
             page: meta.current_page,
@@ -71,7 +121,36 @@ export default {
       const { pagination, filter } = props;
       fetchRoles(pagination.page);
     };
-    return {};
+
+    return {
+      pagination,
+      filter,
+      loading,
+      roles,
+      columns,
+      fetchRoles,
+      onRequest,
+      $q,
+    };
+  },
+  mounted() {
+    this.fetchRoles();
+  },
+  methods: {
+    deleteUser(id) {
+      api
+        .delete(`/users/${id}`)
+        .then((res) => {
+          this.$q.notify({
+            color: "positive",
+            message: "User deleted successfully",
+          });
+          fetchRoles();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
   },
 };
 </script>

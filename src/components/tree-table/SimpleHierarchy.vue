@@ -75,16 +75,14 @@ export default {
   name: "SimpleHierarchy",
   methods: {
     editItem(row) {
-      this.$emit("editItem", row); 
+      this.$emit("editItem", row);
     },
     deleteItem(row) {
-      // Implement delete logic here
-      this.tableData.map((item, index) => {
-        if (item.name === row.name) {
-          this.tableData.splice(index, 1);
-        }
-      });
+      this.$emit("deleteItem", row);
     },
+  },
+  mounted() {
+    console.log(this.tableData);
   },
 };
 </script>

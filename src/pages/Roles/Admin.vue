@@ -13,12 +13,12 @@
         <div class="col-7">
           <q-card>
             <q-card-section>
-              <role-list :role="'admin'"></role-list>
+              <role-list :role="'subadmin'"></role-list>
             </q-card-section>
           </q-card>
         </div>
         <div class="col-5">
-          <add-new-role :role="'admin'"></add-new-role>
+          <add-new-role :role="'subadmin'"></add-new-role>
         </div>
         a
       </div>

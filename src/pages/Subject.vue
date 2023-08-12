@@ -35,8 +35,8 @@
                   filled
                   v-model="name"
                   stack-label
-                  :label="`Subject name `"
-                  :hint="`$Subject name must be unique`"
+                  :label="`Subject/Chapter name `"
+                  :hint="`$Subject/Chapter name must be unique`"
                   lazy-rules
                   :rules="[
                     (val) => (val && val.length > 0) || 'Please type something',
@@ -47,8 +47,8 @@
                   filled
                   stack-label
                   v-model="selectedParentCategory"
-                  :options="options"
-                  :label="`Chapter`"
+                  :options="parentCategoryOptions"
+                  :label="`Parent Subject`"
                   lazy-rules
                 />
                 <div>
@@ -74,13 +74,16 @@
 import { defineComponent, defineAsyncComponent, ref } from "vue";
 import { api } from "boot/axios";
 import { useQuasar } from "quasar";
+import { useStore } from "src/stores/store";
 
 export default {
   name: "Subject",
   setup() {
     const { $q } = useQuasar();
+    const store = useStore();
     return {
       $q,
+      store,
     };
   },
   data() {
@@ -89,15 +92,8 @@ export default {
       name: "",
       model: "",
       tableData: [],
-      selectedParentCategory: ref(0),
-      options: [
-        { label: "Chapter", value: "" },
-        { label: "Chapter 1", value: "1" },
-        { label: "Chapter 2", value: "2" },
-        { label: "Chapter 3", value: "3" },
-        { label: "Chapter 4", value: "4" },
-        { label: "Chapter 5", value: "5" },
-      ],
+      selectedParentCategory: ref(null),
+      parentCategoryOptions: [],
     };
   },
   components: {
@@ -113,20 +109,28 @@ export default {
   },
   methods: {
     onSubmit(evt) {
+      evt.preventDefault();
+      let categoryType = "subject";
+      if (this.selectedParentCategory != null) {
+        categoryType = "chapter";
+      }
       api
         .post("/categories", {
           name: this.name,
           parent_id: this.selectedParentCategory,
-          type: "subject",
+          type: categoryType,
         })
         .then((res) => {
           this.$q.notify({
+            message: "Category Added Successfully",
             color: "positive",
-            message: "Subject added successfully",
+            icon: "check",
           });
           this.name = "";
           this.tableData = [];
-          this.getSubject();
+          this.store.getSubject();
+          this.store.getChapters();
+          this.store.setDataList();
         });
     },
     onReset(evt) {
@@ -134,28 +138,35 @@ export default {
     },
     editItem(item) {
       console.log("editItem", item);
+      this.name = item.name;
+      this.model = item.model;
     },
-    getSubject() {
-      api
-        .get("/categories/subject")
-        .then((res) => {
-          res.data.data.map((item) => {
-            this.tableData.push({
-              id: item.id,
-              name: item.name,
-              parent_id: item.parent_id,
-              real_id: item.real_id,
-              children: [],
-            });
-          });
-        })
-        .catch((err) => {
-          console.log(err);
+    deleteItem(row) {},
+
+    setDataList() {
+      this.tableData = [];
+      this.store.subject.map((item) => {
+        this.tableData.push({
+          name: item.name,
+          id: item.id,
+          children: [],
         });
+      });
+      // if subcategories exist find the parent id in category list and push the subcategory to children
+      this.store.chapters.map((item) => {
+        this.tableData.map((category) => {
+          if (category.id === item.parent_id) {
+            category.children.push({
+              name: item.name,
+              id: item.id,
+            });
+          }
+        });
+      });
     },
   },
   mounted() {
-    this.getSubject();
+    this.setDataList();
   },
 };
 </script>

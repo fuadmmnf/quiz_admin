@@ -8,55 +8,12 @@ export const useStore = defineStore("store", {
     accessToken: null,
     refreshToken: null,
     user: null,
-    questions: [
-      {
-        name: "Question 1",
-        category: "Category 1",
-        subcategory: "Subcategory 1",
-        subject: "Subject 1",
-        chapter: "Chapter 1",
-      },
-      {
-        name: "Question 2",
-        category: "Category 2",
-        subcategory: "Subcategory 2",
-        subject: "Subject 2",
-        chapter: "Chapter 2",
-      },
-      {
-        name: "Question 3",
-        category: "Category 3",
-        subcategory: "Subcategory 3",
-        subject: "Subject 3",
-        chapter: "Chapter 3",
-      },
-    ],
-    exams: [
-      {
-        id: 1,
-        name: "Exam 1",
-        faculty: "Faculty 1",
-        subject: "Subject 1",
-        discipline: "Discipline 1",
-        duration: "Duration 1",
-      },
-      {
-        id: 2,
-        name: "Exam 2",
-        faculty: "Faculty 2",
-        subject: "Subject 2",
-        discipline: "Discipline 2",
-        duration: "Duration 2",
-      },
-      {
-        id: 3,
-        name: "Exam 3",
-        faculty: "Faculty 3",
-        subject: "Subject 3",
-        discipline: "Discipline 3",
-        duration: "Duration 3",
-      },
-    ],
+    categories: [],
+    faculty: [],
+    subject: [],
+    subcategories: [],
+    disciplines: [],
+    chapters: [],
   }),
   getters: {
     doubleCount: (state) => state.counter * 2,
@@ -65,7 +22,66 @@ export const useStore = defineStore("store", {
     increment() {
       this.counter++;
     },
-
+    getCategories() {
+      api
+        .get("/categories/category?limit=0")
+        .then((response) => {
+          this.categories = response.data.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    getFaculty() {
+      api
+        .get("/categories/faculty?limit=0")
+        .then((response) => {
+          this.faculty = response.data.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    getSubject() {
+      api
+        .get("/categories/subject?limit=0")
+        .then((response) => {
+          this.subject = response.data.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    getSubcategories() {
+      api
+        .get("/categories/sub-category?limit=0")
+        .then((response) => {
+          this.subcategories = response.data.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    getDisciplines() {
+      api
+        .get("/categories/discipline?limit=0")
+        .then((response) => {
+          this.disciplines = response.data.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    getChapters() {
+      api
+        .get("/categories/chapter?limit=0")
+        .then((response) => {
+          this.chapters = response.data.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     logout() {
       this.accessToken = null;
       this.refreshToken = null;

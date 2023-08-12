@@ -70,7 +70,6 @@
                       dense
                       flat
                       :to="`/Exam/${props.row.id}/EditQuestions`"
-                      v-if="examType === 'upcoming' || examType === 'draft'"
                     />
                     <q-btn
                       color="secondary"
@@ -80,7 +79,17 @@
                       dense
                       flat
                       :to="`/Exam/Checking/${props.row.id}/questions`"
-                      v-else-if="examType === 'checking'"
+                      v-if="examType === 'checking'"
+                    />
+                    <!-- if checking , mark as completed button -->
+                    <q-btn
+                      color="blue"
+                      size="md"
+                      icon="file_upload"
+                      round
+                      dense
+                      flat
+                      v-if="examType === 'checking'"
                     />
                     <q-btn
                       color="negative"

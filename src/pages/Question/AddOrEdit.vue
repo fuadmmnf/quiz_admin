@@ -644,7 +644,7 @@ export default defineComponent({
       });
     },
     getSubcategories() {
-      api.get("/categories/subcategory").then((response) => {
+      api.get("/categories/sub-category").then((response) => {
         response.data.data.map(
           (subcategory) => {
             this.subcategoryOptions.push({

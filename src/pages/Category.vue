@@ -17,6 +17,7 @@
                 :page="pageName"
                 :tableData="tableData"
                 @editItem="editItem"
+                @deleteItem="deleteItem"
               ></simple-hierarchy>
             </q-card-section>
           </q-card>
@@ -72,29 +73,25 @@ import TableActions from "components/tables/TableActions.vue";
 import { api } from "src/boot/axios";
 import { defineComponent, defineAsyncComponent, ref } from "vue";
 import { useQuasar } from "quasar";
+import { useStore } from "src/stores/store";
 
 export default defineComponent({
   name: "Category",
   setup() {
+    const store = useStore();
     const { $q } = useQuasar();
-    return {};
+    return {
+      store,
+      $q,
+    };
   },
   data() {
     return {
       name: ref(""),
       pageName: "Category",
       tableData: [],
-      selectedParentCategory: ref(0),
-      parentCategoryOptions: [
-        {
-          label: "Category 1",
-          value: "Category 1",
-        },
-        {
-          label: "Category 2",
-          value: "Category 2",
-        },
-      ],
+      selectedParentCategory: ref(null),
+      parentCategoryOptions: [],
     };
   },
   components: {
@@ -111,11 +108,15 @@ export default defineComponent({
   methods: {
     onSubmit(evt) {
       evt.preventDefault();
+      let categoryType = "category";
+      if (this.selectedParentCategory != null) {
+        categoryType = "sub-category";
+      }
       api
         .post("/categories", {
           name: this.name,
           parent_id: this.selectedParentCategory,
-          type: "category",
+          type: categoryType,
         })
         .then((res) => {
           this.$q.notify({
@@ -125,9 +126,9 @@ export default defineComponent({
           });
           this.name = "";
           this.tableData = [];
-          this.getCategories();
+          this.store.getCategories();
+          this.store.getSubcategories();
         });
-      console.log(this.tableData);
     },
     onReset(evt) {
       this.name = "";
@@ -136,22 +137,36 @@ export default defineComponent({
     editItem(row) {
       this.name = row.name;
     },
-    getCategories() {
-      api.get("/categories/category").then((res) => {
-        res.data.data.map((item) => {
-          this.tableData.push({
-            name: item.name,
-            real_id: item.real_id,
-            id: item.id,
-            children: [],
-          });
+    deleteItem(row) {},
+    setDataList() {
+      this.store.categories.map((item) => {
+        this.tableData.push({
+          name: item.name,
+          id: item.id,
+          children: [],
+        });
+      });
+      // if subcategories exist find the parent id in category list and push the subcategory to children
+      this.store.subcategories.map((item) => {
+        this.tableData.map((category) => {
+          if (category.id === item.parent_id) {
+            category.children.push({
+              name: item.name,
+              id: item.id,
+            });
+          }
         });
       });
     },
   },
-
   mounted() {
-    this.getCategories();
+    this.setDataList();
+    this.store.categories.map((item) => {
+      this.parentCategoryOptions.push({
+        label: item.name,
+        value: item.id,
+      });
+    });
   },
 });
 </script>

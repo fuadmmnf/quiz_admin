@@ -17,6 +17,7 @@
                 :page="pageName"
                 :tableData="tableData"
                 @editItem="editItem"
+                @deleteItem="deleteItem"
               ></simple-hierarchy>
             </q-card-section>
           </q-card>
@@ -35,8 +36,8 @@
                   filled
                   v-model="name"
                   stack-label
-                  :label="`Faculty name *`"
-                  :hint="`Faculty name must be unique`"
+                  :label="`Faculty/Discipline name *`"
+                  :hint="`Faculty/Discipline name must be unique`"
                   lazy-rules
                   :rules="[
                     (val) => (val && val.length > 0) || 'Please type something',
@@ -47,8 +48,8 @@
                   filled
                   stack-label
                   v-model="selectedParentCategory"
-                  :options="options"
-                  :label="`Discipline`"
+                  :options="parentCategoryOptions"
+                  :label="`Parent Faculty`"
                   lazy-rules
                   map-options
                   emit-value
@@ -77,13 +78,16 @@ import TableActions from "components/tables/TableActions.vue";
 import { api } from "src/boot/axios";
 import { defineComponent, defineAsyncComponent, ref } from "vue";
 import { useQuasar } from "quasar";
+import { useStore } from "src/stores/store";
 
 export default defineComponent({
   name: "Faculty",
   setup() {
+    const store = useStore();
     const { $q } = useQuasar();
     return {
       $q,
+      store,
     };
   },
   data() {
@@ -92,48 +96,8 @@ export default defineComponent({
       name: "",
       model: "",
       tableData: [],
-      selectedParentCategory: ref(0),
-      options: [
-        { label: "None", value: "" },
-        { label: "Faculty of Engineering", value: "Faculty of Engineering" },
-        { label: "Faculty of Science", value: "Faculty of Science" },
-        { label: "Faculty of Arts", value: "Faculty of Arts" },
-        { label: "Faculty of Medicine", value: "Faculty of Medicine" },
-        { label: "Faculty of Law", value: "Faculty of Law" },
-        { label: "Faculty of Education", value: "Faculty of Education" },
-        { label: "Faculty of Business", value: "Faculty of Business" },
-        { label: "Faculty of Agriculture", value: "Faculty of Agriculture" },
-        {
-          label: "Faculty of Social Sciences",
-          value: "Faculty of Social Sciences",
-        },
-        {
-          label: "Faculty of Environmental Sciences",
-          value: "Faculty of Environmental Sciences",
-        },
-        { label: "Faculty of Pharmacy", value: "Faculty of Pharmacy" },
-        {
-          label: "Faculty of Veterinary Medicine",
-          value: "Faculty of Veterinary Medicine",
-        },
-        { label: "Faculty of Dentistry", value: "Faculty of Dentistry" },
-        {
-          label: "Faculty of Management Sciences",
-          value: "Faculty of Management Sciences",
-        },
-        {
-          label: "Faculty of Health Sciences",
-          value: "Faculty of Health Sciences",
-        },
-        {
-          label: "Faculty of Basic Medical Sciences",
-          value: "Faculty of Basic Medical Sciences",
-        },
-        {
-          label: "Faculty of Clinical Sciences",
-          value: "Faculty of Clinical Sciences",
-        },
-      ],
+      selectedParentCategory: ref(null),
+      parentCategoryOptions: [],
     };
   },
   components: {
@@ -149,37 +113,29 @@ export default defineComponent({
   },
   methods: {
     onSubmit(evt) {
-      console.log("@submit - do something here", evt);
-      if (this.name.length > 0 && this.model.length > 0) {
-        api
-          .post("/categories", {
-            name: this.name,
-            parent_id: this.selectedParentCategory,
-            type: "faculty",
-          })
-          .then((res) => {
-            console.log(res.data);
-            this.$q.notify({
-              color: "green-4",
-              textColor: "white",
-              icon: "cloud_done",
-              message: "Faculty added successfully",
-            });
-            this.name = "";
-            this.model = "";
-            this.tableData = [];
-            this.getFaculty();
-          })
-          .catch((err) => {
-            console.log(err);
-            this.$q.notify({
-              color: "red-4",
-              textColor: "white",
-              icon: "cloud_done",
-              message: "Error adding faculty",
-            });
-          });
+      evt.preventDefault();
+      let categoryType = "faculty";
+      if (this.selectedParentCategory != null) {
+        categoryType = "discipline";
       }
+      api
+        .post("/categories", {
+          name: this.name,
+          parent_id: this.selectedParentCategory,
+          type: categoryType,
+        })
+        .then((res) => {
+          this.$q.notify({
+            message: "Category Added Successfully",
+            color: "positive",
+            icon: "check",
+          });
+          this.name = "";
+          this.tableData = [];
+          this.store.getFaculty();
+          this.store.getDisciplines();
+          this.store.setDataList();
+        });
     },
     onReset(evt) {
       console.log("@reset - do something here", evt);
@@ -189,27 +145,32 @@ export default defineComponent({
       this.name = item.name;
       this.model = item.model;
     },
-    getFaculty() {
-      api
-        .get("/categories/faculty")
-        .then((res) => {
-          console.log(res.data);
-          res.data.data.map((item) => {
-            this.tableData.push({
+    deleteItem(row) {},
+
+    setDataList() {
+      this.tableData = [];
+      this.store.faculty.map((item) => {
+        this.tableData.push({
+          name: item.name,
+          id: item.id,
+          children: [],
+        });
+      });
+      // if subcategories exist find the parent id in category list and push the subcategory to children
+      this.store.disciplines.map((item) => {
+        this.tableData.map((category) => {
+          if (category.id === item.parent_id) {
+            category.children.push({
               name: item.name,
               id: item.id,
-              real_id: item.real_id,
-              parent_id: item.parent_id,
             });
-          });
-        })
-        .catch((err) => {
-          console.log(err);
+          }
         });
+      });
     },
   },
   mounted() {
-    this.getFaculty();
+    this.setDataList();
   },
 });
 </script>

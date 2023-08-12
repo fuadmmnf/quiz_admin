@@ -1,7 +1,7 @@
 <template>
   <q-card>
     <q-card-section>
-      <div class="text-h6 text-indigo-8">Add/Edit {{ role }}</div>
+      <div class="text-h6 text-indigo-8 q-mb-md">Add/Edit {{ role }}</div>
       <q-form>
         <q-input
           outlined
@@ -68,8 +68,12 @@ export default {
       phone: "",
       password: "",
       password_confirmation: "",
-      selectedRole: "subadmin",
-      roles: [{ label: "Admin", value: "subadmin" }],
+      selectedRole: "",
+      roles: [
+        { label: "Admin", value: "subadmin" },
+        { label: "Mentor", value: "mentor" },
+        { label: "Moderator", value: "moderator" },
+      ],
     };
   },
   methods: {
@@ -87,7 +91,7 @@ export default {
             color: "positive",
             icon: "check",
           });
-          this.$router.push("/Users/" + this.role);
+          this.$router.push("/Roles/" + this.role);
         })
         .catch((err) => {
           this.$q.notify({
@@ -97,6 +101,9 @@ export default {
           });
         });
     },
+  },
+  mounted() {
+    this.selectedRole = this.role;
   },
 };
 </script>
