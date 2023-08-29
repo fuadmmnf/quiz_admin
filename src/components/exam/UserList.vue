@@ -35,6 +35,13 @@
               <!-- table data -->
               <template v-slot:body="props">
                 <q-tr :props="props">
+                  <q-td
+                    key="rank"
+                    :props="props"
+                    v-if="route.params.type === 'completed'"
+                  >
+                    {{ props.row.rank }}
+                  </q-td>
                   <q-td key="name" :props="props">
                     {{ props.row.name }}
                   </q-td>
@@ -154,10 +161,6 @@ export default {
                 marks: item.marks,
                 attempt_id: item.id,
               });
-              // add ranks to users
-              users.value.forEach((user, index) => {
-                user.rank = index + 1;
-              });
             });
           }
           const meta = res.data.meta.pagination;
@@ -166,6 +169,12 @@ export default {
             rowsPerPage: meta.per_page,
             rowsNumber: meta.total,
           };
+          users.value.forEach((user, index) => {
+            user.rank =
+              (pagination.value.page - 1) * pagination.value.rowsPerPage +
+              index +
+              1;
+          });
         })
         .catch((error) => {
           console.log(error);
@@ -243,6 +252,15 @@ export default {
         },
       ],
       columnsCompleted: [
+        {
+          name: "rank",
+          required: true,
+          label: "Rank",
+          align: "left",
+          field: (row) => row.rank,
+          format: (val) => `${val}`,
+          sortable: true,
+        },
         {
           name: "name",
           required: true,

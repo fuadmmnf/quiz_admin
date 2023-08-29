@@ -25,11 +25,13 @@ import { defineComponent, ref } from "vue";
 import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 import ExamList from "src/components/exam/ExamList.vue";
+import SearchExams from "src/components/exam/SearchExams.vue";
 
 export default {
   name: "Exam",
   components: {
     ExamList,
+    SearchExams,
   },
   setup() {},
   mounted() {},

@@ -3,7 +3,20 @@
     <q-card class="no-shadow" bordered>
       <!-- add edit header with submit and reset buttons on right -->
       <q-card-section class="row items-center justify-between">
-        <div class="text-h6">Add/Edit Question</div>
+        <div class="text-h6">
+          <!-- back to list -->
+          <q-btn
+            color="primary"
+            icon="arrow_back"
+            flat
+            dense
+            round
+            outline
+            @click="$router.push('/Question')"
+          />
+          Add/Edit Question
+        </div>
+
         <div class="row">
           <q-btn
             label="Submit"
@@ -27,99 +40,11 @@
     <q-separator spaced />
     <!-- search card with filtering option filter icon -->
     <q-expansion-item
-      expand-separator
       icon="search"
-      label="Search"
-      class="q-card"
-      header-class=" text-h6"
+      label="Search Questions"
+      class="q-card q-mt-md"
     >
-      <q-card class="no-shadow" bordered>
-        <q-card-section>
-          <div class="row q-col-gutter-md">
-            <div class="col-12">
-              <q-input filled v-model="name" :label="`Search Question`">
-                <template v-slot:append>
-                  <!-- filter icon -->
-
-                  <q-btn
-                    flat
-                    round
-                    dense
-                    icon="search"
-                    class="bg-grey-3"
-                    style="width: 40px; height: 40px"
-                  />
-                </template>
-              </q-input>
-
-              <!-- filtering options div -->
-              <q-expansion-item
-                class="q-mt-sm text-grey-6"
-                v-model="expanded"
-                icon="filter_list"
-                label="Filtering Options"
-              >
-                <div class="row q-col-gutter-md q-mt-sm">
-                  <div class="col-2">
-                    <q-select
-                      filled
-                      v-model="model"
-                      :options="options"
-                      :label="`Category`"
-                      lazy-rules
-                    />
-                  </div>
-                  <div class="col-2">
-                    <q-select
-                      filled
-                      v-model="model"
-                      :options="options"
-                      :label="`Subcategory`"
-                      lazy-rules
-                    />
-                  </div>
-                  <div class="col-2">
-                    <q-select
-                      filled
-                      v-model="model"
-                      :options="options"
-                      :label="`Subject`"
-                      lazy-rules
-                    />
-                  </div>
-                  <div class="col-2">
-                    <q-select
-                      filled
-                      v-model="model"
-                      :options="options"
-                      :label="`Chapter`"
-                      lazy-rules
-                    />
-                  </div>
-                  <div class="col-2">
-                    <q-select
-                      filled
-                      v-model="model"
-                      :options="options"
-                      :label="`Faculty`"
-                      lazy-rules
-                    />
-                  </div>
-                  <div class="col-2">
-                    <q-select
-                      filled
-                      v-model="model"
-                      :options="options"
-                      :label="`Discipline`"
-                      lazy-rules
-                    />
-                  </div>
-                </div>
-              </q-expansion-item>
-            </div>
-          </div>
-        </q-card-section>
-      </q-card>
+      <search-questions @search="onSearch" />
     </q-expansion-item>
 
     <q-separator spaced />
@@ -136,13 +61,16 @@
             <div v-for="(question, index) in questions" :key="index">
               <!-- question content -->
               <q-expansion-item
-                expand-separator
+                default-opened
                 icon="edit"
                 :label="index > 0 ? `Question ${index}` : `Question`"
                 class="q-card q-mt-md"
                 header-class=" text-h6"
+                v-if="
+                  questions[0].type === 'multilayered-type-1' || index === 0
+                "
               >
-                <q-card class="no-shadow">
+                <q-card class="q-mt-md">
                   <q-card-section class="row q-col-gutter-md">
                     <div class="col-5">
                       <q-card>
@@ -156,12 +84,15 @@
                             class="q-mt-md"
                             filled
                             v-model="question.type"
-                            :options="types"
+                            :options="
+                              questions[0].type === 'multilayered-type-1'
+                                ? types_without_multilayered
+                                : types
+                            "
                             :label="`Question Type`"
                             lazy-rules
                             emit-value
                             map-options
-                            v-if="index === 0"
                           />
                           <q-input
                             filled
@@ -172,6 +103,8 @@
                             <template v-slot:append>
                               <tiny-mce-modal
                                 :content="question.content"
+                                :index="0"
+                                :parentIndex="index"
                                 @save="onDescriptionChange"
                               />
                             </template>
@@ -181,21 +114,25 @@
                             <div class="col-6">
                               <q-select
                                 filled
-                                v-model="question.category"
+                                v-model="question.category_id"
                                 :options="categoryOptions"
                                 :label="`Category`"
                                 lazy-rules
                                 v-if="index === 0"
+                                emit-value
+                                map-options
                               />
                             </div>
                             <div class="col-6">
                               <q-select
                                 filled
-                                v-model="question.subcategory"
+                                v-model="question.subcategory_id"
                                 :options="subcategoryOptions"
                                 :label="`Subcategory`"
                                 lazy-rules
                                 v-if="index === 0"
+                                emit-value
+                                map-options
                               />
                             </div>
                           </div>
@@ -218,21 +155,34 @@
                               />
                             </div>
                           </div>
+                          <!-- button add questions -->
+                          <q-btn
+                            v-if="
+                              index === 0 &&
+                              questions[0].type === 'multilayered-type-1'
+                            "
+                            label="Add Question"
+                            type="submit"
+                            color="primary"
+                            @click="addQuestion"
+                            class="q-mt-md"
+                          />
+                          <q-btn
+                            v-if="
+                              index > 0 &&
+                              questions[0].type === 'multilayered-type-1'
+                            "
+                            label="Delete"
+                            class="q-mt-md"
+                            icon="delete"
+                            color="red"
+                            size="sm"
+                            @click="questions.splice(index, 1)"
+                          />
                         </q-card-section>
                       </q-card>
                     </div>
                     <div class="col-7">
-                      <!-- button add questions -->
-                      <q-btn
-                        v-if="
-                          index === 0 &&
-                          questions[0].type === 'multilayered-type-1'
-                        "
-                        label="Add Question"
-                        type="submit"
-                        color="primary"
-                        @click="addQuestion"
-                      />
                       <q-card
                         v-if="
                           index > 0 ||
@@ -251,11 +201,11 @@
                       :type="type"
                     ></option-card> -->
                           <q-expansion-item
-                            v-for="(option, index) in question.options"
+                            v-for="(option, idx) in question.options"
                             class="q-ma-md"
-                            :label="`Option ${index + 1}`"
-                            :key="index"
-                            :value="index"
+                            :label="`Option ${idx + 1}`"
+                            :key="idx"
+                            :value="idx"
                             :expand-separator="true"
                             :default-open="true"
                           >
@@ -266,32 +216,25 @@
                                   filled
                                   label="Content"
                                   v-model="option.content"
-                                  :key="index"
-                                  :name="`content${index}`"
-                                  :id="`content${index}`"
-                                  readonly
+                                  :key="idx"
+                                  :name="`content${idx}`"
+                                  :id="`content${idx}`"
                                 >
-                                  <template v-slot:append>
-                                    <tiny-mce-modal
-                                      :content="option.content"
-                                      :index="index"
-                                      @save="onContentChange"
-                                    />
-                                  </template>
                                 </q-input>
                                 <q-input
                                   filled
                                   label="Explanation"
                                   v-model="option.explanation"
-                                  :key="index"
-                                  :name="`explanation${index}`"
-                                  :id="`explanation${index}`"
+                                  :key="idx"
+                                  :name="`explanation${idx}`"
+                                  :id="`explanation${idx}`"
                                   readonly
                                 >
                                   <template v-slot:append>
                                     <tiny-mce-modal
                                       :content="option.explanation"
-                                      :index="index"
+                                      :index="idx"
+                                      :parentIndex="index"
                                       @save="onExplanationChange"
                                     />
                                   </template>
@@ -300,14 +243,14 @@
                                 <div class="row">
                                   <q-checkbox
                                     v-model="option.is_correct"
-                                    :key="index"
-                                    :name="`is_correct${index}`"
-                                    :id="`is_correct${index}`"
+                                    :key="idx"
+                                    :name="`is_correct${idx}`"
+                                    :id="`is_correct${idx}`"
                                     label="Correct"
                                     class="q-ma-md"
                                   />
                                   <q-btn
-                                    @click="deleteItem(index)"
+                                    @click="deleteItem(idx, index)"
                                     icon="delete"
                                     size="sm"
                                     color="negative"
@@ -339,7 +282,7 @@
                         </q-card-section>
                         <q-card-section>
                           <q-expansion-item
-                            v-for="(option, index) in question.options"
+                            v-for="(option, index) in question.hints"
                             class="q-ma-md"
                             :label="`Hint ${index + 1}`"
                             :key="index"
@@ -370,7 +313,7 @@
                                 <!-- same row + delete button-->
                                 <div class="row">
                                   <q-btn
-                                    @click="deleteItem(index)"
+                                    @click="deleteHint(index)"
                                     icon="delete"
                                     size="sm"
                                     color="negative"
@@ -384,10 +327,9 @@
                           </q-expansion-item>
                           <div class="q-mt-md">
                             <q-btn
-                              label="Add Option"
-                              type="submit"
+                              label="Add Hint"
                               color="primary"
-                              @click="addHint"
+                              @click="addHint(index)"
                             />
                           </div>
                         </q-card-section>
@@ -419,12 +361,16 @@ export default defineComponent({
     TinyMceModal: defineAsyncComponent(() =>
       import("components/TinyMceModal.vue")
     ),
+    SearchQuestions: defineAsyncComponent(() =>
+      import("components/question/SearchQuestions.vue")
+    ),
   },
   setup() {
     const store = useStore();
     const { $q } = useQuasar();
     return {
       $q,
+      store,
     };
   },
   data() {
@@ -432,6 +378,7 @@ export default defineComponent({
       pageName: "Add/Edit Question",
       dense: true,
       questions: [],
+      question_id: null,
       questionData: {
         content: "Demo content",
         category_id: null,
@@ -531,10 +478,15 @@ export default defineComponent({
         { label: "Single Best Answer", value: "single-best-answer" },
         { label: "Multiple Answer", value: "multiple-answer" },
         { label: "Multiple True/False", value: "multiple-true-false" },
-        { label: "Fill in the blanks", value: "written" },
-        { label: "Essay", value: "written" },
+        { label: "Written", value: "written" },
         { label: "Multilayered Type 1", value: "multilayered-type-1" },
         { label: "Multilayered Type 2", value: "multilayered-type-2" },
+      ],
+      types_without_multilayered: [
+        { label: "Single Best Answer", value: "single-best-answer" },
+        { label: "Multiple Answer", value: "multiple-answer" },
+        { label: "Multiple True/False", value: "multiple-true-false" },
+        { label: "Written", value: "written" },
       ],
     };
   },
@@ -542,22 +494,57 @@ export default defineComponent({
     onSubmit() {
       console.log("Submit");
       if (this.questions[0].type === "multilayered-type-2") {
-        this.questions[0].options.concat(this.questions[0].hints);
+        this.questions[0].options = [
+          ...this.questions[0].options,
+          ...this.questions[0].hints,
+        ];
       }
-      api.post("/questions", this.questions[0]).then((response) => {
-        console.log(response);
-        this.$q.notify({
-          message: "Question Added Successfully",
-          color: "positive",
-          icon: "check",
-        });
-        this.onReset();
-      });
+      if (this.question_id) {
+        // add id to questions
+        this.questions[0].id = this.question_id;
+        api
+          .put(`/questions/${this.question_id}`, this.questions[0])
+          .then((response) => {
+            this.$q.notify({
+              message: "Question Updated Successfully",
+              color: "positive",
+              icon: "check",
+            });
+            this.$router.push("/Question");
+          });
+      } else {
+        if (this.questions[0].type === "multilayered-type-1") {
+          this.questions[0].options = [];
+          this.questions[0].content = "";
+          console.log(this.questions);
+          api
+            .post("/questions/multilayered", { questions: this.questions })
+            .then((response) => {
+              console.log(response);
+              this.$q.notify({
+                message: "Question Added Successfully",
+                color: "positive",
+                icon: "check",
+              });
+              this.onReset();
+            });
+        } else {
+          api.post("/questions", this.questions[0]).then((response) => {
+            console.log(response);
+            this.$q.notify({
+              message: "Question Added Successfully",
+              color: "positive",
+              icon: "check",
+            });
+            this.onReset();
+          });
+        }
+      }
     },
     addQuestion(event) {
       event.preventDefault();
       this.questions.push({
-        content: "",
+        content: "Demo Content",
         category_id: null,
         subcategory: "",
         subject: "",
@@ -570,11 +557,20 @@ export default defineComponent({
         type: "",
         options: [
           {
-            content: "",
+            content: "Demo Content",
             is_correct: false,
             visibility: true,
             hint: "",
-            explanation: "",
+            explanation: "Demo Explanation",
+          },
+        ],
+        hints: [
+          {
+            content: "Demo Content",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "Demo Explanation",
           },
         ],
       });
@@ -595,143 +591,126 @@ export default defineComponent({
         type: "",
         options: [
           {
-            content: "",
+            content: "Demo Data",
             is_correct: false,
             visibility: true,
             hint: "",
-            explanation: "",
+            explanation: "Demo Explanation",
+          },
+        ],
+        hints: [
+          {
+            content: "Demo Data",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "Demo Explanation",
           },
         ],
       };
+      this.questions = [];
+      this.questions.push(this.questionData);
     },
     addOption(event, index) {
       event.preventDefault();
-
       this.questions[index].options.push({
         content: "This is another demo option",
         is_correct: false,
-        visibility: true,
-        hint: " This is demo hint",
         explanation: " This is demo explanation",
+        is_hint: false,
       });
     },
-    onDescriptionChange(value) {
-      this.questionData.content = value;
+    addHint(index) {
+      this.questions[index].hints.push({
+        content: "This is another demo hint",
+        is_correct: false,
+        is_hint: true,
+        explanation: "",
+      });
     },
-    onContentChange(value, index) {
-      this.questionData.options[index].content = value;
+    onDescriptionChange(value, index, parentIndex) {
+      this.questions[parentIndex].content = value;
     },
-    onExplanationChange(value, index) {
-      this.questionData.options[index].explanation = value;
+    onContentChange(value, idx, parentIndex) {
+      this.questions[parentIndex].options[idx].content = value;
     },
-    deleteItem(index) {
-      this.questionData.options.splice(index, 1);
+    onExplanationChange(value, idx, parentIndex) {
+      this.questions[parentIndex].options[idx].explanation = value;
     },
+    deleteItem(idx, index) {
+      this.questions[index].options.splice(idx, 1);
+    },
+    deleteHint(idx) {
+      event.preventDefault();
+      this.questions[0].hints.splice(idx, 1);
+    },
+    processQuestion(questionData, index) {
+      const question = this.questions[index];
+      const responseData = questionData;
 
-    getCategories() {
-      api.get("/categories/category").then((response) => {
-        response.data.data.map(
-          (category) => {
-            this.categoryOptions.push({
-              label: category.name,
-              value: category.id,
-            });
-          },
-          (error) => {
-            console.log(error);
-          }
-        );
+      const { options, content, category_id, type, score, unit_negative_mark } =
+        responseData;
+      const optionsData = options.data;
+
+      question.options = optionsData.filter((option) => !option.is_hint);
+      question.hints = optionsData.filter((option) => option.is_hint);
+
+      Object.assign(question, {
+        content,
+        category_id,
+        type,
+        score,
+        unit_negative_mark,
       });
-    },
-    getSubcategories() {
-      api.get("/categories/sub-category").then((response) => {
-        response.data.data.map(
-          (subcategory) => {
-            this.subcategoryOptions.push({
-              label: subcategory.name,
-              value: subcategory.id,
-            });
-          },
-          (error) => {
-            console.log(error);
-          }
-        );
-      });
-    },
-    getSubjects() {
-      api.get("/categories/subject").then((response) => {
-        response.data.data.map(
-          (subject) => {
-            this.subjectOptions.push({
-              label: subject.name,
-              value: subject.id,
-            });
-          },
-          (error) => {
-            console.log(error);
-          }
-        );
-      });
-    },
-    getChapters() {
-      api.get("/categories/chapter").then((response) => {
-        response.data.data.map(
-          (chapter) => {
-            this.chapterOptions.push({
-              label: chapter.name,
-              value: chapter.id,
-            });
-          },
-          (error) => {
-            console.log(error);
-          }
-        );
-      });
-    },
-    getFaculties() {
-      api.get("/categories/faculty").then((response) => {
-        response.data.data.map(
-          (faculty) => {
-            this.facultyOptions.push({
-              label: faculty.name,
-              value: faculty.id,
-            });
-          },
-          (error) => {
-            console.log(error);
-          }
-        );
-      });
-    },
-    getDisciplines() {
-      api.get("/categories/discipline").then((response) => {
-        response.data.data.map(
-          (discipline) => {
-            this.disciplineOptions.push({
-              label: discipline.name,
-              value: discipline.id,
-            });
-          },
-          (error) => {
-            console.log(error);
-          }
-        );
-      });
+      if (questionData.children.data.length > 0) {
+        this.questions.push({
+          content: "Demo Content",
+          category_id: null,
+          subcategory: "",
+          subject: "",
+          chapter: "",
+          faculty: "",
+          discipline: "",
+          parent_id: null,
+          score: 0,
+          unit_negative_mark: 0,
+          type: "",
+          options: [
+            {
+              content: "Demo Data",
+              is_correct: false,
+              visibility: true,
+              hint: "",
+              explanation: "Demo Explanation",
+            },
+          ],
+        });
+        this.processQuestion(questionData.children.data[0], index + 1);
+      }
     },
   },
   mounted() {
     this.questions.push(this.questionData);
-    this.getCategories();
-    this.getSubcategories();
+    this.store.categories.map((category) => {
+      this.categoryOptions.push({
+        label: category.name,
+        value: category.id,
+      });
+    });
+    this.store.subcategories.map((subcategory) => {
+      this.subcategoryOptions.push({
+        label: subcategory.name,
+        value: subcategory.id,
+      });
+    });
     if (this.$route.params.id) {
+      this.question_id = this.$route.params.id;
       api
-        .get(`/questions/${this.$route.params.id}?include=category`)
+        .get(
+          `/questions/${this.$route.params.id}?include=options,children.options`
+        )
         .then((response) => {
-          this.questionData = response.data.data;
-          this.questionData.options = response.data.data.options.data;
-          this.questionData.type = this.types.find(
-            (type) => type.value === this.questionData.type
-          );
+          this.processQuestion(response.data.data, 0);
         });
     }
   },

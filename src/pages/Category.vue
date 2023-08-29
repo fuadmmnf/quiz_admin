@@ -89,7 +89,7 @@ export default defineComponent({
     return {
       name: ref(""),
       pageName: "Category",
-      tableData: [],
+      tableData: ref([]),
       selectedParentCategory: ref(null),
       parentCategoryOptions: [],
     };
@@ -126,8 +126,7 @@ export default defineComponent({
           });
           this.name = "";
           this.tableData = [];
-          this.store.getCategories();
-          this.store.getSubcategories();
+          this.setDataList();
         });
     },
     onReset(evt) {
@@ -139,22 +138,25 @@ export default defineComponent({
     },
     deleteItem(row) {},
     setDataList() {
-      this.store.categories.map((item) => {
-        this.tableData.push({
-          name: item.name,
-          id: item.id,
-          children: [],
+      api.get("/categories/category?limit=0").then((res) => {
+        res.data.data.map((item) => {
+          this.tableData.push({
+            name: item.name,
+            id: item.id,
+            children: [],
+          });
         });
-      });
-      // if subcategories exist find the parent id in category list and push the subcategory to children
-      this.store.subcategories.map((item) => {
-        this.tableData.map((category) => {
-          if (category.id === item.parent_id) {
-            category.children.push({
-              name: item.name,
-              id: item.id,
+        api.get("/categories/sub-category?limit=0").then((res) => {
+          res.data.data.map((item) => {
+            this.tableData.map((parent) => {
+              if (parent.id == item.parent_id) {
+                parent.children.push({
+                  name: item.name,
+                  id: item.id,
+                });
+              }
             });
-          }
+          });
         });
       });
     },

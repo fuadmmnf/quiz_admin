@@ -18,6 +18,15 @@
     </q-card>
 
     <q-separator spaced />
+    <q-expansion-item
+      expand-separator
+      icon="search"
+      label="Search Questions"
+      class="q-card"
+    >
+      <search-questions @search="onSearch"></search-questions>
+    </q-expansion-item>
+    <q-separator spaced />
 
     <div class="q-pa-none">
       <div class="row q-col-gutter-md">
@@ -91,10 +100,13 @@
 import { defineComponent, defineAsyncComponent, ref, computed } from "vue";
 import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
+import { useQuasar } from "quasar";
+import SearchQuestions from "components/question/SearchQuestions.vue";
 
 export default defineComponent({
   name: "Question",
   setup() {
+    const { $q } = useQuasar();
     const store = useStore();
     const questions = ref([]);
     const pagination = ref({
@@ -102,26 +114,55 @@ export default defineComponent({
       rowsPerPage: 10,
       rowsNumber: 0,
     });
+    const searchData = ref({ type: "", keywords: "" });
     const fetchQuestions = (page = 1) => {
       loading.value = true;
-      api
-        .get("/questions?page=" + page)
-        .then((response) => {
-          questions.value = response.data.data;
-          const meta = response.data.meta.pagination;
-          console.log(meta.current_page);
-          pagination.value = {
-            page: meta.current_page,
-            rowsPerPage: meta.per_page,
-            rowsNumber: meta.total,
-          };
-        })
-        .finally(() => {
-          loading.value = false;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      if (searchData.value.keywords != "" || searchData.value.type != "") {
+        api
+          .get(
+            "/questions?searchJoin=and&search=type:" +
+              searchData.value.type +
+              ";content:" +
+              searchData.value.keywords +
+              "&page=" +
+              page
+          )
+          .then((response) => {
+            questions.value = response.data.data;
+            const meta = response.data.meta.pagination;
+            console.log(meta.current_page);
+            pagination.value = {
+              page: meta.current_page,
+              rowsPerPage: meta.per_page,
+              rowsNumber: meta.total,
+            };
+          })
+          .finally(() => {
+            loading.value = false;
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } else {
+        api
+          .get("/questions?page=" + page)
+          .then((response) => {
+            questions.value = response.data.data;
+            const meta = response.data.meta.pagination;
+            console.log(meta.current_page);
+            pagination.value = {
+              page: meta.current_page,
+              rowsPerPage: meta.per_page,
+              rowsNumber: meta.total,
+            };
+          })
+          .finally(() => {
+            loading.value = false;
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     };
     const loading = ref(true);
 
@@ -136,6 +177,8 @@ export default defineComponent({
       fetchQuestions,
       onRequest,
       questions,
+      $q,
+      searchData,
     };
   },
   data() {
@@ -194,17 +237,35 @@ export default defineComponent({
     TableActions: defineAsyncComponent(() =>
       import("components/tables/TableActions.vue")
     ),
+    SearchQuestions,
   },
   methods: {
     onEdit() {
       this.$router.push({ name: "question-edit" });
     },
     onDelete(row) {
-      this.questions.map((question, index) => {
-        if (question.name === row.name) {
-          this.questions.splice(index, 1);
-        }
-      });
+      this.$q
+        .dialog({
+          title: "Confirm Delete",
+          message: "Are you sure you want to delete this question?",
+          cancel: true,
+          persistent: true,
+        })
+        .onOk(() => {
+          api.delete("/questions/" + row.id).then((response) => {
+            this.$q.notify({
+              color: "positive",
+              message: "Question deleted successfully",
+              icon: "check",
+            });
+            this.fetchQuestions();
+          });
+        });
+    },
+    onSearch(search) {
+      this.searchData = search;
+      console.log(this.searchData);
+      this.fetchQuestions();
     },
   },
   mounted() {

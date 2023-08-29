@@ -6,11 +6,11 @@
         <div class="text-h6">Add/Edit Questions in Exam</div>
         <div class="row">
           <q-btn
-            label="Create Question"
-            color="primary"
+            label="Update Question"
+            color="orange"
             icon="add"
             class="q-ml-sm"
-            to="/Question/add"
+            @click="updateQuestionList"
           />
         </div>
       </q-card-section>
@@ -21,182 +21,123 @@
     <q-expansion-item
       expand-separator
       icon="search"
-      label="Search"
+      label="Search Questions"
       class="q-card"
-      header-class=" text-h6"
     >
-      <q-card class="no-shadow" bordered>
+      <search-questions @search="searchQuestions"></search-questions>
+      <q-card>
         <q-card-section>
-          <div class="row q-col-gutter-md">
-            <div class="col-12">
-              <q-input
-                filled
-                v-model="searchText"
-                :label="`Search Questions to add`"
-              >
-                <template v-slot:append>
-                  <!-- filter icon -->
-
+          <!-- table -->
+          <q-table
+            v-if="searchResults.length > 0"
+            :rows="searchResults"
+            :columns="columns"
+            :loading="loading"
+            rows-per-page-options="[10]"
+            row-key="real_id"
+            wrap-cells
+            class="q-mt-md"
+            :filter="filter"
+            v-model:pagination="pagination"
+            @request="onRequest"
+            hide-pagination
+          >
+            <template v-slot:body="props">
+              <q-tr :props="props">
+                <q-td key="content" :props="props">
+                  {{ props.row.content.substring(0, 50) + "..." }}
+                </q-td>
+                <q-td key="type" :props="props">
+                  {{ props.row.type }}
+                </q-td>
+                <q-td key="score" :props="props">
+                  {{ props.row.score }}
+                </q-td>
+                <q-td key="unit_negative_mark" :props="props">
+                  {{ props.row.unit_negative_mark }}
+                </q-td>
+                <q-td key="actions" :props="props" class="">
                   <q-btn
-                    flat
-                    round
-                    @click="searchQuestions()"
                     dense
-                    icon="search"
-                    class="bg-grey-3"
-                    style="width: 40px; height: 40px"
+                    flat
+                    size="sm"
+                    color="primary"
+                    label="Add"
+                    icon="add"
+                    @click="addQuestion(props.row)"
                   />
-                </template>
-              </q-input>
-
-              <!-- filtering options div -->
-              <q-expansion-item
-                class="q-mt-sm text-grey-6"
-                v-model="expanded"
-                icon="filter_list"
-                label="Filtering Options"
-              >
-                <div class="row q-col-gutter-md q-mt-sm">
-                  <div class="col-2">
-                    <q-select
-                      filled
-                      v-model="type"
-                      :options="type_options"
-                      :label="`Question Type`"
-                      lazy-rules
-                      emit-value
-                      map-options
-                    />
-                  </div>
-                  <div class="col-2">
-                    <q-select
-                      filled
-                      v-model="model"
-                      :options="options"
-                      :label="`Subcategory`"
-                      lazy-rules
-                      emit-value
-                      map-options
-                    />
-                  </div>
-                  <div class="col-2">
-                    <q-select
-                      filled
-                      v-model="model"
-                      :options="options"
-                      :label="`Subject`"
-                      lazy-rules
-                      emit-value
-                      map-options
-                    />
-                  </div>
-                  <div class="col-2">
-                    <q-select
-                      filled
-                      v-model="model"
-                      :options="options"
-                      :label="`Chapter`"
-                      lazy-rules
-                      emit-value
-                      map-options
-                    />
-                  </div>
-                  <div class="col-2">
-                    <q-select
-                      filled
-                      v-model="model"
-                      :options="options"
-                      :label="`Faculty`"
-                      lazy-rules
-                      emit-value
-                      map-options
-                    />
-                  </div>
-                  <div class="col-2">
-                    <q-select
-                      filled
-                      v-model="model"
-                      :options="options"
-                      :label="`Discipline`"
-                      lazy-rules
-                      emit-value
-                      map-options
-                    />
-                  </div>
-                </div>
-              </q-expansion-item>
-            </div>
-          </div>
-        </q-card-section>
-        <q-card-section>
-          <!-- for loop of div for search results of questions, and a button to add a question -->
-          <div v-for="(item, index) in searchResults" :key="index">
-            <div class="row items-center">
-              <div class="col-10">
-                <!-- content , type and score -->
-                <div class="row items-center">
-                  <div class="col-1">
-                    <div class="text">{{ index + 1 }}.</div>
-                  </div>
-                  <div class="col-5">
-                    <div class="">
-                      {{ item.content.substring(0, 50) + "..." }}
-                    </div>
-                    <div class="text-grey-6">{{ item.type }}</div>
-                  </div>
-                  <!-- col for negative marks -->
-                  <div class="col-3">
-                    <div class="text">
-                      Negative Marks : {{ item.unit_negative_mark }}
-                    </div>
-                  </div>
-                  <div class="col-3">
-                    <div class="text">Score : {{ item.score }}</div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-2">
-                <q-btn
-                  size="sm"
-                  color="primary"
-                  outline
-                  label="Add"
-                  icon="add"
-                  @click="addQuestion(item)"
-                />
-              </div>
-            </div>
-            <q-separator />
-          </div>
+                </q-td>
+              </q-tr>
+            </template>
+          </q-table>
+          <q-separator />
         </q-card-section>
       </q-card>
     </q-expansion-item>
+    <q-separator spaced=""></q-separator>
+    <q-expansion-item
+      expand-separator
+      icon="search"
+      label="Search Exams"
+      class="q-card"
+    >
+      <search-exams @search="searchExams"></search-exams>
+      <q-card>
+        <q-card-section>
+          <!-- table -->
+          <q-table
+            v-if="searchExamResults.length > 0"
+            :rows="searchExamResults"
+            :columns="examColumns"
+            rows-per-page-options="[10]"
+            row-key="id"
+            wrap-cells
+            class="q-mt-md"
+            v-model:pagination="pagination"
+            hide-pagination
+          >
+            <template v-slot:body="props">
+              <q-tr :props="props">
+                <q-td key="title" :props="props">
+                  {{ props.row.title }}
+                </q-td>
+                <q-td key="code" :props="props">
+                  {{ props.row.code }}
+                </q-td>
+                <q-td key="duration_in_minutes" :props="props">
+                  {{ props.row.duration_in_minutes }}
+                </q-td>
+                <q-td key="actions" :props="props" class="">
+                  <q-btn
+                    dense
+                    flat
+                    size="sm"
+                    color="primary"
+                    label="Add"
+                    icon="add"
+                    @click="addExamQuestions(props.row)"
+                  />
+                </q-td>
+              </q-tr>
+            </template>
+          </q-table>
+          <q-separator />
+        </q-card-section>
+      </q-card>
+    </q-expansion-item>
+    <q-separator></q-separator>
     <!-- questions table with serial, type, name, cateogry, actions -->
     <q-table
       :rows="examQuestions"
       :columns="columns"
       :loading="loading"
-      rows-per-page-options="[10]"
       row-key="real_id"
       wrap-cells
       class="q-mt-md"
       :filter="filter"
       v-model:pagination="pagination"
-      @request="onRequest"
+      hide-pagination
     >
-      <template v-slot:top-right>
-        <q-input
-          borderless
-          dense
-          debounce="300"
-          v-model="filter"
-          placeholder="Search"
-        >
-          <template v-slot:append>
-            <q-icon name="search" />
-          </template>
-        </q-input>
-      </template>
       <template v-slot:body="props">
         <q-tr :props="props">
           <q-td key="content" :props="props">
@@ -217,7 +158,7 @@
               flat
               size="sm"
               color="primary"
-              label="edit"
+              label="Edit"
               icon="edit"
               @click="edit(props.row.id)"
             />
@@ -228,7 +169,7 @@
               color="negative"
               label="Delete"
               icon="delete"
-              @click="deleteRow"
+              @click="deleteRow(props.row.id)"
             />
           </q-td>
         </q-tr>
@@ -238,18 +179,29 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineAsyncComponent, defineComponent, ref } from "vue";
 import { api } from "boot/axios";
 import { useRoute } from "vue-router";
+import { useQuasar } from "quasar";
 
 export default defineComponent({
   name: "AddEditQuestions",
+  components: {
+    // define async
+    SearchQuestions: defineAsyncComponent(() =>
+      import("components/question/SearchQuestions.vue")
+    ),
+    SearchExams: defineAsyncComponent(() =>
+      import("components/exam/SearchExams.vue")
+    ),
+  },
   setup() {
     const pagination = ref({
       page: 1,
-      rowsPerPage: 10,
+      rowsPerPage: 200,
       rowsNumber: 0,
     });
+    const $q = useQuasar();
     const filter = ref("");
     const loading = ref(true);
     const examQuestions = ref([]);
@@ -257,12 +209,7 @@ export default defineComponent({
     const fetchExamQuestions = (page = 1) => {
       loading.value = true;
       api
-        .get(
-          "/exam-questions/" +
-            route.params.id +
-            "?include=question&page=" +
-            page
-        )
+        .get("/exam-questions/" + route.params.id + "?include=question&limit=0")
         .then((res) => {
           examQuestions.value = [];
           if (res.data.data.length > 0) {
@@ -270,12 +217,6 @@ export default defineComponent({
               examQuestions.value.push(item.question.data);
             });
           }
-          const meta = res.data.meta.pagination;
-          pagination.value = {
-            page: meta.current_page,
-            rowsPerPage: meta.per_page,
-            rowsNumber: meta.total,
-          };
         })
         .catch((err) => {
           console.log(err);
@@ -296,6 +237,7 @@ export default defineComponent({
       fetchExamQuestions,
       examQuestions,
       onRequest,
+      $q,
     };
   },
   data() {
@@ -315,6 +257,7 @@ export default defineComponent({
         sortBy: "name",
       },
       searchResults: [],
+      searchExamResults: [],
       filter: "",
       loading: false,
       show: false,
@@ -360,44 +303,132 @@ export default defineComponent({
           sortable: true,
         },
       ],
+      examColumns: [
+        {
+          name: "title",
+          required: true,
+          label: "Title",
+          align: "left",
+          field: "title",
+          sortable: true,
+        },
+        {
+          name: "code",
+          required: true,
+          label: "Code",
+          align: "left",
+          field: "code",
+          sortable: true,
+        },
+        {
+          name: "duration_in_minutes",
+          required: true,
+          label: "Duration (In Minutes)",
+          align: "left",
+          field: "duration_in_minutes",
+          sortable: true,
+        },
+        {
+          name: "actions",
+          required: true,
+          label: "Actions",
+          align: "left",
+          field: "actions",
+          sortable: true,
+        },
+      ],
     };
   },
   methods: {
     edit(id) {
       this.$router.push(`/Question/` + id);
     },
-    deleteRow() {
-      this.$q.dialog({
-        title: "Confirm",
-        message: "Are you sure you want to Delete?",
-        cancel: true,
-        persistent: true,
-      });
-    },
-    searchQuestions() {
-      this.loading = true;
-      api
-        .get("/questions", {
-          params: {
-            searchJoin: "and",
-            search: "type:" + this.type + " ;content: " + this.searchText,
-          },
+    deleteRow(id) {
+      this.$q
+        .dialog({
+          title: "Confirm",
+          message: "Are you sure you want to Delete?",
+          cancel: true,
+          persistent: true,
         })
+        .onOk(() => {
+          this.examQuestions.splice(
+            this.examQuestions.findIndex((item) => item.id == id),
+            1
+          );
+          this.$q.notify({
+            color: "negative",
+            message: "Question Deleted Successfully",
+            icon: "delete",
+          });
+        })
+        .onCancel(() => {
+          console.log("cancel");
+        });
+    },
+    searchQuestions(searchData) {
+      api
+        .get(
+          `/questions?searchJoin=and&search=type:${searchData.type};content:${searchData.keywords}&limit=0`
+        )
         .then((res) => {
           this.searchResults = res.data.data;
-          this.loading = false;
           console.log(res.data.data);
         })
         .catch((err) => {
-          this.loading = false;
+          console.log(err);
+        });
+    },
+    searchExams(searchData) {
+      if (
+        searchData.keywords == "" &&
+        searchData.category == "" &&
+        searchData.type == "" &&
+        searchData.faculty == "" &&
+        searchData.subject == ""
+      ) {
+        this.searchExamResults = [];
+        return;
+      }
+      api
+        .get(
+          `/exams?searchJoin=and&search=title:${searchData.keywords}&limit=0`
+        )
+        .then((res) => {
+          this.searchExamResults = res.data.data;
+          console.log(res.data.data);
+        })
+        .catch((err) => {
           console.log(err);
         });
     },
     addQuestion(item) {
+      if (
+        this.examQuestions.findIndex((question) => question.id == item.id) == -1
+      ) {
+        this.examQuestions.push(item);
+        this.$q.notify({
+          color: "positive",
+          message: "Question Added Successfully",
+          icon: "check",
+        });
+      } else {
+        this.$q.notify({
+          color: "negative",
+          message: "Question Already Added",
+          icon: "delete",
+        });
+      }
+    },
+    updateQuestionList() {
+      var question_ids = [];
+      this.examQuestions.map((item) => {
+        question_ids.push(item.id);
+      });
       api
         .post("/exam-questions", {
           exam_id: this.$route.params.id,
-          question_ids: [item.real_id],
+          question_ids: question_ids,
         })
         .then((res) => {
           this.$q.notify({
@@ -406,12 +437,42 @@ export default defineComponent({
             icon: "check",
           });
           this.searchResults.splice(this.searchResults.indexOf(item), 1);
-          this.getExamQuestions();
-          console.log(res.data);
+          this.fetchExamQuestions();
         })
         .catch((err) => {
           console.log(err);
         });
+    },
+    addExamQuestions(item) {
+      var question_ids = [];
+      this.examQuestions.map((item) => {
+        question_ids.push(item.id);
+      });
+      api.get("/exam-questions/" + item.id + "?include=question&limit=0").then(
+        (res) => {
+          if (res.data.data.length > 0) {
+            res.data.data.forEach((item) => {
+              if (
+                this.examQuestions.findIndex(
+                  (question) => question.id == item.question.data.id
+                ) == -1
+              ) {
+                this.examQuestions.push(item.question.data);
+              }
+            });
+            this.$q.notify({
+              color: "positive",
+              message: "Questions Added Successfully",
+              icon: "check",
+            });
+          }
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+      if (question_ids.length > 0) {
+      }
     },
   },
   mounted() {

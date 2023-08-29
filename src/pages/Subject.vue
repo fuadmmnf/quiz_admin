@@ -50,6 +50,8 @@
                   :options="parentCategoryOptions"
                   :label="`Parent Subject`"
                   lazy-rules
+                  map-options
+                  emit-value
                 />
                 <div>
                   <q-btn label="Submit" type="submit" color="primary" />
@@ -128,9 +130,7 @@ export default {
           });
           this.name = "";
           this.tableData = [];
-          this.store.getSubject();
-          this.store.getChapters();
-          this.store.setDataList();
+          this.setDataList();
         });
     },
     onReset(evt) {
@@ -144,29 +144,37 @@ export default {
     deleteItem(row) {},
 
     setDataList() {
-      this.tableData = [];
-      this.store.subject.map((item) => {
-        this.tableData.push({
-          name: item.name,
-          id: item.id,
-          children: [],
+      api.get("/categories/subject?limit=0").then((res) => {
+        res.data.data.map((item) => {
+          this.tableData.push({
+            name: item.name,
+            id: item.id,
+            children: [],
+          });
         });
-      });
-      // if subcategories exist find the parent id in category list and push the subcategory to children
-      this.store.chapters.map((item) => {
-        this.tableData.map((category) => {
-          if (category.id === item.parent_id) {
-            category.children.push({
-              name: item.name,
-              id: item.id,
+        api.get("/categories/chapter?limit=0").then((res) => {
+          res.data.data.map((item) => {
+            this.tableData.map((parent) => {
+              if (parent.id == item.parent_id) {
+                parent.children.push({
+                  name: item.name,
+                  id: item.id,
+                });
+              }
             });
-          }
+          });
         });
       });
     },
   },
   mounted() {
     this.setDataList();
+    this.store.subject.map((item) => {
+      this.parentCategoryOptions.push({
+        label: item.name,
+        value: item.id,
+      });
+    });
   },
 };
 </script>

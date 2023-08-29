@@ -132,45 +132,49 @@ export default defineComponent({
           });
           this.name = "";
           this.tableData = [];
-          this.store.getFaculty();
-          this.store.getDisciplines();
-          this.store.setDataList();
+          this.setDataList();
         });
     },
     onReset(evt) {
       console.log("@reset - do something here", evt);
     },
     editItem(item) {
-      console.log("editItem", item);
       this.name = item.name;
-      this.model = item.model;
+      this.selectedParentCategory = item.parent_id;
     },
     deleteItem(row) {},
-
     setDataList() {
-      this.tableData = [];
-      this.store.faculty.map((item) => {
-        this.tableData.push({
-          name: item.name,
-          id: item.id,
-          children: [],
+      api.get("/categories/faculty?limit=0").then((res) => {
+        res.data.data.map((item) => {
+          this.tableData.push({
+            name: item.name,
+            id: item.id,
+            children: [],
+          });
         });
-      });
-      // if subcategories exist find the parent id in category list and push the subcategory to children
-      this.store.disciplines.map((item) => {
-        this.tableData.map((category) => {
-          if (category.id === item.parent_id) {
-            category.children.push({
-              name: item.name,
-              id: item.id,
+        api.get("/categories/discipline?limit=0").then((res) => {
+          res.data.data.map((item) => {
+            this.tableData.map((parent) => {
+              if (parent.id == item.parent_id) {
+                parent.children.push({
+                  name: item.name,
+                  id: item.id,
+                });
+              }
             });
-          }
+          });
         });
       });
     },
   },
   mounted() {
     this.setDataList();
+    this.store.faculty.map((item) => {
+      this.parentCategoryOptions.push({
+        label: item.name,
+        value: item.id,
+      });
+    });
   },
 });
 </script>

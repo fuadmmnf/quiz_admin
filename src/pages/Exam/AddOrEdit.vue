@@ -491,6 +491,7 @@ export default defineComponent({
     const { $q } = useQuasar();
     return {
       exams,
+      $q,
     };
   },
   data() {
@@ -564,7 +565,7 @@ export default defineComponent({
       console.log("Submitted");
       api.post("/exams", this.examData).then((response) => {
         console.log(response);
-        $q.notify({
+        this.$q.notify({
           message: "Exam Added Successfully",
           color: "positive",
           icon: "check",
@@ -615,7 +616,7 @@ export default defineComponent({
         response.data.data.map((category) => {
           this.categoryOptions.push({
             label: category.name,
-            value: category.real_id,
+            value: category.id,
           });
         });
       });
@@ -625,7 +626,7 @@ export default defineComponent({
         response.data.data.map((category) => {
           this.subjectOptions.push({
             label: category.name,
-            value: category.real_id,
+            value: category.id,
           });
         });
       });

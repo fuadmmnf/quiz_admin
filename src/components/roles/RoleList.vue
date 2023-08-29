@@ -138,17 +138,27 @@ export default {
   },
   methods: {
     deleteUser(id) {
-      api
-        .delete(`/users/${id}`)
-        .then((res) => {
-          this.$q.notify({
-            color: "positive",
-            message: "User deleted successfully",
-          });
-          fetchRoles();
+      // confirm
+      this.$q
+        .dialog({
+          title: "Confirm",
+          message: "Are you sure you want to delete this user?",
+          cancel: true,
+          persistent: true,
         })
-        .catch((error) => {
-          console.log(error);
+        .onOk(() => {
+          api
+            .delete(`/users/${id}`)
+            .then((res) => {
+              this.$q.notify({
+                color: "positive",
+                message: "User deleted successfully",
+              });
+              fetchRoles();
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         });
     },
   },

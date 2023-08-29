@@ -31,7 +31,7 @@
             <q-tooltip class="bg-white text-primary">Close</q-tooltip>
           </q-btn>
         </q-bar>
-        <q-card-section align="center" v-if="description">
+        <q-card-section align="center">
           <editor
             v-model="description"
             api-key="nn1oy7fxz6slcu516a4moosd888g0nx0c88bm0jhwg1fib22"
@@ -76,6 +76,10 @@ export default {
       type: Number,
       default: 0,
     },
+    parentIndex: {
+      type: Number,
+      default: 0,
+    },
   },
   components: {
     QEditor: defineAsyncComponent(() => import("quasar")),
@@ -91,16 +95,18 @@ export default {
           "undo redo | bold italic | alignleft aligncenter alignright | code",
       },
       maximizedToggle: ref(true),
-      description: this.content,
+      description: "",
     };
   },
   methods: {
     onSave() {
       this.show = false;
       console.log("save");
-      this.$emit("save", this.description, this.index);
-      console.log(this.description);
+      this.$emit("save", this.description, this.index, this.parentIndex);
     },
+  },
+  mounted() {
+    this.description = this.content;
   },
 };
 </script>
