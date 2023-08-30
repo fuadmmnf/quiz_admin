@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
 import { api } from "boot/axios";
 
-export const useStore = defineStore("store", {
-  state: () => ({
+const defaultStore = () => {
+  return {
     counter: 0,
     isAuthenticated: false,
     accessToken: null,
@@ -14,11 +14,22 @@ export const useStore = defineStore("store", {
     subcategories: [],
     disciplines: [],
     chapters: [],
-  }),
+  };
+};
+
+
+
+export const useStore = defineStore("store", {
+  state: () => (
+    defaultStore()
+  ),
   getters: {
     doubleCount: (state) => state.counter * 2,
   },
   actions: {
+    resetState() {
+      Object.assign(this, defaultStore());
+    },
     increment() {
       this.counter++;
     },

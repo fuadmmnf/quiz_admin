@@ -1,6 +1,5 @@
-import { boot } from "quasar/wrappers";
 import axios from "axios";
-
+import { boot } from "quasar/wrappers";
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
 // If any client changes this (global) instance, it might be a
@@ -8,9 +7,24 @@ import axios from "axios";
 // "export default () => {}" function below (which runs individually
 // for each client)
 const api = axios.create({
-  baseURL: process.env.DEV? "http://api.apiato.test/v1": "https://api-monolith.theeduaid.com/v1",
-  headers: { Authorization: "Bearer " + localStorage.getItem("accessToken") },
+  baseURL: process.env.DEV
+    ? "http://api.apiato.test/v1"
+    : "https://api-monolith.theeduaid.com/v1",
+  headers: { "Content-Type": "application/json" },
 });
+
+api.interceptors.request.use(
+  (config) => {
+    const token = "Bearer " + localStorage.getItem("accessToken");
+    if (token) {
+      config.headers["Authorization"] = token;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api

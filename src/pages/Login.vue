@@ -57,16 +57,16 @@ export default defineComponent({
     const store = useStore();
 
     return {
-      mobile: ref("Pratik"),
-      password: ref("12345"),
+      mobile: ref(""),
+      password: ref(""),
       store,
     };
   },
   methods: {
-    login() {
+    async login() {
       const { mobile, password } = this;
-      this.store.authenticate(mobile, password);
-      this.$router.push("/");
+      await this.store.authenticate(mobile, password);
+      if (this.store.isAuthenticated) this.$router.push("/");
     },
   },
 });

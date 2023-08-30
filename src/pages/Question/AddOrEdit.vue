@@ -310,6 +310,16 @@
                                     />
                                   </template>
                                 </q-input>
+                                <!-- negative mark -->
+                                <q-input
+                                  filled
+                                  label="Negative Mark"
+                                  v-model="option.negative_mark"
+                                  :key="index"
+                                  :name="`negative_mark${index}`"
+                                  :id="`negative_mark${index}`"
+                                  lazy-rules
+                                />
                                 <!-- same row + delete button-->
                                 <div class="row">
                                   <q-btn
@@ -378,7 +388,7 @@ export default defineComponent({
       questions: [],
       question_id: null,
       questionData: {
-        content: "Demo content",
+        content: "",
         category_id: null,
         subcategory: "",
         subject: "",
@@ -391,76 +401,81 @@ export default defineComponent({
         type: "",
         options: [
           {
-            content: "This is an options data",
+            content: "",
             is_correct: true,
-            explanation: "This is demo explanation",
+            explanation: "",
             is_hint: false,
             visibility: true,
           },
           {
-            content: "This is an options data",
+            content: "",
             is_correct: false,
-            explanation: "This is demo explanation",
+            explanation: "",
             is_hint: false,
             visibility: true,
           },
           {
-            content: "This is an options data",
+            content: "",
             is_correct: false,
-            explanation: "This is demo explanation",
+            explanation: "",
             is_hint: false,
             visibility: true,
           },
           {
-            content: "This is an options data",
+            content: "",
             is_correct: false,
-            explanation: "This is demo explanation",
+            explanation: "",
             is_hint: false,
             visibility: true,
           },
           {
-            content: "This is an options data",
+            content: "",
             is_correct: false,
-            explanation: "This is demo explanation",
+            explanation: "",
             is_hint: false,
             visibility: true,
           },
         ],
         hints: [
           {
-            content: "This is an hints data",
+            content: "",
             is_correct: true,
             explanation: "",
             is_hint: true,
             visibility: true,
+            negative_mark: 0,
           },
           {
-            content: "This is an hints data",
+            content: "",
             is_correct: false,
             explanation: "",
             is_hint: true,
             visibility: true,
+            negative_mark: 0,
           },
           {
-            content: "This is an hints data",
+            content: "",
             is_correct: false,
             explanation: "",
             is_hint: true,
             visibility: true,
+            negative_mark: 0,
           },
           {
-            content: "This is an hints data",
+            content: "",
             is_correct: false,
             explanation: "",
             is_hint: true,
             visibility: true,
+            negative_mark: 0,
           },
           {
-            content: "This is an hints data",
+            content: "",
             is_correct: false,
             explanation: "",
             is_hint: true,
             visibility: true,
+            negative_mark: 0,
           },
         ],
       },
@@ -542,7 +557,7 @@ export default defineComponent({
     addQuestion(event) {
       event.preventDefault();
       this.questions.push({
-        content: "Demo Content",
+        content: "",
         category_id: null,
         subcategory: "",
         subject: "",
@@ -555,20 +570,21 @@ export default defineComponent({
         type: "",
         options: [
           {
-            content: "Demo Content",
+            content: "",
             is_correct: false,
             visibility: true,
             hint: "",
-            explanation: "Demo Explanation",
+            explanation: "",
           },
         ],
         hints: [
           {
-            content: "Demo Content",
+            content: "",
             is_correct: false,
             visibility: true,
             hint: "",
-            explanation: "Demo Explanation",
+            explanation: "",
+            negative_mark: 0,
           },
         ],
       });
@@ -589,20 +605,21 @@ export default defineComponent({
         type: "",
         options: [
           {
-            content: "Demo Data",
+            content: "",
             is_correct: false,
             visibility: true,
             hint: "",
-            explanation: "Demo Explanation",
+            explanation: "",
           },
         ],
         hints: [
           {
-            content: "Demo Data",
+            content: "",
             is_correct: false,
             visibility: true,
             hint: "",
-            explanation: "Demo Explanation",
+            explanation: "",
+            negative_mark: 0,
           },
         ],
       };
@@ -614,7 +631,7 @@ export default defineComponent({
       this.questions[index].options.push({
         content: "This is another demo option",
         is_correct: false,
-        explanation: " This is demo explanation",
+        explanation: " ",
         is_hint: false,
       });
     },
@@ -662,7 +679,7 @@ export default defineComponent({
       });
       if (questionData.children.data.length > 0) {
         this.questions.push({
-          content: "Demo Content",
+          content: "",
           category_id: null,
           subcategory: "",
           subject: "",
@@ -675,11 +692,11 @@ export default defineComponent({
           type: "",
           options: [
             {
-              content: "Demo Data",
+              content: "",
               is_correct: false,
               visibility: true,
               hint: "",
-              explanation: "Demo Explanation",
+              explanation: "",
             },
           ],
         });

@@ -1,13 +1,12 @@
 import { route } from "quasar/wrappers";
+import { useStore } from "src/stores/store";
 import {
-  createRouter,
   createMemoryHistory,
-  createWebHistory,
+  createRouter,
   createWebHashHistory,
+  createWebHistory,
 } from "vue-router";
 import routes from "./routes";
-import { useStore } from "src/stores/store";
-import { use } from "echarts";
 
 /*
  * If not building with SSR mode, you can
@@ -25,7 +24,6 @@ export default route(function (/* { store, ssrContext } */) {
     ? createWebHistory
     : createWebHashHistory;
   const store = useStore();
-
   const Router = createRouter({
     scrollBehavior: () => ({ left: 0, top: 0 }),
     routes,
@@ -36,6 +34,8 @@ export default route(function (/* { store, ssrContext } */) {
     history: createHistory(process.env.VUE_ROUTER_BASE),
   });
   Router.beforeEach(async (to, from, next) => {
+    console.log(store.isAuthenticated);
+
     const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
     if (
       requiresAuth &&

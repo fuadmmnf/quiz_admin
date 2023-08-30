@@ -232,6 +232,7 @@ import Messages from "./Messages.vue";
 
 import { defineComponent, ref } from "vue";
 import { useQuasar } from "quasar";
+import { useStore } from "src/stores/store";
 
 export default defineComponent({
   name: "MainLayout",
@@ -244,6 +245,7 @@ export default defineComponent({
   setup() {
     const leftDrawerOpen = ref(false);
     const $q = useQuasar();
+    const store = useStore();
 
     return {
       $q,
@@ -251,13 +253,15 @@ export default defineComponent({
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
       },
+      store,
     };
   },
   methods: {
     logout() {
-      localStorage.removeItem("iuser");
+      localStorage.removeItem("user");
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
+      this.store.resetState();
 
       this.$router.push("/login");
     },
