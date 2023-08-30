@@ -8,7 +8,7 @@ import axios from "axios";
 // "export default () => {}" function below (which runs individually
 // for each client)
 const api = axios.create({
-  baseURL: "http://api.apiato.test/v1",
+  baseURL: process.env.DEV? "http://api.apiato.test/v1": "https://api-monolith.theeduaid.com/v1",
   headers: { Authorization: "Bearer " + localStorage.getItem("accessToken") },
 });
 
