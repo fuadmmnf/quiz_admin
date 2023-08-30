@@ -355,9 +355,7 @@ import { useQuasar } from "quasar";
 export default defineComponent({
   name: "AddOrEditQuestion",
   components: {
-    OptionCard: defineAsyncComponent(() =>
-      import("components/Question/OptionCard.vue")
-    ),
+    OptionCard: OptionCard,
     TinyMceModal: defineAsyncComponent(() =>
       import("components/TinyMceModal.vue")
     ),

@@ -481,9 +481,7 @@ import { useQuasar } from "quasar";
 export default defineComponent({
   name: "AddOrEditEzam",
   components: {
-    OptionCard: defineAsyncComponent(() =>
-      import("components/Question/OptionCard.vue")
-    ),
+    OptionCard: OptionCard
   },
   setup() {
     const store = useStore();
