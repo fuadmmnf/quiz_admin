@@ -1,5 +1,9 @@
 # for local development
 version: '3.7'
+networks:
+  network-custom:
+    name: tunnel
+    external: true
 services:
   quasar-admin:
     container_name: eduaid-admin-prod
@@ -7,3 +11,5 @@ services:
       context: .
     ports:
       - "${NGINX_HOST_PORT}:80"
+    networks:
+      - network-custom
