@@ -32,9 +32,8 @@
                 class="q-gutter-md q-mt-lg"
               >
                 <q-input
-                  filled
+                  outlined
                   v-model="name"
-                  stack-label
                   :label="`Subject/Chapter name `"
                   :hint="`$Subject/Chapter name must be unique`"
                   lazy-rules
@@ -44,8 +43,7 @@
                 />
 
                 <q-select
-                  filled
-                  stack-label
+                  outlined
                   v-model="selectedParentCategory"
                   :options="parentCategoryOptions"
                   :label="`Parent Subject`"

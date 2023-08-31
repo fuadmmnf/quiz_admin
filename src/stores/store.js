@@ -1,5 +1,5 @@
-import { defineStore } from "pinia";
 import { api } from "boot/axios";
+import { defineStore } from "pinia";
 
 const defaultStore = () => {
   return {
@@ -17,12 +17,8 @@ const defaultStore = () => {
   };
 };
 
-
-
 export const useStore = defineStore("store", {
-  state: () => (
-    defaultStore()
-  ),
+  state: () => defaultStore(),
   getters: {
     doubleCount: (state) => state.counter * 2,
   },
@@ -33,7 +29,7 @@ export const useStore = defineStore("store", {
     increment() {
       this.counter++;
     },
-    getCategories() {
+    async getCategories() {
       api
         .get("/categories/category?limit=0")
         .then((response) => {
