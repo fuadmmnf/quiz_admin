@@ -30,7 +30,7 @@ export const useStore = defineStore("store", {
       this.counter++;
     },
     async getCategories() {
-      api
+      await api
         .get("/categories/category?limit=0")
         .then((response) => {
           this.categories = response.data.data;
@@ -39,8 +39,8 @@ export const useStore = defineStore("store", {
           console.log(error);
         });
     },
-    getFaculty() {
-      api
+    async getFaculty() {
+      await api
         .get("/categories/faculty?limit=0")
         .then((response) => {
           this.faculty = response.data.data;
@@ -49,8 +49,8 @@ export const useStore = defineStore("store", {
           console.log(error);
         });
     },
-    getSubject() {
-      api
+    async getSubject() {
+      await api
         .get("/categories/subject?limit=0")
         .then((response) => {
           this.subject = response.data.data;
@@ -59,8 +59,8 @@ export const useStore = defineStore("store", {
           console.log(error);
         });
     },
-    getSubcategories() {
-      api
+    async getSubcategories() {
+      await api
         .get("/categories/sub-category?limit=0")
         .then((response) => {
           this.subcategories = response.data.data;
@@ -69,8 +69,8 @@ export const useStore = defineStore("store", {
           console.log(error);
         });
     },
-    getDisciplines() {
-      api
+    async getDisciplines() {
+      await api
         .get("/categories/discipline?limit=0")
         .then((response) => {
           this.disciplines = response.data.data;
@@ -79,8 +79,8 @@ export const useStore = defineStore("store", {
           console.log(error);
         });
     },
-    getChapters() {
-      api
+    async getChapters() {
+      await api
         .get("/categories/chapter?limit=0")
         .then((response) => {
           this.chapters = response.data.data;
@@ -96,11 +96,11 @@ export const useStore = defineStore("store", {
       localStorage.removeItem("refreshToken");
       this.isAuthenticated = false;
     },
-    getAuthenticatedUser() {
+    async getAuthenticatedUser() {
       const headers = {
         Authorization: "Bearer " + localStorage.getItem("accessToken"),
       };
-      api
+      await api
         .get("/profile", { headers: headers })
         .then((response) => {
           this.user = response.data.data;
@@ -111,8 +111,8 @@ export const useStore = defineStore("store", {
           console.log(error);
         });
     },
-    authenticate(mobile, password) {
-      api
+    async authenticate(mobile, password) {
+      await api
         .post("/clients/web/login", {
           mobile: mobile,
           password: password,

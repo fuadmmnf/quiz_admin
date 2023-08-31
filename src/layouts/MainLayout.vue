@@ -266,6 +266,14 @@ export default defineComponent({
       this.$router.push("/login");
     },
   },
+  async mounted() {
+    await this.store.getCategories();
+    await this.store.getFaculty();
+    await this.store.getSubject();
+    await this.store.getSubcategories();
+    await this.store.getDisciplines();
+    await this.store.getChapters();
+  },
 });
 </script>
 
