@@ -481,7 +481,7 @@ import { useQuasar } from "quasar";
 export default defineComponent({
   name: "AddOrEditEzam",
   components: {
-    OptionCard: OptionCard
+    OptionCard: OptionCard,
   },
   setup() {
     const store = useStore();
@@ -568,6 +568,7 @@ export default defineComponent({
           color: "positive",
           icon: "check",
         });
+        this.onReset();
       });
     },
     onReset() {
@@ -604,7 +605,7 @@ export default defineComponent({
         response.data.data.map((category) => {
           this.facultyOptions.push({
             label: category.name,
-            value: category.real_id,
+            value: category.id,
           });
         });
       });
