@@ -160,9 +160,9 @@ export default defineComponent({
       });
     },
   },
-  async mounted() {
-    await this.setDataList();
-    await this.store.categories.map((item) => {
+  mounted() {
+    this.setDataList();
+    this.store.categories.map((item) => {
       this.parentCategoryOptions.push({
         label: item.name,
         value: item.id,
