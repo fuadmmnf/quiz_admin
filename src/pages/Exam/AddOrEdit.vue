@@ -143,6 +143,7 @@
                           filled
                           v-model="examData.title"
                           :label="`Title`"
+                          :rules="[(val) => !!val || 'Title is required']"
                         />
                       </div>
                       <div class="col-6">
@@ -193,6 +194,7 @@
                           filled
                           v-model="examData.visibility_start_time"
                           :label="`Start Time`"
+                          :rules="[(val) => !!val || 'Start time is required']"
                         >
                           <template v-slot:append>
                             <q-icon name="event" class="cursor-pointer q-ma-md">
@@ -248,6 +250,7 @@
                           filled
                           v-model="examData.visibility_end_time"
                           :label="`End Time`"
+                          :rules="[(val) => !!val || 'End time is required']"
                         >
                           <template v-slot:append>
                             <q-icon name="event" class="cursor-pointer q-ma-md">
@@ -324,6 +327,7 @@
                           filled
                           v-model="examData.duration_in_minutes"
                           :label="`Duration in minutes`"
+                          :rules="[(val) => !!val || 'Duration is required']"
                         />
                       </div>
                     </div>
@@ -392,6 +396,9 @@
                           :options="question_display_type_option"
                           emit-value
                           map-options
+                          :rules="[
+                            (val) => !!val || 'Display type is required',
+                          ]"
                         />
                       </div>
                     </div>
@@ -505,11 +512,11 @@ export default defineComponent({
         end_message: "Demo end message",
         status: "Draft",
         duration_in_minutes: 60,
-        visibility: "",
-        answer_script_visibility_time: "",
-        marks_visibility_time: "",
-        merit_visibility_time: "",
-        question_display_type: "",
+        visibility: "public",
+        answer_script_visibility_time: "after-exam",
+        marks_visibility_time: "after-exam",
+        merit_visibility_time: "after-exam",
+        question_display_type: "vertical",
         can_skip_horizontal_question: false,
         show_answer_between_horizontal_question: false,
         can_change_answer: false,
