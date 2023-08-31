@@ -33,16 +33,15 @@
                 class="q-gutter-md q-mt-lg"
               >
                 <q-input
-                  filled
+                  outlined
                   v-model="name"
-                  stack-label
                   :label="`Category name *`"
                   :hint="`Category name must be unique`"
                   :rules="[(val) => !!val || 'Field is required']"
                 />
 
                 <q-select
-                  filled
+                  outlined
                   v-model="selectedParentCategory"
                   :options="parentCategoryOptions"
                   :label="`Parent Category`"
@@ -137,7 +136,7 @@ export default defineComponent({
       this.name = row.name;
     },
     deleteItem(row) {},
-    setDataList() {
+    async setDataList() {
       api.get("/categories/category?limit=0").then((res) => {
         res.data.data.map((item) => {
           this.tableData.push({
@@ -161,9 +160,9 @@ export default defineComponent({
       });
     },
   },
-  mounted() {
-    this.setDataList();
-    this.store.categories.map((item) => {
+  async mounted() {
+    await this.setDataList();
+    await this.store.categories.map((item) => {
       this.parentCategoryOptions.push({
         label: item.name,
         value: item.id,

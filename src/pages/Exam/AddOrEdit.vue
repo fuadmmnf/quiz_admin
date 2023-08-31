@@ -438,14 +438,7 @@
                         />
                       </div>
                     </div>
-                    <!-- multi-select dropdown for merit list excluded attributes
-                    individual name
-                    c. Position
-                    d. Correct answer,
-                    e. Neg marking
-                    f. final score
-                    g. time needed -->
-                    <div class="row q-col-gutter-md q-mt-auto">
+                    <!-- <div class="row q-col-gutter-md q-mt-auto">
                       <div class="col-12">
                         <q-select
                           filled
@@ -458,7 +451,7 @@
                           map-options
                         />
                       </div>
-                    </div>
+                    </div> -->
                   </q-card-section>
                 </q-card>
               </div>
@@ -500,8 +493,8 @@ export default defineComponent({
       model: "",
       expanded: false,
       examData: {
-        title: "Demo Exam",
-        code: "EXM",
+        title: "",
+        code: "",
         faculty_id: "",
         parent_id: null,
         category_id: "",

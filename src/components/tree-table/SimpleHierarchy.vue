@@ -19,7 +19,7 @@
           </div>
         </td>
         <td class="text-center">
-          <q-btn
+          <!-- <q-btn
             @click="editItem(props.item)"
             icon="edit"
             size="sm"
@@ -28,7 +28,7 @@
             round
             color="primary"
           >
-          </q-btn>
+          </q-btn> -->
           <q-btn
             @click="deleteItem(props.item)"
             icon="delete"

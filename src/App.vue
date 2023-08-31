@@ -12,13 +12,13 @@ export default defineComponent({
     const store = useStore();
     return { store };
   },
-  mounted() {
-    this.store.getCategories();
-    this.store.getFaculty();
-    this.store.getSubject();
-    this.store.getSubcategories();
-    this.store.getDisciplines();
-    this.store.getChapters();
+  async mounted() {
+    await this.store.getCategories();
+    await this.store.getFaculty();
+    await this.store.getSubject();
+    await this.store.getSubcategories();
+    await this.store.getDisciplines();
+    await this.store.getChapters();
   },
 });
 </script>
