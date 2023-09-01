@@ -239,7 +239,13 @@ export default {
       loading.value = true;
       api
         .get(
-          `/exams?examConfiguration&search=status:${props.examType};title:${filter.value.keywords}&orderBy=id&sortedBy=desc&page=${page}`
+          `/exams?include=examConfiguration&searchJoin=and&search=status:${
+            props.examType
+          }${
+            filter.value.keywords.length
+              ? ";title:" + filter.value.keywords
+              : ""
+          }&orderBy=id&sortedBy=desc&page=${page}`
         )
         .then((response) => {
           exams.value = response.data.data;
