@@ -98,7 +98,7 @@
                         <strong class="">Show Exam Attempts</strong>
                       </q-tooltip>
                     </q-btn>
-                    <q-btn
+                    <!-- <q-btn
                       color="primary"
                       size="md"
                       icon="edit"
@@ -114,7 +114,7 @@
                       >
                         <strong class="">Edit Exam</strong>
                       </q-tooltip>
-                    </q-btn>
+                    </q-btn> -->
                     <q-btn
                       color="secondary"
                       size="md"
@@ -239,7 +239,13 @@ export default {
       loading.value = true;
       api
         .get(
-          `/exams?examConfiguration&search=status:${props.examType};title:${filter.value.keywords}&orderBy=id&sortedBy=desc&page=${page}`
+          `/exams?include=examConfiguration&searchJoin=and&search=status:${
+            props.examType
+          }${
+            filter.value.keywords.length
+              ? ";title:" + filter.value.keywords
+              : ""
+          }&orderBy=id&sortedBy=desc&page=${page}`
         )
         .then((response) => {
           exams.value = response.data.data;

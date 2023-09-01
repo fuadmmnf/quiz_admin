@@ -369,7 +369,7 @@ export default defineComponent({
     searchQuestions(searchData) {
       api
         .get(
-          `/questions?searchJoin=and&search=type:${searchData.type};content:${searchData.keywords}&limit=0`
+          `/questions?searchJoin=and&search=type:${searchData.type};content:${searchData.keywords}&orderBy=id&sortedBy=desc&limit=30`
         )
         .then((res) => {
           this.searchResults = res.data.data;
@@ -392,7 +392,7 @@ export default defineComponent({
       }
       api
         .get(
-          `/exams?searchJoin=and&search=title:${searchData.keywords}&limit=0`
+          `/exams?searchJoin=and&search=title:${searchData.keywords}&orderBy=id&sortedBy=desc&limit=0`
         )
         .then((res) => {
           this.searchExamResults = res.data.data;

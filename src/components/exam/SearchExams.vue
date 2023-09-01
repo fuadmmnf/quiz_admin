@@ -3,11 +3,7 @@
     <q-card-section>
       <div class="row q-col-gutter-md">
         <div class="col-12">
-          <q-input
-            filled
-            v-model="searchData.keywords"
-            :label="`Search Question`"
-          >
+          <q-input filled v-model="searchData.keywords" :label="`Search Exams`">
             <template v-slot:append>
               <!-- filter icon -->
 
