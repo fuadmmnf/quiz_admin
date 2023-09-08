@@ -402,7 +402,7 @@ export default defineComponent({
         options: [
           {
             content: "",
-            is_correct: true,
+            is_correct: false,
             explanation: "",
             is_hint: false,
             visibility: true,
@@ -439,7 +439,7 @@ export default defineComponent({
         hints: [
           {
             content: "",
-            is_correct: true,
+            is_correct: false,
             explanation: "",
             is_hint: true,
             visibility: true,
