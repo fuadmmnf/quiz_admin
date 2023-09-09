@@ -98,6 +98,7 @@
                             filled
                             v-model="question.content"
                             :label="`Question Content*`"
+                            :rules="[(val) => !!val || 'Content is required']"
                             readonly
                           >
                             <template v-slot:append>
@@ -207,7 +208,7 @@
                             :key="idx"
                             :value="idx"
                             :expand-separator="true"
-                            :default-open="true"
+                            default-opened
                           >
                             <q-card>
                               <q-card-section>
@@ -215,6 +216,9 @@
                                 <q-input
                                   filled
                                   label="Content"
+                                  :rules="[
+                                    (val) => !!val || 'Content is required',
+                                  ]"
                                   v-model="option.content"
                                   :key="idx"
                                   :name="`content${idx}`"
@@ -288,7 +292,7 @@
                             :key="idx"
                             :value="idx"
                             :expand-separator="true"
-                            :default-open="true"
+                            default-opened
                           >
                             <q-card>
                               <q-card-section>
@@ -297,6 +301,9 @@
                                   filled
                                   label="Content"
                                   v-model="option.content"
+                                  :rules="[
+                                    (val) => !!val || 'Content is required',
+                                  ]"
                                   :key="idx"
                                   :name="`content${idx}`"
                                   :id="`content${idx}`"
@@ -631,33 +638,30 @@ export default defineComponent({
             explanation: "",
             negative_mark: 0,
           },
-        ],
-      });
-    },
-    onReset() {
-      console.log("Reset");
-      this.questionData = {
-        content: "",
-        category_id: null,
-        subcategory: "",
-        subject: "",
-        chapter: "",
-        faculty: "",
-        discipline: "",
-        parent_id: null,
-        score: 0,
-        unit_negative_mark: 0,
-        type: "",
-        options: [
           {
             content: "",
             is_correct: false,
             visibility: true,
             hint: "",
             explanation: "",
+            negative_mark: 0,
           },
-        ],
-        hints: [
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+            negative_mark: 0,
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+            negative_mark: 0,
+          },
           {
             content: "",
             is_correct: false,
@@ -667,9 +671,92 @@ export default defineComponent({
             negative_mark: 0,
           },
         ],
-      };
-      this.questions = [];
-      this.questions.push(this.questionData);
+      });
+    },
+    onReset() {
+      console.log("Reset");
+      questions.forEach((question) => {
+        question.content = "";
+        question.options = [
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+          },
+        ];
+        question.hints = [
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+            negative_mark: 0,
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+            negative_mark: 0,
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+            negative_mark: 0,
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+            negative_mark: 0,
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+            negative_mark: 0,
+          },
+        ];
+      });
     },
     addOption(event, index) {
       event.preventDefault();
