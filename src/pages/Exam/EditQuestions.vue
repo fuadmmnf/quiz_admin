@@ -24,7 +24,7 @@
       label="Search Questions"
       class="q-card"
     >
-      <search-questions @search="searchQuestions"></search-questions>
+      <search-questions @search="onQuestionSearch"></search-questions>
       <q-card>
         <q-card-section>
           <!-- table -->
@@ -34,18 +34,16 @@
             :columns="columns"
             :loading="loading"
             rows-per-page-options="[10]"
-            row-key="real_id"
+            row-key="id"
             wrap-cells
             class="q-mt-md"
-            :filter="filter"
-            v-model:pagination="pagination"
-            @request="onRequest"
-            hide-pagination
+            v-model:pagination="questionPagination"
+            @request="onQuestionRequest"
           >
             <template v-slot:body="props">
               <q-tr :props="props">
                 <q-td key="content" :props="props">
-                  {{ props.row.content.substring(0, 50) + "..." }}
+                  {{ props.row.content }}
                 </q-td>
                 <q-td key="type" :props="props">
                   {{ props.row.type }}
@@ -201,11 +199,29 @@ export default defineComponent({
       rowsPerPage: 200,
       rowsNumber: 0,
     });
+    const questionPagination = ref({
+      page: 1,
+      rowsPerPage: 200,
+      rowsNumber: 0,
+    });
     const $q = useQuasar();
     const filter = ref("");
+    const questionFilter = ref({
+      keywords: "",
+      type: "",
+      category: "",
+      subject: "",
+      faculty: "",
+    });
     const loading = ref(true);
     const examQuestions = ref([]);
     const route = useRoute();
+    const searchResults = ref([]);
+    const onQuestionSearch = (search) => {
+      questionFilter.value = search;
+      searchQuestions(search, 1);
+    };
+
     const fetchExamQuestions = (page = 1) => {
       loading.value = true;
       api
@@ -225,11 +241,34 @@ export default defineComponent({
           loading.value = false;
         });
     };
-
+    const searchQuestions = async (searchData, page = 1) => {
+      await api
+        .get(
+          `/questions?searchJoin=and&search=${
+            searchData.type.length ? "type:" + searchData.type : ""
+          }${
+            searchData.keywords.length ? ";content:" + searchData.keywords : ""
+          }&orderBy=id&sortedBy=desc&page=${page}`
+        )
+        .then((res) => {
+          searchResults.value = res.data.data;
+          const meta = res.data.meta.pagination;
+          questionPagination.value = {
+            page: meta.current_page,
+            rowsPerPage: meta.per_page,
+            rowsNumber: meta.total,
+          };
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
     const onRequest = (props) => {
       fetchExamQuestions(props.pagination.page);
     };
-
+    const onQuestionRequest = (props) => {
+      searchQuestions(questionFilter.value, props.pagination.page);
+    };
     return {
       pagination,
       filter,
@@ -238,6 +277,12 @@ export default defineComponent({
       examQuestions,
       onRequest,
       $q,
+      searchQuestions,
+      questionPagination,
+      onQuestionRequest,
+      questionFilter,
+      onQuestionSearch,
+      searchResults,
     };
   },
   data() {
@@ -256,7 +301,6 @@ export default defineComponent({
       pagination: {
         sortBy: "name",
       },
-      searchResults: [],
       searchExamResults: [],
       filter: "",
       loading: false,
@@ -366,19 +410,7 @@ export default defineComponent({
           console.log("cancel");
         });
     },
-    searchQuestions(searchData) {
-      api
-        .get(
-          `/questions?searchJoin=and&search=type:${searchData.type};content:${searchData.keywords}&orderBy=id&sortedBy=desc&limit=30`
-        )
-        .then((res) => {
-          this.searchResults = res.data.data;
-          console.log(res.data.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
+
     searchExams(searchData) {
       if (
         searchData.keywords == "" &&
@@ -436,7 +468,7 @@ export default defineComponent({
             message: "Question Added Successfully",
             icon: "check",
           });
-          this.searchResults.splice(this.searchResults.indexOf(item), 1);
+          // this.searchResults.splice(this.searchResults.indexOf(item), 1);
           this.fetchExamQuestions();
         })
         .catch((err) => {
@@ -475,8 +507,9 @@ export default defineComponent({
       }
     },
   },
-  mounted() {
+  async mounted() {
     this.fetchExamQuestions();
+    await this.searchQuestions(this.questionFilter, 1);
   },
 });
 </script>

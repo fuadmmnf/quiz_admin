@@ -561,15 +561,26 @@ export default defineComponent({
   methods: {
     onSubmit() {
       console.log("Submitted");
-      api.post("/exams", this.examData).then((response) => {
-        console.log(response);
-        this.$q.notify({
-          message: "Exam Added Successfully",
-          color: "positive",
-          icon: "check",
+      if (this.$route.params.id) {
+        api
+          .put("/exams/" + this.$route.params.id, this.examData)
+          .then((response) => {
+            this.$q.notify({
+              color: "positive",
+              message: "Exam Updated Successfully",
+            });
+          });
+      } else {
+        api.post("/exams", this.examData).then((response) => {
+          console.log(response);
+          this.$q.notify({
+            message: "Exam Added Successfully",
+            color: "positive",
+            icon: "check",
+          });
+          this.onReset();
         });
-        this.onReset();
-      });
+      }
     },
     onReset() {
       console.log("Reset");
