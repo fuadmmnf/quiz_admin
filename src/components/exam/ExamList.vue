@@ -98,7 +98,7 @@
                         <strong class="">Show Exam Attempts</strong>
                       </q-tooltip>
                     </q-btn>
-                    <!-- <q-btn
+                    <q-btn
                       color="primary"
                       size="md"
                       icon="edit"
@@ -114,7 +114,7 @@
                       >
                         <strong class="">Edit Exam</strong>
                       </q-tooltip>
-                    </q-btn> -->
+                    </q-btn>
                     <q-btn
                       color="secondary"
                       size="md"

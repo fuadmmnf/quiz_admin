@@ -98,6 +98,7 @@
                             filled
                             v-model="question.content"
                             :label="`Question Content*`"
+                            :rules="[(val) => !!val || 'Content is required']"
                             readonly
                           >
                             <template v-slot:append>
@@ -207,7 +208,7 @@
                             :key="idx"
                             :value="idx"
                             :expand-separator="true"
-                            :default-open="true"
+                            default-opened
                           >
                             <q-card>
                               <q-card-section>
@@ -215,6 +216,9 @@
                                 <q-input
                                   filled
                                   label="Content"
+                                  :rules="[
+                                    (val) => !!val || 'Content is required',
+                                  ]"
                                   v-model="option.content"
                                   :key="idx"
                                   :name="`content${idx}`"
@@ -282,13 +286,13 @@
                         </q-card-section>
                         <q-card-section>
                           <q-expansion-item
-                            v-for="(option, index) in question.hints"
+                            v-for="(option, idx) in question.hints"
                             class="q-ma-md"
-                            :label="`Hint ${index + 1}`"
-                            :key="index"
-                            :value="index"
+                            :label="`Hint ${idx + 1}`"
+                            :key="idx"
+                            :value="idx"
                             :expand-separator="true"
-                            :default-open="true"
+                            default-opened
                           >
                             <q-card>
                               <q-card-section>
@@ -297,16 +301,20 @@
                                   filled
                                   label="Content"
                                   v-model="option.content"
-                                  :key="index"
-                                  :name="`content${index}`"
-                                  :id="`content${index}`"
+                                  :rules="[
+                                    (val) => !!val || 'Content is required',
+                                  ]"
+                                  :key="idx"
+                                  :name="`content${idx}`"
+                                  :id="`content${idx}`"
                                   readonly
                                 >
                                   <template v-slot:append>
                                     <tiny-mce-modal
                                       :content="option.content"
-                                      :index="index"
-                                      @save="onContentChange"
+                                      :index="idx"
+                                      :parentIndex="index"
+                                      @save="onHintContentChange"
                                     />
                                   </template>
                                 </q-input>
@@ -315,15 +323,15 @@
                                   filled
                                   label="Negative Mark"
                                   v-model="option.negative_mark"
-                                  :key="index"
-                                  :name="`negative_mark${index}`"
-                                  :id="`negative_mark${index}`"
+                                  :key="idx"
+                                  :name="`negative_mark${idx}`"
+                                  :id="`negative_mark${idx}`"
                                   lazy-rules
                                 />
                                 <!-- same row + delete button-->
                                 <div class="row">
                                   <q-btn
-                                    @click="deleteHint(index)"
+                                    @click="deleteHint(idx, index)"
                                     icon="delete"
                                     size="sm"
                                     color="negative"
@@ -439,7 +447,7 @@ export default defineComponent({
         hints: [
           {
             content: "",
-            is_correct: true,
+            is_correct: false,
             explanation: "",
             is_hint: true,
             visibility: true,
@@ -540,17 +548,33 @@ export default defineComponent({
                 icon: "check",
               });
               this.onReset();
+            })
+            .catch((error) => {
+              this.$q.notify({
+                message: "Something went wrong",
+                color: "negative",
+                icon: "warning",
+              });
             });
         } else {
-          api.post("/questions", this.questions[0]).then((response) => {
-            console.log(response);
-            this.$q.notify({
-              message: "Question Added Successfully",
-              color: "positive",
-              icon: "check",
+          api
+            .post("/questions", this.questions[0])
+            .then((response) => {
+              console.log(response);
+              this.$q.notify({
+                message: "Question Added Successfully",
+                color: "positive",
+                icon: "check",
+              });
+              this.onReset();
+            })
+            .catch((error) => {
+              this.$q.notify({
+                message: "Something went wrong",
+                color: "negative",
+                icon: "warning",
+              });
             });
-            this.onReset();
-          });
         }
       }
     },
@@ -576,8 +600,68 @@ export default defineComponent({
             hint: "",
             explanation: "",
           },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+          },
         ],
         hints: [
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+            negative_mark: 0,
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+            negative_mark: 0,
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+            negative_mark: 0,
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+            negative_mark: 0,
+          },
           {
             content: "",
             is_correct: false,
@@ -591,19 +675,9 @@ export default defineComponent({
     },
     onReset() {
       console.log("Reset");
-      this.questionData = {
-        content: "",
-        category_id: null,
-        subcategory: "",
-        subject: "",
-        chapter: "",
-        faculty: "",
-        discipline: "",
-        parent_id: null,
-        score: 0,
-        unit_negative_mark: 0,
-        type: "",
-        options: [
+      questions.forEach((question) => {
+        question.content = "";
+        question.options = [
           {
             content: "",
             is_correct: false,
@@ -611,8 +685,36 @@ export default defineComponent({
             hint: "",
             explanation: "",
           },
-        ],
-        hints: [
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+          },
+        ];
+        question.hints = [
           {
             content: "",
             is_correct: false,
@@ -621,23 +723,53 @@ export default defineComponent({
             explanation: "",
             negative_mark: 0,
           },
-        ],
-      };
-      this.questions = [];
-      this.questions.push(this.questionData);
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+            negative_mark: 0,
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+            negative_mark: 0,
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+            negative_mark: 0,
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+            negative_mark: 0,
+          },
+        ];
+      });
     },
     addOption(event, index) {
       event.preventDefault();
       this.questions[index].options.push({
-        content: "This is another demo option",
+        content: "",
         is_correct: false,
-        explanation: " ",
+        explanation: "",
         is_hint: false,
       });
     },
     addHint(index) {
       this.questions[index].hints.push({
-        content: "This is another demo hint",
+        content: "",
         is_correct: false,
         is_hint: true,
         explanation: "",
@@ -648,6 +780,9 @@ export default defineComponent({
     },
     onContentChange(value, idx, parentIndex) {
       this.questions[parentIndex].options[idx].content = value;
+    },
+    onHintContentChange(value, idx, parentIndex) {
+      this.questions[parentIndex].hints[idx].content = value;
     },
     onExplanationChange(value, idx, parentIndex) {
       this.questions[parentIndex].options[idx].explanation = value;
