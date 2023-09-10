@@ -410,7 +410,7 @@ export default defineComponent({
         options: [
           {
             content: "",
-            is_correct: true,
+            is_correct: false,
             explanation: "",
             is_hint: false,
             visibility: true,

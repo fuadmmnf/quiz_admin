@@ -9,11 +9,11 @@
           class="bg-grey-1"
         >
           <div class="q-pa-md">
-            <SearchExams @search="onSearch" />
+            <SearchExams @search="onSearch"/>
           </div>
         </q-expansion-item>
 
-        <q-separator spaced="" />
+        <q-separator spaced=""/>
         <q-card>
           <q-card-section>
             <!-- List of Exams -->
@@ -197,10 +197,10 @@
 </template>
 
 <script>
-import { defineAsyncComponent, defineComponent, ref } from "vue";
-import { useStore } from "src/stores/store";
-import { api } from "boot/axios";
-import { useQuasar } from "quasar";
+import {defineAsyncComponent, defineComponent, ref} from "vue";
+import {useStore} from "src/stores/store";
+import {api} from "boot/axios";
+import {useQuasar} from "quasar";
 
 export default {
   name: "ExamList",
@@ -217,7 +217,7 @@ export default {
   },
   setup(props) {
     const store = useStore();
-    const { $q } = useQuasar();
+    const {$q} = useQuasar();
     const exams = ref([]);
     const pagination = ref({
       page: 1,
@@ -351,6 +351,8 @@ export default {
           console.log(err);
         });
     },
+
+
     markAsCompleted(id) {
       api
         .patch(`/exams/${id}/status`, {
@@ -362,11 +364,22 @@ export default {
             color: "positive",
             icon: "check",
           });
+          this.recalculateMarks(id);
           this.fetchExams();
         })
         .catch((err) => {
           console.log(err);
         });
+    },
+    recalculateMarks(exam_id) {
+      api.put(`/exam-markings`, {exam_id: exam_id, exam_attempt_ids: "*"}).then(() => {
+        // confirm
+        $q.notify({
+          message: "Marks recalculated successfully",
+          color: "green",
+          icon: "check",
+        });
+      });
     },
   },
 };
