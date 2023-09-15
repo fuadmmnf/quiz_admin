@@ -20,7 +20,7 @@
 
     <q-separator spaced />
 
-    <user-list></user-list>
+    <user-list @totalAttempts="totalAttempts"></user-list>
   </q-page>
 </template>
 
@@ -43,21 +43,33 @@ export default {
     const $q = useQuasar();
     const route = useRoute();
     const router = useRouter();
+    const attempts = ref(0);
 
     const recalculateMarks = async () => {
-      api.put(`/exam-markings`, { exam_id : route.params.id, exam_attempt_ids: "*"}).then(() => {
-        // confirm
-        $q.notify({
-          message: "Marks recalculated successfully",
-          color: "green",
-          icon: "check",
+      api
+        .put(`/exam-markings`, {
+          exam_id: route.params.id,
+          exam_attempt_ids: "*",
+        })
+        .then(() => {
+          // confirm
+          $q.notify({
+            message: "Marks recalculated successfully",
+            color: "green",
+            icon: "check",
+          });
+          router.push(`/Exam/completed`);
         });
-        router.push(`/Exam/completed`);
-      });
+    };
+
+    const totalAttempts = async (total) => {
+      attempts.value = await total;
     };
 
     return {
       recalculateMarks,
+      totalAttempts,
+      attempts,
     };
   },
   mounted() {},

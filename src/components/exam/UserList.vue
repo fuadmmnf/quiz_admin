@@ -19,6 +19,18 @@
               v-model:pagination="pagination"
               @request="onRequest"
             >
+              <template v-slot:top-left>
+                <!-- total attempts -->
+                <div class="row">
+                  <div class="col-12">
+                    <q-badge
+                      color="grey-8"
+                      class="q-pa-sm"
+                      :label="`Total Attempts: ${attempts}`"
+                    />
+                  </div>
+                </div>
+              </template>
               <template v-slot:top-right>
                 <q-input
                   borderless
@@ -109,6 +121,7 @@ export default {
     const loading = ref(true);
     const filter = ref("");
     const route = useRoute();
+    const attempts = ref(0);
 
     const fetchusers = (page = 1) => {
       loading.value = true;
@@ -134,6 +147,7 @@ export default {
             rowsPerPage: meta.per_page,
             rowsNumber: meta.total,
           };
+          attempts.value = meta.total;
         })
         .catch((error) => {
           console.log(error);
@@ -169,6 +183,7 @@ export default {
             rowsPerPage: meta.per_page,
             rowsNumber: meta.total,
           };
+          attempts.value = meta.total;
           users.value.forEach((user, index) => {
             user.rank =
               (pagination.value.page - 1) * pagination.value.rowsPerPage +
@@ -207,6 +222,11 @@ export default {
         fetchCompletedUsers(props.pagination.page);
       else fetchusers(props.pagination.page);
     };
+
+    const setTotalAttempts = (total) => {
+      this.$emit("totalAttempts", total);
+    };
+
     return {
       store,
       pagination,
@@ -218,6 +238,8 @@ export default {
       route,
       fetchCompletedUsers,
       deleteAttempt,
+      setTotalAttempts,
+      attempts,
     };
   },
   mounted() {
