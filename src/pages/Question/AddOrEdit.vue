@@ -145,6 +145,7 @@
                                 v-model="question.score"
                                 :label="`Score`"
                                 lazy-rules
+                                :rules="[(val) => !!val || 'Score is required']"
                               />
                             </div>
                             <div class="col-6">
@@ -153,6 +154,10 @@
                                 v-model="question.unit_negative_mark"
                                 :label="`Negative Marks`"
                                 lazy-rules
+                                :rules="[
+                                  (val) =>
+                                    !!val || 'Negative marks is required',
+                                ]"
                               />
                             </div>
                           </div>
@@ -404,8 +409,8 @@ export default defineComponent({
         faculty: "",
         discipline: "",
         parent_id: null,
-        score: 0,
-        unit_negative_mark: 0,
+        score: "",
+        unit_negative_mark: "",
         type: "",
         options: [
           {
@@ -557,24 +562,15 @@ export default defineComponent({
               });
             });
         } else {
-          api
-            .post("/questions", this.questions[0])
-            .then((response) => {
-              console.log(response);
-              this.$q.notify({
-                message: "Question Added Successfully",
-                color: "positive",
-                icon: "check",
-              });
-              this.onReset();
-            })
-            .catch((error) => {
-              this.$q.notify({
-                message: "Something went wrong",
-                color: "negative",
-                icon: "warning",
-              });
+          api.post("/questions", this.questions[0]).then((response) => {
+            console.log(response);
+            this.$q.notify({
+              message: "Question Added Successfully",
+              color: "positive",
+              icon: "check",
             });
+            this.onReset();
+          });
         }
       }
     },
@@ -589,8 +585,8 @@ export default defineComponent({
         faculty: "",
         discipline: "",
         parent_id: null,
-        score: 0,
-        unit_negative_mark: 0,
+        score: "",
+        unit_negative_mark: "",
         type: "",
         options: [
           {
@@ -822,8 +818,8 @@ export default defineComponent({
           faculty: "",
           discipline: "",
           parent_id: null,
-          score: 0,
-          unit_negative_mark: 0,
+          score: "",
+          unit_negative_mark: "",
           type: "",
           options: [
             {

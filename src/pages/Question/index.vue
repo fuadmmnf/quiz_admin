@@ -48,12 +48,16 @@
                 <!-- table data -->
                 <template v-slot:body="props">
                   <q-tr :props="props">
-                    <!-- serial -->
+                    <!-- serial
                     <q-td key="real_id" :props="props">
                       {{ props.row.real_id }}
-                    </q-td>
+                    </q-td> -->
                     <q-td key="content" :props="props">
-                      {{ props.row.content.substring(0, 50) + "..." }}
+                      {{
+                        props.row.content.length > 50
+                          ? props.row.content.substring(0, 50) + "..."
+                          : props.row.content
+                      }}
                     </q-td>
                     <q-td key="type" :props="props">
                       {{ props.row.type }}
@@ -187,13 +191,6 @@ export default defineComponent({
       //table header
 
       columns: [
-        {
-          name: "real_id",
-          label: "Id",
-          field: "real_id",
-          align: "left",
-          sortable: true,
-        },
         {
           name: "content",
           label: "Content",

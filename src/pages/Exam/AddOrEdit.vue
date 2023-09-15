@@ -227,7 +227,6 @@
                                 <q-time
                                   v-model="examData.visibility_start_time"
                                   mask="YYYY-MM-DD HH:mm"
-                                  format24h
                                 >
                                   <div class="row items-center justify-end">
                                     <q-btn
@@ -284,7 +283,6 @@
                                 <q-time
                                   v-model="examData.visibility_end_time"
                                   mask="YYYY-MM-DD HH:mm"
-                                  format24h
                                 >
                                   <div class="row items-center justify-end">
                                     <q-btn
@@ -306,18 +304,38 @@
                       <div class="col-12">
                         <q-input
                           filled
-                          v-model="examData.start_message"
                           :label="`Start Message`"
-                        />
+                          v-model="examData.start_message"
+                          readonly
+                        >
+                          <template v-slot:append>
+                            <tiny-mce-modal
+                              :content="examData.start_message"
+                              :index="0"
+                              :parentIndex="0"
+                              @save="onStartMessageSave"
+                            />
+                          </template>
+                        </q-input>
                       </div>
                     </div>
                     <div class="row q-col-gutter-md q-mt-auto">
                       <div class="col-12">
                         <q-input
                           filled
-                          v-model="examData.end_message"
                           :label="`End Message`"
-                        />
+                          v-model="examData.end_message"
+                          readonly
+                        >
+                          <template v-slot:append>
+                            <tiny-mce-modal
+                              :content="examData.end_message"
+                              :index="0"
+                              :parentIndex="0"
+                              @save="onEndMessageSave"
+                            />
+                          </template>
+                        </q-input>
                       </div>
                     </div>
                     <!-- status -> draft, ongoing, finished, upcoming, checking and duration two column -->
@@ -477,11 +495,13 @@ import { ref } from "@vue/reactivity";
 import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 import { useQuasar } from "quasar";
+import TinyMceModalVue from "src/components/TinyMceModal.vue";
 
 export default defineComponent({
   name: "AddOrEditEzam",
   components: {
     OptionCard: OptionCard,
+    TinyMceModal: TinyMceModalVue,
   },
   setup() {
     const store = useStore();
@@ -508,8 +528,8 @@ export default defineComponent({
         subject_id: "",
         visibility_start_time: "",
         visibility_end_time: "",
-        start_message: "Demo start message",
-        end_message: "Demo end message",
+        start_message: "",
+        end_message: "",
         status: "Draft",
         duration_in_minutes: 60,
         visibility: "public",
@@ -578,6 +598,7 @@ export default defineComponent({
             color: "positive",
             icon: "check",
           });
+          this.$router.push("/Exam/Draft");
           this.onReset();
         });
       }
@@ -640,6 +661,12 @@ export default defineComponent({
           });
         });
       });
+    },
+    onEndMessageSave(content) {
+      this.examData.end_message = content;
+    },
+    onStartMessageSave(content) {
+      this.examData.start_message = content;
     },
   },
   mounted() {
