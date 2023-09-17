@@ -16,6 +16,7 @@
         <q-separator spaced="" />
         <q-card>
           <q-card-section>
+            
             <!-- List of Exams -->
             <q-table
               :columns="columns"
