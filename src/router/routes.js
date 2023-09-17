@@ -96,6 +96,14 @@ const routes = [
       { path: "/Directory", component: () => import("pages/Directory.vue") },
       { path: "/Footer", component: () => import("pages/Footer.vue") },
       { path: "/CardHeader", component: () => import("pages/CardHeader.vue") },
+      {
+        path: "/Institutions",
+        component: () => import("pages/Institutions.vue"),
+      },
+      {
+        path: "/RegisteredStudents",
+        component: () => import("pages/RegisteredStudents.vue"),
+      },
 
       // Not completed yet
       // {path: '/Taskboard', component: () => import('pages/TaskBoard.vue')},
