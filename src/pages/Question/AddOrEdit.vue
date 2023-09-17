@@ -16,24 +16,6 @@
           />
           Add/Edit Question
         </div>
-
-        <div class="row">
-          <q-btn
-            label="Submit"
-            type="submit"
-            form="questionForm"
-            color="primary"
-          />
-          <q-btn
-            label="Reset"
-            type="reset"
-            color="primary"
-            flat
-            class="q-ml-sm"
-            form="questionForm"
-            @click="onReset"
-          />
-        </div>
       </q-card-section>
     </q-card>
 
@@ -93,15 +75,18 @@
                             lazy-rules
                             emit-value
                             map-options
+                            @update:model-value="onQuestionTypeChange(question)"
                           />
                           <q-input
                             filled
                             v-model="question.content"
                             :label="`Question Content*`"
+                            @click="openQuestionContentTinyMceModal"
                             readonly
                           >
-                            <template v-slot:append>
+                            <template v-slot: append>
                               <tiny-mce-modal
+                                ref="questionContentTinyMceModal"
                                 :content="question.content"
                                 :index="0"
                                 :parentIndex="index"
@@ -109,6 +94,7 @@
                               />
                             </template>
                           </q-input>
+
                           <!-- category and subcategory in the same row -->
                           <div class="row q-col-gutter-md q-mt-sm">
                             <div class="col-6">
@@ -185,8 +171,11 @@
                     <div class="col-7">
                       <q-card
                         v-if="
-                          index > 0 ||
-                          questions[0].type != 'multilayered-type-1'
+                          questions[0].type == 'multilayered-type-1' ||
+                          questions[0].type == 'multilayered-type-2' ||
+                          questions[0].type == 'single-best-answer' ||
+                          questions[0].type == 'multiple-answer' ||
+                          questions[0].type == 'multiple-true-false'
                         "
                       >
                         <q-card-section>
@@ -194,12 +183,12 @@
                         </q-card-section>
                         <q-card-section>
                           <!-- <option-card
-                      v-for="(option, index) in questionData.options"
-                      :key="index"
-                      :option="option"
-                      :index="index"
-                      :type="type"
-                    ></option-card> -->
+                            v-for="(option, index) in questionData.options"
+                            :key="index"
+                            :option="option"
+                            :index="index"
+                            :type="type"
+                          ></option-card> -->
                           <q-expansion-item
                             v-for="(option, idx) in question.options"
                             class="q-ma-md"
@@ -207,7 +196,7 @@
                             :key="idx"
                             :value="idx"
                             :expand-separator="true"
-                            :default-open="true"
+                            :default-opened="true"
                           >
                             <q-card>
                               <q-card-section>
@@ -222,6 +211,9 @@
                                 >
                                 </q-input>
                                 <q-input
+                                  @click="
+                                    openOptionExplanationTinyMceModal(idx)
+                                  "
                                   filled
                                   label="Explanation"
                                   v-model="option.explanation"
@@ -232,6 +224,7 @@
                                 >
                                   <template v-slot:append>
                                     <tiny-mce-modal
+                                      ref="optionExplanationTinyMceModal"
                                       :content="option.explanation"
                                       :index="idx"
                                       :parentIndex="index"
@@ -248,6 +241,7 @@
                                     :id="`is_correct${idx}`"
                                     label="Correct"
                                     class="q-ma-md"
+                                    @click="onCheckboxClick(question, idx)"
                                   />
                                   <q-btn
                                     @click="deleteItem(idx, index)"
@@ -353,6 +347,28 @@
         </div>
       </div>
     </q-form>
+    <q-card class="no-shadow" bordered>
+      <!-- add edit header with submit and reset buttons on right -->
+      <q-card-section class="row items-center justify-between">
+        <div class="row">
+          <q-btn
+            label="Submit"
+            type="submit"
+            form="questionForm"
+            color="primary"
+          />
+          <q-btn
+            label="Reset"
+            type="reset"
+            color="primary"
+            flat
+            class="q-ml-sm"
+            form="questionForm"
+            @click="onReset"
+          />
+        </div>
+      </q-card-section>
+    </q-card>
   </q-page>
 </template>
 
@@ -701,6 +717,32 @@ export default defineComponent({
           ],
         });
         this.processQuestion(questionData.children.data[0], index + 1);
+      }
+    },
+    openQuestionContentTinyMceModal() {
+      this.$refs.questionContentTinyMceModal[0].show = true;
+    },
+    openOptionExplanationTinyMceModal(index) {
+      this.$refs.optionExplanationTinyMceModal[index].show = true;
+    },
+    onQuestionTypeChange(question) {
+      if (question.type === "single-best-answer") {
+        for (const option of question.options) {
+          option.is_correct = false;
+        }
+        if (question.options.length > 0) {
+          question.options[0].is_correct = true;
+        }
+      }
+    },
+
+    onCheckboxClick(question, option_index) {
+      if (question.type === "single-best-answer") {
+        question.options.map((option, index) => {
+          if (index !== option_index) {
+            option.is_correct = false;
+          }
+        });
       }
     },
   },

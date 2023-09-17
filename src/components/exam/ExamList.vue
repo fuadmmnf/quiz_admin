@@ -35,8 +35,11 @@
                   <q-td key="title" :props="props">
                     {{ props.row.title }}
                   </q-td>
-                  <q-td key="code" :props="props">
-                    {{ props.row.code }}
+                  <q-td key="start_time" :props="props">
+                    {{ "start_time" }}
+                  </q-td>
+                  <q-td key="end_time" :props="props">
+                    {{ "end_time" }}
                   </q-td>
                   <q-td key="duration_in_minutes" :props="props">
                     {{ props.row.duration_in_minutes }}
@@ -295,10 +298,17 @@ export default {
           sortable: true,
         },
         {
-          name: "code",
+          name: "start_time",
           align: "left",
-          label: "Code",
-          field: (row) => row.code,
+          label: "Start Time",
+          field: (row) => row.start_time,
+          sortable: true,
+        },
+        {
+          name: "end_time",
+          align: "left",
+          label: "End Time",
+          field: (row) => row.end_time,
           sortable: true,
         },
         {

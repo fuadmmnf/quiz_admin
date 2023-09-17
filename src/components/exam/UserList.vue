@@ -63,6 +63,15 @@
                     {{ props.row.marks }}
                   </q-td>
                   <q-td key="actions" :props="props">
+                    <q-btn color="black" dense flat round icon="logout">
+                      <q-tooltip
+                        anchor="top middle"
+                        self="bottom middle"
+                        :offset="[10, 10]"
+                      >
+                        <strong class="">Export attempt</strong>
+                      </q-tooltip>
+                    </q-btn>
                     <q-btn
                       color="red"
                       dense
@@ -70,7 +79,15 @@
                       round
                       icon="delete"
                       @click="deleteAttempt(props.row.attempt_id)"
-                    />
+                    >
+                      <q-tooltip
+                        anchor="top middle"
+                        self="bottom middle"
+                        :offset="[10, 10]"
+                      >
+                        <strong class="">Delete attempt</strong>
+                      </q-tooltip>
+                    </q-btn>
                   </q-td>
                 </q-tr>
               </template>
@@ -185,21 +202,30 @@ export default {
     };
 
     const deleteAttempt = (id) => {
-      api
-        .delete(`/exam-attempts/${id}`)
-        .then((res) => {
-          $q.notify({
-            message: "Attempt deleted successfully",
-            color: "green",
-            icon: "check",
+      $q.dialog({
+        title: "Confirm",
+        message: "Are you sure you want to delete this attempt?",
+        cancel: true,
+        persistent: true,
+      }).onOk(() => {
+        api
+          .delete(`/exam-attempts/${id}`)
+          .then((res) => {
+            $q.notify({
+              message: "Attempt deleted successfully",
+              color: "green",
+              icon: "check",
+            });
+            if (route.params.type === "completed") {
+              fetchCompletedUsers(pagination.value.page);
+            } else {
+              fetchusers(pagination.value.page);
+            }
+          })
+          .catch((error) => {
+            console.log(error);
           });
-          if (route.params.type === "completed")
-            fetchCompletedUsers(pagination.value.page);
-          else fetchusers(pagination.value.page);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      });
     };
 
     const onRequest = (props) => {
