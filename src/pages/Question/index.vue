@@ -17,7 +17,7 @@
       </q-card-section>
     </q-card>
 
-    <q-separator spaced/>
+    <q-separator spaced />
     <q-expansion-item
       expand-separator
       icon="search"
@@ -26,7 +26,7 @@
     >
       <search-questions @search="onSearch"></search-questions>
     </q-expansion-item>
-    <q-separator spaced/>
+    <q-separator spaced />
 
     <div class="q-pa-none">
       <div class="row q-col-gutter-md">
@@ -49,9 +49,7 @@
                 <template v-slot:body="props">
                   <q-tr :props="props">
                     <!-- serial -->
-                    <q-td key="real_id" :props="props">
-                      {{ props.row.real_id }}
-                    </q-td>
+
                     <q-td key="content" :props="props">
                       {{ props.row.content.substring(0, 50) + "..." }}
                     </q-td>
@@ -97,16 +95,16 @@
 </template>
 
 <script>
-import {defineComponent, defineAsyncComponent, ref, computed} from "vue";
-import {useStore} from "src/stores/store";
-import {api} from "boot/axios";
-import {useQuasar} from "quasar";
+import { defineComponent, defineAsyncComponent, ref, computed } from "vue";
+import { useStore } from "src/stores/store";
+import { api } from "boot/axios";
+import { useQuasar } from "quasar";
 import SearchQuestions from "components/question/SearchQuestions.vue";
 
 export default defineComponent({
   name: "Question",
   setup() {
-    const {$q} = useQuasar();
+    const { $q } = useQuasar();
     const store = useStore();
     const questions = ref([]);
     const pagination = ref({
@@ -114,19 +112,19 @@ export default defineComponent({
       rowsPerPage: 10,
       rowsNumber: 0,
     });
-    const searchData = ref({type: "", keywords: ""});
+    const searchData = ref({ type: "", keywords: "" });
     const fetchQuestions = (page = 1) => {
       loading.value = true;
       if (searchData.value.keywords != "" || searchData.value.type != "") {
         api
           .get(
             "/questions?searchJoin=and&search=type:" +
-            searchData.value.type +
-            ";content:" +
-            searchData.value.keywords +
-            "&page=" +
-            page +
-            "&limit=30"
+              searchData.value.type +
+              ";content:" +
+              searchData.value.keywords +
+              "&page=" +
+              page +
+              "&limit=30"
           )
           .then((response) => {
             questions.value = response.data.data;
@@ -189,13 +187,6 @@ export default defineComponent({
 
       columns: [
         {
-          name: "real_id",
-          label: "Id",
-          field: "real_id",
-          align: "left",
-          sortable: true,
-        },
-        {
           name: "content",
           label: "Content",
           field: "content",
@@ -242,7 +233,7 @@ export default defineComponent({
   },
   methods: {
     onEdit() {
-      this.$router.push({name: "question-edit"});
+      this.$router.push({ name: "question-edit" });
     },
     onDelete(row) {
       this.$q

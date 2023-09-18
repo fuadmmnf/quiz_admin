@@ -444,6 +444,12 @@
                           :label="`Show Merit List`"
                         />
                       </div>
+                      <div class="col-6">
+                        <q-toggle
+                          v-model="examData.make_code_public"
+                          :label="`Make Code Public`"
+                        />
+                      </div>
                     </div>
                     <!-- <div class="row q-col-gutter-md q-mt-auto">
                       <div class="col-12">
@@ -522,6 +528,7 @@ export default defineComponent({
         can_change_answer: true,
         can_retake_after_exam: true,
         show_merit_list: true,
+        make_code_public: false,
         merit_list_excluded_attributes: null,
       },
       date: ref("2021-01-01 12:00"),

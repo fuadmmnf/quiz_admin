@@ -81,7 +81,6 @@
                             filled
                             v-model="question.content"
                             :label="`Question Content*`"
-                            @click="openQuestionContentTinyMceModal"
                             readonly
                           >
                             <template v-slot: append>
@@ -211,9 +210,6 @@
                                 >
                                 </q-input>
                                 <q-input
-                                  @click="
-                                    openOptionExplanationTinyMceModal(idx)
-                                  "
                                   filled
                                   label="Explanation"
                                   v-model="option.explanation"
@@ -719,12 +715,14 @@ export default defineComponent({
         this.processQuestion(questionData.children.data[0], index + 1);
       }
     },
-    openQuestionContentTinyMceModal() {
-      this.$refs.questionContentTinyMceModal[0].show = true;
-    },
-    openOptionExplanationTinyMceModal(index) {
-      this.$refs.optionExplanationTinyMceModal[index].show = true;
-    },
+    // openQuestionContentTinyMceModal(index) {
+    //   console.log(this.$refs.questionContentTinyMceModal);
+    //   this.$refs.questionContentTinyMceModal[index].show = true;
+    // },
+    // openOptionExplanationTinyMceModal(index) {
+    //   console.log(this.$refs.optionExplanationTinyMceModal);
+    //   this.$refs.optionExplanationTinyMceModal[index].show = true;
+    // },
     onQuestionTypeChange(question) {
       if (question.type === "single-best-answer") {
         for (const option of question.options) {
