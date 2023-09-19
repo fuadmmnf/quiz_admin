@@ -81,6 +81,7 @@
                             filled
                             v-model="question.content"
                             :label="`Question Content*`"
+                            @click="openQuestionContentTinyMceModal(index)"
                             readonly
                           >
                             <template v-slot: append>
@@ -216,6 +217,12 @@
                                   :key="idx"
                                   :name="`explanation${idx}`"
                                   :id="`explanation${idx}`"
+                                  @click="
+                                    openOptionExplanationTinyMceModal(
+                                      index,
+                                      idx
+                                    )
+                                  "
                                   readonly
                                 >
                                   <template v-slot:append>
@@ -374,6 +381,7 @@ import { defineComponent, defineAsyncComponent } from "vue";
 import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 import { useQuasar } from "quasar";
+import _ from "lodash";
 export default defineComponent({
   name: "AddOrEditQuestion",
   components: {
@@ -516,7 +524,7 @@ export default defineComponent({
     };
   },
   methods: {
-    onSubmit() {
+    onSubmit: _.debounce(function () {
       console.log("Submit");
       if (this.questions[0].type === "multilayered-type-2") {
         this.questions[0].options = [
@@ -565,7 +573,7 @@ export default defineComponent({
           });
         }
       }
-    },
+    }, 2000),
     addQuestion(event) {
       event.preventDefault();
       this.questions.push({
@@ -715,14 +723,21 @@ export default defineComponent({
         this.processQuestion(questionData.children.data[0], index + 1);
       }
     },
-    // openQuestionContentTinyMceModal(index) {
-    //   console.log(this.$refs.questionContentTinyMceModal);
-    //   this.$refs.questionContentTinyMceModal[index].show = true;
-    // },
-    // openOptionExplanationTinyMceModal(index) {
-    //   console.log(this.$refs.optionExplanationTinyMceModal);
-    //   this.$refs.optionExplanationTinyMceModal[index].show = true;
-    // },
+    openQuestionContentTinyMceModal(index) {
+      console.log(this.$refs.questionContentTinyMceModal[index]);
+      this.$refs.questionContentTinyMceModal[index].show = true;
+    },
+    openOptionExplanationTinyMceModal(questionIndex, optionIndex) {
+      const optionExplanationTinyMceModals =
+        this.$refs.optionExplanationTinyMceModal;
+
+      const target = optionExplanationTinyMceModals.filter(
+        (model) =>
+          model.index === optionIndex && model.parentIndex === questionIndex
+      );
+
+      target[0].show = true;
+    },
     onQuestionTypeChange(question) {
       if (question.type === "single-best-answer") {
         for (const option of question.options) {

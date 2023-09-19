@@ -483,6 +483,7 @@ import { ref } from "@vue/reactivity";
 import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 import { useQuasar } from "quasar";
+import _ from "lodash";
 
 export default defineComponent({
   name: "AddOrEditEzam",
@@ -566,7 +567,7 @@ export default defineComponent({
     };
   },
   methods: {
-    onSubmit() {
+    onSubmit: _.debounce(function () {
       console.log("Submitted");
       api.post("/exams", this.examData).then((response) => {
         console.log(response);
@@ -577,7 +578,8 @@ export default defineComponent({
         });
         this.onReset();
       });
-    },
+    }, 2000),
+
     onReset() {
       console.log("Reset");
       this.examData = {
