@@ -98,6 +98,7 @@
                             filled
                             v-model="question.content"
                             :label="`Question Content*`"
+                            @click="openQuestionContentTinyMceModal(index)"
                             :rules="[(val) => !!val || 'Content is required']"
                             readonly
                           >
@@ -237,6 +238,12 @@
                                   :key="idx"
                                   :name="`explanation${idx}`"
                                   :id="`explanation${idx}`"
+                                  @click="
+                                    openOptionExplanationTinyMceModal(
+                                      index,
+                                      idx
+                                    )
+                                  "
                                   readonly
                                 >
                                   <template v-slot:append>
@@ -375,6 +382,7 @@ import { defineComponent, defineAsyncComponent } from "vue";
 import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 import { useQuasar } from "quasar";
+import _ from "lodash";
 export default defineComponent({
   name: "AddOrEditQuestion",
   components: {
@@ -517,7 +525,7 @@ export default defineComponent({
     };
   },
   methods: {
-    onSubmit() {
+    onSubmit: _.debounce(function () {
       console.log("Submit");
       if (this.questions[0].type === "multilayered-type-2") {
         this.questions[0].options = [
@@ -573,7 +581,7 @@ export default defineComponent({
           });
         }
       }
-    },
+    }, 2000),
     addQuestion(event) {
       event.preventDefault();
       this.questions.push({
@@ -834,6 +842,42 @@ export default defineComponent({
         this.processQuestion(questionData.children.data[0], index + 1);
       }
     },
+    openQuestionContentTinyMceModal(index) {
+      console.log(this.$refs.questionContentTinyMceModal[index]);
+      this.$refs.questionContentTinyMceModal[index].show = true;
+    },
+    openOptionExplanationTinyMceModal(questionIndex, optionIndex) {
+      const optionExplanationTinyMceModals =
+        this.$refs.optionExplanationTinyMceModal;
+
+      const target = optionExplanationTinyMceModals.filter(
+        (model) =>
+          model.index === optionIndex && model.parentIndex === questionIndex
+      );
+
+      target[0].show = true;
+    },
+    onQuestionTypeChange(question) {
+      if (question.type === "single-best-answer") {
+        for (const option of question.options) {
+          option.is_correct = false;
+        }
+        if (question.options.length > 0) {
+          question.options[0].is_correct = true;
+        }
+      }
+    },
+
+    onCheckboxClick(question, option_index) {
+      if (question.type === "single-best-answer") {
+        question.options.map((option, index) => {
+          if (index !== option_index) {
+            option.is_correct = false;
+          }
+        });
+      }
+    },
+
   },
   mounted() {
     this.questions.push(this.questionData);

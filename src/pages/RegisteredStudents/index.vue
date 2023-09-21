@@ -67,7 +67,7 @@
                           round
                           dense
                           flat
-                          :to="``"
+                          :to="`/RegisteredStudents/${props.row.id}`"
                         />
   
                         <q-btn
@@ -116,44 +116,44 @@
         students.value = [
           {
             id: 1,
-            student_name: "Marjan",
+            student_name: "Sajid",
             student_mobile: "01700000000",
-            student_institution: "BNMPC",
+            student_institution: "Dhaka College",
             action: "action",
           },
           {
             id: 2,
-            student_name: "Rafiya",
+            student_name: "Sajid",
             student_mobile: "01700000000",
-            student_institution: "Holy Cross",
+            student_institution: "Dhaka College",
             action: "action",
           },
           {
             id: 3,
-            student_name: "Nuzhat",
+            student_name: "Sajid",
             student_mobile: "01700000000",
-            student_institution: "BNMPC",
+            student_institution: "Dhaka College",
             action: "action",
           },
           {
             id: 4,
-            student_name: "John",
+            student_name: "Sajid",
             student_mobile: "01700000000",
             student_institution: "Dhaka College",
             action: "action",
           },
           {
             id: 5,
-            student_name: "Marjan",
+            student_name: "Sajid",
             student_mobile: "01700000000",
-            student_institution: "DRMC",
+            student_institution: "Dhaka College",
             action: "action",
           },
           {
             id: 6,
             student_name: "Sajid",
             student_mobile: "01700000000",
-            student_institution: "BNMPC",
+            student_institution: "Dhaka College",
             action: "action",
           },
           {
@@ -167,14 +167,14 @@
             id: 8,
             student_name: "Sajid",
             student_mobile: "01700000000",
-            student_institution: "NDC",
+            student_institution: "Dhaka College",
             action: "action",
           },
           {
             id: 9,
-            student_name: "Mitu",
+            student_name: "Sajid",
             student_mobile: "01700000000",
-            student_institution: "BNMPC",
+            student_institution: "Dhaka College",
             action: "action",
           },
         ];
@@ -221,7 +221,7 @@
           },
           {
             name: "action",
-            label: "action",
+            label: "Action",
             field: "action",
             align: "left",
             sortable: true,

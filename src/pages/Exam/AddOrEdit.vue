@@ -444,6 +444,12 @@
                           :label="`Show Merit List`"
                         />
                       </div>
+                      <div class="col-6">
+                        <q-toggle
+                          v-model="examData.make_code_public"
+                          :label="`Make Code Public`"
+                        />
+                      </div>
                     </div>
                     <!-- <div class="row q-col-gutter-md q-mt-auto">
                       <div class="col-12">
@@ -477,6 +483,7 @@ import { ref } from "@vue/reactivity";
 import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 import { useQuasar } from "quasar";
+import _ from "lodash";
 
 export default defineComponent({
   name: "AddOrEditEzam",
@@ -522,6 +529,7 @@ export default defineComponent({
         can_change_answer: true,
         can_retake_after_exam: true,
         show_merit_list: true,
+        make_code_public: false,
         merit_list_excluded_attributes: null,
       },
       date: ref("2021-01-01 12:00"),
@@ -559,7 +567,7 @@ export default defineComponent({
     };
   },
   methods: {
-    onSubmit() {
+    onSubmit: _.debounce(function () {
       console.log("Submitted");
       api.post("/exams", this.examData).then((response) => {
         console.log(response);
@@ -570,7 +578,8 @@ export default defineComponent({
         });
         this.onReset();
       });
-    },
+    }, 2000),
+
     onReset() {
       console.log("Reset");
       this.examData = {
