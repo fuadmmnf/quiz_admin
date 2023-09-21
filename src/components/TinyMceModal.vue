@@ -93,7 +93,7 @@
 
 <script>
 import {defineComponent, ref} from "vue";
-import {defineAsyncComponent} from "vue";
+import Editor from '@tinymce/tinymce-vue'
 
 export default {
   name: "TinyMceModal",
@@ -112,8 +112,7 @@ export default {
     },
   },
   components: {
-    QEditor: defineAsyncComponent(() => import("quasar")),
-    Editor: defineAsyncComponent(() => import("@tinymce/tinymce-vue")),
+    'editor': Editor
   },
 
   data() {
