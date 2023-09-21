@@ -9,11 +9,11 @@
           class="bg-grey-1"
         >
           <div class="q-pa-md">
-            <SearchExams @search="onSearch" />
+            <SearchExams @search="onSearch"/>
           </div>
         </q-expansion-item>
 
-        <q-separator spaced="" />
+        <q-separator spaced=""/>
         <q-card>
           <q-card-section>
             
@@ -36,11 +36,8 @@
                   <q-td key="title" :props="props">
                     {{ props.row.title }}
                   </q-td>
-                  <q-td key="start_time" :props="props">
-                    {{ "start_time" }}
-                  </q-td>
-                  <q-td key="end_time" :props="props">
-                    {{ "end_time" }}
+                  <q-td key="code" :props="props">
+                    {{ props.row.code }}
                   </q-td>
                   <q-td key="duration_in_minutes" :props="props">
                     {{ props.row.duration_in_minutes }}
@@ -102,7 +99,7 @@
                         <strong class="">Show Exam Attempts</strong>
                       </q-tooltip>
                     </q-btn>
-                    <!-- <q-btn
+                    <q-btn
                       color="primary"
                       size="md"
                       icon="edit"
@@ -118,7 +115,7 @@
                       >
                         <strong class="">Edit Exam</strong>
                       </q-tooltip>
-                    </q-btn> -->
+                    </q-btn>
                     <q-btn
                       color="secondary"
                       size="md"
@@ -201,10 +198,10 @@
 </template>
 
 <script>
-import { defineAsyncComponent, defineComponent, ref } from "vue";
-import { useStore } from "src/stores/store";
-import { api } from "boot/axios";
-import { useQuasar } from "quasar";
+import {defineAsyncComponent, defineComponent, ref} from "vue";
+import {useStore} from "src/stores/store";
+import {api} from "boot/axios";
+import {useQuasar} from "quasar";
 
 export default {
   name: "ExamList",
@@ -221,7 +218,7 @@ export default {
   },
   setup(props) {
     const store = useStore();
-    const { $q } = useQuasar();
+    const {$q} = useQuasar();
     const exams = ref([]);
     const pagination = ref({
       page: 1,
@@ -299,17 +296,10 @@ export default {
           sortable: true,
         },
         {
-          name: "start_time",
+          name: "code",
           align: "left",
-          label: "Start Time",
-          field: (row) => row.start_time,
-          sortable: true,
-        },
-        {
-          name: "end_time",
-          align: "left",
-          label: "End Time",
-          field: (row) => row.end_time,
+          label: "Code",
+          field: (row) => row.code,
           sortable: true,
         },
         {
@@ -362,6 +352,8 @@ export default {
           console.log(err);
         });
     },
+
+
     markAsCompleted(id) {
       api
         .patch(`/exams/${id}/status`, {
@@ -373,11 +365,22 @@ export default {
             color: "positive",
             icon: "check",
           });
+          this.recalculateMarks(id);
           this.fetchExams();
         })
         .catch((err) => {
           console.log(err);
         });
+    },
+    recalculateMarks(exam_id) {
+      api.put(`/exam-markings`, {exam_id: exam_id, exam_attempt_ids: "*"}).then(() => {
+        // confirm
+        $q.notify({
+          message: "Marks recalculated successfully",
+          color: "green",
+          icon: "check",
+        });
+      });
     },
   },
 };

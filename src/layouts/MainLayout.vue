@@ -38,14 +38,13 @@
             round
             dense
             flat
-            color="white"
-            icon="fab fa-twitter"
+            style="color: red !important"
             type="a"
-            href="https://twitter.com/pratik227"
+            href="https://github.com/sponsors/pratik227"
             target="_blank"
           >
+            <i class="fa fa-heart fa-2x fa-beat"></i>
           </q-btn>
-
           <q-btn round dense flat color="white" icon="notifications">
             <q-badge color="red" text-color="white" floating> 5 </q-badge>
             <q-menu>
@@ -210,34 +209,12 @@
             </q-item-section>
           </q-item>
         </q-expansion-item>
-
         <q-item to="/TreeTable" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
             <q-icon name="list" />
           </q-item-section>
           <q-item-section>
             <q-item-label>TreeTable</q-item-label>
-          </q-item-section>
-        </q-item>
-
-        <q-item to="/Institutions" active-class="q-item-no-link-highlighting">
-          <q-item-section avatar>
-            <q-icon name="list" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Institutions</q-item-label>
-          </q-item-section>
-        </q-item>
-
-        <q-item
-          to="/RegisteredStudents"
-          active-class="q-item-no-link-highlighting"
-        >
-          <q-item-section avatar>
-            <q-icon name="list" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Registered studens</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>

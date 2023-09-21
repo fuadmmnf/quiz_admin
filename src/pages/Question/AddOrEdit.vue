@@ -16,6 +16,24 @@
           />
           Add/Edit Question
         </div>
+
+        <div class="row">
+          <q-btn
+            label="Submit"
+            type="submit"
+            form="questionForm"
+            color="primary"
+          />
+          <q-btn
+            label="Reset"
+            type="reset"
+            color="primary"
+            flat
+            class="q-ml-sm"
+            form="questionForm"
+            @click="onReset"
+          />
+        </div>
       </q-card-section>
     </q-card>
 
@@ -75,18 +93,17 @@
                             lazy-rules
                             emit-value
                             map-options
-                            @update:model-value="onQuestionTypeChange(question)"
                           />
                           <q-input
                             filled
                             v-model="question.content"
                             :label="`Question Content*`"
                             @click="openQuestionContentTinyMceModal(index)"
+                            :rules="[(val) => !!val || 'Content is required']"
                             readonly
                           >
-                            <template v-slot: append>
+                            <template v-slot:append>
                               <tiny-mce-modal
-                                ref="questionContentTinyMceModal"
                                 :content="question.content"
                                 :index="0"
                                 :parentIndex="index"
@@ -94,7 +111,6 @@
                               />
                             </template>
                           </q-input>
-
                           <!-- category and subcategory in the same row -->
                           <div class="row q-col-gutter-md q-mt-sm">
                             <div class="col-6">
@@ -130,6 +146,7 @@
                                 v-model="question.score"
                                 :label="`Score`"
                                 lazy-rules
+                                :rules="[(val) => !!val || 'Score is required']"
                               />
                             </div>
                             <div class="col-6">
@@ -138,6 +155,10 @@
                                 v-model="question.unit_negative_mark"
                                 :label="`Negative Marks`"
                                 lazy-rules
+                                :rules="[
+                                  (val) =>
+                                    !!val || 'Negative marks is required',
+                                ]"
                               />
                             </div>
                           </div>
@@ -171,11 +192,8 @@
                     <div class="col-7">
                       <q-card
                         v-if="
-                          questions[0].type == 'multilayered-type-1' ||
-                          questions[0].type == 'multilayered-type-2' ||
-                          questions[0].type == 'single-best-answer' ||
-                          questions[0].type == 'multiple-answer' ||
-                          questions[0].type == 'multiple-true-false'
+                          index > 0 ||
+                          questions[0].type != 'multilayered-type-1'
                         "
                       >
                         <q-card-section>
@@ -183,12 +201,12 @@
                         </q-card-section>
                         <q-card-section>
                           <!-- <option-card
-                            v-for="(option, index) in questionData.options"
-                            :key="index"
-                            :option="option"
-                            :index="index"
-                            :type="type"
-                          ></option-card> -->
+                      v-for="(option, index) in questionData.options"
+                      :key="index"
+                      :option="option"
+                      :index="index"
+                      :type="type"
+                    ></option-card> -->
                           <q-expansion-item
                             v-for="(option, idx) in question.options"
                             class="q-ma-md"
@@ -196,7 +214,7 @@
                             :key="idx"
                             :value="idx"
                             :expand-separator="true"
-                            :default-opened="true"
+                            default-opened
                           >
                             <q-card>
                               <q-card-section>
@@ -204,6 +222,9 @@
                                 <q-input
                                   filled
                                   label="Content"
+                                  :rules="[
+                                    (val) => !!val || 'Content is required',
+                                  ]"
                                   v-model="option.content"
                                   :key="idx"
                                   :name="`content${idx}`"
@@ -227,7 +248,6 @@
                                 >
                                   <template v-slot:append>
                                     <tiny-mce-modal
-                                      ref="optionExplanationTinyMceModal"
                                       :content="option.explanation"
                                       :index="idx"
                                       :parentIndex="index"
@@ -244,7 +264,6 @@
                                     :id="`is_correct${idx}`"
                                     label="Correct"
                                     class="q-ma-md"
-                                    @click="onCheckboxClick(question, idx)"
                                   />
                                   <q-btn
                                     @click="deleteItem(idx, index)"
@@ -279,13 +298,13 @@
                         </q-card-section>
                         <q-card-section>
                           <q-expansion-item
-                            v-for="(option, index) in question.hints"
+                            v-for="(option, idx) in question.hints"
                             class="q-ma-md"
-                            :label="`Hint ${index + 1}`"
-                            :key="index"
-                            :value="index"
+                            :label="`Hint ${idx + 1}`"
+                            :key="idx"
+                            :value="idx"
                             :expand-separator="true"
-                            :default-open="true"
+                            default-opened
                           >
                             <q-card>
                               <q-card-section>
@@ -294,16 +313,20 @@
                                   filled
                                   label="Content"
                                   v-model="option.content"
-                                  :key="index"
-                                  :name="`content${index}`"
-                                  :id="`content${index}`"
+                                  :rules="[
+                                    (val) => !!val || 'Content is required',
+                                  ]"
+                                  :key="idx"
+                                  :name="`content${idx}`"
+                                  :id="`content${idx}`"
                                   readonly
                                 >
                                   <template v-slot:append>
                                     <tiny-mce-modal
                                       :content="option.content"
-                                      :index="index"
-                                      @save="onContentChange"
+                                      :index="idx"
+                                      :parentIndex="index"
+                                      @save="onHintContentChange"
                                     />
                                   </template>
                                 </q-input>
@@ -312,15 +335,15 @@
                                   filled
                                   label="Negative Mark"
                                   v-model="option.negative_mark"
-                                  :key="index"
-                                  :name="`negative_mark${index}`"
-                                  :id="`negative_mark${index}`"
+                                  :key="idx"
+                                  :name="`negative_mark${idx}`"
+                                  :id="`negative_mark${idx}`"
                                   lazy-rules
                                 />
                                 <!-- same row + delete button-->
                                 <div class="row">
                                   <q-btn
-                                    @click="deleteHint(index)"
+                                    @click="deleteHint(idx, index)"
                                     icon="delete"
                                     size="sm"
                                     color="negative"
@@ -350,28 +373,6 @@
         </div>
       </div>
     </q-form>
-    <q-card class="no-shadow" bordered>
-      <!-- add edit header with submit and reset buttons on right -->
-      <q-card-section class="row items-center justify-between">
-        <div class="row">
-          <q-btn
-            label="Submit"
-            type="submit"
-            form="questionForm"
-            color="primary"
-          />
-          <q-btn
-            label="Reset"
-            type="reset"
-            color="primary"
-            flat
-            class="q-ml-sm"
-            form="questionForm"
-            @click="onReset"
-          />
-        </div>
-      </q-card-section>
-    </q-card>
   </q-page>
 </template>
 
@@ -416,13 +417,13 @@ export default defineComponent({
         faculty: "",
         discipline: "",
         parent_id: null,
-        score: 0,
-        unit_negative_mark: 0,
+        score: "",
+        unit_negative_mark: "",
         type: "",
         options: [
           {
             content: "",
-            is_correct: true,
+            is_correct: false,
             explanation: "",
             is_hint: false,
             visibility: true,
@@ -459,7 +460,7 @@ export default defineComponent({
         hints: [
           {
             content: "",
-            is_correct: true,
+            is_correct: false,
             explanation: "",
             is_hint: true,
             visibility: true,
@@ -560,6 +561,13 @@ export default defineComponent({
                 icon: "check",
               });
               this.onReset();
+            })
+            .catch((error) => {
+              this.$q.notify({
+                message: "Something went wrong",
+                color: "negative",
+                icon: "warning",
+              });
             });
         } else {
           api.post("/questions", this.questions[0]).then((response) => {
@@ -585,8 +593,8 @@ export default defineComponent({
         faculty: "",
         discipline: "",
         parent_id: null,
-        score: 0,
-        unit_negative_mark: 0,
+        score: "",
+        unit_negative_mark: "",
         type: "",
         options: [
           {
@@ -596,8 +604,68 @@ export default defineComponent({
             hint: "",
             explanation: "",
           },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+          },
         ],
         hints: [
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+            negative_mark: 0,
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+            negative_mark: 0,
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+            negative_mark: 0,
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+            negative_mark: 0,
+          },
           {
             content: "",
             is_correct: false,
@@ -611,19 +679,9 @@ export default defineComponent({
     },
     onReset() {
       console.log("Reset");
-      this.questionData = {
-        content: "",
-        category_id: null,
-        subcategory: "",
-        subject: "",
-        chapter: "",
-        faculty: "",
-        discipline: "",
-        parent_id: null,
-        score: 0,
-        unit_negative_mark: 0,
-        type: "",
-        options: [
+      questions.forEach((question) => {
+        question.content = "";
+        question.options = [
           {
             content: "",
             is_correct: false,
@@ -631,8 +689,36 @@ export default defineComponent({
             hint: "",
             explanation: "",
           },
-        ],
-        hints: [
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+          },
+        ];
+        question.hints = [
           {
             content: "",
             is_correct: false,
@@ -641,23 +727,53 @@ export default defineComponent({
             explanation: "",
             negative_mark: 0,
           },
-        ],
-      };
-      this.questions = [];
-      this.questions.push(this.questionData);
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+            negative_mark: 0,
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+            negative_mark: 0,
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+            negative_mark: 0,
+          },
+          {
+            content: "",
+            is_correct: false,
+            visibility: true,
+            hint: "",
+            explanation: "",
+            negative_mark: 0,
+          },
+        ];
+      });
     },
     addOption(event, index) {
       event.preventDefault();
       this.questions[index].options.push({
-        content: "This is another demo option",
+        content: "",
         is_correct: false,
-        explanation: " ",
+        explanation: "",
         is_hint: false,
       });
     },
     addHint(index) {
       this.questions[index].hints.push({
-        content: "This is another demo hint",
+        content: "",
         is_correct: false,
         is_hint: true,
         explanation: "",
@@ -668,6 +784,9 @@ export default defineComponent({
     },
     onContentChange(value, idx, parentIndex) {
       this.questions[parentIndex].options[idx].content = value;
+    },
+    onHintContentChange(value, idx, parentIndex) {
+      this.questions[parentIndex].hints[idx].content = value;
     },
     onExplanationChange(value, idx, parentIndex) {
       this.questions[parentIndex].options[idx].explanation = value;
@@ -707,8 +826,8 @@ export default defineComponent({
           faculty: "",
           discipline: "",
           parent_id: null,
-          score: 0,
-          unit_negative_mark: 0,
+          score: "",
+          unit_negative_mark: "",
           type: "",
           options: [
             {
@@ -758,6 +877,7 @@ export default defineComponent({
         });
       }
     },
+
   },
   mounted() {
     this.questions.push(this.questionData);

@@ -51,7 +51,11 @@
                     <!-- serial -->
 
                     <q-td key="content" :props="props">
-                      {{ props.row.content.substring(0, 50) + "..." }}
+                      {{
+                        props.row.content.length > 50
+                          ? props.row.content.substring(0, 50) + "..."
+                          : props.row.content
+                      }}
                     </q-td>
                     <q-td key="type" :props="props">
                       {{ props.row.type }}
