@@ -17,23 +17,6 @@
           Add/Edit Question
         </div>
 
-        <div class="row">
-          <q-btn
-            label="Submit"
-            type="submit"
-            form="questionForm"
-            color="primary"
-          />
-          <q-btn
-            label="Reset"
-            type="reset"
-            color="primary"
-            flat
-            class="q-ml-sm"
-            form="questionForm"
-            @click="onReset"
-          />
-        </div>
       </q-card-section>
     </q-card>
 
@@ -188,6 +171,7 @@
                           />
                         </q-card-section>
                       </q-card>
+
                     </div>
                     <div class="col-7">
                       <q-card
@@ -372,6 +356,24 @@
           </div>
         </div>
       </div>
+      <div class="row">
+        <q-btn
+            label="Submit"
+            type="submit"
+            form="questionForm"
+            color="primary"
+        />
+        <q-btn
+            label="Reset"
+            type="reset"
+            color="primary"
+            flat
+            class="q-ml-sm"
+            form="questionForm"
+            @click="onReset"
+        />
+      </div>
+
     </q-form>
   </q-page>
 </template>
