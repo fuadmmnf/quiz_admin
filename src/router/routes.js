@@ -102,7 +102,11 @@ const routes = [
       },
       {
         path: "/RegisteredStudents",
-        component: () => import("pages/RegisteredStudents.vue"),
+        component: () => import("pages/RegisteredStudents/index.vue"),
+      },
+      {
+        path: "/RegisteredStudents/:id",
+        component: () => import("pages/RegisteredStudents/edit.vue"),
       },
 
       // Not completed yet

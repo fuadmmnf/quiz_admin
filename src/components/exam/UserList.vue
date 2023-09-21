@@ -2,6 +2,24 @@
   <div class="q-pa-none">
     <div class="row q-col-gutter-md">
       <div class="col-12">
+        <q-dialog v-model="feedback">
+          <q-card>
+            <q-card-section>
+              <div class="text-h6">User Feedback</div>
+            </q-card-section>
+
+            <q-card-section class="q-pt-none">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum
+              repellendus sit voluptate voluptas eveniet porro. Rerum blanditiis
+              perferendis totam, ea at omnis vel numquam exercitationem aut,
+              natus minima, porro labore.
+            </q-card-section>
+
+            <q-card-actions align="right">
+              <q-btn flat label="OK" color="primary" v-close-popup />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
         <q-card>
           <q-card-section>
             <!-- List of users -->
@@ -56,6 +74,11 @@
                   </q-td>
                   <q-td key="name" :props="props">
                     {{ props.row.name }}
+                    {{
+                      route.params.type === "completed"
+                        ? `(` + props.row.mobile + `)`
+                        : null
+                    }}
                   </q-td>
                   <q-td key="mobile" :props="props">
                     {{ props.row.mobile }}
@@ -74,7 +97,30 @@
                   >
                     {{ props.row.marks }}
                   </q-td>
+                  <q-td
+                    key="rating"
+                    :props="props"
+                    v-if="route.params.type === 'completed'"
+                  >
+                    {{ 4 }}
+                  </q-td>
                   <q-td key="actions" :props="props">
+                    <q-btn
+                      color="blue"
+                      dense
+                      flat
+                      round
+                      icon="feedback"
+                      @click="feedback = true"
+                    >
+                      <q-tooltip
+                        anchor="top middle"
+                        self="bottom middle"
+                        :offset="[10, 10]"
+                      >
+                        <strong class="">See feedback</strong>
+                      </q-tooltip>
+                    </q-btn>
                     <q-btn
                       color="red"
                       dense
@@ -165,6 +211,7 @@ export default {
         )
         .then((res) => {
           if (res.data.data.length > 0) {
+            console.log(res.data.data);
             users.value = [];
             res.data.data.forEach((item) => {
               users.value.push({
@@ -238,6 +285,7 @@ export default {
       route,
       fetchCompletedUsers,
       deleteAttempt,
+      feedback: ref(false),
       setTotalAttempts,
       attempts,
     };
@@ -304,6 +352,13 @@ export default {
           align: "left",
           label: "Marks",
           field: (row) => row.marks,
+          sortable: true,
+        },
+        {
+          name: "rating",
+          align: "left",
+          label: "Rating",
+          field: (row) => row.rating,
           sortable: true,
         },
         {
