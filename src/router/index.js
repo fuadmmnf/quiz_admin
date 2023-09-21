@@ -1,5 +1,5 @@
-import { route } from "quasar/wrappers";
-import { useStore } from "src/stores/store";
+import {route} from "quasar/wrappers";
+import {useStore} from "src/stores/store";
 import {
   createMemoryHistory,
   createRouter,
@@ -21,11 +21,11 @@ export default route(function (/* { store, ssrContext } */) {
   const createHistory = process.env.SERVER
     ? createMemoryHistory
     : process.env.VUE_ROUTER_MODE === "history"
-    ? createWebHistory
-    : createWebHashHistory;
+      ? createWebHistory
+      : createWebHashHistory;
   const store = useStore();
   const Router = createRouter({
-    scrollBehavior: () => ({ left: 0, top: 0 }),
+    scrollBehavior: () => ({left: 0, top: 0}),
     routes,
 
     // Leave this as is and make changes in quasar.conf.js instead!
@@ -43,7 +43,7 @@ export default route(function (/* { store, ssrContext } */) {
       !localStorage.getItem("user")
     ) {
       console.log("Not authenticated");
-      next({ name: "Login" }); // Redirect to login page if not authenticated
+      next({name: "Login"}); // Redirect to login page if not authenticated
     } else {
       next(); // Proceed to the requested route
     }
