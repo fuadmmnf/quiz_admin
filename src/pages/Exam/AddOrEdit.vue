@@ -227,6 +227,7 @@
                                 <q-time
                                   v-model="examData.visibility_start_time"
                                   mask="YYYY-MM-DD HH:mm"
+                                  format24h
                                 >
                                   <div class="row items-center justify-end">
                                     <q-btn
@@ -283,6 +284,7 @@
                                 <q-time
                                   v-model="examData.visibility_end_time"
                                   mask="YYYY-MM-DD HH:mm"
+                                  format24h
                                 >
                                   <div class="row items-center justify-end">
                                     <q-btn
@@ -304,38 +306,18 @@
                       <div class="col-12">
                         <q-input
                           filled
-                          :label="`Start Message`"
                           v-model="examData.start_message"
-                          readonly
-                        >
-                          <template v-slot:append>
-                            <tiny-mce-modal
-                              :content="examData.start_message"
-                              :index="0"
-                              :parentIndex="0"
-                              @save="onStartMessageSave"
-                            />
-                          </template>
-                        </q-input>
+                          :label="`Start Message`"
+                        />
                       </div>
                     </div>
                     <div class="row q-col-gutter-md q-mt-auto">
                       <div class="col-12">
                         <q-input
                           filled
-                          :label="`End Message`"
                           v-model="examData.end_message"
-                          readonly
-                        >
-                          <template v-slot:append>
-                            <tiny-mce-modal
-                              :content="examData.end_message"
-                              :index="0"
-                              :parentIndex="0"
-                              @save="onEndMessageSave"
-                            />
-                          </template>
-                        </q-input>
+                          :label="`End Message`"
+                        />
                       </div>
                     </div>
                     <!-- status -> draft, ongoing, finished, upcoming, checking and duration two column -->
@@ -495,13 +477,11 @@ import { ref } from "@vue/reactivity";
 import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 import { useQuasar } from "quasar";
-import TinyMceModalVue from "src/components/TinyMceModal.vue";
 
 export default defineComponent({
   name: "AddOrEditEzam",
   components: {
     OptionCard: OptionCard,
-    TinyMceModal: TinyMceModalVue,
   },
   setup() {
     const store = useStore();
@@ -531,7 +511,7 @@ export default defineComponent({
         start_message: "",
         end_message: "",
         status: "Draft",
-        duration_in_minutes: 60,
+        duration_in_minutes: "",
         visibility: "public",
         answer_script_visibility_time: "after-exam",
         marks_visibility_time: "after-exam",
@@ -539,9 +519,9 @@ export default defineComponent({
         question_display_type: "vertical",
         can_skip_horizontal_question: false,
         show_answer_between_horizontal_question: false,
-        can_change_answer: false,
-        can_retake_after_exam: false,
-        show_merit_list: false,
+        can_change_answer: true,
+        can_retake_after_exam: true,
+        show_merit_list: true,
         merit_list_excluded_attributes: null,
       },
       date: ref("2021-01-01 12:00"),
@@ -581,27 +561,15 @@ export default defineComponent({
   methods: {
     onSubmit() {
       console.log("Submitted");
-      if (this.$route.params.id) {
-        api
-          .put("/exams/" + this.$route.params.id, this.examData)
-          .then((response) => {
-            this.$q.notify({
-              color: "positive",
-              message: "Exam Updated Successfully",
-            });
-          });
-      } else {
-        api.post("/exams", this.examData).then((response) => {
-          console.log(response);
-          this.$q.notify({
-            message: "Exam Added Successfully",
-            color: "positive",
-            icon: "check",
-          });
-          this.$router.push("/Exam/Draft");
-          this.onReset();
+      api.post("/exams", this.examData).then((response) => {
+        console.log(response);
+        this.$q.notify({
+          message: "Exam Added Successfully",
+          color: "positive",
+          icon: "check",
         });
-      }
+        this.onReset();
+      });
     },
     onReset() {
       console.log("Reset");
@@ -626,9 +594,9 @@ export default defineComponent({
         question_display_type: "",
         can_skip_horizontal_questions: false,
         show_answer_between_horizontal_question: false,
-        can_change_answer: false,
-        can_retake_after_exam: false,
-        show_merit_list: false,
+        can_change_answer: true,
+        can_retake_after_exam: true,
+        show_merit_list: true,
         merit_list_excluded_attributes: null,
       };
     },
@@ -661,12 +629,6 @@ export default defineComponent({
           });
         });
       });
-    },
-    onEndMessageSave(content) {
-      this.examData.end_message = content;
-    },
-    onStartMessageSave(content) {
-      this.examData.start_message = content;
     },
   },
   mounted() {
