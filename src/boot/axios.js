@@ -8,7 +8,7 @@ import {boot} from "quasar/wrappers";
 // for each client)
 const api = axios.create({
   baseURL: process.env.DEV
-    ? "https://api-monolith.theeduaid.com/v1"
+    ? "http://api.apiato.test/v1"
     : "https://api-monolith.theeduaid.com/v1",
   headers: {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"},
 });

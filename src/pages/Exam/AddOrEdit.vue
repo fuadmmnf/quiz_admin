@@ -4,17 +4,6 @@
       <!-- add edit header with submit and reset buttons on right -->
       <q-card-section class="row items-center justify-between">
         <div class="text-h6">Add/Edit Exam</div>
-        <div class="row">
-          <q-btn label="Submit" type="submit" color="primary" form="examForm" />
-          <q-btn
-            label="Reset"
-            type="reset"
-            color="primary"
-            flat
-            class="q-ml-sm"
-            form="examForm"
-          />
-        </div>
       </q-card-section>
     </q-card>
 
@@ -472,6 +461,18 @@
           </div>
         </div>
       </div>
+      <div class="row">
+        <q-btn label="Submit" type="submit" color="primary" form="examForm" />
+        <q-btn
+            label="Reset"
+            type="reset"
+            color="primary"
+            flat
+            class="q-ml-sm"
+            form="examForm"
+        />
+      </div>
+
     </q-form>
   </q-page>
 </template>

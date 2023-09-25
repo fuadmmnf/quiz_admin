@@ -34,8 +34,6 @@ export default route(function (/* { store, ssrContext } */) {
     history: createHistory(process.env.VUE_ROUTER_BASE),
   });
   Router.beforeEach(async (to, from, next) => {
-    console.log(store.isAuthenticated);
-
     const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
     if (
       requiresAuth &&
