@@ -9,11 +9,11 @@ const defaultStore = () => {
     refreshToken: null,
     user: null,
     categories: [],
-    faculty: [],
-    subject: [],
+    faculties: [],
+    subjects: [],
+    chapters: [],
     subcategories: [],
     disciplines: [],
-    chapters: [],
   };
 };
 

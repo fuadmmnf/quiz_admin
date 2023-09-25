@@ -167,7 +167,7 @@ export default {
   },
   mounted() {
     this.setDataList();
-    this.store.subject.map((item) => {
+    this.store.subjects.map((item) => {
       this.parentCategoryOptions.push({
         label: item.name,
         value: item.id,

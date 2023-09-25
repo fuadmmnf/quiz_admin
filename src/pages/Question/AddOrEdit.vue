@@ -20,17 +20,17 @@
       </q-card-section>
     </q-card>
 
-    <q-separator spaced />
+    <q-separator spaced/>
     <!-- search card with filtering option filter icon -->
     <q-expansion-item
       icon="search"
       label="Search Questions"
       class="q-card q-mt-md"
     >
-      <search-questions @search="onSearch" />
+      <search-questions @search="onSearch"/>
     </q-expansion-item>
 
-    <q-separator spaced />
+    <q-separator spaced/>
     <q-form
       id="questionForm"
       @submit.prevent="onSubmit()"
@@ -99,28 +99,66 @@
                             <div class="col-6">
                               <q-select
                                 filled
-                                v-model="question.category_id"
+                                v-model="question.selected_category"
                                 :options="categoryOptions"
+                                option-value="id"
+                                option-label="name"
                                 :label="`Category`"
                                 lazy-rules
                                 v-if="index === 0"
-                                emit-value
                                 map-options
+                                emit-value
+                                @update:model-value="(val) => {question.category_id = null}"
                               />
                             </div>
                             <div class="col-6">
                               <q-select
                                 filled
-                                v-model="question.subcategory_id"
-                                :options="subcategoryOptions"
+                                v-model="question.category_id"
+                                :options="question.selected_category? categoryOptions.find(c => c.id === question.selected_category).children.data: []"
+                                option-value="id"
+                                option-label="name"
                                 :label="`Subcategory`"
                                 lazy-rules
+                                map-options
                                 v-if="index === 0"
+                              />
+                            </div>
+                          </div>
+
+                          <!-- subject and chapter selection -->
+                          <div class="row q-col-gutter-md q-mt-sm">
+                            <div class="col-6">
+                              <q-select
+                                filled
+                                v-model="question.selected_subject"
+                                :options="subjectOptions"
+                                option-value="id"
+                                option-label="name"
+                                :label="`Subject`"
+                                lazy-rules
+                                v-if="index === 0"
+                                map-options
                                 emit-value
+                                @update:model-value="(val) => {question.subject_id = null}"
+                              />
+                            </div>
+                            <div class="col-6">
+                              <q-select
+                                filled
+                                v-model="question.subject_id"
+                                :options="question.selected_subject? subjectOptions.find(s => s.id === question.selected_subject).children.data: []"
+                                option-value="id"
+                                option-label="name"
+                                :label="`Chapter`"
+                                lazy-rules
+                                v-if="index === 0"
                                 map-options
                               />
                             </div>
                           </div>
+
+
                           <!-- score and negative marks -->
                           <div class="row q-col-gutter-md q-mt-sm">
                             <div class="col-6">
@@ -358,19 +396,19 @@
       </div>
       <div class="row">
         <q-btn
-            label="Submit"
-            type="submit"
-            form="questionForm"
-            color="primary"
+          label="Submit"
+          type="submit"
+          form="questionForm"
+          color="primary"
         />
         <q-btn
-            label="Reset"
-            type="reset"
-            color="primary"
-            flat
-            class="q-ml-sm"
-            form="questionForm"
-            @click="onReset"
+          label="Reset"
+          type="reset"
+          color="primary"
+          flat
+          class="q-ml-sm"
+          form="questionForm"
+          @click="onReset"
         />
       </div>
 
@@ -380,11 +418,12 @@
 
 <script>
 import OptionCard from "src/components/question/OptionCard.vue";
-import { defineComponent, defineAsyncComponent } from "vue";
-import { useStore } from "src/stores/store";
-import { api } from "boot/axios";
-import { useQuasar } from "quasar";
+import {defineAsyncComponent, defineComponent} from "vue";
+import {useStore} from "src/stores/store";
+import {api} from "boot/axios";
+import {useQuasar} from "quasar";
 import _ from "lodash";
+
 export default defineComponent({
   name: "AddOrEditQuestion",
   components: {
@@ -398,7 +437,7 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
-    const { $q } = useQuasar();
+    const {$q} = useQuasar();
     return {
       $q,
       store,
@@ -412,12 +451,10 @@ export default defineComponent({
       question_id: null,
       questionData: {
         content: "",
+        selected_category: null,
         category_id: null,
-        subcategory: "",
-        subject: "",
-        chapter: "",
-        faculty: "",
-        discipline: "",
+        selected_subject: null,
+        subject_id: "",
         parent_id: null,
         score: "",
         unit_negative_mark: "",
@@ -511,24 +548,36 @@ export default defineComponent({
       facultyOptions: [],
       disciplineOptions: [],
       types: [
-        { label: "Single Best Answer", value: "single-best-answer" },
-        { label: "Multiple Answer", value: "multiple-answer" },
-        { label: "Multiple True/False", value: "multiple-true-false" },
-        { label: "Written", value: "written" },
-        { label: "Multilayered Type 1", value: "multilayered-type-1" },
-        { label: "Multilayered Type 2", value: "multilayered-type-2" },
+        {label: "Single Best Answer", value: "single-best-answer"},
+        {label: "Multiple Answer", value: "multiple-answer"},
+        {label: "Multiple True/False", value: "multiple-true-false"},
+        {label: "Written", value: "written"},
+        {label: "Multilayered Type 1", value: "multilayered-type-1"},
+        {label: "Multilayered Type 2", value: "multilayered-type-2"},
       ],
       types_without_multilayered: [
-        { label: "Single Best Answer", value: "single-best-answer" },
-        { label: "Multiple Answer", value: "multiple-answer" },
-        { label: "Multiple True/False", value: "multiple-true-false" },
-        { label: "Written", value: "written" },
+        {label: "Single Best Answer", value: "single-best-answer"},
+        {label: "Multiple Answer", value: "multiple-answer"},
+        {label: "Multiple True/False", value: "multiple-true-false"},
+        {label: "Written", value: "written"},
       ],
     };
   },
   methods: {
+    // onCategorySelect(val, idx) {
+    //   this.questions[idx] = {...this.questions[idx], selected_category: val, category_id: null};
+    // },
+    // onSubjectSelect(val, idx){
+    //   this.questions[idx] = {...this.questions[idx], selected_category: val, category_id: null};
+    // }
     onSubmit: _.debounce(function () {
-      console.log("Submit");
+      const origQuestions = [...this.questions];
+      this.questions = this.questions.map(q => {
+        q.category_id = q.category_id == null ? q.selected_category : q.category_id
+        q.subject_id = q.subject_id == null ? q.selected_subject : q.subject_id
+        return q;
+      });
+
       if (this.questions[0].type === "multilayered-type-2") {
         this.questions[0].options = [
           ...this.questions[0].options,
@@ -554,7 +603,7 @@ export default defineComponent({
           this.questions[0].content = "";
           console.log(this.questions);
           api
-            .post("/questions/multilayered", { questions: this.questions })
+            .post("/questions/multilayered", {questions: this.questions})
             .then((response) => {
               console.log(response);
               this.$q.notify({
@@ -583,203 +632,23 @@ export default defineComponent({
           });
         }
       }
+
+      this.questions = origQuestions;
     }, 2000),
     addQuestion(event) {
       event.preventDefault();
-      this.questions.push({
-        content: "",
-        category_id: null,
-        subcategory: "",
-        subject: "",
-        chapter: "",
-        faculty: "",
-        discipline: "",
-        parent_id: null,
-        score: "",
-        unit_negative_mark: "",
-        type: "",
-        options: [
-          {
-            content: "",
-            is_correct: false,
-            visibility: true,
-            hint: "",
-            explanation: "",
-          },
-          {
-            content: "",
-            is_correct: false,
-            visibility: true,
-            hint: "",
-            explanation: "",
-          },
-          {
-            content: "",
-            is_correct: false,
-            visibility: true,
-            hint: "",
-            explanation: "",
-          },
-          {
-            content: "",
-            is_correct: false,
-            visibility: true,
-            hint: "",
-            explanation: "",
-          },
-          {
-            content: "",
-            is_correct: false,
-            visibility: true,
-            hint: "",
-            explanation: "",
-          },
-        ],
-        hints: [
-          {
-            content: "",
-            is_correct: false,
-            visibility: true,
-            hint: "",
-            explanation: "",
-            negative_mark: 0,
-          },
-          {
-            content: "",
-            is_correct: false,
-            visibility: true,
-            hint: "",
-            explanation: "",
-            negative_mark: 0,
-          },
-          {
-            content: "",
-            is_correct: false,
-            visibility: true,
-            hint: "",
-            explanation: "",
-            negative_mark: 0,
-          },
-          {
-            content: "",
-            is_correct: false,
-            visibility: true,
-            hint: "",
-            explanation: "",
-            negative_mark: 0,
-          },
-          {
-            content: "",
-            is_correct: false,
-            visibility: true,
-            hint: "",
-            explanation: "",
-            negative_mark: 0,
-          },
-        ],
-      });
+      this.questions.push({...this.questionData});
     },
     onReset() {
       console.log("Reset");
-      questions.forEach((question) => {
-        question.content = "";
-        question.options = [
-          {
-            content: "",
-            is_correct: false,
-            visibility: true,
-            hint: "",
-            explanation: "",
-          },
-          {
-            content: "",
-            is_correct: false,
-            visibility: true,
-            hint: "",
-            explanation: "",
-          },
-          {
-            content: "",
-            is_correct: false,
-            visibility: true,
-            hint: "",
-            explanation: "",
-          },
-          {
-            content: "",
-            is_correct: false,
-            visibility: true,
-            hint: "",
-            explanation: "",
-          },
-          {
-            content: "",
-            is_correct: false,
-            visibility: true,
-            hint: "",
-            explanation: "",
-          },
-        ];
-        question.hints = [
-          {
-            content: "",
-            is_correct: false,
-            visibility: true,
-            hint: "",
-            explanation: "",
-            negative_mark: 0,
-          },
-          {
-            content: "",
-            is_correct: false,
-            visibility: true,
-            hint: "",
-            explanation: "",
-            negative_mark: 0,
-          },
-          {
-            content: "",
-            is_correct: false,
-            visibility: true,
-            hint: "",
-            explanation: "",
-            negative_mark: 0,
-          },
-          {
-            content: "",
-            is_correct: false,
-            visibility: true,
-            hint: "",
-            explanation: "",
-            negative_mark: 0,
-          },
-          {
-            content: "",
-            is_correct: false,
-            visibility: true,
-            hint: "",
-            explanation: "",
-            negative_mark: 0,
-          },
-        ];
-      });
+      this.questions = [{...this.questionData}];
     },
     addOption(event, index) {
       event.preventDefault();
-      this.questions[index].options.push({
-        content: "",
-        is_correct: false,
-        explanation: "",
-        is_hint: false,
-      });
+      this.questions[index].options.push({...this.questionData.options[0]});
     },
     addHint(index) {
-      this.questions[index].hints.push({
-        content: "",
-        is_correct: false,
-        is_hint: true,
-        explanation: "",
-      });
+      this.questions[index].hints.push({...this.questionData.hints[0]});
     },
     onDescriptionChange(value, index, parentIndex) {
       this.questions[parentIndex].content = value;
@@ -802,10 +671,12 @@ export default defineComponent({
     },
     processQuestion(questionData, index) {
       const question = this.questions[index];
-      const responseData = questionData;
+      const {options, content, category_id, subject_id, type, score, unit_negative_mark} =
+        questionData;
+      const catData = this.subjectOptions.find(sc => sc.value === category_id)
+      const subData = this.chapterOptions.find(co => co.value === subject_id)
 
-      const { options, content, category_id, type, score, unit_negative_mark } =
-        responseData;
+
       const optionsData = options.data;
 
       question.options = optionsData.filter((option) => !option.is_hint);
@@ -813,34 +684,16 @@ export default defineComponent({
 
       Object.assign(question, {
         content,
-        category_id,
+        selected_category: catData ? catData.parent_id : catData.id,
+        category_id: catData ? catData : null,
+        selected_subject: subData ? subData.parent_id : subData.id,
+        subject_id: subData ? subData : null,
         type,
         score,
         unit_negative_mark,
       });
       if (questionData.children.data.length > 0) {
-        this.questions.push({
-          content: "",
-          category_id: null,
-          subcategory: "",
-          subject: "",
-          chapter: "",
-          faculty: "",
-          discipline: "",
-          parent_id: null,
-          score: "",
-          unit_negative_mark: "",
-          type: "",
-          options: [
-            {
-              content: "",
-              is_correct: false,
-              visibility: true,
-              hint: "",
-              explanation: "",
-            },
-          ],
-        });
+        this.questions.push({...this.questionData});
         this.processQuestion(questionData.children.data[0], index + 1);
       }
     },
@@ -879,22 +732,35 @@ export default defineComponent({
         });
       }
     },
+    getCategories() {
+      api
+        .get("/categories/category?limit=0")
+        .then((response) => {
+          this.categoryOptions = response.data.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    getSubject() {
+      api
+        .get("/categories/subject?limit=0")
+        .then((response) => {
+          this.subjectOptions = response.data.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
 
   },
+
   mounted() {
     this.questions.push(this.questionData);
-    this.store.categories.map((category) => {
-      this.categoryOptions.push({
-        label: category.name,
-        value: category.id,
-      });
-    });
-    this.store.subcategories.map((subcategory) => {
-      this.subcategoryOptions.push({
-        label: subcategory.name,
-        value: subcategory.id,
-      });
-    });
+    this.getCategories();
+    this.getSubject();
+
     if (this.$route.params.id) {
       this.question_id = this.$route.params.id;
       api
