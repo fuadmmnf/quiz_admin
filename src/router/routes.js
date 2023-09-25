@@ -78,8 +78,6 @@ const routes = [
       },
       { path: "/Dashboard2", component: () => import("pages/Dashboard2.vue") },
       { path: "/Profile", component: () => import("pages/UserProfile.vue") },
-      { path: "/Map", component: () => import("pages/Map.vue") },
-      { path: "/MapMarker", component: () => import("pages/MapMarker.vue") },
       { path: "/TreeTable", component: () => import("pages/TreeTable.vue") },
       { path: "/StreetView", component: () => import("pages/StreetView.vue") },
       { path: "/Cards", component: () => import("pages/Cards.vue") },
