@@ -16,7 +16,7 @@
         <q-separator spaced=""/>
         <q-card>
           <q-card-section>
-            
+
             <!-- List of Exams -->
             <q-table
               :columns="columns"
@@ -295,11 +295,25 @@ export default {
           format: (val) => `${val}`,
           sortable: true,
         },
+        // {
+        //   name: "code",
+        //   align: "left",
+        //   label: "Code",
+        //   field: (row) => row.code,
+        //   sortable: true,
+        // },
         {
-          name: "code",
+          name: "visibility_start_time",
           align: "left",
-          label: "Code",
-          field: (row) => row.code,
+          label: "Start Time",
+          field: (row) => row.visibility_start_time,
+          sortable: true,
+        },
+        {
+          name: "visibility_end_time",
+          align: "left",
+          label: "End Time",
+          field: (row) => row.visibility_start_time,
           sortable: true,
         },
         {
