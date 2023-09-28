@@ -583,7 +583,7 @@ export default defineComponent({
       this.questions[idx] = {...this.questions[idx], selected_subject: val, subject_id: null};
     },
     onSubmit: _.debounce(function () {
-      const origQuestions = [...this.questions];
+      // const origQuestions = [...this.questions];
       this.questions = this.questions.map((q) => {
         q.category_id = (q.category_id == null? q.selected_category : q.category_id)
         q.subject_id = (q.subject_id == null? q.selected_subject : q.subject_id)
@@ -645,7 +645,6 @@ export default defineComponent({
         }
       }
 
-      this.questions = origQuestions;
     }, 2000),
     addQuestion(event) {
       event.preventDefault();
