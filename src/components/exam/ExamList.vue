@@ -36,8 +36,11 @@
                   <q-td key="title" :props="props">
                     {{ props.row.title }}
                   </q-td>
-                  <q-td key="code" :props="props">
-                    {{ props.row.code }}
+                  <q-td key="visibility_start_time" :props="props">
+                    {{ props.row.visibility_start_time }}
+                  </q-td>
+                  <q-td key="visibility_end_time" :props="props">
+                    {{ props.row.visibility_end_time }}
                   </q-td>
                   <q-td key="duration_in_minutes" :props="props">
                     {{ props.row.duration_in_minutes }}
@@ -326,6 +329,7 @@ export default {
         {
           name: "actions",
           label: "Actions",
+          align: "center",
           field: (row) => row.actions,
         },
       ],
