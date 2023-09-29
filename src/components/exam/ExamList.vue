@@ -16,7 +16,7 @@
         <q-separator spaced=""/>
         <q-card>
           <q-card-section>
-            
+
             <!-- List of Exams -->
             <q-table
               :columns="columns"
@@ -36,8 +36,11 @@
                   <q-td key="title" :props="props">
                     {{ props.row.title }}
                   </q-td>
-                  <q-td key="code" :props="props">
-                    {{ props.row.code }}
+                  <q-td key="visibility_start_time" :props="props">
+                    {{ props.row.visibility_start_time }}
+                  </q-td>
+                  <q-td key="visibility_end_time" :props="props">
+                    {{ props.row.visibility_end_time }}
                   </q-td>
                   <q-td key="duration_in_minutes" :props="props">
                     {{ props.row.duration_in_minutes }}
@@ -295,11 +298,25 @@ export default {
           format: (val) => `${val}`,
           sortable: true,
         },
+        // {
+        //   name: "code",
+        //   align: "left",
+        //   label: "Code",
+        //   field: (row) => row.code,
+        //   sortable: true,
+        // },
         {
-          name: "code",
+          name: "visibility_start_time",
           align: "left",
-          label: "Code",
-          field: (row) => row.code,
+          label: "Start Time",
+          field: (row) => row.visibility_start_time,
+          sortable: true,
+        },
+        {
+          name: "visibility_end_time",
+          align: "left",
+          label: "End Time",
+          field: (row) => row.visibility_start_time,
           sortable: true,
         },
         {
@@ -312,6 +329,7 @@ export default {
         {
           name: "actions",
           label: "Actions",
+          align: "center",
           field: (row) => row.actions,
         },
       ],

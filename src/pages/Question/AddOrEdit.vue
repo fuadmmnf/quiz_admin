@@ -108,7 +108,10 @@
                                 v-if="index === 0"
                                 map-options
                                 emit-value
-                                @update:model-value="(val) => {question.category_id = null}"
+                                clearable
+                                @update:model-value="(val) => {onCategorySelect(val, index)}"
+                                @clear="(val) => {question.selected_category = null}"
+
                               />
                             </div>
                             <div class="col-6">
@@ -122,6 +125,9 @@
                                 lazy-rules
                                 map-options
                                 v-if="index === 0"
+                                emit-value
+                                clearable
+                                @clear="(val) => {question.category_id = null}"
                               />
                             </div>
                           </div>
@@ -140,7 +146,10 @@
                                 v-if="index === 0"
                                 map-options
                                 emit-value
-                                @update:model-value="(val) => {question.subject_id = null}"
+                                clearable
+                                @update:model-value="(val) => {onSubjectSelect(val, index)}"
+                                @clear="(val) => {question.selected_subject = null}"
+
                               />
                             </div>
                             <div class="col-6">
@@ -154,6 +163,9 @@
                                 lazy-rules
                                 v-if="index === 0"
                                 map-options
+                                emit-value
+                                clearable
+                                @clear="(val) => {question.subject_id = null}"
                               />
                             </div>
                           </div>
@@ -564,17 +576,17 @@ export default defineComponent({
     };
   },
   methods: {
-    // onCategorySelect(val, idx) {
-    //   this.questions[idx] = {...this.questions[idx], selected_category: val, category_id: null};
-    // },
-    // onSubjectSelect(val, idx){
-    //   this.questions[idx] = {...this.questions[idx], selected_category: val, category_id: null};
-    // }
+    onCategorySelect(val, idx) {
+      this.questions[idx] = {...this.questions[idx], selected_category: val, category_id: null};
+    },
+    onSubjectSelect(val, idx){
+      this.questions[idx] = {...this.questions[idx], selected_subject: val, subject_id: null};
+    },
     onSubmit: _.debounce(function () {
-      const origQuestions = [...this.questions];
-      this.questions = this.questions.map(q => {
-        q.category_id = q.category_id == null ? q.selected_category : q.category_id
-        q.subject_id = q.subject_id == null ? q.selected_subject : q.subject_id
+      // const origQuestions = [...this.questions];
+      this.questions = this.questions.map((q) => {
+        q.category_id = (q.category_id == null? q.selected_category : q.category_id)
+        q.subject_id = (q.subject_id == null? q.selected_subject : q.subject_id)
         return q;
       });
 
@@ -633,7 +645,6 @@ export default defineComponent({
         }
       }
 
-      this.questions = origQuestions;
     }, 2000),
     addQuestion(event) {
       event.preventDefault();
