@@ -229,6 +229,15 @@
           </q-item-section>
         </q-item>
 
+        <q-item to="/Course" active-class="q-item-no-link-highlighting">
+          <q-item-section avatar>
+            <q-icon name="list" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Course</q-item-label>
+          </q-item-section>
+        </q-item>
+
         <q-item
           to="/RegisteredStudents"
           active-class="q-item-no-link-highlighting"

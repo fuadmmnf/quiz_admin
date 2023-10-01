@@ -4,7 +4,7 @@ import { defineStore } from "pinia";
 const defaultStore = () => {
   return {
     counter: 0,
-    isAuthenticated: true,
+    isAuthenticated: false,
     accessToken: null,
     refreshToken: null,
     user: null,

@@ -101,6 +101,18 @@ const routes = [
         component: () => import("pages/Institutions.vue"),
       },
       {
+        path: "/Course",
+        component: () => import("pages/Course/index.vue"),
+      },
+      {
+        path: "/Course/add",
+        component: () => import("pages/Course/AddOrEdit.vue"),
+      },
+      {
+        path: "/Course/:id",
+        component: () => import("pages/Course/AddOrEdit.vue"),
+      },
+      {
         path: "/RegisteredStudents",
         component: () => import("pages/RegisteredStudents/index.vue"),
       },
