@@ -554,9 +554,7 @@ export default defineComponent({
       model: "",
       expanded: false,
       categoryOptions: [],
-      subcategoryOptions: [],
       subjectOptions: [],
-      chapterOptions: [],
       facultyOptions: [],
       disciplineOptions: [],
       types: [
@@ -579,14 +577,14 @@ export default defineComponent({
     onCategorySelect(val, idx) {
       this.questions[idx] = {...this.questions[idx], selected_category: val, category_id: null};
     },
-    onSubjectSelect(val, idx){
+    onSubjectSelect(val, idx) {
       this.questions[idx] = {...this.questions[idx], selected_subject: val, subject_id: null};
     },
     onSubmit: _.debounce(function () {
       // const origQuestions = [...this.questions];
       this.questions = this.questions.map((q) => {
-        q.category_id = (q.category_id == null? q.selected_category : q.category_id)
-        q.subject_id = (q.subject_id == null? q.selected_subject : q.subject_id)
+        q.category_id = (q.category_id == null ? q.selected_category : q.category_id)
+        q.subject_id = (q.subject_id == null ? q.selected_subject : q.subject_id)
         return q;
       });
 
@@ -684,21 +682,26 @@ export default defineComponent({
       const question = this.questions[index];
       const {options, content, category_id, subject_id, type, score, unit_negative_mark} =
         questionData;
-      const catData = this.subjectOptions.find(sc => sc.value === category_id)
-      const subData = this.chapterOptions.find(co => co.value === subject_id)
 
+      const catData = this.categoryOptions.reduce((acc, c) => {
+        return acc.concat(c.children.data)
+      }, []).find(sc => sc.id === category_id)
 
-      const optionsData = options.data;
+      const subData = this.subjectOptions.reduce((acc, s) => {
+        return acc.concat(s.children.data)
+      }, []).find(sc => sc.id === subject_id)
+
+      const optionsData = options.data
 
       question.options = optionsData.filter((option) => !option.is_hint);
       question.hints = optionsData.filter((option) => option.is_hint);
 
       Object.assign(question, {
         content,
-        selected_category: catData ? catData.parent_id : catData.id,
-        category_id: catData ? catData : null,
-        selected_subject: subData ? subData.parent_id : subData.id,
-        subject_id: subData ? subData : null,
+        category_id: catData ? catData.id : null,
+        selected_category: category_id == null ? null : (catData ? catData.parent_id : this.categoryOptions.find(c => c.id === category_id).id),
+        subject_id: subData ? subData.id : null,
+        selected_subject: subject_id == null ? null : (subData ? subData.parent_id : this.subjectOptions.find(s => s.id === subject_id).id),
         type,
         score,
         unit_negative_mark,
@@ -744,44 +747,37 @@ export default defineComponent({
       }
     },
     getCategories() {
-      api
-        .get("/categories/category?limit=0")
-        .then((response) => {
-          this.categoryOptions = response.data.data;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      return api.get("/categories/category").then((response) => {
+        this.categoryOptions = response.data.data
+      });
     },
-    getSubject() {
-      api
-        .get("/categories/subject?limit=0")
-        .then((response) => {
-          this.subjectOptions = response.data.data;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+    getSubjects() {
+      return api.get("/categories/subject").then((response) => {
+        this.subjectOptions = response.data.data
+      });
     },
 
 
   },
 
-  mounted() {
+  async mounted() {
     this.questions.push(this.questionData);
-    this.getCategories();
-    this.getSubject();
+    Promise.all([
+      this.getCategories(),
+      this.getSubjects()
+    ]).then(value => {
+      if (this.$route.params.id) {
+        this.question_id = this.$route.params.id;
+        api
+          .get(
+            `/questions/${this.$route.params.id}?include=options,children.options`
+          )
+          .then((response) => {
+            this.processQuestion(response.data.data, 0);
+          });
+      }
+    });
 
-    if (this.$route.params.id) {
-      this.question_id = this.$route.params.id;
-      api
-        .get(
-          `/questions/${this.$route.params.id}?include=options,children.options`
-        )
-        .then((response) => {
-          this.processQuestion(response.data.data, 0);
-        });
-    }
   },
 });
 </script>
