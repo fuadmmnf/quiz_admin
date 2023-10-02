@@ -599,7 +599,6 @@ export default defineComponent({
         });
       }
     }, 2000),
-
     onReset() {
       this.examData = initExamData();
     },
