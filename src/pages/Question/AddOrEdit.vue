@@ -177,7 +177,7 @@
                               <q-input
                                 filled
                                 v-model="question.score"
-                                :label="`Score`"
+                                label="Score"
                                 lazy-rules
                                 :rules="[(val) => !!val || 'Score is required']"
                               />
