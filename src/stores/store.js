@@ -101,10 +101,14 @@ export const useStore = defineStore("store", {
         Authorization: "Bearer " + localStorage.getItem("accessToken"),
       };
       await api
-        .get("/profile", { headers: headers })
+        .get("/profile?include=roles", { headers: headers })
         .then((response) => {
           this.user = response.data.data;
           localStorage.setItem("user", JSON.stringify(response.data.data));
+          localStorage.setItem(
+            "userRole",
+            JSON.stringify(this.user.roles.data)
+          );
           this.isAuthenticated = true;
         })
         .catch((error) => {
