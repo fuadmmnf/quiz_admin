@@ -5,8 +5,8 @@ const routes = [
     children: [
       { path: "", component: () => import("pages/Dashboard.vue") },
       {
-        path: "/Roles/Admin",
-        component: () => import("pages/Roles/Admin.vue"),
+        path: "/Roles/SubAdmin",
+        component: () => import("pages/Roles/SubAdmin.vue"),
       },
       {
         path: "/Roles/Moderator",
