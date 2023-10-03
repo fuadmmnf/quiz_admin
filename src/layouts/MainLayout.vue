@@ -101,12 +101,12 @@
         </q-item>
         <q-expansion-item icon="people" label="Roles">
           <q-item
-            to="/Roles/Admin"
+            to="/Roles/SubAdmin"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
             <q-item-section>
-              <q-item-label>Admins</q-item-label>
+              <q-item-label>SubAdmins</q-item-label>
             </q-item-section>
           </q-item>
           <q-item
