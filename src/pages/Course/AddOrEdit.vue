@@ -74,6 +74,28 @@
                       <div class="col-6">
                         <q-input
                           filled
+                          v-model="courseData.co_ordinator_name"
+                          :label="`Co-ordinator Name`"
+                          :rules="[
+                            (val) => !!val || 'Co-ordinator Name is required',
+                          ]"
+                        />
+                      </div>
+                      <div class="col-6">
+                        <q-input
+                          filled
+                          v-model="courseData.co_ordinator_phone"
+                          :label="`Co-ordinator Phone number`"
+                          :rules="[
+                            (val) => !!val || 'Phone number is required',
+                          ]"
+                        />
+                      </div>
+                    </div>
+                    <div class="row q-col-gutter-md">
+                      <div class="col-6">
+                        <q-input
+                          filled
                           v-model="courseData.number_of_classes"
                           :label="`Number of classes`"
                           :rules="[
@@ -90,6 +112,59 @@
                             (val) => !!val || 'Number of exams is required',
                           ]"
                         />
+                      </div>
+                    </div>
+                    <div class="row q-col-gutter-md">
+                      <div class="col-6">
+                        <q-file
+                          filled
+                          bottom-slots
+                          v-model="courseData.course_icon"
+                          label="Course icon"
+                          counter
+                        >
+                          <template v-slot:prepend>
+                            <q-icon name="cloud_upload" @click.stop.prevent />
+                          </template>
+                          <template v-if="courseData.course_icon" v-slot:append>
+                            <q-icon
+                              name="close"
+                              @click.stop.prevent="
+                                courseData.course_icon = null
+                              "
+                              class="cursor-pointer"
+                            />
+                          </template>
+
+                          <template v-slot:hint> png/jpg </template>
+                        </q-file>
+                      </div>
+                      <div class="col-6">
+                        <q-file
+                          filled
+                          bottom-slots
+                          v-model="courseData.course_short_video"
+                          label="Short video"
+                          counter
+                        >
+                          <template v-slot:prepend>
+                            <q-icon name="cloud_upload" @click.stop.prevent />
+                          </template>
+                          <template
+                            v-if="courseData.course_short_video"
+                            v-slot:append
+                          >
+                            <q-icon
+                              name="close"
+                              @click.stop.prevent="
+                                courseData.course_short_video = null
+                              "
+                              class="cursor-pointer"
+                            />
+                          </template>
+
+                          <template v-slot:hint> mp4/mkv </template>
+                        </q-file>
                       </div>
                     </div>
                     <div class="row q-col-gutter-md q-mt-auto">
@@ -175,7 +250,7 @@
 
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
-import { ref } from "@vue/reactivity";
+import { ref } from "vue";
 import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 import { useQuasar } from "quasar";
@@ -209,6 +284,10 @@ export default defineComponent({
         number_of_exams: "",
         start_date: "",
         end_date: "",
+        co_ordinator_name: "",
+        co_ordinator_phone: "",
+        course_icon: ref(null),
+        course_short_video: ref(null),
       },
     };
   },
@@ -227,6 +306,10 @@ export default defineComponent({
         number_of_exams: "",
         start_date: "",
         end_date: "",
+        co_ordinator_name: "",
+        co_ordinator_phone: "",
+        course_icon: ref(null),
+        course_short_video: ref(null),
       };
     },
     openCourseDescriptionTinyMceModal() {

@@ -69,7 +69,7 @@
                         round
                         dense
                         flat
-                        @click="onDelete(props.row)"
+                        @click="onDelete(props.row.id)"
                       />
                     </q-td>
                   </q-tr>
@@ -212,6 +212,23 @@ export default defineComponent({
     TableActions: defineAsyncComponent(() =>
       import("components/tables/TableActions.vue")
     ),
+  },
+  methods: {
+    onDelete(id) {
+      this.$q
+        .dialog({
+          title: "Confirm",
+          message: "Would you like to turn on the wifi?",
+          cancel: true,
+          persistent: true,
+        })
+        .onOk(() => {
+          console.log(">>>> OK", id);
+        })
+        .onCancel(() => {
+          console.log(">>>> Cancel");
+        });
+    },
   },
 
   mounted() {
