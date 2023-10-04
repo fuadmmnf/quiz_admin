@@ -120,6 +120,10 @@ const routes = [
         path: "/RegisteredStudents/:id",
         component: () => import("pages/RegisteredStudents/edit.vue"),
       },
+      {
+        path: "/send-message",
+        component: () => import("pages/SendMessage.vue"),
+      },
 
       // Not completed yet
       // {path: '/Taskboard', component: () => import('pages/TaskBoard.vue')},
