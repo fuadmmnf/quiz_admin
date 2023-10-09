@@ -91,7 +91,7 @@ export default {
             color: "positive",
             icon: "check",
           });
-          this.$router.push("/Roles/" + this.role);
+          this.$router.push("/roles/" + this.role);
         })
         .catch((err) => {
           this.$q.notify({

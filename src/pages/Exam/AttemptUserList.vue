@@ -45,15 +45,20 @@ export default {
     const router = useRouter();
 
     const recalculateMarks = async () => {
-      api.put(`/exam-markings`, { exam_id : route.params.id, exam_attempt_ids: "*"}).then(() => {
-        // confirm
-        $q.notify({
-          message: "Marks recalculated successfully",
-          color: "green",
-          icon: "check",
+      api
+        .put(`/exam-markings`, {
+          exam_id: route.params.id,
+          exam_attempt_ids: "*",
+        })
+        .then(() => {
+          // confirm
+          $q.notify({
+            message: "Marks recalculated successfully",
+            color: "green",
+            icon: "check",
+          });
+          router.push(`/exam/completed`);
         });
-        router.push(`/Exam/completed`);
-      });
     };
 
     return {

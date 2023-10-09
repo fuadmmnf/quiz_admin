@@ -7,7 +7,7 @@
           <div class="text-subtitle2">List of all Exams are shown here</div>
         </div>
         <div class="row">
-          <q-btn color="primary" label="Add Exam" icon="add" to="/Exam/add" />
+          <q-btn color="primary" label="Add Exam" icon="add" to="/exam/add" />
         </div>
       </q-card-section>
     </q-card>

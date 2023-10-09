@@ -102,7 +102,7 @@
         </q-item>
         <q-expansion-item icon="people" label="Roles">
           <q-item
-            to="/Roles/Admin"
+            to="/roles/admin"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -111,7 +111,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            to="/Roles/Moderator"
+            to="/roles/moderator"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -120,7 +120,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            to="/Roles/Mentor"
+            to="/roles/mentor"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -129,7 +129,7 @@
             </q-item-section>
           </q-item>
         </q-expansion-item>
-        <q-item to="/Category" active-class="q-item-no-link-highlighting">
+        <q-item to="/category" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
             <q-icon name="category" />
           </q-item-section>
@@ -137,7 +137,7 @@
             <q-item-label>Category</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item to="/Faculty" active-class="q-item-no-link-highlighting">
+        <q-item to="/faculty" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
             <q-icon name="person" />
           </q-item-section>
@@ -145,7 +145,7 @@
             <q-item-label>Faculty</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item to="/Subject" active-class="q-item-no-link-highlighting">
+        <q-item to="/subject" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
             <q-icon name="subject" />
           </q-item-section>
@@ -153,7 +153,7 @@
             <q-item-label>Subject</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item to="/Question" active-class="q-item-no-link-highlighting">
+        <q-item to="/question" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
             <q-icon name="question_answer" />
           </q-item-section>
@@ -165,7 +165,7 @@
 
         <q-expansion-item icon="menu_open" label="Exams">
           <q-item
-            to="/Exam/Draft"
+            to="/exam/draft"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -174,7 +174,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            to="/Exam/Upcoming"
+            to="/exam/upcoming"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -183,7 +183,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            to="/Exam/Ongoing"
+            to="/exam/ongoing"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -192,7 +192,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            to="/Exam/Checking"
+            to="/exam/checking"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -201,7 +201,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            to="/Exam/Completed"
+            to="/exam/completed"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -220,7 +220,7 @@
           </q-item-section>
         </q-item>
 
-        <q-item to="/Institutions" active-class="q-item-no-link-highlighting">
+        <q-item to="/institutions" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
             <q-icon name="list" />
           </q-item-section>
@@ -229,7 +229,7 @@
           </q-item-section>
         </q-item>
 
-        <q-item to="/Course" active-class="q-item-no-link-highlighting">
+        <q-item to="/course" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
             <q-icon name="list" />
           </q-item-section>
@@ -239,14 +239,14 @@
         </q-item>
 
         <q-item
-          to="/RegisteredStudents"
+          to="/registered-students"
           active-class="q-item-no-link-highlighting"
         >
           <q-item-section avatar>
             <q-icon name="list" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Registered studens</q-item-label>
+            <q-item-label>Registered students</q-item-label>
           </q-item-section>
         </q-item>
 
@@ -256,6 +256,17 @@
           </q-item-section>
           <q-item-section>
             <q-item-label>Send Message</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item
+          to="/lecture-classes"
+          active-class="q-item-no-link-highlighting"
+        >
+          <q-item-section avatar>
+            <q-icon name="list" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Lecture Classes</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>

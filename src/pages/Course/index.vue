@@ -11,7 +11,7 @@
             color="primary"
             label="Add Course"
             icon="add"
-            to="/Course/add"
+            to="/course/add"
           />
         </div>
       </q-card-section>
@@ -59,7 +59,7 @@
                         round
                         dense
                         flat
-                        :to="`/Course/${props.row.id}`"
+                        :to="`/course/${props.row.id}`"
                       />
 
                       <q-btn
