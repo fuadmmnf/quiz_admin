@@ -124,9 +124,14 @@ const routes = [
         path: "/send-message",
         component: () => import("pages/SendMessage.vue"),
       },
+
       {
         path: "/lecture-classes",
-        component: () => import("pages/LectureClasses.vue"),
+        component: () => import("pages/LectureClass/index.vue"),
+      },
+      {
+        path: "/lecture-class/add",
+        component: () => import("pages/LectureClass/AddOrEdit.vue"),
       },
 
       // Not completed yet

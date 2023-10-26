@@ -229,61 +229,63 @@
           </q-item-section>
         </q-item>
 
-        <!-- <q-item to="/course" active-class="q-item-no-link-highlighting">
+        <q-item to="/course" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
             <q-icon name="list" />
           </q-item-section>
           <q-item-section>
             <q-item-label>Course</q-item-label>
           </q-item-section>
-        </q-item> -->
+        </q-item>
 
         <q-expansion-item icon="menu_open" label="Courses">
-          <q-item
-            to="/exam/draft"
-            class="q-ml-xl"
-            active-class="q-item-no-link-highlighting"
-          >
-            <q-item-section>
-              <q-item-label>Draft Exams</q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item
-            to="/exam/upcoming"
-            class="q-ml-xl"
-            active-class="q-item-no-link-highlighting"
-          >
-            <q-item-section>
-              <q-item-label>Upcoming Exams</q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item
-            to="/exam/ongoing"
-            class="q-ml-xl"
-            active-class="q-item-no-link-highlighting"
-          >
-            <q-item-section>
-              <q-item-label>Ongoing Exams</q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item
-            to="/exam/checking"
-            class="q-ml-xl"
-            active-class="q-item-no-link-highlighting"
-          >
-            <q-item-section>
-              <q-item-label>Checking Exams</q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item
-            to="/exam/completed"
-            class="q-ml-xl"
-            active-class="q-item-no-link-highlighting"
-          >
-            <q-item-section>
-              <q-item-label>Completed Exams</q-item-label>
-            </q-item-section>
-          </q-item>
+          <q-expansion-item icon="menu" label="Exams">
+            <q-item
+              to="/exam/draft"
+              class="q-ml-xl"
+              active-class="q-item-no-link-highlighting"
+            >
+              <q-item-section>
+                <q-item-label>Draft Exams</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item
+              to="/exam/upcoming"
+              class="q-ml-xl"
+              active-class="q-item-no-link-highlighting"
+            >
+              <q-item-section>
+                <q-item-label>Upcoming Exams</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item
+              to="/exam/ongoing"
+              class="q-ml-xl"
+              active-class="q-item-no-link-highlighting"
+            >
+              <q-item-section>
+                <q-item-label>Ongoing Exams</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item
+              to="/exam/checking"
+              class="q-ml-xl"
+              active-class="q-item-no-link-highlighting"
+            >
+              <q-item-section>
+                <q-item-label>Checking Exams</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item
+              to="/exam/completed"
+              class="q-ml-xl"
+              active-class="q-item-no-link-highlighting"
+            >
+              <q-item-section>
+                <q-item-label>Completed Exams</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-expansion-item>
         </q-expansion-item>
 
         <q-item
@@ -306,7 +308,7 @@
             <q-item-label>Send Message</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item
+        <!-- <q-item
           to="/lecture-classes"
           active-class="q-item-no-link-highlighting"
         >
@@ -316,7 +318,7 @@
           <q-item-section>
             <q-item-label>Lecture Classes</q-item-label>
           </q-item-section>
-        </q-item>
+        </q-item> -->
       </q-list>
     </q-drawer>
 

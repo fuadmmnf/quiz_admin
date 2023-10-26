@@ -3,21 +3,17 @@
     <q-card class="no-shadow" bordered>
       <q-card-section class="row items-center justify-between">
         <div class="text-h6 text-indigo-8">
-          Course
-          <div class="text-subtitle2">List of all Course are shown here</div>
+          Lecture classes
+          <div class="text-subtitle2">
+            List of all Lecture classes are shown here
+          </div>
         </div>
         <div class="row">
           <q-btn
-            class="q-mr-sm"
             color="primary"
-            label="Lecture classes"
-            to="/lecture-classes"
-          />
-          <q-btn
-            color="primary"
-            label="Add Course"
+            label="Add Lecture classes"
             icon="add"
-            to="/course/add"
+            to="/lecture-class/add"
           />
         </div>
       </q-card-section>
@@ -30,7 +26,7 @@
             <q-card-section>
               <q-table
                 :columns="columns"
-                :rows="courses"
+                :rows="LectureClasses"
                 row-key="id"
                 wrap-cells
                 no-data-label="No data available"
@@ -44,17 +40,14 @@
                     <q-td key="title" :props="props">
                       {{ props.row.title }}
                     </q-td>
-                    <q-td key="number_of_classes" :props="props">
-                      {{ props.row.number_of_classes }}
+                    <q-td key="subject" :props="props">
+                      {{ props.row.subject }}
                     </q-td>
-                    <q-td key="number_of_exams" :props="props">
-                      {{ props.row.number_of_exams }}
+                    <q-td key="lecture_description" :props="props">
+                      {{ props.row.lecture_description }}
                     </q-td>
                     <q-td key="start_date" :props="props">
                       {{ props.row.start_date }}
-                    </q-td>
-                    <q-td key="end_date" :props="props">
-                      {{ props.row.end_date }}
                     </q-td>
 
                     <q-td key="action" :props="props">
@@ -65,7 +58,6 @@
                         round
                         dense
                         flat
-                        :to="`/course/${props.row.id}`"
                       />
 
                       <q-btn
@@ -96,55 +88,43 @@ import { api } from "boot/axios";
 import { useQuasar } from "quasar";
 
 export default defineComponent({
-  name: "Courses",
+  name: "LectureClasses",
   setup() {
     const { $q } = useQuasar();
     const store = useStore();
-    const courses = ref([]);
+    const LectureClasses = ref([]);
     const pagination = ref({
       page: 1,
       rowsPerPage: 10,
       rowsNumber: 0,
     });
     const searchData = ref({ type: "", keywords: "" });
-    const fetchCourses = (page = 1) => {
+    const fetchLectureClasses = (page = 1) => {
       loading.value = true;
 
-      courses.value = [
+      LectureClasses.value = [
         {
           id: 1,
           title: "Hello World",
-          number_of_classes: "10",
-          number_of_exams: "3",
-          start_date: "12-12-2022",
-          end_date: "22-12-2022",
+          subject: "10",
+          lecture_description: "bla bla",
+          start_date: "02-12-2022",
           action: "action",
         },
         {
           id: 2,
-          title: "Testing",
-          number_of_classes: "20",
-          number_of_exams: "1",
+          title: "Hello World",
+          subject: "10",
+          lecture_description: "bla bla",
           start_date: "02-12-2022",
-          end_date: "26-12-2022",
           action: "action",
         },
         {
           id: 3,
           title: "Hello World",
-          number_of_classes: "10",
-          number_of_exams: "3",
-          start_date: "12-12-2022",
-          end_date: "22-12-2022",
-          action: "action",
-        },
-        {
-          id: 4,
-          title: "ABC",
-          number_of_classes: "140",
-          number_of_exams: "36",
-          start_date: "12-12-2022",
-          end_date: "22-12-2022",
+          subject: "10",
+          lecture_description: "bla bla",
+          start_date: "02-12-2022",
           action: "action",
         },
       ];
@@ -156,15 +136,15 @@ export default defineComponent({
       store,
       pagination,
       loading,
-      fetchCourses,
-      courses,
+      fetchLectureClasses,
+      LectureClasses,
       $q,
       searchData,
     };
   },
   data() {
     return {
-      name: "Course",
+      name: "Lecture Class",
       //table header
       //name , mobile , institution, action
       columns: [
@@ -176,16 +156,16 @@ export default defineComponent({
           sortable: true,
         },
         {
-          name: "number_of_classes",
-          label: "Number of Classes",
-          field: "number_of_classes",
+          name: "subject",
+          label: "Subject",
+          field: "subject",
           align: "left",
           sortable: true,
         },
         {
-          name: "number_of_exams",
-          label: "Number of Exams",
-          field: "number_of_exams",
+          name: "lecture_description",
+          label: "Lecture Description",
+          field: "lecture_description",
           align: "left",
           sortable: true,
         },
@@ -196,19 +176,12 @@ export default defineComponent({
           align: "left",
           sortable: true,
         },
-        {
-          name: "end_date",
-          label: "End Date",
-          field: "end_date",
-          align: "left",
-          sortable: true,
-        },
+
         {
           name: "action",
           label: "Action",
           field: "action",
           align: "left",
-          sortable: true,
         },
       ],
       //table data
@@ -238,7 +211,7 @@ export default defineComponent({
   },
 
   mounted() {
-    this.fetchCourses();
+    this.fetchLectureClasses();
   },
 });
 </script>
