@@ -575,7 +575,7 @@ export default defineComponent({
       }
     }, 2000),
     addQuestion(event) {
-      event.preventDefault();
+      // event.preventDefault();
       this.questions.push({
         content: "",
         category_id: null,

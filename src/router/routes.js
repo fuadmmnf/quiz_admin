@@ -37,6 +37,10 @@ const routes = [
         component: () => import("pages/Exam/Draft/index.vue"),
       },
       {
+        path: "user-activity",
+        component: () => import("pages/UserActivity.vue"),
+      },
+      {
         path: "exam/upcoming",
         component: () => import("pages/Exam/Upcoming/index.vue"),
       },
