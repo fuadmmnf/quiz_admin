@@ -44,6 +44,9 @@
                   <q-td key="duration_in_minutes" :props="props">
                     {{ props.row.duration_in_minutes }}
                   </q-td>
+                  <q-td key="course" :props="props">
+                    {{ props.row.id }}
+                  </q-td>
                   <q-td key="actions" :props="props">
                     <!-- move to draft -->
                     <q-btn
@@ -319,6 +322,13 @@ export default {
           sortable: true,
         },
         {
+          name: "course",
+          align: "left",
+          label: "Course",
+          field: (row) => row.id,
+          sortable: true,
+        },
+        {
           name: "actions",
           label: "Actions",
           field: (row) => row.actions,
@@ -381,5 +391,3 @@ export default {
   },
 };
 </script>
-
-<style></style>

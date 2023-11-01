@@ -8,12 +8,6 @@
         </div>
         <div class="row">
           <q-btn
-            class="q-mr-sm"
-            color="primary"
-            label="Lecture classes"
-            to="/lecture-classes"
-          />
-          <q-btn
             color="primary"
             label="Add Course"
             icon="add"
@@ -58,6 +52,23 @@
                     </q-td>
 
                     <q-td key="action" :props="props">
+                      <q-btn
+                        color="primary"
+                        to="/lecture-classes"
+                        round
+                        dense
+                        flat
+                        size="sm"
+                        icon="fa-solid fa-clipboard-list"
+                      >
+                        <q-tooltip
+                          anchor="top middle"
+                          self="bottom middle"
+                          :offset="[10, 10]"
+                        >
+                          <strong class="">Lecture Classes</strong>
+                        </q-tooltip></q-btn
+                      >
                       <q-btn
                         color="primary"
                         size="sm"

@@ -137,6 +137,16 @@
 
                   <q-card-section>
                     <div class="row q-col-gutter-md">
+                      <div class="col-12">
+                        <q-select
+                          filled
+                          v-model="examData.course"
+                          :label="`Course`"
+                          :options="course_option"
+                          emit-value
+                          map-options
+                        />
+                      </div>
                       <!-- title, code, faculty, subject category, duration, start time, end time, start message , end message two columns -->
                       <div class="col-6">
                         <q-input
@@ -521,6 +531,7 @@ export default defineComponent({
         duration_in_minutes: "",
         visibility: "public",
         answer_script_visibility_time: "after-exam",
+        course: "no_course",
         marks_visibility_time: "after-exam",
         merit_visibility_time: "after-exam",
         question_display_type: "vertical",
@@ -539,6 +550,12 @@ export default defineComponent({
       visibility_option: [
         { label: "Public", value: "public" },
         { label: "Private", value: "private" },
+      ],
+      course_option: [
+        { label: "No Course", value: "no_course" },
+        { label: "ABC", value: "abc" },
+        { label: "XYZ", value: "xyz" },
+        { label: "PQR", value: "pqr" },
       ],
       answer_script_visibility_option: [
         { label: "After Attempt", value: "after-attempt" },
@@ -598,6 +615,7 @@ export default defineComponent({
         duration: "",
         visibility: "",
         answer_script_visibility: "",
+        course: "no_course",
         marks_visibility: "",
         merits_visibility: "",
         question_display_type: "",
