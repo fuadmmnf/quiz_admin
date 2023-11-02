@@ -133,6 +133,10 @@ const routes = [
         path: "/lecture-class/add",
         component: () => import("pages/LectureClass/AddOrEdit.vue"),
       },
+      {
+        path: "/subscribe-user",
+        component: () => import("pages/SubscribeUser.vue"),
+      },
 
       // Not completed yet
       // {path: '/Taskboard', component: () => import('pages/TaskBoard.vue')},

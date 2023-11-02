@@ -8,6 +8,13 @@
         </div>
         <div class="row">
           <q-btn
+            class="q-mr-sm"
+            color="primary"
+            label="Subscribe user"
+            icon="add"
+            to="/subscribe-user"
+          />
+          <q-btn
             color="primary"
             label="Add Course"
             icon="add"
