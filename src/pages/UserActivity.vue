@@ -152,16 +152,23 @@ export default {
       const startDate = this.startDate ? new Date(this.startDate) : null;
       const endDate = this.endDate ? new Date(this.endDate) : null;
 
-      return this.rows.filter((row) => {
-        const rowDate = new Date(row.date);
+      const sortedRows = this.rows
+        .filter((row) => {
+          const rowDate = new Date(row.date);
 
-        return (
-          (startDate === null || rowDate >= startDate) &&
-          (endDate === null || rowDate <= endDate) &&
-          (row.user.toLowerCase().includes(filterText) ||
-            row.action.toLowerCase().includes(filterText))
-        );
-      });
+          return (
+            (startDate === null || rowDate >= startDate) &&
+            (endDate === null || rowDate <= endDate) &&
+            (row.user.toLowerCase().includes(filterText) ||
+              row.action.toLowerCase().includes(filterText))
+          );
+        })
+        .sort((a, b) => {
+          // Sort by date in descending order (most recent first)
+          return new Date(b.date) - new Date(a.date);
+        });
+
+      return sortedRows;
     },
   },
 };
