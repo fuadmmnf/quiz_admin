@@ -8,13 +8,6 @@
         </div>
         <div class="row">
           <q-btn
-            class="q-mr-sm"
-            color="primary"
-            label="Subscribe user"
-            icon="add"
-            to="/subscribe-user"
-          />
-          <q-btn
             color="primary"
             label="Add Course"
             icon="add"
@@ -74,8 +67,26 @@
                           :offset="[10, 10]"
                         >
                           <strong class="">Lecture Classes</strong>
-                        </q-tooltip></q-btn
+                        </q-tooltip>
+                      </q-btn>
+                      <q-btn
+                        color="primary"
+                        size="md"
+                        icon="people"
+                        round
+                        dense
+                        flat
+                        :to="`/subscribe-user`"
                       >
+                        <q-tooltip
+                          anchor="top middle"
+                          self="bottom middle"
+                          :offset="[10, 10]"
+                        >
+                          <strong class="">Subscribe users</strong>
+                        </q-tooltip>
+                      </q-btn>
+
                       <q-btn
                         color="primary"
                         size="sm"
