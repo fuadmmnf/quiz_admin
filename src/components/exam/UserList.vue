@@ -220,7 +220,7 @@ export default {
                 real_id: item.examAttempt.data.user.data.id,
                 correct_answers: item.correct_answers,
                 marks: item.marks,
-                attempt_id: item.id,
+                attempt_id: item.examAttempt.data.id,
               });
             });
           }
