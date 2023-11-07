@@ -254,6 +254,7 @@ import { ref } from "vue";
 import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 import { useQuasar } from "quasar";
+import _ from "lodash";
 
 export default defineComponent({
   name: "AddOrEdit Course",
@@ -272,7 +273,7 @@ export default defineComponent({
   },
   data() {
     return {
-      pageName: "Add or Course",
+      pageName: "Add/Edit Course",
       dense: true,
       name: "",
       model: "",
@@ -292,10 +293,33 @@ export default defineComponent({
     };
   },
   methods: {
-    onSubmit() {
-      console.log("Submitted");
-      console.log(this.courseData);
-    },
+    onSubmit: _.debounce(function () {
+      api
+        .post("/courses", {
+          subject_id: null,
+          title: this.courseData.title,
+          description: this.courseData.description,
+          num_classes: this.courseData.number_of_classes,
+          num_exams: this.courseData.number_of_exams,
+          coordinator_name: this.courseData.co_ordinator_name,
+          coordinator_number: this.courseData.co_ordinator_phone,
+          intro_video: "https://www.youtube.com/watch?v=9JSYB59QmZw",
+        })
+        .then((response) => {
+          console.log(response);
+          this.$q.notify({
+            message: "Course Added Successfully",
+            color: "positive",
+            icon: "check",
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          this.onReset();
+        });
+    }, 2000),
     onReset() {
       console.log("Reset");
       this.courseData = {
