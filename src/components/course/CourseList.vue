@@ -7,10 +7,14 @@
             <q-table
               :columns="columns"
               :rows="courses"
-              row-key="id"
+              row-key="real_id"
+              rows-per-page-options="[10]"
+              :loading="loading"
               wrap-cells
               no-data-label="No data available"
               class="shadow-0"
+              v-model:pagination="pagination"
+              @request="onRequest"
             >
               <!-- table data -->
               <template v-slot:body="props">
@@ -20,11 +24,11 @@
                   <q-td key="title" :props="props">
                     {{ props.row.title }}
                   </q-td>
-                  <q-td key="number_of_classes" :props="props">
-                    {{ props.row.number_of_classes }}
+                  <q-td key="num_classes" :props="props">
+                    {{ props.row.num_classes }}
                   </q-td>
-                  <q-td key="number_of_exams" :props="props">
-                    {{ props.row.number_of_exams }}
+                  <q-td key="num_exams" :props="props">
+                    {{ props.row.num_exams }}
                   </q-td>
                   <q-td key="start_date" :props="props">
                     {{ props.row.start_date }}
@@ -163,7 +167,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup() {
+  setup(props) {
     const { $q } = useQuasar();
     const store = useStore();
     const courses = ref([]);
@@ -172,57 +176,41 @@ export default defineComponent({
       rowsPerPage: 10,
       rowsNumber: 0,
     });
+    const loading = ref(true);
     const searchData = ref({ type: "", keywords: "" });
+
     const fetchCourses = (page = 1) => {
       loading.value = true;
-
-      courses.value = [
-        {
-          id: 1,
-          title: "Hello World",
-          number_of_classes: "10",
-          number_of_exams: "3",
-          start_date: "12-12-2022",
-          end_date: "22-12-2022",
-          action: "action",
-        },
-        {
-          id: 2,
-          title: "Testing",
-          number_of_classes: "20",
-          number_of_exams: "1",
-          start_date: "02-12-2022",
-          end_date: "26-12-2022",
-          action: "action",
-        },
-        {
-          id: 3,
-          title: "Hello World",
-          number_of_classes: "10",
-          number_of_exams: "3",
-          start_date: "12-12-2022",
-          end_date: "22-12-2022",
-          action: "action",
-        },
-        {
-          id: 4,
-          title: "ABC",
-          number_of_classes: "140",
-          number_of_exams: "36",
-          start_date: "12-12-2022",
-          end_date: "22-12-2022",
-          action: "action",
-        },
-      ];
+      api
+        .get(
+          `/courses?search=status:${props.courseType}&orderBy=id&sortedBy=desc&page=${page}`
+        )
+        .then((response) => {
+          console.log(`${props.courseType} courses`, response.data);
+          courses.value = response.data.data;
+          const meta = response.data.meta.pagination;
+          pagination.value = {
+            page: meta.current_page,
+            rowsPerPage: meta.per_page,
+            rowsNumber: meta.total,
+          };
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          loading.value = false;
+        });
     };
-
-    const loading = ref(true);
-
+    const onRequest = (props) => {
+      fetchCourses(props.pagination.page);
+    };
     return {
       store,
       pagination,
       loading,
       fetchCourses,
+      onRequest,
       courses,
       $q,
       searchData,
@@ -242,16 +230,16 @@ export default defineComponent({
           sortable: true,
         },
         {
-          name: "number_of_classes",
+          name: "num_classes",
           label: "Number of Classes",
-          field: "number_of_classes",
+          field: "num_classes",
           align: "left",
           sortable: true,
         },
         {
-          name: "number_of_exams",
+          name: "num_exams",
           label: "Number of Exams",
-          field: "number_of_exams",
+          field: "num_exams",
           align: "left",
           sortable: true,
         },
