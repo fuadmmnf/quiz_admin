@@ -293,33 +293,61 @@ export default defineComponent({
     };
   },
   methods: {
-    onSubmit: _.debounce(function () {
-      api
-        .post("/courses", {
-          subject_id: null,
-          title: this.courseData.title,
-          description: this.courseData.description,
-          num_classes: this.courseData.number_of_classes,
-          num_exams: this.courseData.number_of_exams,
-          coordinator_name: this.courseData.co_ordinator_name,
-          coordinator_number: this.courseData.co_ordinator_phone,
-          intro_video: "https://www.youtube.com/watch?v=9JSYB59QmZw",
-        })
-        .then((response) => {
-          console.log(response);
-          this.$q.notify({
-            message: "Course Added Successfully",
-            color: "positive",
-            icon: "check",
+    onSubmit() {
+      if (this.$route.params.id) {
+        api
+          .patch(`/courses/${this.$route.params.id}`, {
+            subject_id: null,
+            title: this.courseData.title,
+            description: this.courseData.description,
+            num_classes: this.courseData.number_of_classes,
+            num_exams: this.courseData.number_of_exams,
+            coordinator_name: this.courseData.co_ordinator_name,
+            coordinator_number: this.courseData.co_ordinator_phone,
+            intro_video: "https://www.youtube.com/watch?v=9JSYB59QmZw",
+          })
+          .then((response) => {
+            console.log(response);
+            this.$q.notify({
+              message: "Course updated Successfully",
+              color: "positive",
+              icon: "check",
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => {
+            this.onReset();
           });
-        })
-        .catch((err) => {
-          console.log(err);
-        })
-        .finally(() => {
-          this.onReset();
-        });
-    }, 2000),
+      } else {
+        api
+          .post("/courses", {
+            subject_id: null,
+            title: this.courseData.title,
+            description: this.courseData.description,
+            num_classes: this.courseData.number_of_classes,
+            num_exams: this.courseData.number_of_exams,
+            coordinator_name: this.courseData.co_ordinator_name,
+            coordinator_number: this.courseData.co_ordinator_phone,
+            intro_video: "https://www.youtube.com/watch?v=9JSYB59QmZw",
+          })
+          .then((response) => {
+            console.log(response);
+            this.$q.notify({
+              message: "Course Added Successfully",
+              color: "positive",
+              icon: "check",
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => {
+            this.onReset();
+          });
+      }
+    },
     onReset() {
       console.log("Reset");
       this.courseData = {
@@ -345,11 +373,16 @@ export default defineComponent({
   },
   mounted() {
     if (this.$route.params.id) {
-      //   api
-      //     .get("")
-      //     .then((response) => {
-      //       this.courseData = response.data.data;
-      //     });
+      api.get("/courses/" + this.$route.params.id).then((response) => {
+        const result = response.data.data;
+        this.courseData.title = result.title;
+        this.courseData.description = result.description;
+        this.courseData.number_of_classes = result.num_classes;
+        this.courseData.number_of_exams = result.num_exams;
+        this.courseData.co_ordinator_name = result.coordinator_name;
+        this.courseData.co_ordinator_phone = result.coordinator_number;
+        this.courseData.course_short_video = result.intro_video;
+      });
     }
   },
 });

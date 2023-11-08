@@ -16,7 +16,7 @@
         </div>
       </q-card-section>
     </q-card>
-
+    <q-separator spaced />
     <course-list :courseType="'completed'"></course-list>
   </q-page>
 </template>

@@ -16,6 +16,7 @@
         </div>
       </q-card-section>
     </q-card>
+    <q-separator spaced />
 
     <course-list :courseType="'draft'"></course-list>
   </q-page>

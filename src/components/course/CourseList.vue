@@ -2,6 +2,18 @@
   <div class="q-pa-none">
     <div class="row q-col-gutter-md">
       <div class="col-12">
+        <q-expansion-item
+          icon="search"
+          label="Search Courses"
+          default-open
+          class="bg-grey-1"
+        >
+          <div class="q-pa-md">
+            <SearchCourses @search="onSearch" />
+          </div>
+        </q-expansion-item>
+
+        <q-separator spaced="" />
         <q-card>
           <q-card-section>
             <q-table
@@ -46,6 +58,7 @@
                       round
                       dense
                       flat
+                      @click="publishCourse(props.row.id)"
                     >
                       <q-tooltip
                         anchor="top middle"
@@ -63,6 +76,7 @@
                       round
                       dense
                       flat
+                      @click="moveToDraft(props.row.id)"
                     >
                       <q-tooltip
                         anchor="top middle"
@@ -80,6 +94,7 @@
                       round
                       dense
                       flat
+                      @click="moveToCompleted(props.row.id)"
                     >
                       <q-tooltip
                         anchor="top middle"
@@ -167,6 +182,11 @@ export default defineComponent({
       required: true,
     },
   },
+  components: {
+    SearchCourses: defineAsyncComponent(() =>
+      import("src/components/course/SearchCourses.vue")
+    ),
+  },
   setup(props) {
     const { $q } = useQuasar();
     const store = useStore();
@@ -177,8 +197,10 @@ export default defineComponent({
       rowsNumber: 0,
     });
     const loading = ref(true);
-    const searchData = ref({ type: "", keywords: "" });
-
+    const searchData = ref({ keywords: "" });
+    const onSearch = (search) => {
+      console.log(search);
+    };
     const fetchCourses = (page = 1) => {
       loading.value = true;
       api
@@ -211,6 +233,7 @@ export default defineComponent({
       loading,
       fetchCourses,
       onRequest,
+      onSearch,
       courses,
       $q,
       searchData,
@@ -268,12 +291,59 @@ export default defineComponent({
       //table data
     };
   },
-  components: {
-    TableActions: defineAsyncComponent(() =>
-      import("components/tables/TableActions.vue")
-    ),
-  },
+
   methods: {
+    moveToCompleted(id) {
+      api
+        .patch(`/courses/${id}/status`, {
+          status: "completed",
+        })
+        .then((res) => {
+          this.$q.notify({
+            message: "Course marked as completed successfully",
+            color: "positive",
+            icon: "check",
+          });
+          this.fetchCourses();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    moveToDraft(id) {
+      api
+        .patch(`/courses/${id}/status`, {
+          status: "draft",
+        })
+        .then((res) => {
+          this.$q.notify({
+            message: "Course moved to draft successfully",
+            color: "positive",
+            icon: "check",
+          });
+          this.fetchCourses();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    publishCourse(id) {
+      api
+        .patch(`/courses/${id}/status`, {
+          status: "published",
+        })
+        .then((res) => {
+          this.$q.notify({
+            message: "Course published successfully",
+            color: "positive",
+            icon: "check",
+          });
+          this.fetchCourses();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
     onDelete(id) {
       this.$q
         .dialog({

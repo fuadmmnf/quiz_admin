@@ -16,6 +16,7 @@
         </div>
       </q-card-section>
     </q-card>
+    <q-separator spaced />
 
     <course-list :courseType="'published'"></course-list>
   </q-page>
