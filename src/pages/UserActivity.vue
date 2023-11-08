@@ -1,175 +1,242 @@
 <template>
   <div class="q-pa-md">
+
+    <div class="row justify-end">
+
+
+      <div class="q-pa-md col" style="max-width: 300px">
+        <q-input filled v-model="startDate" placeholder="Start Date" mask="date" :rules="['date']">
+          <template v-slot:append>
+            <q-icon name="event" class="cursor-pointer">
+              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                <q-date v-model="startDate">
+                  <div class="row items-center justify-end">
+                    <q-btn v-close-popup label="Close" color="primary" flat />
+                  </div>
+                </q-date>
+              </q-popup-proxy>
+            </q-icon>
+          </template>
+        </q-input>
+      </div>
+
+      <div class="q-pa-md col" style="max-width: 300px">
+        <q-input filled v-model="endDate" placeholder="End Date" mask="date" :rules="['date']">
+          <template v-slot:append>
+            <q-icon name="event" class="cursor-pointer">
+              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                <q-date v-model="endDate">
+                  <div class="row items-center justify-end">
+                    <q-btn v-close-popup label="Close" color="primary" flat />
+                  </div>
+                </q-date>
+              </q-popup-proxy>
+            </q-icon>
+          </template>
+        </q-input>
+      </div>
+
+      <div class="q-pa-md col" style="max-width: 300px">
+        <q-select v-model="model" :options="subjectOptions" emit-value
+                  map-options
+                 />
+      </div>
+
+     <div class="q-mt-md q-mb-lg q-pa-md"> <q-btn color="primary" label="Filter" @click="fetchActivityLogs"/></div>
+    </div>
+
     <q-table
       flat
       bordered
       title="User Activity"
-      :rows="filteredRows"
-      :columns="filteredColumns"
+      :rows="rows"
+      :columns="columns"
       row-key="name"
-      :filter="filter"
+      v-model:pagination="pagination"
+      @request="onRequest"
+
     >
-      <template v-slot:top-right>
-        <div class="q-mr-md q-mt-md" style="max-width: 150px">
-          <q-input
-            filled
-            v-model="startDate"
-            mask="date"
-            :rules="['date']"
-            placeholder="Start Date"
-          >
-            <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-                <q-popup-proxy
-                  cover
-                  transition-show="scale"
-                  transition-hide="scale"
-                >
-                  <q-date v-model="startDate">
-                    <div class="row items-center justify-end">
-                      <q-btn v-close-popup label="Close" color="primary" flat />
-                    </div>
-                  </q-date>
-                </q-popup-proxy>
-              </q-icon>
-            </template>
-          </q-input>
-        </div>
 
-        <div class="q-mr-md q-mt-md" style="max-width: 150px">
-          <q-input
-            filled
-            v-model="endDate"
-            mask="date"
-            :rules="['date']"
-            placeholder="End Date"
-          >
-            <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-                <q-popup-proxy
-                  cover
-                  transition-show="scale"
-                  transition-hide="scale"
-                >
-                  <q-date v-model="endDate">
-                    <div class="row items-center justify-end">
-                      <q-btn v-close-popup label="Close" color="primary" flat />
-                    </div>
-                  </q-date>
-                </q-popup-proxy>
-              </q-icon>
-            </template>
-          </q-input>
-        </div>
 
-        <q-input
-          borderless
-          dense
-          debounce="300"
-          v-model="filter"
-          placeholder="Search"
-        >
-          <template v-slot:append>
-            <q-icon name="search" />
-          </template>
-        </q-input>
-      </template>
     </q-table>
   </div>
+
+
 </template>
 
 <script>
-import { ref } from "vue";
-const columns = [
-  {
-    name: "date",
-    required: true,
-    label: "Date",
-    align: "left",
-    field: "date",
-    sortable: true,
-  },
-  {
-    name: "user",
-    label: "User",
-    field: "user",
-    sortable: true,
-  },
-  {
-    name: "resourceType",
-    label: "Resource Type",
-    field: "resourceType",
-    sortable: true,
-  },
-  {
-    name: "action",
-    label: "Action",
-    field: "action",
-    sortable: true,
-  },
-];
+import { api } from "src/boot/axios";
+import { onMounted, ref, watch, computed } from "vue";
+import { date } from 'quasar';
 
-const rows = [
-  {
-    date: "2023-10-01 (12:00 AM)",
-    user: "User 1",
-    action: "Logged in",
-    resourceType: "Resource (Courses)",
-  },
-  {
-    date: "2023-10-02 (12:00 PM)",
-    user: "User 2",
-    action: "Performed an action",
-    resourceType: "Resource (Exams)",
-  },
-  {
-    date: "2023-10-03 (2:00 AM)",
-    user: "User 1",
-    action: "Logged out",
-    resourceType: "Resource (Courses)",
-  },
-];
+
+
 
 export default {
   setup() {
-    return {};
-  },
-  data() {
-    return {
-      filter: "",
-      columns: columns,
-      rows: rows,
-      startDate: null, // Define startDate property
-      endDate: null, // Define endDate property
+    const columns = [
+      {
+        name: "date",
+        required: true,
+        label: "Date",
+        align: "left",
+        field: (row) => row.created_at,
+        sortable: true,
+      },
+      {
+        name: "user",
+        label: "User",
+        field: "causer",
+        sortable: true,
+        format: (val) => (val !== null ? val : "null"),
+      },
+      {
+        name: "resourceType",
+        label: "Resource Type",
+        field: "message",
+        sortable: true,
+        style: "white-space: normal;",
+      },
+      {
+        name: "action",
+        label: "Action",
+        field: "object",
+        sortable: true,
+      },
+    ];
+
+
+    const rows = ref([]);
+    const startDate = ref(null);
+    const endDate = ref(null);
+    const newEndDate = ref(null);
+    const model = ref("All Users");
+
+    const pagination = ref({
+      page: 1,
+      rowsPerPage: 10,
+      rowsNumber: 0,
+    });
+    const subjectOptions = ref([
+      // Include "All Users" as an option
+      {
+        label: "All Users",
+        value: "All Users",
+      },
+    ]);
+
+
+    const fetchUsers = async () => {
+      try {
+        const response = await api.get("/users?search=roles.name:subadmin,moderator&limit=0");
+        if (response && response.data.data) {
+          console.log("Test", response);
+
+          const userData = response.data.data;
+          const transformedData = userData.map(user => ({
+            label: user.name,
+            value: user.id,
+          }));
+
+          subjectOptions.value = subjectOptions.value.concat(transformedData);
+          console.log(transformedData);
+
+        }
+      } catch (error) {
+        console.error("Failed to fetch subjects:", error);
+      }
     };
-  },
-  computed: {
-    filteredColumns() {
-      return this.columns;
-    },
-    filteredRows() {
-      const filterText = this.filter.toLowerCase();
-      const startDate = this.startDate ? new Date(this.startDate) : null;
-      const endDate = this.endDate ? new Date(this.endDate) : null;
 
-      const sortedRows = this.rows
-        .filter((row) => {
-          const rowDate = new Date(row.date);
 
-          return (
-            (startDate === null || rowDate >= startDate) &&
-            (endDate === null || rowDate <= endDate) &&
-            (row.user.toLowerCase().includes(filterText) ||
-              row.action.toLowerCase().includes(filterText))
-          );
-        })
-        .sort((a, b) => {
-          // Sort by date in descending order (most recent first)
-          return new Date(b.date) - new Date(a.date);
-        });
+    const fetchActivityLogs = async (page = 1) => {
 
-      return sortedRows;
-    },
+
+      try {
+        console.log("Start", startDate.value);
+        if (date.isValid(endDate.value)) {
+          const nextDay = date.addToDate(endDate.value, { days: 1 });
+          if (date.isValid(nextDay)) {
+            const increasedDate = date.formatDate(nextDay, 'YYYY-MM-DD');
+            console.log("End Date increased by one day:", increasedDate);
+
+            newEndDate.value = increasedDate;
+          } else {
+            console.error("Invalid End Date after adding one day");
+          }
+        }
+
+        let dateRangeFilter = "";
+
+        if (date.isValid(startDate.value) && date.isValid(newEndDate.value)) {
+          dateRangeFilter = `created_at:${startDate.value},${newEndDate.value}`;
+        }
+
+
+        let causerId = "";
+        if (model.value !== "All Users" && model.value !== null) {
+          causerId = `search=causer_id:${model.value};`;
+          console.log("User Found!", causerId);
+        }
+
+        const apiEndpoint = dateRangeFilter
+          ? `/activity_logs?orderBy=id&sortedBy=desc&searchJoin=and&${causerId}${dateRangeFilter}&page=${page}`
+          : `/activity_logs?orderBy=id&sortedBy=desc&page=${page}`;
+
+
+
+        const response = await api.get(apiEndpoint);
+        if (response) {
+          console.log("Response:", response);
+          rows.value = response.data.data;
+          const meta = response.data.meta.pagination;
+          pagination.value = {
+            page: meta.current_page,
+            rowsPerPage: meta.per_page,
+            rowsNumber: meta.total,
+          };
+
+        }
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      }
+    };
+
+    onMounted(async () => {
+      await fetchUsers();
+      await fetchActivityLogs();
+
+    });
+
+
+
+    const onRequest = (props) => {
+      fetchActivityLogs(props.pagination.page);
+    };
+
+    watch(model, (selectedValue) => {
+      // Log the selected label and value
+      console.log("Selected Label:", subjectOptions.value.find(option => option.value === selectedValue).label);
+      console.log("Selected Value (ID):", selectedValue);
+    });
+
+
+
+
+    return {
+      columns,
+      rows,
+      startDate,
+      endDate,
+      model,
+
+      fetchActivityLogs,
+      pagination,
+      onRequest,
+      subjectOptions,
+
+
+
+    };
   },
 };
 </script>
