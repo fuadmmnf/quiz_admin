@@ -128,7 +128,7 @@
                       round
                       dense
                       flat
-                      :to="`/subscribe-user`"
+                      :to="`/subscribe-user/${props.row.id}`"
                     >
                       <q-tooltip
                         anchor="top middle"

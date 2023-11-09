@@ -29,17 +29,18 @@
                     <!-- serial -->
 
                     <q-td key="name" :props="props">
-                      {{ props.row.name }}
+                      {{ props.row.user.data.name }}
                     </q-td>
                     <q-td key="mobile" :props="props">
-                      {{ props.row.mobile }}
+                      {{ props.row.user.data.mobile }}
                     </q-td>
                     <q-td key="institution" :props="props">
                       {{ props.row.institution }}
                     </q-td>
 
                     <q-td key="action" :props="props">
-                      <q-btn
+                      N/A
+                      <!-- <q-btn
                         color="green"
                         size="sm"
                         icon="fa-solid fa-user-plus"
@@ -56,8 +57,8 @@
                           <strong class=""
                             >Subscribe {{ props.row.name }}</strong
                           >
-                        </q-tooltip></q-btn
-                      >
+                        </q-tooltip>
+                      </q-btn> -->
                     </q-td>
                   </q-tr>
                 </template>
@@ -78,6 +79,7 @@ import { useQuasar } from "quasar";
 
 export default defineComponent({
   name: "SubscribeUser",
+
   setup() {
     const { $q } = useQuasar();
     const store = useStore();
@@ -88,39 +90,28 @@ export default defineComponent({
       rowsNumber: 0,
     });
     const searchData = ref({ type: "", keywords: "" });
+    const courseId = ref("");
     const fetchUsers = (page = 1) => {
       loading.value = true;
-
-      users.value = [
-        {
-          id: 1,
-          name: "Newton",
-          mobile: "017xxxxxxxx",
-          institution: "Dhaka College",
-          action: "action",
-        },
-        {
-          id: 2,
-          name: "Einstein",
-          mobile: "017xxxxxxxx",
-          institution: "City college",
-          action: "action",
-        },
-        {
-          id: 3,
-          name: "Hawking",
-          mobile: "017xxxxxxxx",
-          institution: "Bangladesh University",
-          action: "action",
-        },
-        {
-          id: 4,
-          name: "Feynman",
-          mobile: "017xxxxxxxx",
-          institution: "NSTU",
-          action: "action",
-        },
-      ];
+      api
+        .get(
+          `/course-users?search=course_id:${courseId.value}&include=user&orderBy=id&sortedBy=desc&page=${page}`
+        )
+        .then((response) => {
+          users.value = response.data.data;
+          const meta = response.data.meta.pagination;
+          pagination.value = {
+            page: meta.current_page,
+            rowsPerPage: meta.per_page,
+            rowsNumber: meta.total,
+          };
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          loading.value = false;
+        });
     };
 
     const loading = ref(true);
@@ -133,6 +124,7 @@ export default defineComponent({
       users,
       $q,
       searchData,
+      courseId,
     };
   },
   data() {
@@ -174,11 +166,7 @@ export default defineComponent({
       //table data
     };
   },
-  components: {
-    TableActions: defineAsyncComponent(() =>
-      import("components/tables/TableActions.vue")
-    ),
-  },
+
   methods: {
     onSubscribe(id) {
       this.$q
@@ -198,6 +186,7 @@ export default defineComponent({
   },
 
   mounted() {
+    this.courseId = this.$route.params.courseId;
     this.fetchUsers();
   },
 });

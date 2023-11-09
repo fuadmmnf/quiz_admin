@@ -101,10 +101,6 @@ const routes = [
         component: () => import("pages/Institutions.vue"),
       },
       {
-        path: "/course",
-        component: () => import("pages/Course/index.vue"),
-      },
-      {
         path: "/course/draft",
         component: () => import("pages/Course/Draft/index.vue"),
       },
@@ -146,8 +142,8 @@ const routes = [
         component: () => import("pages/LectureClass/AddOrEdit.vue"),
       },
       {
-        path: "/subscribe-user",
-        component: () => import("pages/SubscribeUser.vue"),
+        path: "/subscribe-user/:courseId",
+        component: () => import("pages/Course/EnrolledUser.vue"),
       },
 
       // Not completed yet

@@ -238,11 +238,7 @@
           </q-item-section>
         </q-item> -->
 
-        <q-expansion-item
-          icon="menu_open"
-          label="Courses"
-          @click="this.$router.push('/course')"
-        >
+        <q-expansion-item icon="menu_open" label="Courses">
           <q-item
             to="/course/draft"
             class="q-ml-xl"
