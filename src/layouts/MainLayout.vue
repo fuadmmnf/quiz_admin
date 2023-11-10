@@ -38,14 +38,13 @@
             round
             dense
             flat
-            color="white"
-            icon="fab fa-twitter"
+            style="color: red !important"
             type="a"
-            href="https://twitter.com/pratik227"
+            href="https://github.com/sponsors/pratik227"
             target="_blank"
           >
+            <i class="fa fa-heart fa-2x fa-beat"></i>
           </q-btn>
-
           <q-btn round dense flat color="white" icon="notifications">
             <q-badge color="red" text-color="white" floating> 5 </q-badge>
             <q-menu>
@@ -102,12 +101,12 @@
         </q-item>
         <q-expansion-item icon="people" label="Roles">
           <q-item
-            to="/roles/admin"
+            to="/Roles/SubAdmin"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
             <q-item-section>
-              <q-item-label>Admins</q-item-label>
+              <q-item-label>SubAdmins</q-item-label>
             </q-item-section>
           </q-item>
           <q-item
@@ -210,7 +209,6 @@
             </q-item-section>
           </q-item>
         </q-expansion-item>
-
         <q-item to="/TreeTable" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
             <q-icon name="list" />
@@ -219,7 +217,6 @@
             <q-item-label>TreeTable</q-item-label>
           </q-item-section>
         </q-item>
-
         <q-item to="/institutions" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
             <q-icon name="list" />
@@ -228,7 +225,6 @@
             <q-item-label>Institutions</q-item-label>
           </q-item-section>
         </q-item>
-        <!-- 
         <q-item to="/course" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
             <q-icon name="list" />
@@ -278,6 +274,7 @@
           </q-item-section>
           <q-item-section>
             <q-item-label>Registered students</q-item-label>
+
           </q-item-section>
         </q-item>
 
@@ -287,6 +284,15 @@
           </q-item-section>
           <q-item-section>
             <q-item-label>Send Message</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-item to="/user-activity" active-class="q-item-no-link-highlighting" v-if="user && user.name === 'Super Admin'">
+          <q-item-section avatar>
+            <q-icon name="list" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Activity</q-item-label>
           </q-item-section>
         </q-item>
         <!-- <q-item
@@ -313,7 +319,7 @@
 import EssentialLink from "components/EssentialLink.vue";
 import Messages from "./Messages.vue";
 
-import { defineComponent, ref } from "vue";
+import {defineComponent, onMounted, ref} from "vue";
 import { useQuasar } from "quasar";
 import { useStore } from "src/stores/store";
 
@@ -329,6 +335,18 @@ export default defineComponent({
     const leftDrawerOpen = ref(false);
     const $q = useQuasar();
     const store = useStore();
+    const user = ref(null);
+
+    onMounted(async () => {
+      // Call the action to fetch the user data
+      await store.getAuthenticatedUser();
+
+      // Now, you can access the user object
+      if (store.user) {
+        user.value = store.user;
+        console.log(user.value.name);
+      }
+    });
 
     return {
       $q,
@@ -337,6 +355,7 @@ export default defineComponent({
         leftDrawerOpen.value = !leftDrawerOpen.value;
       },
       store,
+      user,
     };
   },
   methods: {

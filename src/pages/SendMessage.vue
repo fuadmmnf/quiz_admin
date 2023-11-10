@@ -6,7 +6,9 @@
           Send Message
           <div class="text-subtitle2">Mail to all or specific user</div>
         </div>
-        <div class="row"></div>
+        <div class="row">
+          <q-btn color="primary" label="Send" icon="send" />
+        </div>
       </q-card-section>
     </q-card>
 
@@ -121,6 +123,7 @@
                 />
               </div>
             </q-card-section>
+
           </q-card>
         </div>
       </div>
@@ -133,6 +136,7 @@ import { ref } from "vue";
 
 const stringOptions = ["Sultana", "Marjan", "Mitu"];
 const stringTemplatesOptions = ["Simple", "Dynamic", "Email type"];
+
 
 export default {
   setup() {
@@ -163,6 +167,7 @@ export default {
           );
         });
       },
+
 
       filterFn(val, update) {
         if (val === "") {

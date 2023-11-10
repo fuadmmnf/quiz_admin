@@ -114,8 +114,8 @@ export default {
         keywords: "",
         type: "",
         category: "",
-        subject: "",
-        faculty: "",
+        subjects: "",
+        faculties: "",
       };
       this.$emit("search", this.searchData);
     },
@@ -127,13 +127,13 @@ export default {
         value: category.id,
       });
     });
-    this.store.subject.map((subject) => {
+    this.store.subjects.map((subject) => {
       this.subjectOptions.push({
         label: subject.name,
         value: subject.id,
       });
     });
-    this.store.faculty.map((faculty) => {
+    this.store.faculties.map((faculty) => {
       this.facultyOptions.push({
         label: faculty.name,
         value: faculty.id,

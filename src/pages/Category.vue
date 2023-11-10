@@ -6,7 +6,7 @@
         <div class="text-subtitle2">List of all categories</div>
       </q-card-section>
     </q-card>
-    <q-separator spaced />
+    <q-separator spaced/>
 
     <div class="q-pa-none">
       <div class="row q-col-gutter-md">
@@ -14,10 +14,10 @@
           <q-card>
             <q-card-section>
               <simple-hierarchy
-                :page="pageName"
-                :tableData="tableData"
-                @editItem="editItem"
-                @deleteItem="deleteItem"
+                  :page="pageName"
+                  :tableData="allCategories"
+                  @editItem="editItem"
+                  @deleteItem="deleteItem"
               ></simple-hierarchy>
             </q-card-section>
           </q-card>
@@ -28,34 +28,36 @@
               <div class="text-h6 text-indigo-8">Add/Edit Category</div>
 
               <q-form
-                @submit="onSubmit"
-                @reset="onReset"
-                class="q-gutter-md q-mt-lg"
+                  @submit="onSubmit"
+                  @reset="onReset"
+                  class="q-gutter-md q-mt-lg"
               >
                 <q-input
-                  outlined
-                  v-model="name"
-                  :label="`Category name *`"
-                  :hint="`Category name must be unique`"
-                  :rules="[(val) => !!val || 'Field is required']"
+                    outlined
+                    v-model="name"
+                    :label="`Category name *`"
+                    :hint="`Category name must be unique`"
+                    :rules="[(val) => !!val || 'Field is required']"
                 />
 
                 <q-select
-                  outlined
-                  v-model="selectedParentCategory"
-                  :options="parentCategoryOptions"
-                  :label="`Parent Category`"
-                  map-options
-                  emit-value
+                    outlined
+                    option-label="name"
+                    option-value="id"
+                    v-model="selectedParentCategory"
+                    :options="allCategories"
+                    :label="`Parent Category`"
+                    map-options
+                    emit-value
                 />
                 <div>
-                  <q-btn label="Submit" type="submit" color="primary" />
+                  <q-btn label="Submit" type="submit" color="primary"/>
                   <q-btn
-                    label="Reset"
-                    type="reset"
-                    color="primary"
-                    flat
-                    class="q-ml-sm"
+                      label="Reset"
+                      type="reset"
+                      color="primary"
+                      flat
+                      class="q-ml-sm"
                   />
                 </div>
               </q-form>
@@ -69,16 +71,16 @@
 
 <script>
 import TableActions from "components/tables/TableActions.vue";
-import { api } from "src/boot/axios";
-import { defineComponent, defineAsyncComponent, ref } from "vue";
-import { useQuasar } from "quasar";
-import { useStore } from "src/stores/store";
+import {api} from "src/boot/axios";
+import {defineComponent, defineAsyncComponent, ref} from "vue";
+import {useQuasar} from "quasar";
+import {useStore} from "src/stores/store";
 
 export default defineComponent({
   name: "Category",
   setup() {
     const store = useStore();
-    const { $q } = useQuasar();
+    const {$q} = useQuasar();
     return {
       store,
       $q,
@@ -88,23 +90,35 @@ export default defineComponent({
     return {
       name: ref(""),
       pageName: "Category",
-      tableData: ref([]),
+      allCategories: [],
       selectedParentCategory: ref(null),
-      parentCategoryOptions: [],
     };
   },
   components: {
     SimpleHierarchy: defineAsyncComponent(() =>
-      import("components/tree-table/SimpleHierarchy.vue")
+        import("components/tree-table/SimpleHierarchy.vue")
     ),
     CustomHierarchy: defineAsyncComponent(() =>
-      import("components/tree-table/CustomHierarchy.vue")
+        import("components/tree-table/CustomHierarchy.vue")
     ),
     TableActions: defineAsyncComponent(() =>
-      import("components/tables/TableActions.vue")
+        import("components/tables/TableActions.vue")
     ),
   },
   methods: {
+    getCategories() {
+      api
+          .get("/categories/category?limit=0")
+          .then((response) => {
+            this.allCategories = response.data.data.map((c) => {
+              c.children = (c.children.data !== undefined? c.children.data: [])
+              return c;
+            })
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+    },
     onSubmit(evt) {
       evt.preventDefault();
       let categoryType = "category";
@@ -112,21 +126,21 @@ export default defineComponent({
         categoryType = "sub-category";
       }
       api
-        .post("/categories", {
-          name: this.name,
-          parent_id: this.selectedParentCategory,
-          type: categoryType,
-        })
-        .then((res) => {
-          this.$q.notify({
-            message: "Category Added Successfully",
-            color: "positive",
-            icon: "check",
+          .post("/categories", {
+            name: this.name,
+            parent_id: this.selectedParentCategory,
+            type: categoryType,
+          })
+          .then((res) => {
+            this.$q.notify({
+              message: "Category Added Successfully",
+              color: "positive",
+              icon: "check",
+            });
+            this.name = '';
+            this.selectedParentCategory = null;
+            this.getCategories();
           });
-          this.name = "";
-          this.tableData = [];
-          this.setDataList();
-        });
     },
     onReset(evt) {
       this.name = "";
@@ -135,39 +149,12 @@ export default defineComponent({
     editItem(row) {
       this.name = row.name;
     },
-    deleteItem(row) {},
-    async setDataList() {
-      api.get("/categories/category?limit=0").then((res) => {
-        res.data.data.map((item) => {
-          this.tableData.push({
-            name: item.name,
-            id: item.id,
-            children: [],
-          });
-        });
-        api.get("/categories/sub-category?limit=0").then((res) => {
-          res.data.data.map((item) => {
-            this.tableData.map((parent) => {
-              if (parent.id == item.parent_id) {
-                parent.children.push({
-                  name: item.name,
-                  id: item.id,
-                });
-              }
-            });
-          });
-        });
-      });
+    deleteItem(row) {
     },
+
   },
   mounted() {
-    this.setDataList();
-    this.store.categories.map((item) => {
-      this.parentCategoryOptions.push({
-        label: item.name,
-        value: item.id,
-      });
-    });
+    this.getCategories();
   },
 });
 </script>
