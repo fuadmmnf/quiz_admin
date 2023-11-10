@@ -106,7 +106,7 @@
                     </q-btn>
                     <q-btn
                       color="primary"
-                      to="/lecture-classes"
+                      :to="`/lecture-classes/${props.row.id}`"
                       round
                       dense
                       flat
@@ -119,8 +119,8 @@
                         :offset="[10, 10]"
                       >
                         <strong class="">Lecture Classes</strong>
-                      </q-tooltip></q-btn
-                    >
+                      </q-tooltip>
+                    </q-btn>
                     <q-btn
                       color="primary"
                       size="md"

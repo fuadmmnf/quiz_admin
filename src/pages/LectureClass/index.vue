@@ -27,10 +27,14 @@
               <q-table
                 :columns="columns"
                 :rows="LectureClasses"
-                row-key="id"
+                :loading="loading"
+                rows-per-page-options="[10]"
+                row-key="real_id"
                 wrap-cells
                 no-data-label="No data available"
                 class="shadow-0"
+                v-model:pagination="pagination"
+                @request="onRequest"
               >
                 <!-- table data -->
                 <template v-slot:body="props">
@@ -43,11 +47,11 @@
                     <q-td key="subject" :props="props">
                       {{ props.row.subject }}
                     </q-td>
-                    <q-td key="lecture_description" :props="props">
-                      {{ props.row.lecture_description }}
+                    <q-td key="description" :props="props">
+                      {{ props.row.description }}
                     </q-td>
-                    <q-td key="start_date" :props="props">
-                      {{ props.row.start_date }}
+                    <q-td key="start_time" :props="props">
+                      {{ props.row.start_time }}
                     </q-td>
 
                     <q-td key="action" :props="props">
@@ -99,39 +103,36 @@ export default defineComponent({
       rowsNumber: 0,
     });
     const searchData = ref({ type: "", keywords: "" });
+    const courseId = ref("");
+
+    const loading = ref(true);
     const fetchLectureClasses = (page = 1) => {
       loading.value = true;
 
-      LectureClasses.value = [
-        {
-          id: 1,
-          title: "Hello World",
-          subject: "10",
-          lecture_description: "bla bla",
-          start_date: "02-12-2022",
-          action: "action",
-        },
-        {
-          id: 2,
-          title: "Hello World",
-          subject: "10",
-          lecture_description: "bla bla",
-          start_date: "02-12-2022",
-          action: "action",
-        },
-        {
-          id: 3,
-          title: "Hello World",
-          subject: "10",
-          lecture_description: "bla bla",
-          start_date: "02-12-2022",
-          action: "action",
-        },
-      ];
+      api
+        .get(
+          `/class-lectures?search=course_id:${courseId.value}&orderBy=id&sortedBy=desc&page=${page}`
+        )
+        .then((response) => {
+          console.log(response.data.data);
+          LectureClasses.value = response.data.data;
+          const meta = response.data.meta.pagination;
+          pagination.value = {
+            page: meta.current_page,
+            rowsPerPage: meta.per_page,
+            rowsNumber: meta.total,
+          };
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          loading.value = false;
+        });
     };
-
-    const loading = ref(true);
-
+    const onRequest = (props) => {
+      fetchLectureClasses(props.pagination.page);
+    };
     return {
       store,
       pagination,
@@ -140,6 +141,8 @@ export default defineComponent({
       LectureClasses,
       $q,
       searchData,
+      courseId,
+      onRequest,
     };
   },
   data() {
@@ -163,16 +166,16 @@ export default defineComponent({
           sortable: true,
         },
         {
-          name: "lecture_description",
-          label: "Lecture Description",
-          field: "lecture_description",
+          name: "description",
+          label: "Description",
+          field: "description",
           align: "left",
           sortable: true,
         },
         {
-          name: "start_date",
+          name: "start_time",
           label: "Start Date",
-          field: "start_date",
+          field: "start_time",
           align: "left",
           sortable: true,
         },
@@ -187,11 +190,7 @@ export default defineComponent({
       //table data
     };
   },
-  components: {
-    TableActions: defineAsyncComponent(() =>
-      import("components/tables/TableActions.vue")
-    ),
-  },
+
   methods: {
     onDelete(id) {
       this.$q
@@ -211,6 +210,7 @@ export default defineComponent({
   },
 
   mounted() {
+    this.courseId = this.$route.params.courseId;
     this.fetchLectureClasses();
   },
 });

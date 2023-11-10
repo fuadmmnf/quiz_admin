@@ -140,9 +140,9 @@
                       <div class="col-12">
                         <q-select
                           filled
-                          v-model="examData.course"
+                          v-model="examData.course_id"
                           :label="`Course`"
-                          :options="course_option"
+                          :options="courseOptions"
                           emit-value
                           map-options
                         />
@@ -531,7 +531,7 @@ export default defineComponent({
         duration_in_minutes: "",
         visibility: "public",
         answer_script_visibility_time: "after-exam",
-        course: "no_course",
+        course_id: "",
         marks_visibility_time: "after-exam",
         merit_visibility_time: "after-exam",
         question_display_type: "vertical",
@@ -551,12 +551,7 @@ export default defineComponent({
         { label: "Public", value: "public" },
         { label: "Private", value: "private" },
       ],
-      course_option: [
-        { label: "No Course", value: "no_course" },
-        { label: "ABC", value: "abc" },
-        { label: "XYZ", value: "xyz" },
-        { label: "PQR", value: "pqr" },
-      ],
+      courseOptions: [],
       answer_script_visibility_option: [
         { label: "After Attempt", value: "after-attempt" },
         { label: "After Exam", value: "after-exam" },
@@ -586,6 +581,7 @@ export default defineComponent({
   methods: {
     onSubmit: _.debounce(function () {
       console.log("Submitted");
+
       api.post("/exams", this.examData).then((response) => {
         console.log(response);
         this.$q.notify({
@@ -615,7 +611,7 @@ export default defineComponent({
         duration: "",
         visibility: "",
         answer_script_visibility: "",
-        course: "no_course",
+        course_id: "",
         marks_visibility: "",
         merits_visibility: "",
         question_display_type: "",
@@ -657,11 +653,23 @@ export default defineComponent({
         });
       });
     },
+
+    getCourses() {
+      api.get("/courses?orderBy=id&sortedBy=desc&limit=0").then((response) => {
+        response.data.data.map((course) => {
+          this.courseOptions.push({
+            label: course.title,
+            value: course.id,
+          });
+        });
+      });
+    },
   },
   mounted() {
     this.getFaculties();
     this.getCategories();
     this.getSubjects();
+    this.getCourses();
     if (this.$route.params.id) {
       api
         .get("/exams/" + this.$route.params.id + "?include=examConfiguration")

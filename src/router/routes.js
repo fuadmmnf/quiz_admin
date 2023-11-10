@@ -134,12 +134,12 @@ const routes = [
       },
 
       {
-        path: "/lecture-classes",
-        component: () => import("pages/LectureClass/index.vue"),
-      },
-      {
         path: "/lecture-class/add",
         component: () => import("pages/LectureClass/AddOrEdit.vue"),
+      },
+      {
+        path: "/lecture-classes/:courseId",
+        component: () => import("pages/LectureClass/index.vue"),
       },
       {
         path: "/subscribe-user/:courseId",
