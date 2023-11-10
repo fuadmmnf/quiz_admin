@@ -237,6 +237,20 @@
                         </q-input>
                       </div>
                     </div>
+                    <div class="row q-col-gutter-md q-mt-auto">
+                      <div class="col-6">
+                        <!-- subject dropdown -->
+                        <q-select
+                          filled
+                          v-model="courseData.subject_id"
+                          :label="`Subject`"
+                          :options="subjectOptions"
+                          emit-value
+                          map-options
+                        />
+                      </div>
+                      <div class="col-6"></div>
+                    </div>
                   </q-card-section>
                 </q-card>
               </div>
@@ -283,6 +297,7 @@ export default defineComponent({
         description: "",
         number_of_classes: "",
         number_of_exams: "",
+        subject_id: "",
         start_date: "",
         end_date: "",
         co_ordinator_name: "",
@@ -290,14 +305,16 @@ export default defineComponent({
         course_icon: ref(null),
         course_short_video: ref(null),
       },
+      subjectOptions: [],
     };
   },
   methods: {
     onSubmit() {
+      console.log(this.courseData);
       if (this.$route.params.id) {
         api
           .patch(`/courses/${this.$route.params.id}`, {
-            subject_id: null,
+            subject_id: this.courseData.subject_id,
             title: this.courseData.title,
             description: this.courseData.description,
             num_classes: this.courseData.number_of_classes,
@@ -323,7 +340,7 @@ export default defineComponent({
       } else {
         api
           .post("/courses", {
-            subject_id: null,
+            subject_id: this.courseData.subject_id,
             title: this.courseData.title,
             description: this.courseData.description,
             num_classes: this.courseData.number_of_classes,
@@ -356,6 +373,7 @@ export default defineComponent({
         description: "",
         number_of_classes: "",
         number_of_exams: "",
+        subject_id: "",
         start_date: "",
         end_date: "",
         co_ordinator_name: "",
@@ -370,12 +388,24 @@ export default defineComponent({
     onDescriptionChange(value, index, parentIndex) {
       this.courseData.description = value;
     },
+    getSubjects() {
+      api.get("/categories/subject").then((response) => {
+        response.data.data.map((category) => {
+          this.subjectOptions.push({
+            label: category.name,
+            value: category.id,
+          });
+        });
+      });
+    },
   },
   mounted() {
+    this.getSubjects();
     if (this.$route.params.id) {
       api.get("/courses/" + this.$route.params.id).then((response) => {
         const result = response.data.data;
         this.courseData.title = result.title;
+        this.courseData.subject_id = result.subject_id;
         this.courseData.description = result.description;
         this.courseData.number_of_classes = result.num_classes;
         this.courseData.number_of_exams = result.num_exams;

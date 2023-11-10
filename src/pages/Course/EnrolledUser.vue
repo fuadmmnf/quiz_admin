@@ -18,10 +18,14 @@
               <q-table
                 :columns="columns"
                 :rows="users"
-                row-key="id"
+                row-key="real_id"
+                :loading="loading"
+                rows-per-page-options="[10]"
                 wrap-cells
                 no-data-label="No data available"
                 class="shadow-0"
+                v-model:pagination="pagination"
+                @request="onRequest"
               >
                 <!-- table data -->
                 <template v-slot:body="props">
@@ -91,6 +95,7 @@ export default defineComponent({
     });
     const searchData = ref({ type: "", keywords: "" });
     const courseId = ref("");
+    const loading = ref(true);
     const fetchUsers = (page = 1) => {
       loading.value = true;
       api
@@ -114,13 +119,15 @@ export default defineComponent({
         });
     };
 
-    const loading = ref(true);
-
+    const onRequest = (props) => {
+      fetchUsers(props.pagination.page);
+    };
     return {
       store,
       pagination,
       loading,
       fetchUsers,
+      onRequest,
       users,
       $q,
       searchData,
