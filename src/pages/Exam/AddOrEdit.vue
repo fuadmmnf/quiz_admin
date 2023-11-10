@@ -126,6 +126,16 @@
 
                   <q-card-section>
                     <div class="row q-col-gutter-md">
+                      <div class="col-12">
+                        <q-select
+                          filled
+                          v-model="examData.course_id"
+                          :label="`Course`"
+                          :options="courseOptions"
+                          emit-value
+                          map-options
+                        />
+                      </div>
                       <!-- title, code, faculty, subject category, duration, start time, end time, start message , end message two columns -->
                       <div class="col-6">
                         <q-input
@@ -348,7 +358,10 @@
                       <div class="col-6">
                         <q-select
                           filled
-                          v-model="examData.examConfiguration.answer_script_visibility_time"
+                          v-model="
+                            examData.examConfiguration
+                              .answer_script_visibility_time
+                          "
                           :label="`Answer Script Visibility`"
                           :options="answer_script_visibility_option"
                           emit-value
@@ -360,7 +373,9 @@
                       <div class="col-6">
                         <q-select
                           filled
-                          v-model="examData.examConfiguration.marks_visibility_time"
+                          v-model="
+                            examData.examConfiguration.marks_visibility_time
+                          "
                           :label="`Marks Visibility`"
                           :options="marks_visibility_option"
                           emit-value
@@ -370,7 +385,9 @@
                       <div class="col-6">
                         <q-select
                           filled
-                          v-model="examData.examConfiguration.merit_visibility_time"
+                          v-model="
+                            examData.examConfiguration.merit_visibility_time
+                          "
                           :label="`Merits Visibility`"
                           :options="merits_visibility_option"
                           emit-value
@@ -378,22 +395,48 @@
                         />
                       </div>
                     </div>
-
+                    <!-- question display type - vertical or horizontal, if horizontal, can skip horizontal -->
+                    <div class="row q-col-gutter-md q-mt-auto">
+                      <div class="col-12">
+                        <q-select
+                          filled
+                          v-model="
+                            examData.examConfiguration.question_display_type
+                          "
+                          :label="`Question Display Type`"
+                          :options="question_display_type_option"
+                          emit-value
+                          map-options
+                          :rules="[
+                            (val) => !!val || 'Display type is required',
+                          ]"
+                        />
+                      </div>
+                    </div>
                     <!-- if horizontal, "can skip horizontal questions" and "show answer between horizontal question" -->
                     <div
                       class="row q-col-gutter-md q-mt-auto"
-                      v-if="examData.examConfiguration.question_display_type === 'horizontal'"
+                      v-if="
+                        examData.examConfiguration.question_display_type ===
+                        'horizontal'
+                      "
                     >
                       <div class="col-6">
                         <q-toggle
-                          v-model="examData.examConfiguration.can_skip_horizontal_question"
+                          v-model="
+                            examData.examConfiguration
+                              .can_skip_horizontal_question
+                          "
+
                           :label="`Can Skip Horizontal Questions`"
                         />
                       </div>
                       <div class="col-6">
                         <q-toggle
                           v-model="
-                            examData.examConfiguration.show_answer_between_horizontal_question
+                            examData.examConfiguration
+                              .show_answer_between_horizontal_question
+
                           "
                           :label="`Show Answer Between Horizontal Question`"
                         />
@@ -409,7 +452,9 @@
                       </div>
                       <div class="col-6">
                         <q-toggle
-                          v-model="examData.examConfiguration.can_retake_after_exam"
+                          v-model="
+                            examData.examConfiguration.can_retake_after_exam
+                          "
                           :label="`Can Retake After Exam`"
                         />
                       </div>
@@ -448,7 +493,7 @@
                         <q-select
                           filled
                           use-chips
-                          v-model="examData.merit_list_excluded_attributes"
+                          v-model="examData.examConfiguration.merit_list_excluded_attributes"
                           :label="`Merit List Excluded Attributes`"
                           :options="merit_list_excluded_attributes_option"
                           multiple
@@ -497,6 +542,7 @@ function initExamData() {
     parent_id: null,
     category_id: "",
     subject_id: "",
+    course_id: "",
     visibility_start_time: "",
     visibility_end_time: "",
     start_message: "",
@@ -549,6 +595,7 @@ export default defineComponent({
         {label: "Public", value: "public"},
         {label: "Private", value: "private"},
       ],
+      courseOptions: [],
       answer_script_visibility_option: [
         {label: "After Attempt", value: "after-attempt"},
         {label: "After Exam", value: "after-exam"},
@@ -633,11 +680,23 @@ export default defineComponent({
         });
       });
     },
+
+    getCourses() {
+      api.get("/courses?orderBy=id&sortedBy=desc&limit=0").then((response) => {
+        response.data.data.map((course) => {
+          this.courseOptions.push({
+            label: course.title,
+            value: course.id,
+          });
+        });
+      });
+    },
   },
   mounted() {
     this.getFaculties();
     this.getCategories();
     this.getSubjects();
+    this.getCourses();
     if (this.$route.params.id) {
       api
         .get("/exams/" + this.$route.params.id + "?include=examConfiguration")

@@ -114,6 +114,18 @@
                         </q-input>
                       </div>
                     </div>
+                    <div class="row q-col-gutter-md">
+                      <div class="col-6">
+                        <q-input
+                          filled
+                          v-model="lectureData.zoom_link"
+                          :label="`Zoom Link`"
+                          type="url"
+                          hint="https://example.com"
+                          :rules="[(val) => !!val || 'Url is required']"
+                        />
+                      </div>
+                    </div>
                   </q-card-section>
                 </q-card>
               </div>
@@ -159,6 +171,8 @@ export default defineComponent({
         description: "",
         subject: "",
         start_date: "",
+        zoom_link: "",
+
       },
     };
   },
@@ -174,6 +188,7 @@ export default defineComponent({
         description: "",
         subject: "",
         start_date: "",
+        zoom_link: "",
       };
     },
     openLectureDescriptionTinyMceModal() {

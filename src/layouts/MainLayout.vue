@@ -225,7 +225,6 @@
             <q-item-label>Institutions</q-item-label>
           </q-item-section>
         </q-item>
-        <!--
         <q-item to="/course" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
             <q-icon name="list" />
@@ -235,58 +234,35 @@
           </q-item-section>
         </q-item> -->
 
-        <q-expansion-item
-          icon="menu_open"
-          label="Courses"
-          @click="this.$router.push('/course')"
-        >
-          <q-expansion-item icon="menu" label="Exams">
-            <q-item
-              to="/exam/draft"
-              class="q-ml-xl"
-              active-class="q-item-no-link-highlighting"
-            >
-              <q-item-section>
-                <q-item-label>Draft Exams</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item
-              to="/exam/upcoming"
-              class="q-ml-xl"
-              active-class="q-item-no-link-highlighting"
-            >
-              <q-item-section>
-                <q-item-label>Upcoming Exams</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item
-              to="/exam/ongoing"
-              class="q-ml-xl"
-              active-class="q-item-no-link-highlighting"
-            >
-              <q-item-section>
-                <q-item-label>Ongoing Exams</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item
-              to="/exam/checking"
-              class="q-ml-xl"
-              active-class="q-item-no-link-highlighting"
-            >
-              <q-item-section>
-                <q-item-label>Checking Exams</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item
-              to="/exam/completed"
-              class="q-ml-xl"
-              active-class="q-item-no-link-highlighting"
-            >
-              <q-item-section>
-                <q-item-label>Completed Exams</q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-expansion-item>
+        <q-expansion-item icon="menu_open" label="Courses">
+          <q-item
+            to="/course/draft"
+            class="q-ml-xl"
+            active-class="q-item-no-link-highlighting"
+          >
+            <q-item-section>
+              <q-item-label>Draft Courses</q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item
+            to="/course/published"
+            class="q-ml-xl"
+            active-class="q-item-no-link-highlighting"
+          >
+            <q-item-section>
+              <q-item-label>Published Courses</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item
+            to="/course/completed"
+            class="q-ml-xl"
+            active-class="q-item-no-link-highlighting"
+          >
+            <q-item-section>
+              <q-item-label>Completed Courses</q-item-label>
+            </q-item-section>
+          </q-item>
         </q-expansion-item>
 
         <q-item
@@ -298,6 +274,7 @@
           </q-item-section>
           <q-item-section>
             <q-item-label>Registered students</q-item-label>
+
           </q-item-section>
         </q-item>
 
@@ -329,7 +306,6 @@
             <q-item-label>Lecture Classes</q-item-label>
           </q-item-section>
         </q-item> -->
-
       </q-list>
     </q-drawer>
 
