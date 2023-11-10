@@ -385,7 +385,7 @@ export default defineComponent({
   },
   methods: {
     edit(id) {
-      this.$router.push(`/Question/` + id);
+      this.$router.push(`/question/` + id);
     },
     deleteRow(id) {
       this.$q

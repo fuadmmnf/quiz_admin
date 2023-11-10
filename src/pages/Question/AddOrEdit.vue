@@ -12,7 +12,7 @@
             dense
             round
             outline
-            @click="$router.push('/Question')"
+            @click="$router.push('/question')"
           />
           Add/Edit Question
         </div>
@@ -605,7 +605,7 @@ export default defineComponent({
               color: "positive",
               icon: "check",
             });
-            this.$router.push("/Question");
+            this.$router.push("/question");
           });
       } else {
         if (this.questions[0].type === "multilayered-type-1") {

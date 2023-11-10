@@ -16,7 +16,6 @@
         <q-separator spaced=""/>
         <q-card>
           <q-card-section>
-
             <!-- List of Exams -->
             <q-table
               :columns="columns"
@@ -92,7 +91,7 @@
                       round
                       dense
                       flat
-                      :to="`/Exam/${examType}/${props.row.id}/AttemptedUsers`"
+                      :to="`/exam/${examType}/${props.row.id}/attempted-users`"
                     >
                       <q-tooltip
                         anchor="top middle"
@@ -126,7 +125,7 @@
                       round
                       dense
                       flat
-                      :to="`/Exam/${props.row.id}/EditQuestions`"
+                      :to="`/exam/${props.row.id}/edit-questions`"
                     >
                       <q-tooltip
                         anchor="top middle"
@@ -143,7 +142,7 @@
                       round
                       dense
                       flat
-                      :to="`/Exam/Checking/${props.row.id}/questions`"
+                      :to="`/exam/checking/${props.row.id}/questions`"
                       v-if="examType === 'checking'"
                     >
                       <q-tooltip

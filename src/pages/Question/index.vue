@@ -11,7 +11,7 @@
             color="primary"
             label="Add Question"
             icon="add"
-            to="/Question/add"
+            to="/question/add"
           />
         </div>
       </q-card-section>
@@ -74,7 +74,7 @@
                         round
                         dense
                         flat
-                        :to="`/Question/${props.row.id}`"
+                        :to="`/question/${props.row.id}`"
                       />
 
                       <q-btn

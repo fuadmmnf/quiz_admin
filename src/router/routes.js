@@ -9,71 +9,75 @@ const routes = [
         component: () => import("pages/Roles/SubAdmin.vue"),
       },
       {
-        path: "/Roles/Moderator",
+        path: "/roles/moderator",
         component: () => import("pages/Roles/Moderator.vue"),
       },
       {
-        path: "/Roles/Mentor",
+        path: "/roles/mentor",
         component: () => import("pages/Roles/Mentor.vue"),
       },
-      { path: "/Category", component: () => import("pages/Category.vue") },
-      { path: "/Faculty", component: () => import("pages/Faculty.vue") },
+      { path: "/category", component: () => import("pages/Category.vue") },
+      { path: "/faculty", component: () => import("pages/Faculty.vue") },
       //faculty path with id and edit
-      { path: "/Subject", component: () => import("pages/Subject.vue") },
+      { path: "/subject", component: () => import("pages/Subject.vue") },
       {
-        path: "/Question",
+        path: "/question",
         component: () => import("pages/Question/index.vue"),
       },
       {
-        path: "/Question/add",
+        path: "/question/add",
         component: () => import("pages/Question/AddOrEdit.vue"),
       },
       {
-        path: "/Question/:id",
+        path: "/question/:id",
         component: () => import("pages/Question/AddOrEdit.vue"),
       },
       {
-        path: "Exam/Draft",
+        path: "exam/draft",
         component: () => import("pages/Exam/Draft/index.vue"),
       },
       {
-        path: "Exam/Upcoming",
+        path: "user-activity",
+        component: () => import("pages/UserActivity.vue"),
+      },
+      {
+        path: "exam/upcoming",
         component: () => import("pages/Exam/Upcoming/index.vue"),
       },
       {
-        path: "Exam/Completed",
+        path: "exam/completed",
         component: () => import("pages/Exam/Completed/index.vue"),
       },
       {
-        path: "Exam/Ongoing",
+        path: "exam/ongoing",
         component: () => import("pages/Exam/Ongoing/index.vue"),
       },
       {
-        path: "/Exam/Checking",
+        path: "/exam/checking",
         component: () => import("pages/Exam/Checking/index.vue"),
       },
       {
-        path: "/Exam/Checking/:id/questions",
+        path: "/exam/checking/:id/questions",
         component: () => import("pages/Exam/Checking/questions.vue"),
       },
       {
-        path: "/Exam/Checking/:exam_id/questions/:id/answers",
+        path: "/exam/checking/:exam_id/questions/:id/answers",
         component: () => import("pages/Exam/Checking/answers.vue"),
       },
       {
-        path: "/Exam/add",
+        path: "/exam/add",
         component: () => import("pages/Exam/AddOrEdit.vue"),
       },
       {
-        path: "/Exam/:id",
+        path: "/exam/:id",
         component: () => import("pages/Exam/AddOrEdit.vue"),
       },
       {
-        path: "/Exam/:type/:id/AttemptedUsers",
+        path: "/exam/:type/:id/attempted-users",
         component: () => import("pages/Exam/AttemptUserList.vue"),
       },
       {
-        path: "/Exam/:id/EditQuestions",
+        path: "/exam/:id/edit-questions",
         component: () => import("pages/Exam/EditQuestions.vue"),
       },
       { path: "/Dashboard2", component: () => import("pages/Dashboard2.vue") },
@@ -95,16 +99,41 @@ const routes = [
       { path: "/Footer", component: () => import("pages/Footer.vue") },
       { path: "/CardHeader", component: () => import("pages/CardHeader.vue") },
       {
-        path: "/Institutions",
+        path: "/institutions",
         component: () => import("pages/Institutions.vue"),
       },
       {
-        path: "/RegisteredStudents",
+        path: "/course",
+        component: () => import("pages/Course/index.vue"),
+      },
+      {
+        path: "/course/add",
+        component: () => import("pages/Course/AddOrEdit.vue"),
+      },
+      {
+        path: "/course/:id",
+        component: () => import("pages/Course/AddOrEdit.vue"),
+      },
+      {
+        path: "/registered-students",
         component: () => import("pages/RegisteredStudents/index.vue"),
       },
       {
-        path: "/RegisteredStudents/:id",
+        path: "/registered-students/:id",
         component: () => import("pages/RegisteredStudents/edit.vue"),
+      },
+      {
+        path: "/send-message",
+        component: () => import("pages/SendMessage.vue"),
+      },
+
+      {
+        path: "/lecture-classes",
+        component: () => import("pages/LectureClass/index.vue"),
+      },
+      {
+        path: "/lecture-class/add",
+        component: () => import("pages/LectureClass/AddOrEdit.vue"),
       },
 
       // Not completed yet
