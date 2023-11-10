@@ -20,7 +20,7 @@
 
     <q-separator spaced />
 
-    <user-list></user-list>
+    <user-list @totalAttempts="totalAttempts"></user-list>
   </q-page>
 </template>
 
@@ -43,6 +43,7 @@ export default {
     const $q = useQuasar();
     const route = useRoute();
     const router = useRouter();
+    const attempts = ref(0);
 
     const recalculateMarks = async () => {
       api
@@ -59,10 +60,15 @@ export default {
           });
           router.push(`/exam/completed`);
         });
+
+    const totalAttempts = async (total) => {
+      attempts.value = await total;
     };
 
     return {
       recalculateMarks,
+      totalAttempts,
+      attempts,
     };
   },
   mounted() {},
