@@ -366,7 +366,10 @@
                       <div class="col-6">
                         <q-select
                           filled
-                          v-model="examData.answer_script_visibility_time"
+                          v-model="
+                            examData.examConfiguration
+                              .answer_script_visibility_time
+                          "
                           :label="`Answer Script Visibility`"
                           :options="answer_script_visibility_option"
                           emit-value
@@ -378,7 +381,9 @@
                       <div class="col-6">
                         <q-select
                           filled
-                          v-model="examData.marks_visibility_time"
+                          v-model="
+                            examData.examConfiguration.marks_visibility_time
+                          "
                           :label="`Marks Visibility`"
                           :options="marks_visibility_option"
                           emit-value
@@ -388,7 +393,9 @@
                       <div class="col-6">
                         <q-select
                           filled
-                          v-model="examData.merit_visibility_time"
+                          v-model="
+                            examData.examConfiguration.merit_visibility_time
+                          "
                           :label="`Merits Visibility`"
                           :options="merits_visibility_option"
                           emit-value
@@ -401,7 +408,9 @@
                       <div class="col-12">
                         <q-select
                           filled
-                          v-model="examData.question_display_type"
+                          v-model="
+                            examData.examConfiguration.question_display_type
+                          "
                           :label="`Question Display Type`"
                           :options="question_display_type_option"
                           emit-value
@@ -415,18 +424,25 @@
                     <!-- if horizontal, "can skip horizontal questions" and "show answer between horizontal question" -->
                     <div
                       class="row q-col-gutter-md q-mt-auto"
-                      v-if="examData.question_display_type === 'horizontal'"
+                      v-if="
+                        examData.examConfiguration.question_display_type ===
+                        'horizontal'
+                      "
                     >
                       <div class="col-6">
                         <q-toggle
-                          v-model="examData.can_skip_horizontal_question"
+                          v-model="
+                            examData.examConfiguration
+                              .can_skip_horizontal_question
+                          "
                           :label="`Can Skip Horizontal Questions`"
                         />
                       </div>
                       <div class="col-6">
                         <q-toggle
                           v-model="
-                            examData.show_answer_between_horizontal_question
+                            examData.examConfiguration
+                              .show_answer_between_horizontal_question
                           "
                           :label="`Show Answer Between Horizontal Question`"
                         />
@@ -436,13 +452,15 @@
                     <div class="row q-col-gutter-md q-mt-auto">
                       <div class="col-6">
                         <q-toggle
-                          v-model="examData.can_change_answer"
+                          v-model="examData.examConfiguration.can_change_answer"
                           :label="`Can Change Answer`"
                         />
                       </div>
                       <div class="col-6">
                         <q-toggle
-                          v-model="examData.can_retake_after_exam"
+                          v-model="
+                            examData.examConfiguration.can_retake_after_exam
+                          "
                           :label="`Can Retake After Exam`"
                         />
                       </div>
@@ -450,13 +468,13 @@
                     <div class="row q-col-gutter-md q-mt-auto">
                       <div class="col-6">
                         <q-toggle
-                          v-model="examData.show_merit_list"
+                          v-model="examData.examConfiguration.show_merit_list"
                           :label="`Show Merit List`"
                         />
                       </div>
                       <div class="col-6">
                         <q-toggle
-                          v-model="examData.make_code_public"
+                          v-model="examData.examConfiguration.make_code_public"
                           :label="`Make Code Public`"
                         />
                       </div>
@@ -466,7 +484,7 @@
                         <q-select
                           filled
                           use-chips
-                          v-model="examData.merit_list_excluded_attributes"
+                          v-model="examData.examConfiguration.merit_list_excluded_attributes"
                           :label="`Merit List Excluded Attributes`"
                           :options="merit_list_excluded_attributes_option"
                           multiple
@@ -523,6 +541,7 @@ export default defineComponent({
         parent_id: null,
         category_id: "",
         subject_id: "",
+        course_id: "",
         visibility_start_time: "",
         visibility_end_time: "",
         start_message: "",
@@ -530,18 +549,20 @@ export default defineComponent({
         status: "Draft",
         duration_in_minutes: "",
         visibility: "public",
-        answer_script_visibility_time: "after-exam",
-        course_id: "",
-        marks_visibility_time: "after-exam",
-        merit_visibility_time: "after-exam",
-        question_display_type: "vertical",
-        can_skip_horizontal_question: false,
-        show_answer_between_horizontal_question: false,
-        can_change_answer: true,
-        can_retake_after_exam: true,
-        show_merit_list: true,
-        make_code_public: false,
-        merit_list_excluded_attributes: null,
+        examConfiguration: {
+          answer_script_visibility_time: "after-exam",
+
+          marks_visibility_time: "after-exam",
+          merit_visibility_time: "after-exam",
+          question_display_type: "vertical",
+          can_skip_horizontal_question: false,
+          show_answer_between_horizontal_question: false,
+          can_change_answer: true,
+          can_retake_after_exam: true,
+          show_merit_list: true,
+          make_code_public: false,
+          merit_list_excluded_attributes: null,
+        },
       },
       date: ref("2021-01-01 12:00"),
       facultyOptions: [],
@@ -610,17 +631,21 @@ export default defineComponent({
         status: "",
         duration: "",
         visibility: "",
-        answer_script_visibility: "",
         course_id: "",
-        marks_visibility: "",
-        merits_visibility: "",
-        question_display_type: "",
-        can_skip_horizontal_questions: false,
-        show_answer_between_horizontal_question: false,
-        can_change_answer: true,
-        can_retake_after_exam: true,
-        show_merit_list: true,
-        merit_list_excluded_attributes: null,
+
+        examConfiguration: {
+          answer_script_visibility_time: "after-exam",
+          marks_visibility_time: "after-exam",
+          merit_visibility_time: "after-exam",
+          question_display_type: "vertical",
+          can_skip_horizontal_question: false,
+          show_answer_between_horizontal_question: false,
+          can_change_answer: true,
+          can_retake_after_exam: true,
+          show_merit_list: true,
+          make_code_public: false,
+          merit_list_excluded_attributes: null,
+        },
       };
     },
     getFaculties() {
@@ -677,30 +702,28 @@ export default defineComponent({
           this.examData = response.data.data;
           const examConfiguration = response.data.data.examConfiguration.data;
           this.examData.visibility = examConfiguration.visibility;
-          this.examData.answer_script_visibility_time =
+          this.examData.examConfiguration.answer_script_visibility_time =
             examConfiguration.answer_script_visibility_time;
-          this.examData.marks_visibility_time =
+          this.examData.examConfiguration.marks_visibility_time =
             examConfiguration.marks_visibility_time;
-          this.examData.merit_visibility_time =
+          this.examData.examConfiguration.merit_visibility_time =
             examConfiguration.merit_visibility_time;
-          this.examData.question_display_type =
+          this.examData.examConfiguration.question_display_type =
             examConfiguration.question_display_type;
-          this.examData.can_skip_horizontal_question = Boolean(
-            examConfiguration.can_skip_horizontal_question
-          );
-          this.examData.show_answer_between_horizontal_question = Boolean(
-            examConfiguration.show_answer_between_horizontal_question
-          );
-          this.examData.can_change_answer = Boolean(
+          this.examData.examConfiguration.can_skip_horizontal_question =
+            Boolean(examConfiguration.can_skip_horizontal_question);
+          this.examData.examConfiguration.show_answer_between_horizontal_question =
+            Boolean(examConfiguration.show_answer_between_horizontal_question);
+          this.examData.examConfiguration.can_change_answer = Boolean(
             examConfiguration.can_change_answer
           );
-          this.examData.can_retake_after_exam = Boolean(
+          this.examData.examConfiguration.can_retake_after_exam = Boolean(
             examConfiguration.can_retake_after_exam
           );
-          this.examData.show_merit_list = Boolean(
+          this.examData.examConfiguration.show_merit_list = Boolean(
             examConfiguration.show_merit_list
           );
-          this.examData.merit_list_excluded_attributes =
+          this.examData.examConfiguration.merit_list_excluded_attributes =
             examConfiguration.merit_list_excluded_attributes;
         });
     }
