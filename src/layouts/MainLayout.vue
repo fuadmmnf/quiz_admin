@@ -225,14 +225,14 @@
             <q-item-label>Institutions</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item to="/course" active-class="q-item-no-link-highlighting">
-          <q-item-section avatar>
-            <q-icon name="list" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Course</q-item-label>
-          </q-item-section>
-        </q-item> -->
+<!--        <q-item to="/course" active-class="q-item-no-link-highlighting">-->
+<!--          <q-item-section avatar>-->
+<!--            <q-icon name="list" />-->
+<!--          </q-item-section>-->
+<!--          <q-item-section>-->
+<!--            <q-item-label>Course</q-item-label>-->
+<!--          </q-item-section>-->
+<!--        </q-item> -->
 
         <q-expansion-item icon="menu_open" label="Courses">
           <q-item
