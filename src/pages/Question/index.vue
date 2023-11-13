@@ -63,10 +63,14 @@
                       {{ props.row.type }}
                     </q-td>
                     <q-td key="subject" :props="props">
-                      {{ props.row.subject === null ? "" : props.row.subject.data.name }}
+                      {{
+                        (props.row.subject === null || props.row.subject === undefined) ? "" : props.row.subject.data.name
+                      }}
                     </q-td>
                     <q-td key="category" :props="props">
-                      {{ props.row.category === null ? "" : props.row.category.data.name }}
+                      {{
+                        (props.row.category === null || props.row.category === undefined) ? "" : props.row.category.data.name
+                      }}
                     </q-td>
                     <q-td key="score" :props="props">
                       {{ props.row.score }}

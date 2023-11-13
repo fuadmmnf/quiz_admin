@@ -134,6 +134,8 @@
                           :options="courseOptions"
                           emit-value
                           map-options
+                          clearable
+                          @clear="(val) => {examData.course_id = null}"
                         />
                       </div>
                       <!-- title, code, faculty, subject category, duration, start time, end time, start message , end message two columns -->
@@ -164,6 +166,8 @@
                           :options="facultyOptions"
                           emit-value
                           map-options
+                          clearable
+                          @clear="(val) => {examData.faculty_id = null}"
                         />
                       </div>
                       <div class="col-4">
@@ -174,6 +178,9 @@
                           :options="categoryOptions"
                           emit-value
                           map-options
+                          clearable
+                          @clear="(val) => {examData.category_id = null}"
+
                         />
                       </div>
                       <div class="col-4">
@@ -184,6 +191,8 @@
                           :options="subjectOptions"
                           emit-value
                           map-options
+                          clearable
+                          @clear="(val) => {examData.subject_id = null}"
                         />
                       </div>
                     </div>

@@ -39,13 +39,19 @@
                     {{ props.row.code }}
                   </q-td>
                   <q-td key="category" :props="props">
-                    {{ props.row.category === null ? "" : props.row.category.data.name }}
+                    {{
+                      (props.row.category === null || props.row.category === undefined) ? "" : props.row.category.data.name
+                    }}
                   </q-td>
                   <q-td key="subject" :props="props">
-                    {{ props.row.subject === null ? "" : props.row.subject.data.name }}
+                    {{
+                      (props.row.subject === null || props.row.subject === undefined) ? "" : props.row.subject.data.name
+                    }}
                   </q-td>
                   <q-td key="faculty" :props="props">
-                    {{ props.row.faculty === null ? "" : props.row.faculty.data.name }}
+                    {{
+                      (props.row.faculty === null || props.row.faculty === undefined) ? "" : props.row.faculty.data.name
+                    }}
                   </q-td>
                   <q-td key="visibility_start_time" :props="props">
                     {{ props.row.visibility_start_time }}
@@ -57,7 +63,9 @@
                     {{ props.row.duration_in_minutes }}
                   </q-td>
                   <q-td key="course" :props="props">
-                    {{ props.row.course === null ? "" : props.row.course.data.name }}
+                    {{
+                      (props.row.course === null || props.row.course === undefined) ? "" : props.row.course.data.name
+                    }}
                   </q-td>
                   <q-td key="actions" :props="props">
                     <!-- move to draft -->
