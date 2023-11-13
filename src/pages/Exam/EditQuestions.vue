@@ -48,11 +48,15 @@
                 <q-td key="type" :props="props">
                   {{ props.row.type }}
                 </q-td>
-                <q-td key="category" :props="props">
-                  {{ props.row.category === undefined ? "" : props.row.category.data.name }}
-                </q-td>
                 <q-td key="subject" :props="props">
-                  {{ props.row.subject === undefined ? "" : props.row.subject.data.name }}
+                  {{
+                    (props.row.subject === null || props.row.subject === undefined) ? "" : props.row.subject.data.name
+                  }}
+                </q-td>
+                <q-td key="category" :props="props">
+                  {{
+                    (props.row.category === null || props.row.category === undefined) ? "" : props.row.category.data.name
+                  }}
                 </q-td>
 
                 <q-td key="score" :props="props">
@@ -152,10 +156,14 @@
             {{ props.row.type }}
           </q-td>
           <q-td key="category" :props="props">
-            {{ props.row.category === undefined ? "" : props.row.category.data.name }}
+            {{
+              (props.row.category === null || props.row.category === undefined) ? "" : props.row.category.data.name
+            }}
           </q-td>
           <q-td key="subject" :props="props">
-            {{ props.row.subject === undefined ? "" : props.row.subject.data.name }}
+            {{
+              (props.row.subject === null || props.row.subject === undefined) ? "" : props.row.subject.data.name
+            }}
           </q-td>
           <q-td key="score" :props="props">
             {{ props.row.score }}
@@ -257,7 +265,7 @@ export default defineComponent({
     const searchQuestions = async (searchData, page = 1) => {
       await api
         .get(
-          `/questions?include=subject,category;searchJoin=and&search=${
+          `/questions?include=category,subject&searchJoin=and&search=${
             searchData.type.length ? "type:" + searchData.type : ""
           }${
             searchData.keywords.length ? ";content:" + searchData.keywords : ""
@@ -334,6 +342,20 @@ export default defineComponent({
           align: "left",
           field: "type",
           sortable: true,
+        },
+        {
+          name: "subject",
+          label: "Subject",
+          field: "Subject",
+          align: "left",
+          // sortable: true,
+        },
+        {
+          name: "category",
+          label: "Category",
+          field: "Category",
+          align: "left",
+          // sortable: true,
         },
         {
           name: "score",
@@ -493,7 +515,7 @@ export default defineComponent({
       this.examQuestions.map((item) => {
         question_ids.push(item.id);
       });
-      api.get("/exam-questions/" + item.id + "?include=question&limit=0").then(
+      api.get("/exam-questions/" + item.id + "?include=question,question.subject,question.category&limit=0").then(
         (res) => {
           if (res.data.data.length > 0) {
             res.data.data.forEach((item) => {
