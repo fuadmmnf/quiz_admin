@@ -225,6 +225,7 @@
             <q-item-label>Institutions</q-item-label>
           </q-item-section>
         </q-item>
+
 <!--        <q-item to="/course" active-class="q-item-no-link-highlighting">-->
 <!--          <q-item-section avatar>-->
 <!--            <q-icon name="list" />-->
@@ -287,7 +288,11 @@
           </q-item-section>
         </q-item>
 
-        <q-item to="/user-activity" active-class="q-item-no-link-highlighting" v-if="user && user.name === 'Super Admin'">
+        <q-item
+          to="/user-activity"
+          active-class="q-item-no-link-highlighting"
+          v-if="user && user.name === 'Super Admin'"
+        >
           <q-item-section avatar>
             <q-icon name="list" />
           </q-item-section>
@@ -319,7 +324,7 @@
 import EssentialLink from "components/EssentialLink.vue";
 import Messages from "./Messages.vue";
 
-import {defineComponent, onMounted, ref} from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import { useQuasar } from "quasar";
 import { useStore } from "src/stores/store";
 

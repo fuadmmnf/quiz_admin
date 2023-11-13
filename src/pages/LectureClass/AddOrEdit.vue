@@ -84,8 +84,8 @@
                         <q-input
                           filled
                           v-model="lectureData.start_date"
-                          :label="`Start Date`"
-                          :rules="[(val) => !!val || 'Start Date is required']"
+                          :label="`Start Time`"
+                          :rules="[(val) => !!val || 'Start time is required']"
                         >
                           <template v-slot:append>
                             <q-icon name="event" class="cursor-pointer q-ma-md">
@@ -96,7 +96,7 @@
                               >
                                 <q-date
                                   v-model="lectureData.start_date"
-                                  mask="YYYY-MM-DD"
+                                  mask="YYYY-MM-DD HH:mm"
                                 >
                                   <div class="row items-center justify-end">
                                     <q-btn
@@ -104,10 +104,31 @@
                                       label="Close"
                                       color="primary"
                                       flat
-                                      size="sm"
                                     />
                                   </div>
                                 </q-date>
+                              </q-popup-proxy>
+                            </q-icon>
+                            <q-icon name="access_time" class="cursor-pointer">
+                              <q-popup-proxy
+                                cover
+                                transition-show="scale"
+                                transition-hide="scale"
+                              >
+                                <q-time
+                                  v-model="lectureData.start_date"
+                                  mask="YYYY-MM-DD HH:mm"
+                                  format24h
+                                >
+                                  <div class="row items-center justify-end">
+                                    <q-btn
+                                      v-close-popup
+                                      label="Close"
+                                      color="primary"
+                                      flat
+                                    />
+                                  </div>
+                                </q-time>
                               </q-popup-proxy>
                             </q-icon>
                           </template>
@@ -155,7 +176,9 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const { $q } = useQuasar();
+    const courseId = ref("");
     return {
+      courseId,
       $q,
     };
   },
@@ -179,7 +202,58 @@ export default defineComponent({
   methods: {
     onSubmit() {
       console.log("Submitted");
+      console.log(this.courseId);
       console.log(this.lectureData);
+      if (this.$route.params.id) {
+        api
+          .patch(`/courses/${this.$route.params.id}`, {
+            subject_id: this.courseData.subject_id,
+            title: this.courseData.title,
+            description: this.courseData.description,
+            num_classes: this.courseData.number_of_classes,
+            num_exams: this.courseData.number_of_exams,
+            coordinator_name: this.courseData.co_ordinator_name,
+            coordinator_number: this.courseData.co_ordinator_phone,
+            intro_video: "https://www.youtube.com/watch?v=9JSYB59QmZw",
+          })
+          .then((response) => {
+            console.log(response);
+            this.$q.notify({
+              message: "Course updated Successfully",
+              color: "positive",
+              icon: "check",
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => {
+            this.onReset();
+          });
+      } else {
+        api
+          .post("/class-lectures", {
+            course_id: this.courseId,
+            title: this.lectureData.title,
+            description: this.lectureData.description,
+            link: this.lectureData.zoom_link,
+            start_time: this.lectureData.start_date,
+          })
+          .then((response) => {
+            console.log(response);
+            this.$q.notify({
+              message: "Lecture class Added Successfully",
+              color: "positive",
+              icon: "check",
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => {
+            this.onReset();
+          });
+      }
     },
     onReset() {
       console.log("Reset");
@@ -199,6 +273,7 @@ export default defineComponent({
     },
   },
   mounted() {
+    this.courseId = this.$route.params.courseId;
     if (this.$route.params.id) {
       //   api
       //     .get("")

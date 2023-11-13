@@ -123,6 +123,23 @@
                     </q-btn>
                     <q-btn
                       color="primary"
+                      :to="`/course-exams/${props.row.id}`"
+                      round
+                      dense
+                      flat
+                      size="sm"
+                      icon="fa-solid fa-book-open"
+                    >
+                      <q-tooltip
+                        anchor="top middle"
+                        self="bottom middle"
+                        :offset="[10, 10]"
+                      >
+                        <strong class="">Course Exams</strong>
+                      </q-tooltip>
+                    </q-btn>
+                    <q-btn
+                      color="primary"
                       size="md"
                       icon="people"
                       round

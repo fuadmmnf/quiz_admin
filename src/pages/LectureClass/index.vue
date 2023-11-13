@@ -13,7 +13,7 @@
             color="primary"
             label="Add Lecture classes"
             icon="add"
-            to="/lecture-class/add"
+            :to="`/lecture-classes/${courseId}/add`"
           />
         </div>
       </q-card-section>

@@ -60,6 +60,7 @@ export default {
           });
           router.push(`/exam/completed`);
         });
+
     const totalAttempts = async (total) => {
       attempts.value = await total;
     };

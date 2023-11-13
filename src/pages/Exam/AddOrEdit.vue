@@ -7,7 +7,7 @@
       </q-card-section>
     </q-card>
 
-    <q-separator spaced/>
+    <q-separator spaced />
     <!-- search card with filtering option filter icon -->
     <q-expansion-item
       expand-separator
@@ -105,7 +105,7 @@
       </q-card>
     </q-expansion-item>
 
-    <q-separator spaced/>
+    <q-separator spaced />
     <q-form
       @submit.prevent="onSubmit"
       id="examForm"
@@ -354,7 +354,9 @@
                       <div class="col-6">
                         <q-select
                           filled
-                          v-model="examData.examConfiguration.question_display_type"
+                          v-model="
+                            examData.examConfiguration.question_display_type
+                          "
                           :label="`Question Display Type`"
                           :options="question_display_type_option"
                           emit-value
@@ -436,7 +438,6 @@
                             examData.examConfiguration
                               .can_skip_horizontal_question
                           "
-
                           :label="`Can Skip Horizontal Questions`"
                         />
                       </div>
@@ -445,7 +446,6 @@
                           v-model="
                             examData.examConfiguration
                               .show_answer_between_horizontal_question
-
                           "
                           :label="`Show Answer Between Horizontal Question`"
                         />
@@ -486,7 +486,9 @@
                     <div class="row q-col-gutter-md q-mt-auto">
                       <div class="col-6">
                         <q-toggle
-                          v-model="examData.examConfiguration.group_question_type"
+                          v-model="
+                            examData.examConfiguration.group_question_type
+                          "
                           :label="`Group Questions By Type`"
                         />
                       </div>
@@ -519,7 +521,7 @@
         </div>
       </div>
       <div class="row">
-        <q-btn label="Submit" type="submit" color="primary" form="examForm"/>
+        <q-btn label="Submit" type="submit" color="primary" form="examForm" />
         <q-btn
           label="Reset"
           type="reset"
@@ -529,18 +531,17 @@
           form="examForm"
         />
       </div>
-
     </q-form>
   </q-page>
 </template>
 
 <script>
 import OptionCard from "src/components/question/OptionCard.vue";
-import {defineComponent, defineAsyncComponent} from "vue";
-import {ref} from "@vue/reactivity";
-import {useStore} from "src/stores/store";
-import {api} from "boot/axios";
-import {useQuasar} from "quasar";
+import { defineComponent, defineAsyncComponent } from "vue";
+import { ref } from "@vue/reactivity";
+import { useStore } from "src/stores/store";
+import { api } from "boot/axios";
+import { useQuasar } from "quasar";
 import _ from "lodash";
 
 function initExamData() {
@@ -571,8 +572,8 @@ function initExamData() {
       make_code_public: false,
       group_question_type: true,
       merit_list_excluded_attributes: null,
-    }
-  }
+    },
+  };
 }
 
 export default defineComponent({
@@ -583,7 +584,7 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const exams = store.exams;
-    const {$q} = useQuasar();
+    const { $q } = useQuasar();
     return {
       exams,
       $q,
@@ -601,33 +602,33 @@ export default defineComponent({
       categoryOptions: [],
       subjectOptions: [],
       visibility_option: [
-        {label: "Public", value: "public"},
-        {label: "Private", value: "private"},
+        { label: "Public", value: "public" },
+        { label: "Private", value: "private" },
       ],
       courseOptions: [],
       answer_script_visibility_option: [
-        {label: "After Attempt", value: "after-attempt"},
-        {label: "After Exam", value: "after-exam"},
+        { label: "After Attempt", value: "after-attempt" },
+        { label: "After Exam", value: "after-exam" },
       ],
       marks_visibility_option: [
-        {label: "After Attempt", value: "after-attempt"},
-        {label: "After Exam", value: "after-exam"},
+        { label: "After Attempt", value: "after-attempt" },
+        { label: "After Exam", value: "after-exam" },
       ],
       merits_visibility_option: [
-        {label: "After Attempt", value: "after-attempt"},
-        {label: "After Exam", value: "after-exam"},
+        { label: "After Attempt", value: "after-attempt" },
+        { label: "After Exam", value: "after-exam" },
       ],
       question_display_type_option: [
-        {label: "Vertical", value: "vertical"},
-        {label: "Horizontal", value: "horizontal"},
+        { label: "Vertical", value: "vertical" },
+        { label: "Horizontal", value: "horizontal" },
       ],
       merit_list_excluded_attributes_option: [
-        {label: "Individual Name", value: "Individual Name"},
-        {label: "Position", value: "Position"},
-        {label: "Correct Answer", value: "Correct Answer"},
-        {label: "Neg Marking", value: "Neg Marking"},
-        {label: "Final Score", value: "Final Score"},
-        {label: "Time Needed", value: "Time Needed"},
+        { label: "Individual Name", value: "Individual Name" },
+        { label: "Position", value: "Position" },
+        { label: "Correct Answer", value: "Correct Answer" },
+        { label: "Neg Marking", value: "Neg Marking" },
+        { label: "Final Score", value: "Final Score" },
+        { label: "Time Needed", value: "Time Needed" },
       ],
     };
   },
@@ -717,8 +718,6 @@ export default defineComponent({
           });
       }
     });
-
-
   },
 });
 </script>

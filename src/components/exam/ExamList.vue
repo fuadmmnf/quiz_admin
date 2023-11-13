@@ -9,11 +9,11 @@
           class="bg-grey-1"
         >
           <div class="q-pa-md">
-            <SearchExams @search="onSearch"/>
+            <SearchExams @search="onSearch" />
           </div>
         </q-expansion-item>
 
-        <q-separator spaced=""/>
+        <q-separator spaced="" />
         <q-card>
           <q-card-section>
             <!-- List of Exams -->
@@ -223,10 +223,10 @@
 </template>
 
 <script>
-import {defineAsyncComponent, defineComponent, ref} from "vue";
-import {useStore} from "src/stores/store";
-import {api} from "boot/axios";
-import {useQuasar} from "quasar";
+import { defineAsyncComponent, defineComponent, ref } from "vue";
+import { useStore } from "src/stores/store";
+import { api } from "boot/axios";
+import { useQuasar } from "quasar";
 
 export default {
   name: "ExamList",
@@ -243,7 +243,7 @@ export default {
   },
   setup(props) {
     const store = useStore();
-    const {$q} = useQuasar();
+    const { $q } = useQuasar();
     const exams = ref([]);
     const pagination = ref({
       page: 1,
@@ -359,8 +359,8 @@ export default {
           name: "visibility_end_time",
           align: "left",
           label: "End Time",
-          field: (row) => row.visibility_start_time,
-          // sortable: true,
+          field: (row) => row.visibility_end_time,
+          //sortable: true,
         },
         {
           name: "duration_in_minutes",
@@ -375,6 +375,13 @@ export default {
           label: "Course",
           field: (row) => row.course,
           // sortable: true,
+        },
+        {
+          name: "course",
+          align: "left",
+          label: "Course",
+          field: (row) => row.id,
+          sortable: true,
         },
         {
           name: "actions",
@@ -421,7 +428,6 @@ export default {
         });
     },
 
-
     markAsCompleted(id) {
       api
         .patch(`/exams/${id}/status`, {
@@ -441,14 +447,16 @@ export default {
         });
     },
     recalculateMarks(exam_id) {
-      api.put(`/exam-markings`, {exam_id: exam_id, exam_attempt_ids: "*"}).then(() => {
-        // confirm
-        $q.notify({
-          message: "Marks recalculated successfully",
-          color: "green",
-          icon: "check",
+      api
+        .put(`/exam-markings`, { exam_id: exam_id, exam_attempt_ids: "*" })
+        .then(() => {
+          // confirm
+          $q.notify({
+            message: "Marks recalculated successfully",
+            color: "green",
+            icon: "check",
+          });
         });
-      });
     },
   },
 };
