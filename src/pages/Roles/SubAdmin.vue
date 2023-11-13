@@ -2,8 +2,8 @@
   <q-page class="q-pa-sm">
     <q-card class="no-shadow" bordered>
       <q-card-section>
-        <div class="text-h6 text-indigo-8">Admin Roles</div>
-        <div class="text-subtitle2">List of all admin roles</div>
+        <div class="text-h6 text-indigo-8">SubAdmin Roles</div>
+        <div class="text-subtitle2">List of all subadmin roles</div>
       </q-card-section>
     </q-card>
     <q-separator spaced />

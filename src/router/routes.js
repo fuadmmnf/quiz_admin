@@ -5,8 +5,8 @@ const routes = [
     children: [
       { path: "", component: () => import("pages/Dashboard.vue") },
       {
-        path: "/roles/admin",
-        component: () => import("pages/Roles/Admin.vue"),
+        path: "/Roles/SubAdmin",
+        component: () => import("pages/Roles/SubAdmin.vue"),
       },
       {
         path: "/roles/moderator",
@@ -35,6 +35,10 @@ const routes = [
       {
         path: "exam/draft",
         component: () => import("pages/Exam/Draft/index.vue"),
+      },
+      {
+        path: "user-activity",
+        component: () => import("pages/UserActivity.vue"),
       },
       {
         path: "exam/upcoming",
@@ -78,8 +82,6 @@ const routes = [
       },
       { path: "/Dashboard2", component: () => import("pages/Dashboard2.vue") },
       { path: "/Profile", component: () => import("pages/UserProfile.vue") },
-      { path: "/Map", component: () => import("pages/Map.vue") },
-      { path: "/MapMarker", component: () => import("pages/MapMarker.vue") },
       { path: "/TreeTable", component: () => import("pages/TreeTable.vue") },
       { path: "/StreetView", component: () => import("pages/StreetView.vue") },
       { path: "/Cards", component: () => import("pages/Cards.vue") },

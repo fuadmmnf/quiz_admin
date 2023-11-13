@@ -19,16 +19,16 @@
         <q-input
           outlined
           v-model="password"
-          label="Password"
+          label="Password (min 8 characters)"
           type="password"
-          :rules="[(val) => !!val || 'Password is required']"
+          :rules="[(val) => (!!val && val.length > 7) || 'Password (minimum 8 characters) is required']"
         />
         <q-input
           outlined
           v-model="password_confirmation"
           label="Confirm Password"
           type="password"
-          :rules="[(val) => !!val || 'Confirm Password is required']"
+          :rules="[(val) => (!!val && val === password) || 'Does not match above password']"
         />
         <q-select
           outlined
@@ -70,7 +70,7 @@ export default {
       password_confirmation: "",
       selectedRole: "",
       roles: [
-        { label: "Admin", value: "subadmin" },
+        { label: "SubAdmin", value: "subadmin" },
         { label: "Mentor", value: "mentor" },
         { label: "Moderator", value: "moderator" },
       ],
@@ -91,7 +91,7 @@ export default {
             color: "positive",
             icon: "check",
           });
-          this.$router.push("/roles/" + this.role);
+          this.$router.push("/Roles/" + this.roles.find(r => r.value === this.role).label);
         })
         .catch((err) => {
           this.$q.notify({

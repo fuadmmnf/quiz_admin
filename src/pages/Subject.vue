@@ -3,10 +3,10 @@
     <q-card class="no-shadow" bordered>
       <q-card-section>
         <div class="text-h6 text-indigo-8">Subjects</div>
-        <div class="text-subtitle2">List of all subjects</div>
+        <div class="text-subtitle2">List of all Subjects</div>
       </q-card-section>
     </q-card>
-    <q-separator spaced />
+    <q-separator spaced/>
 
     <div class="q-pa-none">
       <div class="row q-col-gutter-md">
@@ -14,9 +14,10 @@
           <q-card>
             <q-card-section>
               <simple-hierarchy
-                :page="pageName"
-                :tableData="tableData"
-                @editItem="editItem"
+                  :page="pageName"
+                  :tableData="allSubjects"
+                  @editItem="editItem"
+                  @deleteItem="deleteItem"
               ></simple-hierarchy>
             </q-card-section>
           </q-card>
@@ -24,41 +25,39 @@
         <div class="col-5">
           <q-card>
             <q-card-section>
-              <div class="text-h6 text-indigo-8">Add/Edit Subject</div>
+              <div class="text-h6 text-indigo-8">Add/Edit Category</div>
 
               <q-form
-                @submit="onSubmit"
-                @reset="onReset"
-                class="q-gutter-md q-mt-lg"
+                  @submit="onSubmit"
+                  @reset="onReset"
+                  class="q-gutter-md q-mt-lg"
               >
                 <q-input
-                  outlined
-                  v-model="name"
-                  :label="`Subject/Chapter name `"
-                  :hint="`$Subject/Chapter name must be unique`"
-                  lazy-rules
-                  :rules="[
-                    (val) => (val && val.length > 0) || 'Please type something',
-                  ]"
+                    outlined
+                    v-model="name"
+                    :label="`Category name *`"
+                    :hint="`Category name must be unique`"
+                    :rules="[(val) => !!val || 'Field is required']"
                 />
 
                 <q-select
-                  outlined
-                  v-model="selectedParentCategory"
-                  :options="parentCategoryOptions"
-                  :label="`Parent Subject`"
-                  lazy-rules
-                  map-options
-                  emit-value
+                    outlined
+                    option-label="name"
+                    option-value="id"
+                    v-model="selectedParentSubject"
+                    :options="allSubjects"
+                    :label="`Parent Category`"
+                    map-options
+                    emit-value
                 />
                 <div>
-                  <q-btn label="Submit" type="submit" color="primary" />
+                  <q-btn label="Submit" type="submit" color="primary"/>
                   <q-btn
-                    label="Reset"
-                    type="reset"
-                    color="primary"
-                    flat
-                    class="q-ml-sm"
+                      label="Reset"
+                      type="reset"
+                      color="primary"
+                      flat
+                      class="q-ml-sm"
                   />
                 </div>
               </q-form>
@@ -71,110 +70,93 @@
 </template>
 
 <script>
-import { defineComponent, defineAsyncComponent, ref } from "vue";
-import { api } from "boot/axios";
-import { useQuasar } from "quasar";
-import { useStore } from "src/stores/store";
+import TableActions from "components/tables/TableActions.vue";
+import {api} from "src/boot/axios";
+import {defineComponent, defineAsyncComponent, ref} from "vue";
+import {useQuasar} from "quasar";
+import {useStore} from "src/stores/store";
 
-export default {
-  name: "Subject",
+export default defineComponent({
+  name: "Category",
   setup() {
-    const { $q } = useQuasar();
     const store = useStore();
+    const {$q} = useQuasar();
     return {
-      $q,
       store,
+      $q,
     };
   },
   data() {
     return {
+      name: ref(""),
       pageName: "Subject",
-      name: "",
-      model: "",
-      tableData: [],
-      selectedParentCategory: ref(null),
-      parentCategoryOptions: [],
+      allSubjects: [],
+      selectedParentSubject: ref(null),
     };
   },
   components: {
     SimpleHierarchy: defineAsyncComponent(() =>
-      import("components/tree-table/SimpleHierarchy.vue")
+        import("components/tree-table/SimpleHierarchy.vue")
     ),
     CustomHierarchy: defineAsyncComponent(() =>
-      import("components/tree-table/CustomHierarchy.vue")
+        import("components/tree-table/CustomHierarchy.vue")
     ),
     TableActions: defineAsyncComponent(() =>
-      import("components/tables/TableActions.vue")
+        import("components/tables/TableActions.vue")
     ),
   },
   methods: {
+    getSubjects() {
+      api
+          .get("/categories/subject?limit=0")
+          .then((response) => {
+            this.allSubjects = response.data.data.map((c) => {
+              c.children = (c.children.data !== undefined? c.children.data: [])
+              return c;
+            })
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+    },
     onSubmit(evt) {
       evt.preventDefault();
       let categoryType = "subject";
-      if (this.selectedParentCategory != null) {
+      if (this.selectedParentSubject != null) {
         categoryType = "chapter";
       }
       api
-        .post("/categories", {
-          name: this.name,
-          parent_id: this.selectedParentCategory,
-          type: categoryType,
-        })
-        .then((res) => {
-          this.$q.notify({
-            message: "Category Added Successfully",
-            color: "positive",
-            icon: "check",
+          .post("/categories", {
+            name: this.name,
+            parent_id: this.selectedParentSubject,
+            type: categoryType,
+          })
+          .then((res) => {
+            this.$q.notify({
+              message: "Subject/Chapter Added Successfully",
+              color: "positive",
+              icon: "check",
+            });
+            this.name = '';
+            this.selectedParentSubject = null;
+            this.getSubjects();
           });
-          this.name = "";
-          this.tableData = [];
-          this.setDataList();
-        });
     },
     onReset(evt) {
-      console.log("@reset - do something here", evt);
+      this.name = "";
+      this.selectedParentSubject = null;
     },
-    editItem(item) {
-      console.log("editItem", item);
-      this.name = item.name;
-      this.model = item.model;
+    editItem(row) {
+      this.name = row.name;
     },
-    deleteItem(row) {},
+    deleteItem(row) {
+    },
 
-    setDataList() {
-      api.get("/categories/subject?limit=0").then((res) => {
-        res.data.data.map((item) => {
-          this.tableData.push({
-            name: item.name,
-            id: item.id,
-            children: [],
-          });
-        });
-        api.get("/categories/chapter?limit=0").then((res) => {
-          res.data.data.map((item) => {
-            this.tableData.map((parent) => {
-              if (parent.id == item.parent_id) {
-                parent.children.push({
-                  name: item.name,
-                  id: item.id,
-                });
-              }
-            });
-          });
-        });
-      });
-    },
   },
   mounted() {
-    this.setDataList();
-    this.store.subject.map((item) => {
-      this.parentCategoryOptions.push({
-        label: item.name,
-        value: item.id,
-      });
-    });
+    this.getSubjects();
   },
-};
+});
 </script>
 
 <style></style>

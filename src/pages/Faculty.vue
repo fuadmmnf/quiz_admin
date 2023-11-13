@@ -167,7 +167,7 @@ export default defineComponent({
   },
   mounted() {
     this.setDataList();
-    this.store.faculty.map((item) => {
+    this.store.faculties.map((item) => {
       this.parentCategoryOptions.push({
         label: item.name,
         value: item.id,

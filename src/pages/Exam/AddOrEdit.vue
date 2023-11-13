@@ -4,17 +4,6 @@
       <!-- add edit header with submit and reset buttons on right -->
       <q-card-section class="row items-center justify-between">
         <div class="text-h6">Add/Edit Exam</div>
-        <div class="row">
-          <q-btn label="Submit" type="submit" color="primary" form="examForm" />
-          <q-btn
-            label="Reset"
-            type="reset"
-            color="primary"
-            flat
-            class="q-ml-sm"
-            form="examForm"
-          />
-        </div>
       </q-card-section>
     </q-card>
 
@@ -356,11 +345,16 @@
                       <div class="col-6">
                         <q-select
                           filled
-                          v-model="examData.visibility"
-                          :label="`Visibility`"
-                          :options="visibility_option"
+                          v-model="
+                            examData.examConfiguration.question_display_type
+                          "
+                          :label="`Question Display Type`"
+                          :options="question_display_type_option"
                           emit-value
                           map-options
+                          :rules="[
+                            (val) => !!val || 'Display type is required',
+                          ]"
                         />
                       </div>
                       <div class="col-6">
@@ -479,6 +473,23 @@
                         />
                       </div>
                     </div>
+
+                    <div class="row q-col-gutter-md q-mt-auto">
+                      <div class="col-6">
+                        <q-toggle
+                          v-model="
+                            examData.examConfiguration.group_question_type
+                          "
+                          :label="`Group Questions By Type`"
+                        />
+                      </div>
+                      <!--                      <div class="col-6">-->
+                      <!--                        <q-toggle-->
+                      <!--                          v-model="examData.make_code_public"-->
+                      <!--                          :label="`Make Code Public`"-->
+                      <!--                        />-->
+                      <!--                      </div>-->
+                    </div>
                     <!-- <div class="row q-col-gutter-md q-mt-auto">
                       <div class="col-12">
                         <q-select
@@ -500,6 +511,17 @@
           </div>
         </div>
       </div>
+      <div class="row">
+        <q-btn label="Submit" type="submit" color="primary" form="examForm" />
+        <q-btn
+          label="Reset"
+          type="reset"
+          color="primary"
+          flat
+          class="q-ml-sm"
+          form="examForm"
+        />
+      </div>
     </q-form>
   </q-page>
 </template>
@@ -512,6 +534,38 @@ import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 import { useQuasar } from "quasar";
 import _ from "lodash";
+
+function initExamData() {
+  return {
+    title: "",
+    code: "",
+    faculty_id: "",
+    parent_id: null,
+    category_id: "",
+    subject_id: "",
+    course_id: "",
+    visibility_start_time: "",
+    visibility_end_time: "",
+    start_message: "",
+    end_message: "",
+    status: "Draft",
+    duration_in_minutes: "",
+    examConfiguration: {
+      answer_script_visibility_time: "after-exam",
+      marks_visibility_time: "after-exam",
+      merit_visibility_time: "after-exam",
+      question_display_type: "vertical",
+      can_skip_horizontal_question: false,
+      show_answer_between_horizontal_question: false,
+      can_change_answer: true,
+      can_retake_after_exam: true,
+      show_merit_list: true,
+      make_code_public: false,
+      group_question_type: true,
+      merit_list_excluded_attributes: null,
+    },
+  };
+}
 
 export default defineComponent({
   name: "AddOrEditEzam",
@@ -534,37 +588,7 @@ export default defineComponent({
       name: "",
       model: "",
       expanded: false,
-      examData: {
-        title: "",
-        code: "",
-        faculty_id: "",
-        parent_id: null,
-        category_id: "",
-        subject_id: "",
-        course_id: "",
-        visibility_start_time: "",
-        visibility_end_time: "",
-        start_message: "",
-        end_message: "",
-        status: "Draft",
-        duration_in_minutes: "",
-        visibility: "public",
-        examConfiguration: {
-          answer_script_visibility_time: "after-exam",
-
-          marks_visibility_time: "after-exam",
-          merit_visibility_time: "after-exam",
-          question_display_type: "vertical",
-          can_skip_horizontal_question: false,
-          show_answer_between_horizontal_question: false,
-          can_change_answer: true,
-          can_retake_after_exam: true,
-          show_merit_list: true,
-          make_code_public: false,
-          merit_list_excluded_attributes: null,
-        },
-      },
-      date: ref("2021-01-01 12:00"),
+      examData: initExamData(),
       facultyOptions: [],
       categoryOptions: [],
       subjectOptions: [],
@@ -601,52 +625,31 @@ export default defineComponent({
   },
   methods: {
     onSubmit: _.debounce(function () {
-      console.log("Submitted");
-
-      api.post("/exams", this.examData).then((response) => {
-        console.log(response);
-        this.$q.notify({
-          message: "Exam Added Successfully",
-          color: "positive",
-          icon: "check",
+      if (this.$route.params.id) {
+        api
+          .put(`/exams/${this.$route.params.id}`, this.examData)
+          .then((response) => {
+            this.$q.notify({
+              message: "Exam Updated Successfully",
+              color: "positive",
+              icon: "check",
+            });
+            // this.$router.push("/Exams");
+          });
+      } else {
+        api.post("/exams", this.examData).then((response) => {
+          this.$q.notify({
+            message: "Exam Added Successfully",
+            color: "positive",
+            icon: "check",
+          });
+          this.onReset();
         });
-        this.onReset();
-      });
+      }
     }, 2000),
 
     onReset() {
-      console.log("Reset");
-      this.examData = {
-        id: "",
-        title: "",
-        parent_id: null,
-        code: "",
-        faculty_id: "",
-        category_id: "",
-        subject_id: "",
-        course_id: "",
-        start_time: "",
-        end_time: "",
-        start_message: "",
-        end_message: "",
-        status: "",
-        duration: "",
-        visibility: "",
-
-        examConfiguration: {
-          answer_script_visibility_time: "after-exam",
-          marks_visibility_time: "after-exam",
-          merit_visibility_time: "after-exam",
-          question_display_type: "vertical",
-          can_skip_horizontal_question: false,
-          show_answer_between_horizontal_question: false,
-          can_change_answer: true,
-          can_retake_after_exam: true,
-          show_merit_list: true,
-          make_code_public: false,
-          merit_list_excluded_attributes: null,
-        },
-      };
+      this.examData = initExamData();
     },
     getFaculties() {
       api.get("/categories/faculty").then((response) => {
@@ -700,31 +703,8 @@ export default defineComponent({
         .get("/exams/" + this.$route.params.id + "?include=examConfiguration")
         .then((response) => {
           this.examData = response.data.data;
-          const examConfiguration = response.data.data.examConfiguration.data;
-          this.examData.visibility = examConfiguration.visibility;
-          this.examData.examConfiguration.answer_script_visibility_time =
-            examConfiguration.answer_script_visibility_time;
-          this.examData.examConfiguration.marks_visibility_time =
-            examConfiguration.marks_visibility_time;
-          this.examData.examConfiguration.merit_visibility_time =
-            examConfiguration.merit_visibility_time;
-          this.examData.examConfiguration.question_display_type =
-            examConfiguration.question_display_type;
-          this.examData.examConfiguration.can_skip_horizontal_question =
-            Boolean(examConfiguration.can_skip_horizontal_question);
-          this.examData.examConfiguration.show_answer_between_horizontal_question =
-            Boolean(examConfiguration.show_answer_between_horizontal_question);
-          this.examData.examConfiguration.can_change_answer = Boolean(
-            examConfiguration.can_change_answer
-          );
-          this.examData.examConfiguration.can_retake_after_exam = Boolean(
-            examConfiguration.can_retake_after_exam
-          );
-          this.examData.examConfiguration.show_merit_list = Boolean(
-            examConfiguration.show_merit_list
-          );
-          this.examData.examConfiguration.merit_list_excluded_attributes =
-            examConfiguration.merit_list_excluded_attributes;
+          this.examData.examConfiguration =
+            response.data.data.examConfiguration.data;
         });
     }
   },

@@ -16,20 +16,21 @@
           />
           Add/Edit Question
         </div>
+
       </q-card-section>
     </q-card>
 
-    <q-separator spaced />
+    <q-separator spaced/>
     <!-- search card with filtering option filter icon -->
     <q-expansion-item
       icon="search"
       label="Search Questions"
       class="q-card q-mt-md"
     >
-      <search-questions @search="onSearch" />
+      <search-questions @search="onSearch"/>
     </q-expansion-item>
 
-    <q-separator spaced />
+    <q-separator spaced/>
     <q-form
       id="questionForm"
       @submit.prevent="onSubmit()"
@@ -75,18 +76,17 @@
                             lazy-rules
                             emit-value
                             map-options
-                            @update:model-value="onQuestionTypeChange(question)"
                           />
                           <q-input
                             filled
                             v-model="question.content"
                             :label="`Question Content*`"
                             @click="openQuestionContentTinyMceModal(index)"
+                            :rules="[(val) => !!val || 'Content is required']"
                             readonly
                           >
-                            <template v-slot: append>
+                            <template v-slot:append>
                               <tiny-mce-modal
-                                ref="questionContentTinyMceModal"
                                 :content="question.content"
                                 :index="0"
                                 :parentIndex="index"
@@ -94,42 +94,92 @@
                               />
                             </template>
                           </q-input>
-
                           <!-- category and subcategory in the same row -->
                           <div class="row q-col-gutter-md q-mt-sm">
                             <div class="col-6">
                               <q-select
                                 filled
-                                v-model="question.category_id"
+                                v-model="question.selected_category"
                                 :options="categoryOptions"
+                                option-value="id"
+                                option-label="name"
                                 :label="`Category`"
                                 lazy-rules
                                 v-if="index === 0"
-                                emit-value
                                 map-options
+                                emit-value
+                                clearable
+                                @update:model-value="(val) => {onCategorySelect(val, index)}"
+                                @clear="(val) => {question.selected_category = null}"
+
                               />
                             </div>
                             <div class="col-6">
                               <q-select
                                 filled
-                                v-model="question.subcategory_id"
-                                :options="subcategoryOptions"
+                                v-model="question.category_id"
+                                :options="question.selected_category? categoryOptions.find(c => c.id === question.selected_category).children.data: []"
+                                option-value="id"
+                                option-label="name"
                                 :label="`Subcategory`"
                                 lazy-rules
+                                map-options
                                 v-if="index === 0"
                                 emit-value
-                                map-options
+                                clearable
+                                @clear="(val) => {question.category_id = null}"
                               />
                             </div>
                           </div>
+
+                          <!-- subject and chapter selection -->
+                          <div class="row q-col-gutter-md q-mt-sm">
+                            <div class="col-6">
+                              <q-select
+                                filled
+                                v-model="question.selected_subject"
+                                :options="subjectOptions"
+                                option-value="id"
+                                option-label="name"
+                                :label="`Subject`"
+                                lazy-rules
+                                v-if="index === 0"
+                                map-options
+                                emit-value
+                                clearable
+                                @update:model-value="(val) => {onSubjectSelect(val, index)}"
+                                @clear="(val) => {question.selected_subject = null}"
+
+                              />
+                            </div>
+                            <div class="col-6">
+                              <q-select
+                                filled
+                                v-model="question.subject_id"
+                                :options="question.selected_subject? subjectOptions.find(s => s.id === question.selected_subject).children.data: []"
+                                option-value="id"
+                                option-label="name"
+                                :label="`Chapter`"
+                                lazy-rules
+                                v-if="index === 0"
+                                map-options
+                                emit-value
+                                clearable
+                                @clear="(val) => {question.subject_id = null}"
+                              />
+                            </div>
+                          </div>
+
+
                           <!-- score and negative marks -->
                           <div class="row q-col-gutter-md q-mt-sm">
                             <div class="col-6">
                               <q-input
                                 filled
                                 v-model="question.score"
-                                :label="`Score`"
+                                label="Score"
                                 lazy-rules
+                                :rules="[(val) => !!val || 'Score is required']"
                               />
                             </div>
                             <div class="col-6">
@@ -138,6 +188,10 @@
                                 v-model="question.unit_negative_mark"
                                 :label="`Negative Marks`"
                                 lazy-rules
+                                :rules="[
+                                  (val) =>
+                                    !!val || 'Negative marks is required',
+                                ]"
                               />
                             </div>
                           </div>
@@ -167,15 +221,13 @@
                           />
                         </q-card-section>
                       </q-card>
+
                     </div>
                     <div class="col-7">
                       <q-card
                         v-if="
-                          questions[0].type == 'multilayered-type-1' ||
-                          questions[0].type == 'multilayered-type-2' ||
-                          questions[0].type == 'single-best-answer' ||
-                          questions[0].type == 'multiple-answer' ||
-                          questions[0].type == 'multiple-true-false'
+                          index > 0 ||
+                          questions[0].type != 'multilayered-type-1'
                         "
                       >
                         <q-card-section>
@@ -183,12 +235,12 @@
                         </q-card-section>
                         <q-card-section>
                           <!-- <option-card
-                            v-for="(option, index) in questionData.options"
-                            :key="index"
-                            :option="option"
-                            :index="index"
-                            :type="type"
-                          ></option-card> -->
+                      v-for="(option, index) in questionData.options"
+                      :key="index"
+                      :option="option"
+                      :index="index"
+                      :type="type"
+                    ></option-card> -->
                           <q-expansion-item
                             v-for="(option, idx) in question.options"
                             class="q-ma-md"
@@ -196,7 +248,7 @@
                             :key="idx"
                             :value="idx"
                             :expand-separator="true"
-                            :default-opened="true"
+                            default-opened
                           >
                             <q-card>
                               <q-card-section>
@@ -204,6 +256,9 @@
                                 <q-input
                                   filled
                                   label="Content"
+                                  :rules="[
+                                    (val) => !!val || 'Content is required',
+                                  ]"
                                   v-model="option.content"
                                   :key="idx"
                                   :name="`content${idx}`"
@@ -227,7 +282,6 @@
                                 >
                                   <template v-slot:append>
                                     <tiny-mce-modal
-                                      ref="optionExplanationTinyMceModal"
                                       :content="option.explanation"
                                       :index="idx"
                                       :parentIndex="index"
@@ -244,7 +298,6 @@
                                     :id="`is_correct${idx}`"
                                     label="Correct"
                                     class="q-ma-md"
-                                    @click="onCheckboxClick(question, idx)"
                                   />
                                   <q-btn
                                     @click="deleteItem(idx, index)"
@@ -279,13 +332,13 @@
                         </q-card-section>
                         <q-card-section>
                           <q-expansion-item
-                            v-for="(option, index) in question.hints"
+                            v-for="(option, idx) in question.hints"
                             class="q-ma-md"
-                            :label="`Hint ${index + 1}`"
-                            :key="index"
-                            :value="index"
+                            :label="`Hint ${idx + 1}`"
+                            :key="idx"
+                            :value="idx"
                             :expand-separator="true"
-                            :default-open="true"
+                            default-opened
                           >
                             <q-card>
                               <q-card-section>
@@ -294,16 +347,20 @@
                                   filled
                                   label="Content"
                                   v-model="option.content"
-                                  :key="index"
-                                  :name="`content${index}`"
-                                  :id="`content${index}`"
+                                  :rules="[
+                                    (val) => !!val || 'Content is required',
+                                  ]"
+                                  :key="idx"
+                                  :name="`content${idx}`"
+                                  :id="`content${idx}`"
                                   readonly
                                 >
                                   <template v-slot:append>
                                     <tiny-mce-modal
                                       :content="option.content"
-                                      :index="index"
-                                      @save="onContentChange"
+                                      :index="idx"
+                                      :parentIndex="index"
+                                      @save="onHintContentChange"
                                     />
                                   </template>
                                 </q-input>
@@ -312,15 +369,15 @@
                                   filled
                                   label="Negative Mark"
                                   v-model="option.negative_mark"
-                                  :key="index"
-                                  :name="`negative_mark${index}`"
-                                  :id="`negative_mark${index}`"
+                                  :key="idx"
+                                  :name="`negative_mark${idx}`"
+                                  :id="`negative_mark${idx}`"
                                   lazy-rules
                                 />
                                 <!-- same row + delete button-->
                                 <div class="row">
                                   <q-btn
-                                    @click="deleteHint(index)"
+                                    @click="deleteHint(idx, index)"
                                     icon="delete"
                                     size="sm"
                                     color="negative"
@@ -349,39 +406,36 @@
           </div>
         </div>
       </div>
+      <div class="row">
+        <q-btn
+          label="Submit"
+          type="submit"
+          form="questionForm"
+          color="primary"
+        />
+        <q-btn
+          label="Reset"
+          type="reset"
+          color="primary"
+          flat
+          class="q-ml-sm"
+          form="questionForm"
+          @click="onReset"
+        />
+      </div>
+
     </q-form>
-    <q-card class="no-shadow" bordered>
-      <!-- add edit header with submit and reset buttons on right -->
-      <q-card-section class="row items-center justify-between">
-        <div class="row">
-          <q-btn
-            label="Submit"
-            type="submit"
-            form="questionForm"
-            color="primary"
-          />
-          <q-btn
-            label="Reset"
-            type="reset"
-            color="primary"
-            flat
-            class="q-ml-sm"
-            form="questionForm"
-            @click="onReset"
-          />
-        </div>
-      </q-card-section>
-    </q-card>
   </q-page>
 </template>
 
 <script>
 import OptionCard from "src/components/question/OptionCard.vue";
-import { defineComponent, defineAsyncComponent } from "vue";
-import { useStore } from "src/stores/store";
-import { api } from "boot/axios";
-import { useQuasar } from "quasar";
+import {defineAsyncComponent, defineComponent} from "vue";
+import {useStore} from "src/stores/store";
+import {api} from "boot/axios";
+import {useQuasar} from "quasar";
 import _ from "lodash";
+
 export default defineComponent({
   name: "AddOrEditQuestion",
   components: {
@@ -395,7 +449,7 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
-    const { $q } = useQuasar();
+    const {$q} = useQuasar();
     return {
       $q,
       store,
@@ -409,20 +463,18 @@ export default defineComponent({
       question_id: null,
       questionData: {
         content: "",
+        selected_category: null,
         category_id: null,
-        subcategory: "",
-        subject: "",
-        chapter: "",
-        faculty: "",
-        discipline: "",
+        selected_subject: null,
+        subject_id: "",
         parent_id: null,
-        score: 0,
-        unit_negative_mark: 0,
+        score: "",
+        unit_negative_mark: "",
         type: "",
         options: [
           {
             content: "",
-            is_correct: true,
+            is_correct: false,
             explanation: "",
             is_hint: false,
             visibility: true,
@@ -459,7 +511,7 @@ export default defineComponent({
         hints: [
           {
             content: "",
-            is_correct: true,
+            is_correct: false,
             explanation: "",
             is_hint: true,
             visibility: true,
@@ -502,30 +554,40 @@ export default defineComponent({
       model: "",
       expanded: false,
       categoryOptions: [],
-      subcategoryOptions: [],
       subjectOptions: [],
-      chapterOptions: [],
       facultyOptions: [],
       disciplineOptions: [],
       types: [
-        { label: "Single Best Answer", value: "single-best-answer" },
-        { label: "Multiple Answer", value: "multiple-answer" },
-        { label: "Multiple True/False", value: "multiple-true-false" },
-        { label: "Written", value: "written" },
-        { label: "Multilayered Type 1", value: "multilayered-type-1" },
-        { label: "Multilayered Type 2", value: "multilayered-type-2" },
+        {label: "Single Best Answer", value: "single-best-answer"},
+        {label: "Multiple Answer", value: "multiple-answer"},
+        {label: "Multiple True/False", value: "multiple-true-false"},
+        {label: "Written", value: "written"},
+        {label: "Multilayered Type 1", value: "multilayered-type-1"},
+        {label: "Multilayered Type 2", value: "multilayered-type-2"},
       ],
       types_without_multilayered: [
-        { label: "Single Best Answer", value: "single-best-answer" },
-        { label: "Multiple Answer", value: "multiple-answer" },
-        { label: "Multiple True/False", value: "multiple-true-false" },
-        { label: "Written", value: "written" },
+        {label: "Single Best Answer", value: "single-best-answer"},
+        {label: "Multiple Answer", value: "multiple-answer"},
+        {label: "Multiple True/False", value: "multiple-true-false"},
+        {label: "Written", value: "written"},
       ],
     };
   },
   methods: {
+    onCategorySelect(val, idx) {
+      this.questions[idx] = {...this.questions[idx], selected_category: val, category_id: null};
+    },
+    onSubjectSelect(val, idx) {
+      this.questions[idx] = {...this.questions[idx], selected_subject: val, subject_id: null};
+    },
     onSubmit: _.debounce(function () {
-      console.log("Submit");
+      // const origQuestions = [...this.questions];
+      this.questions = this.questions.map((q) => {
+        q.category_id = (q.category_id == null ? q.selected_category : q.category_id)
+        q.subject_id = (q.subject_id == null ? q.selected_subject : q.subject_id)
+        return q;
+      });
+
       if (this.questions[0].type === "multilayered-type-2") {
         this.questions[0].options = [
           ...this.questions[0].options,
@@ -551,7 +613,7 @@ export default defineComponent({
           this.questions[0].content = "";
           console.log(this.questions);
           api
-            .post("/questions/multilayered", { questions: this.questions })
+            .post("/questions/multilayered", {questions: this.questions})
             .then((response) => {
               console.log(response);
               this.$q.notify({
@@ -560,6 +622,13 @@ export default defineComponent({
                 icon: "check",
               });
               this.onReset();
+            })
+            .catch((error) => {
+              this.$q.notify({
+                message: "Something went wrong",
+                color: "negative",
+                icon: "warning",
+              });
             });
         } else {
           api.post("/questions", this.questions[0]).then((response) => {
@@ -573,101 +642,31 @@ export default defineComponent({
           });
         }
       }
+
     }, 2000),
     addQuestion(event) {
       event.preventDefault();
-      this.questions.push({
-        content: "",
-        category_id: null,
-        subcategory: "",
-        subject: "",
-        chapter: "",
-        faculty: "",
-        discipline: "",
-        parent_id: null,
-        score: 0,
-        unit_negative_mark: 0,
-        type: "",
-        options: [
-          {
-            content: "",
-            is_correct: false,
-            visibility: true,
-            hint: "",
-            explanation: "",
-          },
-        ],
-        hints: [
-          {
-            content: "",
-            is_correct: false,
-            visibility: true,
-            hint: "",
-            explanation: "",
-            negative_mark: 0,
-          },
-        ],
-      });
+      this.questions.push({...this.questionData});
     },
     onReset() {
       console.log("Reset");
-      this.questionData = {
-        content: "",
-        category_id: null,
-        subcategory: "",
-        subject: "",
-        chapter: "",
-        faculty: "",
-        discipline: "",
-        parent_id: null,
-        score: 0,
-        unit_negative_mark: 0,
-        type: "",
-        options: [
-          {
-            content: "",
-            is_correct: false,
-            visibility: true,
-            hint: "",
-            explanation: "",
-          },
-        ],
-        hints: [
-          {
-            content: "",
-            is_correct: false,
-            visibility: true,
-            hint: "",
-            explanation: "",
-            negative_mark: 0,
-          },
-        ],
-      };
-      this.questions = [];
-      this.questions.push(this.questionData);
+      this.questions = [{...this.questionData}];
     },
     addOption(event, index) {
       event.preventDefault();
-      this.questions[index].options.push({
-        content: "This is another demo option",
-        is_correct: false,
-        explanation: " ",
-        is_hint: false,
-      });
+      this.questions[index].options.push({...this.questionData.options[0]});
     },
     addHint(index) {
-      this.questions[index].hints.push({
-        content: "This is another demo hint",
-        is_correct: false,
-        is_hint: true,
-        explanation: "",
-      });
+      this.questions[index].hints.push({...this.questionData.hints[0]});
     },
     onDescriptionChange(value, index, parentIndex) {
       this.questions[parentIndex].content = value;
     },
     onContentChange(value, idx, parentIndex) {
       this.questions[parentIndex].options[idx].content = value;
+    },
+    onHintContentChange(value, idx, parentIndex) {
+      this.questions[parentIndex].hints[idx].content = value;
     },
     onExplanationChange(value, idx, parentIndex) {
       this.questions[parentIndex].options[idx].explanation = value;
@@ -681,45 +680,34 @@ export default defineComponent({
     },
     processQuestion(questionData, index) {
       const question = this.questions[index];
-      const responseData = questionData;
+      const {options, content, category_id, subject_id, type, score, unit_negative_mark} =
+        questionData;
 
-      const { options, content, category_id, type, score, unit_negative_mark } =
-        responseData;
-      const optionsData = options.data;
+      const catData = this.categoryOptions.reduce((acc, c) => {
+        return acc.concat(c.children.data)
+      }, []).find(sc => sc.id === category_id)
+
+      const subData = this.subjectOptions.reduce((acc, s) => {
+        return acc.concat(s.children.data)
+      }, []).find(sc => sc.id === subject_id)
+
+      const optionsData = options.data
 
       question.options = optionsData.filter((option) => !option.is_hint);
       question.hints = optionsData.filter((option) => option.is_hint);
 
       Object.assign(question, {
         content,
-        category_id,
+        category_id: catData ? catData.id : null,
+        selected_category: category_id == null ? null : (catData ? catData.parent_id : this.categoryOptions.find(c => c.id === category_id).id),
+        subject_id: subData ? subData.id : null,
+        selected_subject: subject_id == null ? null : (subData ? subData.parent_id : this.subjectOptions.find(s => s.id === subject_id).id),
         type,
         score,
         unit_negative_mark,
       });
       if (questionData.children.data.length > 0) {
-        this.questions.push({
-          content: "",
-          category_id: null,
-          subcategory: "",
-          subject: "",
-          chapter: "",
-          faculty: "",
-          discipline: "",
-          parent_id: null,
-          score: 0,
-          unit_negative_mark: 0,
-          type: "",
-          options: [
-            {
-              content: "",
-              is_correct: false,
-              visibility: true,
-              hint: "",
-              explanation: "",
-            },
-          ],
-        });
+        this.questions.push({...this.questionData});
         this.processQuestion(questionData.children.data[0], index + 1);
       }
     },
@@ -758,31 +746,38 @@ export default defineComponent({
         });
       }
     },
+    getCategories() {
+      return api.get("/categories/category").then((response) => {
+        this.categoryOptions = response.data.data
+      });
+    },
+    getSubjects() {
+      return api.get("/categories/subject").then((response) => {
+        this.subjectOptions = response.data.data
+      });
+    },
+
+
   },
-  mounted() {
+
+  async mounted() {
     this.questions.push(this.questionData);
-    this.store.categories.map((category) => {
-      this.categoryOptions.push({
-        label: category.name,
-        value: category.id,
-      });
+    Promise.all([
+      this.getCategories(),
+      this.getSubjects()
+    ]).then(value => {
+      if (this.$route.params.id) {
+        this.question_id = this.$route.params.id;
+        api
+          .get(
+            `/questions/${this.$route.params.id}?include=options,children.options`
+          )
+          .then((response) => {
+            this.processQuestion(response.data.data, 0);
+          });
+      }
     });
-    this.store.subcategories.map((subcategory) => {
-      this.subcategoryOptions.push({
-        label: subcategory.name,
-        value: subcategory.id,
-      });
-    });
-    if (this.$route.params.id) {
-      this.question_id = this.$route.params.id;
-      api
-        .get(
-          `/questions/${this.$route.params.id}?include=options,children.options`
-        )
-        .then((response) => {
-          this.processQuestion(response.data.data, 0);
-        });
-    }
+
   },
 });
 </script>

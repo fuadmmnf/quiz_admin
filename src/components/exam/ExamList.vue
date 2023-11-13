@@ -35,10 +35,10 @@
                   <q-td key="title" :props="props">
                     {{ props.row.title }}
                   </q-td>
-                  <q-td key="start_time" :props="props">
+                  <q-td key="visibility_start_time" :props="props">
                     {{ props.row.visibility_start_time }}
                   </q-td>
-                  <q-td key="end_time" :props="props">
+                  <q-td key="visibility_end_time" :props="props">
                     {{ props.row.visibility_end_time }}
                   </q-td>
                   <q-td key="duration_in_minutes" :props="props">
@@ -104,7 +104,7 @@
                         <strong class="">Show Exam Attempts</strong>
                       </q-tooltip>
                     </q-btn>
-                    <!-- <q-btn
+                    <q-btn
                       color="primary"
                       size="md"
                       icon="edit"
@@ -120,7 +120,7 @@
                       >
                         <strong class="">Edit Exam</strong>
                       </q-tooltip>
-                    </q-btn> -->
+                    </q-btn>
                     <q-btn
                       color="secondary"
                       size="md"
@@ -300,15 +300,22 @@ export default {
           format: (val) => `${val}`,
           sortable: true,
         },
+        // {
+        //   name: "code",
+        //   align: "left",
+        //   label: "Code",
+        //   field: (row) => row.code,
+        //   sortable: true,
+        // },
         {
-          name: "start_time",
+          name: "visibility_start_time",
           align: "left",
           label: "Start Time",
           field: (row) => row.visibility_start_time,
           sortable: true,
         },
         {
-          name: "end_time",
+          name: "visibility_end_time",
           align: "left",
           label: "End Time",
           field: (row) => row.visibility_end_time,
@@ -331,6 +338,7 @@ export default {
         {
           name: "actions",
           label: "Actions",
+          align: "center",
           field: (row) => row.actions,
         },
       ],
@@ -371,6 +379,7 @@ export default {
           console.log(err);
         });
     },
+
     markAsCompleted(id) {
       api
         .patch(`/exams/${id}/status`, {
@@ -382,10 +391,23 @@ export default {
             color: "positive",
             icon: "check",
           });
+          this.recalculateMarks(id);
           this.fetchExams();
         })
         .catch((err) => {
           console.log(err);
+        });
+    },
+    recalculateMarks(exam_id) {
+      api
+        .put(`/exam-markings`, { exam_id: exam_id, exam_attempt_ids: "*" })
+        .then(() => {
+          // confirm
+          $q.notify({
+            message: "Marks recalculated successfully",
+            color: "green",
+            icon: "check",
+          });
         });
     },
   },

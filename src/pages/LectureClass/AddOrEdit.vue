@@ -195,6 +195,7 @@ export default defineComponent({
         subject: "",
         start_date: "",
         zoom_link: "",
+
       },
     };
   },
