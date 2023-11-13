@@ -121,6 +121,10 @@ const routes = [
         component: () => import("pages/Course/AddOrEdit.vue"),
       },
       {
+        path: "/course-exams/:courseId",
+        component: () => import("pages/Course/CourseExamList.vue"),
+      },
+      {
         path: "/registered-students",
         component: () => import("pages/RegisteredStudents/index.vue"),
       },
@@ -134,13 +138,14 @@ const routes = [
       },
 
       {
-        path: "/lecture-class/add",
-        component: () => import("pages/LectureClass/AddOrEdit.vue"),
-      },
-      {
         path: "/lecture-classes/:courseId",
         component: () => import("pages/LectureClass/index.vue"),
       },
+      {
+        path: "/lecture-classes/:courseId/add",
+        component: () => import("pages/LectureClass/AddOrEdit.vue"),
+      },
+
       {
         path: "/subscribe-user/:courseId",
         component: () => import("pages/Course/EnrolledUser.vue"),

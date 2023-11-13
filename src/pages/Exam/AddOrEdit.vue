@@ -624,6 +624,7 @@ export default defineComponent({
         faculty_id: "",
         category_id: "",
         subject_id: "",
+        course_id: "",
         start_time: "",
         end_time: "",
         start_message: "",
@@ -631,7 +632,6 @@ export default defineComponent({
         status: "",
         duration: "",
         visibility: "",
-        course_id: "",
 
         examConfiguration: {
           answer_script_visibility_time: "after-exam",
