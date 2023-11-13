@@ -51,7 +51,7 @@
               color="primary"
               label="Answers"
               icon="edit"
-              :to="`/Exam/Checking/${exam_id}/questions/${props.row.id}/answers`"
+              :to="`/exam/checking/${exam_id}/questions/${props.row.id}/answers`"
             ></q-btn>
           </q-td>
         </q-tr>
@@ -173,7 +173,7 @@ export default defineComponent({
     },
     showAnswers(id, real_id) {
       this.$router.push(
-        "/Exam/Checking/" +
+        "/exam/checking/" +
           this.$route.params.id +
           "/" +
           this.$route.params.real_id +

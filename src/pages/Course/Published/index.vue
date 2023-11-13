@@ -3,20 +3,22 @@
     <q-card class="no-shadow" bordered>
       <q-card-section class="row items-center justify-between">
         <div class="text-h6 text-indigo-8">
-          Completed Exams
-          <div class="text-subtitle2">
-            List of all completed exams are shown here
-          </div>
+          Published Course
+          <div class="text-subtitle2">List of all Course are shown here</div>
         </div>
         <div class="row">
-          <q-btn color="primary" label="Add Exam" icon="add" to="/exam/add" />
+          <q-btn
+            color="primary"
+            label="Add Course"
+            icon="add"
+            to="/course/add"
+          />
         </div>
       </q-card-section>
     </q-card>
-
     <q-separator spaced />
 
-    <exam-list :examType="'completed'"></exam-list>
+    <course-list :courseType="'published'"></course-list>
   </q-page>
 </template>
 
@@ -24,12 +26,12 @@
 import { defineComponent, ref } from "vue";
 import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
-import ExamList from "src/components/exam/ExamList.vue";
+import CourseList from "src/components/course/CourseList.vue";
 
 export default {
-  name: "CompletedExams",
+  name: "Exam",
   components: {
-    ExamList,
+    CourseList,
   },
   setup() {},
   mounted() {},

@@ -12,7 +12,7 @@
             dense
             round
             outline
-            @click="$router.push('/Question')"
+            @click="$router.push('/question')"
           />
           Add/Edit Question
         </div>
@@ -605,7 +605,7 @@ export default defineComponent({
               color: "positive",
               icon: "check",
             });
-            this.$router.push("/Question");
+            this.$router.push("/question");
           });
       } else {
         if (this.questions[0].type === "multilayered-type-1") {
@@ -699,9 +699,9 @@ export default defineComponent({
       Object.assign(question, {
         content,
         category_id: catData ? catData.id : null,
-        selected_category: category_id == null ? null : (catData ? catData.parent_id : this.categoryOptions.find(c => c.id === category_id).id),
+        selected_category: (category_id === "" || category_id === null || category_id === undefined) ? null : (catData ? catData.parent_id : this.categoryOptions.find(c => c.id === category_id).id),
         subject_id: subData ? subData.id : null,
-        selected_subject: subject_id == null ? null : (subData ? subData.parent_id : this.subjectOptions.find(s => s.id === subject_id).id),
+        selected_subject: (subject_id === "" || subject_id === null || subject_id === undefined) ? null : (subData ? subData.parent_id : this.subjectOptions.find(s => s.id === subject_id).id),
         type,
         score,
         unit_negative_mark,

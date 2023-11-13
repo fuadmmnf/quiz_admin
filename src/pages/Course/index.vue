@@ -3,43 +3,35 @@
     <q-card class="no-shadow" bordered>
       <q-card-section class="row items-center justify-between">
         <div class="text-h6 text-indigo-8">
-          Registered Students
-          <div class="text-subtitle2">
-            List of all registered students are shown here
-          </div>
+          Course
+          <div class="text-subtitle2">List of all Course are shown here</div>
         </div>
         <div class="row">
-          <!-- <q-btn
-              color="primary"
-              label="Add Question"
-              icon="add"
-              to="/question/add"
-            /> -->
+          <q-btn
+            class="q-mr-sm"
+            color="primary"
+            label="Lecture classes"
+            to="/lecture-classes"
+          />
+          <q-btn
+            color="primary"
+            label="Add Course"
+            icon="add"
+            to="/course/add"
+          />
         </div>
       </q-card-section>
     </q-card>
-
-    <!-- <q-separator spaced />
-      <q-expansion-item
-        expand-separator
-        icon="search"
-        label="Search Questions"
-        class="q-card"
-      >
-        <search-questions @search="onSearch"></search-questions>
-      </q-expansion-item>
-      <q-separator spaced /> -->
 
     <div class="q-pa-none">
       <div class="row q-col-gutter-md">
         <div class="col-12">
           <q-card>
             <q-card-section>
-              <!-- List of Questions -->
               <q-table
                 :columns="columns"
-                :rows="students"
-                row-key="student_mobile"
+                :rows="courses"
+                row-key="id"
                 wrap-cells
                 no-data-label="No data available"
                 class="shadow-0"
@@ -49,14 +41,20 @@
                   <q-tr :props="props">
                     <!-- serial -->
 
-                    <q-td key="student_name" :props="props">
-                      {{ props.row.student_name }}
+                    <q-td key="title" :props="props">
+                      {{ props.row.title }}
                     </q-td>
-                    <q-td key="student_mobile" :props="props">
-                      {{ props.row.student_mobile }}
+                    <q-td key="number_of_classes" :props="props">
+                      {{ props.row.number_of_classes }}
                     </q-td>
-                    <q-td key="student_institution" :props="props">
-                      {{ props.row.student_institution }}
+                    <q-td key="number_of_exams" :props="props">
+                      {{ props.row.number_of_exams }}
+                    </q-td>
+                    <q-td key="start_date" :props="props">
+                      {{ props.row.start_date }}
+                    </q-td>
+                    <q-td key="end_date" :props="props">
+                      {{ props.row.end_date }}
                     </q-td>
 
                     <q-td key="action" :props="props">
@@ -67,7 +65,7 @@
                         round
                         dense
                         flat
-                        :to="`/registered-students/${props.row.id}`"
+                        :to="`/course/${props.row.id}`"
                       />
 
                       <q-btn
@@ -77,7 +75,7 @@
                         round
                         dense
                         flat
-                        @click="onDelete(props.row)"
+                        @click="onDelete(props.row.id)"
                       />
                     </q-td>
                   </q-tr>
@@ -96,85 +94,57 @@ import { defineComponent, defineAsyncComponent, ref, computed } from "vue";
 import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 import { useQuasar } from "quasar";
-import SearchQuestions from "components/question/SearchQuestions.vue";
 
 export default defineComponent({
-  name: "RegisteredStudents",
+  name: "Courses",
   setup() {
     const { $q } = useQuasar();
     const store = useStore();
-    const students = ref([]);
+    const courses = ref([]);
     const pagination = ref({
       page: 1,
       rowsPerPage: 10,
       rowsNumber: 0,
     });
     const searchData = ref({ type: "", keywords: "" });
-    const fetchStudents = (page = 1) => {
+    const fetchCourses = (page = 1) => {
       loading.value = true;
 
-      students.value = [
+      courses.value = [
         {
           id: 1,
-          student_name: "Sajid",
-          student_mobile: "01700000000",
-          student_institution: "Dhaka College",
+          title: "Hello World",
+          number_of_classes: "10",
+          number_of_exams: "3",
+          start_date: "12-12-2022",
+          end_date: "22-12-2022",
           action: "action",
         },
         {
           id: 2,
-          student_name: "Sajid",
-          student_mobile: "01700000000",
-          student_institution: "Dhaka College",
+          title: "Testing",
+          number_of_classes: "20",
+          number_of_exams: "1",
+          start_date: "02-12-2022",
+          end_date: "26-12-2022",
           action: "action",
         },
         {
           id: 3,
-          student_name: "Sajid",
-          student_mobile: "01700000000",
-          student_institution: "Dhaka College",
+          title: "Hello World",
+          number_of_classes: "10",
+          number_of_exams: "3",
+          start_date: "12-12-2022",
+          end_date: "22-12-2022",
           action: "action",
         },
         {
           id: 4,
-          student_name: "Sajid",
-          student_mobile: "01700000000",
-          student_institution: "Dhaka College",
-          action: "action",
-        },
-        {
-          id: 5,
-          student_name: "Sajid",
-          student_mobile: "01700000000",
-          student_institution: "Dhaka College",
-          action: "action",
-        },
-        {
-          id: 6,
-          student_name: "Sajid",
-          student_mobile: "01700000000",
-          student_institution: "Dhaka College",
-          action: "action",
-        },
-        {
-          id: 7,
-          student_name: "Sajid",
-          student_mobile: "01700000000",
-          student_institution: "Dhaka College",
-          action: "action",
-        },
-        {
-          id: 8,
-          student_name: "Sajid",
-          student_mobile: "01700000000",
-          student_institution: "Dhaka College",
-          action: "action",
-        },
-        {
-          id: 9,
-          student_name: "Sajid",
-          student_mobile: "01700000000",
-          student_institution: "Dhaka College",
+          title: "ABC",
+          number_of_classes: "140",
+          number_of_exams: "36",
+          start_date: "12-12-2022",
+          end_date: "22-12-2022",
           action: "action",
         },
       ];
@@ -186,36 +156,50 @@ export default defineComponent({
       store,
       pagination,
       loading,
-      fetchStudents,
-      students,
+      fetchCourses,
+      courses,
       $q,
       searchData,
     };
   },
   data() {
     return {
-      name: "Question",
+      name: "Course",
       //table header
       //name , mobile , institution, action
       columns: [
         {
-          name: "student_name",
-          label: "Name",
-          field: "student_name",
+          name: "title",
+          label: "Title",
+          field: "title",
           align: "left",
           sortable: true,
         },
         {
-          name: "student_mobile",
-          label: "Mobile",
-          field: "student_mobile",
+          name: "number_of_classes",
+          label: "Number of Classes",
+          field: "number_of_classes",
           align: "left",
           sortable: true,
         },
         {
-          name: "student_institution",
-          label: "Institution",
-          field: "student_institution",
+          name: "number_of_exams",
+          label: "Number of Exams",
+          field: "number_of_exams",
+          align: "left",
+          sortable: true,
+        },
+        {
+          name: "start_date",
+          label: "Start Date",
+          field: "start_date",
+          align: "left",
+          sortable: true,
+        },
+        {
+          name: "end_date",
+          label: "End Date",
+          field: "end_date",
           align: "left",
           sortable: true,
         },
@@ -234,11 +218,27 @@ export default defineComponent({
     TableActions: defineAsyncComponent(() =>
       import("components/tables/TableActions.vue")
     ),
-    SearchQuestions,
+  },
+  methods: {
+    onDelete(id) {
+      this.$q
+        .dialog({
+          title: "Confirm",
+          message: "Would you like to turn on the wifi?",
+          cancel: true,
+          persistent: true,
+        })
+        .onOk(() => {
+          console.log(">>>> OK", id);
+        })
+        .onCancel(() => {
+          console.log(">>>> Cancel");
+        });
+    },
   },
 
   mounted() {
-    this.fetchStudents();
+    this.fetchCourses();
   },
 });
 </script>

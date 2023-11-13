@@ -58,9 +58,8 @@ export default {
             color: "green",
             icon: "check",
           });
-          router.push(`/Exam/completed`);
+          router.push(`/exam/completed`);
         });
-    };
 
     const totalAttempts = async (total) => {
       attempts.value = await total;
