@@ -35,6 +35,18 @@
                   <q-td key="title" :props="props">
                     {{ props.row.title }}
                   </q-td>
+                  <q-td key="title" :props="props">
+                    {{ props.row.code }}
+                  </q-td>
+                  <q-td key="category" :props="props">
+                    {{ props.row.category === null ? "" : props.row.category.data.name }}
+                  </q-td>
+                  <q-td key="subject" :props="props">
+                    {{ props.row.subject === null ? "" : props.row.subject.data.name }}
+                  </q-td>
+                  <q-td key="faculty" :props="props">
+                    {{ props.row.faculty === null ? "" : props.row.faculty.data.name }}
+                  </q-td>
                   <q-td key="visibility_start_time" :props="props">
                     {{ props.row.visibility_start_time }}
                   </q-td>
@@ -45,12 +57,12 @@
                     {{ props.row.duration_in_minutes }}
                   </q-td>
                   <q-td key="course" :props="props">
-                    {{ props.row.id }}
+                    {{ props.row.course === null ? "" : props.row.course.data.name }}
                   </q-td>
                   <q-td key="actions" :props="props">
                     <!-- move to draft -->
                     <q-btn
-                      v-if="examType != 'draft'"
+                      v-if="examType !== 'draft'"
                       color="primary"
                       size="md"
                       icon="drafts"
@@ -245,7 +257,7 @@ export default {
       loading.value = true;
       api
         .get(
-          `/exams?include=examConfiguration&searchJoin=and&search=status:${
+          `/exams?include=examConfiguration,subject,category,faculty,course&searchJoin=and&search=status:${
             props.examType
           }${
             filter.value.keywords.length
@@ -298,42 +310,63 @@ export default {
           align: "left",
           field: (row) => row.title,
           format: (val) => `${val}`,
-          sortable: true,
+          // sortable: true,
         },
-        // {
-        //   name: "code",
-        //   align: "left",
-        //   label: "Code",
-        //   field: (row) => row.code,
-        //   sortable: true,
-        // },
+        {
+          name: "code",
+          align: "left",
+          label: "Code",
+          field: (row) => row.code,
+          // sortable: true,
+        },
+        {
+          name: "category",
+          align: "left",
+          label: "Category",
+          field: (row) => row.category,
+          // sortable: true,
+        },
+        {
+          name: "subject",
+          align: "left",
+          label: "Subject",
+          field: (row) => row.subject,
+          // sortable: true,
+        },
+        {
+          name: "faculty",
+          align: "left",
+          label: "Faculty",
+          field: (row) => row.faculty,
+          // sortable: true,
+        },
         {
           name: "visibility_start_time",
           align: "left",
           label: "Start Time",
           field: (row) => row.visibility_start_time,
-          sortable: true,
+          // sortable: true,
         },
         {
           name: "visibility_end_time",
           align: "left",
           label: "End Time",
           field: (row) => row.visibility_start_time,
-          sortable: true,
+          // sortable: true,
         },
         {
           name: "duration_in_minutes",
           align: "left",
           label: "Duration (In Minutes)",
           field: (row) => row.duration_in_minutes,
-          sortable: true,
+          // sortable: true,
         },
         {
           name: "course",
           align: "left",
           label: "Course",
-          field: (row) => row.id,
-          sortable: true,
+          field: (row) => row.course,
+          // sortable: true,
         },
         {
           name: "actions",

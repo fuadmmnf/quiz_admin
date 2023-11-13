@@ -651,7 +651,7 @@ export default defineComponent({
       this.examData = initExamData();
     },
     getFaculties() {
-      api.get("/categories/faculty").then((response) => {
+      return api.get("/categories/faculty").then((response) => {
         response.data.data.map((category) => {
           this.facultyOptions.push({
             label: category.name,
@@ -661,7 +661,7 @@ export default defineComponent({
       });
     },
     getCategories() {
-      api.get("/categories/category").then((response) => {
+      return api.get("/categories/category").then((response) => {
         response.data.data.map((category) => {
           this.categoryOptions.push({
             label: category.name,
@@ -671,7 +671,7 @@ export default defineComponent({
       });
     },
     getSubjects() {
-      api.get("/categories/subject").then((response) => {
+      return api.get("/categories/subject").then((response) => {
         response.data.data.map((category) => {
           this.subjectOptions.push({
             label: category.name,
@@ -682,7 +682,7 @@ export default defineComponent({
     },
 
     getCourses() {
-      api.get("/courses?orderBy=id&sortedBy=desc&limit=0").then((response) => {
+      return api.get("/courses?orderBy=id&sortedBy=desc&limit=0").then((response) => {
         response.data.data.map((course) => {
           this.courseOptions.push({
             label: course.title,
@@ -693,18 +693,23 @@ export default defineComponent({
     },
   },
   mounted() {
-    this.getFaculties();
-    this.getCategories();
-    this.getSubjects();
-    this.getCourses();
-    if (this.$route.params.id) {
-      api
-        .get("/exams/" + this.$route.params.id + "?include=examConfiguration")
-        .then((response) => {
-          this.examData = response.data.data;
-          this.examData.examConfiguration = response.data.data.examConfiguration.data;
-        });
-    }
+    Promise.all([
+      this.getFaculties(),
+      this.getCategories(),
+      this.getSubjects(),
+      this.getCourses(),
+    ]).then(value => {
+      if (this.$route.params.id) {
+        api
+          .get("/exams/" + this.$route.params.id + "?include=examConfiguration")
+          .then((response) => {
+            this.examData = response.data.data;
+            this.examData.examConfiguration = response.data.data.examConfiguration.data;
+          });
+      }
+    });
+
+
   },
 });
 </script>
