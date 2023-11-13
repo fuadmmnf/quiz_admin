@@ -18,20 +18,20 @@
       </q-card-section>
     </q-card>
 
-    <q-separator spaced />
+    <q-separator spaced/>
 
     <user-list @totalAttempts="totalAttempts"></user-list>
   </q-page>
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
-import { useStore } from "src/stores/store";
-import { api } from "boot/axios";
+import {defineComponent, ref} from "vue";
+import {useStore} from "src/stores/store";
+import {api} from "boot/axios";
 import UserList from "src/components/exam/UserList.vue";
-import { useQuasar } from "quasar";
-import { route } from "quasar/wrappers";
-import { useRoute, useRouter } from "vue-router";
+import {useQuasar} from "quasar";
+import {route} from "quasar/wrappers";
+import {useRoute, useRouter} from "vue-router";
 
 export default {
   name: "CompletedExams",
@@ -60,7 +60,7 @@ export default {
           });
           router.push(`/exam/completed`);
         });
-
+    }
     const totalAttempts = async (total) => {
       attempts.value = await total;
     };
@@ -70,12 +70,8 @@ export default {
       totalAttempts,
       attempts,
     };
-  },
-  mounted() {},
-  data() {
-    return {};
-  },
-};
+  }
+}
 </script>
 
 <style></style>
