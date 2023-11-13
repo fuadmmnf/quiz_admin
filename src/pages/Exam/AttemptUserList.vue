@@ -60,15 +60,15 @@ export default {
           });
           router.push(`/exam/completed`);
         });
-      const totalAttempts = async (total) => {
-        attempts.value = await total;
-      };
 
-      return {
-        recalculateMarks,
-        totalAttempts,
-        attempts,
-      };
+    const totalAttempts = async (total) => {
+      attempts.value = await total;
+    };
+
+    return {
+      recalculateMarks,
+      totalAttempts,
+      attempts,
     };
   },
   mounted() {},

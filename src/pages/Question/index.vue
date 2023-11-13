@@ -17,7 +17,7 @@
       </q-card-section>
     </q-card>
 
-    <q-separator spaced />
+    <q-separator spaced/>
     <q-expansion-item
       expand-separator
       icon="search"
@@ -26,7 +26,7 @@
     >
       <search-questions @search="onSearch"></search-questions>
     </q-expansion-item>
-    <q-separator spaced />
+    <q-separator spaced/>
 
     <div class="q-pa-none">
       <div class="row q-col-gutter-md">
@@ -50,15 +50,27 @@
                   <q-tr :props="props">
                     <!-- serial -->
 
-                    <q-td key="content" :props="props">
-                      {{
-                        props.row.content.length > 50
-                          ? props.row.content.substring(0, 50) + "..."
-                          : props.row.content
-                      }}
+                    <!--                    <q-td key="content" :props="props">-->
+                    <!--                      {{-->
+                    <!--                        props.row.content.length > 50-->
+                    <!--                          ? props.row.content.substring(0, 50) + "..."-->
+                    <!--                          : props.row.content-->
+                    <!--                      }}-->
+                    <!--                    </q-td>-->
+                    <q-td key="content" :props="props" v-html="props.row.content">
                     </q-td>
                     <q-td key="type" :props="props">
                       {{ props.row.type }}
+                    </q-td>
+                    <q-td key="subject" :props="props">
+                      {{
+                        (props.row.subject === null || props.row.subject === undefined) ? "" : props.row.subject.data.name
+                      }}
+                    </q-td>
+                    <q-td key="category" :props="props">
+                      {{
+                        (props.row.category === null || props.row.category === undefined) ? "" : props.row.category.data.name
+                      }}
                     </q-td>
                     <q-td key="score" :props="props">
                       {{ props.row.score }}
@@ -99,16 +111,16 @@
 </template>
 
 <script>
-import { defineComponent, defineAsyncComponent, ref, computed } from "vue";
-import { useStore } from "src/stores/store";
-import { api } from "boot/axios";
-import { useQuasar } from "quasar";
+import {defineComponent, defineAsyncComponent, ref, computed} from "vue";
+import {useStore} from "src/stores/store";
+import {api} from "boot/axios";
+import {useQuasar} from "quasar";
 import SearchQuestions from "components/question/SearchQuestions.vue";
 
 export default defineComponent({
   name: "Question",
   setup() {
-    const { $q } = useQuasar();
+    const {$q} = useQuasar();
     const store = useStore();
     const questions = ref([]);
     const pagination = ref({
@@ -116,19 +128,19 @@ export default defineComponent({
       rowsPerPage: 10,
       rowsNumber: 0,
     });
-    const searchData = ref({ type: "", keywords: "" });
+    const searchData = ref({type: "", keywords: ""});
     const fetchQuestions = (page = 1) => {
       loading.value = true;
       if (searchData.value.keywords != "" || searchData.value.type != "") {
         api
           .get(
-            "/questions?searchJoin=and&search=type:" +
-              searchData.value.type +
-              ";content:" +
-              searchData.value.keywords +
-              "&page=" +
-              page +
-              "&limit=30"
+            "/questions?include=category,subject;searchJoin=and&search=type:" +
+            searchData.value.type +
+            ";content:" +
+            searchData.value.keywords +
+            "&page=" +
+            page +
+            "&limit=30"
           )
           .then((response) => {
             questions.value = response.data.data;
@@ -148,7 +160,7 @@ export default defineComponent({
           });
       } else {
         api
-          .get("/questions?page=" + page)
+          .get("/questions?include=category,subject;page=" + page)
           .then((response) => {
             questions.value = response.data.data;
             const meta = response.data.meta.pagination;
@@ -195,35 +207,49 @@ export default defineComponent({
           label: "Content",
           field: "content",
           align: "left",
-          sortable: true,
+          // sortable: true,
         },
         {
           name: "type",
           label: "Type",
           field: "type",
           align: "left",
-          sortable: true,
+          // sortable: true,
+        },
+        {
+          name: "subject",
+          label: "Subject",
+          field: "Subject",
+          align: "left",
+          // sortable: true,
+        },
+        {
+          name: "category",
+          label: "Category",
+          field: "Category",
+          align: "left",
+          // sortable: true,
         },
         {
           name: "score",
           label: "Score",
           field: "score",
           align: "left",
-          sortable: true,
+          // sortable: true,
         },
         {
           name: "unit_negative_mark",
-          label: "Unit Negative Mark",
+          label: "Negative",
           field: "unit_negative_mark",
           align: "left",
-          sortable: true,
+          // sortable: true,
         },
         {
           name: "actions",
           label: "Actions",
           field: "actions",
           align: "left",
-          sortable: false,
+          // sortable: false,
         },
       ],
       //table data
@@ -237,7 +263,7 @@ export default defineComponent({
   },
   methods: {
     onEdit() {
-      this.$router.push({ name: "question-edit" });
+      this.$router.push({name: "question-edit"});
     },
     onDelete(row) {
       this.$q
