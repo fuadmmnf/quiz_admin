@@ -134,13 +134,13 @@ export default defineComponent({
       if (searchData.value.keywords != "" || searchData.value.type != "") {
         api
           .get(
-            "/questions?include=category,subject;searchJoin=and&search=type:" +
+            "/questions?include=category,subject&searchJoin=and&search=type:" +
             searchData.value.type +
             ";content:" +
             searchData.value.keywords +
             "&page=" +
             page +
-            "&limit=30"
+            "&orderBy=id&sortedBy=desc&limit=30"
           )
           .then((response) => {
             questions.value = response.data.data;
@@ -160,7 +160,7 @@ export default defineComponent({
           });
       } else {
         api
-          .get("/questions?include=category,subject;page=" + page)
+          .get("/questions?include=category,subject&orderBy=id&sortedBy=desc&page=" + page)
           .then((response) => {
             questions.value = response.data.data;
             const meta = response.data.meta.pagination;
