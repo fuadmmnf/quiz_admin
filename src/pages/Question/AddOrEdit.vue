@@ -83,6 +83,7 @@
                             :label="`Question Content*`"
                             @click="openQuestionContentTinyMceModal(index)"
                             :rules="[(val) => !!val || 'Content is required']"
+                            lazy-rules
                             readonly
                           >
                             <template v-slot:append>
@@ -259,6 +260,7 @@
                                   :rules="[
                                     (val) => !!val || 'Content is required',
                                   ]"
+                                  lazy-rules
                                   v-model="option.content"
                                   :key="idx"
                                   :name="`content${idx}`"
@@ -461,6 +463,85 @@ export default defineComponent({
       dense: true,
       questions: [],
       question_id: null,
+      optionsData: [
+      {
+        content: "",
+        is_correct: false,
+        explanation: "",
+        is_hint: false,
+        visibility: true,
+      },
+      {
+        content: "",
+        is_correct: false,
+        explanation: "",
+        is_hint: false,
+        visibility: true,
+      },
+      {
+        content: "",
+        is_correct: false,
+        explanation: "",
+        is_hint: false,
+        visibility: true,
+      },
+      {
+        content: "",
+        is_correct: false,
+        explanation: "",
+        is_hint: false,
+        visibility: true,
+      },
+      {
+        content: "",
+        is_correct: false,
+        explanation: "",
+        is_hint: false,
+        visibility: true,
+      },
+    ],
+      hintsData: [
+        {
+          content: "",
+          is_correct: false,
+          explanation: "",
+          is_hint: true,
+          visibility: true,
+          negative_mark: 0,
+        },
+        {
+          content: "",
+          is_correct: false,
+          explanation: "",
+          is_hint: true,
+          visibility: true,
+          negative_mark: 0,
+        },
+        {
+          content: "",
+          is_correct: false,
+          explanation: "",
+          is_hint: true,
+          visibility: true,
+          negative_mark: 0,
+        },
+        {
+          content: "",
+          is_correct: false,
+          explanation: "",
+          is_hint: true,
+          visibility: true,
+          negative_mark: 0,
+        },
+        {
+          content: "",
+          is_correct: false,
+          explanation: "",
+          is_hint: true,
+          visibility: true,
+          negative_mark: 0,
+        },
+      ],
       questionData: {
         content: "",
         selected_category: null,
@@ -615,13 +696,14 @@ export default defineComponent({
           api
             .post("/questions/multilayered", {questions: this.questions})
             .then((response) => {
-              console.log(response);
-              this.$q.notify({
-                message: "Question Added Successfully",
-                color: "positive",
-                icon: "check",
-              });
-              this.onContentReset();
+              if (response.status === 201) {
+                this.$q.notify({
+                  message: "Question Added Successfully",
+                  color: "positive",
+                  icon: "check",
+                });
+                this.onContentReset();
+              }
             })
             .catch((error) => {
               this.$q.notify({
@@ -632,13 +714,15 @@ export default defineComponent({
             });
         } else {
           api.post("/questions", this.questions[0]).then((response) => {
-            console.log(response);
-            this.$q.notify({
-              message: "Question Added Successfully",
-              color: "positive",
-              icon: "check",
-            });
-            this.onContentReset();
+            if (response.status === 201) {
+              this.$q.notify({
+                message: "Question Added Successfully",
+                color: "positive",
+                icon: "check",
+              });
+              this.onContentReset();
+            }
+
           });
         }
       }
@@ -652,18 +736,33 @@ export default defineComponent({
       this.questions = [{...this.questionData}];
     },
     onContentReset() {
+      const cats = this.categoryOptions.reduce((acc, c) => {
+        return acc.concat(c.children.data)
+      }, [])
+
+      const subs = this.subjectOptions.reduce((acc, s) => {
+        return acc.concat(s.children.data)
+      }, [])
+
       this.questions = this.questions.map((question) => {
+        let catData = cats.find(sc => sc.id === question.category_id)
+        let subData = subs.find(sc => sc.id === question.subject_id)
         return {
-          ...question, content: this.questionData.content, options: this.questionData.options
+          ...question, content: this.questionData.content, options: [...this.optionsData], hints: [...this.hintsData],
+          category_id: catData ? catData.id : null,
+          selected_category: (question.category_id === "" || question.category_id === null || question.category_id === undefined) ? null : (catData ? catData.parent_id : this.categoryOptions.find(c => c.id === question.category_id).id),
+          subject_id: subData ? subData.id : null,
+          selected_subject: (question.subject_id === "" || question.subject_id === null || question.subject_id === undefined) ? null : (subData ? subData.parent_id : this.subjectOptions.find(s => s.id === question.subject_id).id),
         }
       })
+
     },
     addOption(event, index) {
       event.preventDefault();
-      this.questions[index].options.push({...this.questionData.options[0]});
+      this.questions[index].options.push({...(this.questionData.options[0])});
     },
     addHint(index) {
-      this.questions[index].hints.push({...this.questionData.hints[0]});
+      this.questions[index].hints.push({...(this.questionData.hints[0])});
     },
     onDescriptionChange(value, index, parentIndex) {
       this.questions[parentIndex].content = value;
@@ -684,10 +783,10 @@ export default defineComponent({
       event.preventDefault();
       this.questions[0].hints.splice(idx, 1);
     },
-    processQuestion(questionData, index) {
+    processQuestion(qData, index) {
       const question = this.questions[index];
       const {options, content, category_id, subject_id, type, score, unit_negative_mark} =
-        questionData;
+        qData;
 
       const catData = this.categoryOptions.reduce((acc, c) => {
         return acc.concat(c.children.data)
@@ -712,9 +811,9 @@ export default defineComponent({
         score,
         unit_negative_mark,
       });
-      if (questionData.children.data.length > 0) {
+      if (qData.children.data.length > 0) {
         this.questions.push({...this.questionData});
-        this.processQuestion(questionData.children.data[0], index + 1);
+        this.processQuestion(qData.children.data[0], index + 1);
       }
     },
     openQuestionContentTinyMceModal(index) {
@@ -767,7 +866,7 @@ export default defineComponent({
   },
 
   async mounted() {
-    this.questions.push(this.questionData);
+    this.questions.push({...this.questionData});
     Promise.all([
       this.getCategories(),
       this.getSubjects()
