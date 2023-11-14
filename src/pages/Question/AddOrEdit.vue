@@ -621,7 +621,7 @@ export default defineComponent({
                 color: "positive",
                 icon: "check",
               });
-              this.onReset();
+              this.onContentReset();
             })
             .catch((error) => {
               this.$q.notify({
@@ -638,7 +638,7 @@ export default defineComponent({
               color: "positive",
               icon: "check",
             });
-            this.onReset();
+            this.onContentReset();
           });
         }
       }
@@ -649,8 +649,14 @@ export default defineComponent({
       this.questions.push({...this.questionData});
     },
     onReset() {
-      console.log("Reset");
       this.questions = [{...this.questionData}];
+    },
+    onContentReset() {
+      this.questions = this.questions.map((question) => {
+        return {
+          ...question, content: this.questionData.content, options: this.questionData.options
+        }
+      })
     },
     addOption(event, index) {
       event.preventDefault();
