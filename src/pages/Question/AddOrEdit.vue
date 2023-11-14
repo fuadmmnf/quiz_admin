@@ -79,6 +79,7 @@
                           />
                           <q-input
                             filled
+                            v-if="(this.$route.params.id && question.content.length > 0) || !this.$route.params.id"
                             v-model="question.content"
                             :label="`Question Content*`"
                             @click="openQuestionContentTinyMceModal(index)"
@@ -88,6 +89,7 @@
                           >
                             <template v-slot:append>
                               <tiny-mce-modal
+                                :id="`tinymce-qustion-${index}`"
                                 :content="question.content"
                                 :index="0"
                                 :parentIndex="index"
@@ -817,7 +819,6 @@ export default defineComponent({
       }
     },
     openQuestionContentTinyMceModal(index) {
-      console.log(this.$refs.questionContentTinyMceModal[index]);
       this.$refs.questionContentTinyMceModal[index].show = true;
     },
     openOptionExplanationTinyMceModal(questionIndex, optionIndex) {
