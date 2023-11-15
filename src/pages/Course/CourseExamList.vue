@@ -64,6 +64,42 @@
                       {{ props.row.status }}
                     </q-td>
                     <q-td key="actions" :props="props">
+                      <q-btn
+                        v-if="props.row.status !== 'draft'"
+                        color="primary"
+                        size="md"
+                        icon="drafts"
+                        round
+                        dense
+                        flat
+                        @click="moveToDraft(props.row.id)"
+                      >
+                        <q-tooltip
+                          anchor="top middle"
+                          self="bottom middle"
+                          :offset="[10, 10]"
+                        >
+                          <strong class="">Move to draft</strong>
+                        </q-tooltip>
+                      </q-btn>
+                      <q-btn
+                        v-if="props.row.status === 'draft'"
+                        color="green"
+                        size="md"
+                        icon="publish"
+                        round
+                        dense
+                        flat
+                        @click="publishExam(props.row.id)"
+                      >
+                        <q-tooltip
+                          anchor="top middle"
+                          self="bottom middle"
+                          :offset="[10, 10]"
+                        >
+                          <strong class="">Publish Exam</strong>
+                        </q-tooltip>
+                      </q-btn>
                       <!-- users -->
                       <q-btn
                         color="primary"
@@ -82,7 +118,7 @@
                           <strong class="">Show Exam Attempts</strong>
                         </q-tooltip>
                       </q-btn>
-                      <!-- <q-btn
+                      <q-btn
                         color="primary"
                         size="md"
                         icon="edit"
@@ -98,7 +134,7 @@
                         >
                           <strong class="">Edit Exam</strong>
                         </q-tooltip>
-                      </q-btn> -->
+                      </q-btn>
                       <q-btn
                         color="secondary"
                         size="md"
@@ -114,6 +150,42 @@
                           :offset="[10, 10]"
                         >
                           <strong class="">Edit exam questions</strong>
+                        </q-tooltip>
+                      </q-btn>
+                      <q-btn
+                        color="secondary"
+                        size="md"
+                        icon="file_open"
+                        round
+                        dense
+                        flat
+                        :to="`/exam/checking/${props.row.id}/questions`"
+                        v-if="props.row.status === 'checking'"
+                      >
+                        <q-tooltip
+                          anchor="top middle"
+                          self="bottom middle"
+                          :offset="[10, 10]"
+                        >
+                          <strong class="">Check exam written questions</strong>
+                        </q-tooltip>
+                      </q-btn>
+                      <q-btn
+                        color="blue"
+                        size="md"
+                        icon="file_upload"
+                        round
+                        dense
+                        flat
+                        v-if="props.row.status === 'checking'"
+                        @click="markAsCompleted(props.row.id)"
+                      >
+                        <q-tooltip
+                          anchor="top middle"
+                          self="bottom middle"
+                          :offset="[10, 10]"
+                        >
+                          <strong class="">Mark as completed</strong>
                         </q-tooltip>
                       </q-btn>
 
@@ -190,7 +262,7 @@ export default {
               : ""
           }&orderBy=id&sortedBy=desc&searchJoin=and&page=${page}`
         )
-        .then((response) => { 
+        .then((response) => {
           exams.value = response.data.data;
           const meta = response.data.meta.pagination;
           pagination.value = {
@@ -321,10 +393,23 @@ export default {
             color: "positive",
             icon: "check",
           });
+          this.recalculateMarks(id);
           this.fetchExams();
         })
         .catch((err) => {
           console.log(err);
+        });
+    },
+    recalculateMarks(exam_id) {
+      api
+        .put(`/exam-markings`, { exam_id: exam_id, exam_attempt_ids: "*" })
+        .then(() => {
+          // confirm
+          $q.notify({
+            message: "Marks recalculated successfully",
+            color: "green",
+            icon: "check",
+          });
         });
     },
   },
