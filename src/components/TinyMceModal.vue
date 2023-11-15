@@ -143,6 +143,7 @@ export default {
   }
   ,
   mounted() {
+    console.log(this.content);
     this.description = this.content;
   }
   ,

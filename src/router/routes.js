@@ -103,8 +103,16 @@ const routes = [
         component: () => import("pages/Institutions.vue"),
       },
       {
-        path: "/course",
-        component: () => import("pages/Course/index.vue"),
+        path: "/course/draft",
+        component: () => import("pages/Course/Draft/index.vue"),
+      },
+      {
+        path: "/course/published",
+        component: () => import("pages/Course/Published/index.vue"),
+      },
+      {
+        path: "/course/completed",
+        component: () => import("pages/Course/Completed/index.vue"),
       },
       {
         path: "/course/add",
@@ -113,6 +121,10 @@ const routes = [
       {
         path: "/course/:id",
         component: () => import("pages/Course/AddOrEdit.vue"),
+      },
+      {
+        path: "/course-exams/:courseId",
+        component: () => import("pages/Course/CourseExamList.vue"),
       },
       {
         path: "/registered-students",
@@ -128,12 +140,18 @@ const routes = [
       },
 
       {
-        path: "/lecture-classes",
+
+        path: "/lecture-classes/:courseId",
         component: () => import("pages/LectureClass/index.vue"),
       },
       {
-        path: "/lecture-class/add",
+        path: "/lecture-classes/:courseId/add",
         component: () => import("pages/LectureClass/AddOrEdit.vue"),
+      },
+
+      {
+        path: "/subscribe-user/:courseId",
+        component: () => import("pages/Course/EnrolledUser.vue"),
       },
 
       // Not completed yet

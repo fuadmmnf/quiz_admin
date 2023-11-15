@@ -3,19 +3,10 @@
     <q-card class="no-shadow" bordered>
       <q-card-section class="row items-center justify-between">
         <div class="text-h6 text-indigo-8">
-          Lecture classes
-          <div class="text-subtitle2">
-            List of all Lecture classes are shown here
-          </div>
+          Subscribe User
+          <div class="text-subtitle2">List of all users are shown here</div>
         </div>
-        <div class="row">
-          <q-btn
-            color="primary"
-            label="Add Lecture classes"
-            icon="add"
-            :to="`/lecture-classes/${courseId}/add`"
-          />
-        </div>
+        <div class="row"></div>
       </q-card-section>
     </q-card>
 
@@ -26,10 +17,10 @@
             <q-card-section>
               <q-table
                 :columns="columns"
-                :rows="LectureClasses"
+                :rows="users"
+                row-key="real_id"
                 :loading="loading"
                 rows-per-page-options="[10]"
-                row-key="real_id"
                 wrap-cells
                 no-data-label="No data available"
                 class="shadow-0"
@@ -41,38 +32,37 @@
                   <q-tr :props="props">
                     <!-- serial -->
 
-                    <q-td key="title" :props="props">
-                      {{ props.row.title }}
+                    <q-td key="name" :props="props">
+                      {{ props.row.user.data.name }}
                     </q-td>
-                    <q-td key="subject" :props="props">
-                      {{ props.row.subject }}
+                    <q-td key="mobile" :props="props">
+                      {{ props.row.user.data.mobile }}
                     </q-td>
-                    <q-td key="description" :props="props">
-                      {{ props.row.description }}
-                    </q-td>
-                    <q-td key="start_time" :props="props">
-                      {{ props.row.start_time }}
+                    <q-td key="institution" :props="props">
+                      {{ props.row.institution }}
                     </q-td>
 
                     <q-td key="action" :props="props">
-                      <q-btn
-                        color="primary"
+                      N/A
+                      <!-- <q-btn
+                        color="green"
                         size="sm"
-                        icon="edit"
+                        icon="fa-solid fa-user-plus"
                         round
                         dense
                         flat
-                      />
-
-                      <q-btn
-                        color="negative"
-                        size="sm"
-                        icon="delete"
-                        round
-                        dense
-                        flat
-                        @click="onDelete(props.row.id)"
-                      />
+                        @click="onSubscribe(props.row.id)"
+                      >
+                        <q-tooltip
+                          anchor="top middle"
+                          self="bottom middle"
+                          :offset="[10, 10]"
+                        >
+                          <strong class=""
+                            >Subscribe {{ props.row.name }}</strong
+                          >
+                        </q-tooltip>
+                      </q-btn> -->
                     </q-td>
                   </q-tr>
                 </template>
@@ -92,11 +82,12 @@ import { api } from "boot/axios";
 import { useQuasar } from "quasar";
 
 export default defineComponent({
-  name: "LectureClasses",
+  name: "SubscribeUser",
+
   setup() {
     const { $q } = useQuasar();
     const store = useStore();
-    const LectureClasses = ref([]);
+    const users = ref([]);
     const pagination = ref({
       page: 1,
       rowsPerPage: 10,
@@ -104,18 +95,15 @@ export default defineComponent({
     });
     const searchData = ref({ type: "", keywords: "" });
     const courseId = ref("");
-
     const loading = ref(true);
-    const fetchLectureClasses = (page = 1) => {
+    const fetchUsers = (page = 1) => {
       loading.value = true;
-
       api
         .get(
-          `/class-lectures?search=course_id:${courseId.value}&orderBy=id&sortedBy=desc&page=${page}`
+          `/course-users?search=course_id:${courseId.value}&include=user&orderBy=id&sortedBy=desc&page=${page}`
         )
         .then((response) => {
-          console.log(response.data.data);
-          LectureClasses.value = response.data.data;
+          users.value = response.data.data;
           const meta = response.data.meta.pagination;
           pagination.value = {
             page: meta.current_page,
@@ -130,52 +118,46 @@ export default defineComponent({
           loading.value = false;
         });
     };
+
     const onRequest = (props) => {
-      fetchLectureClasses(props.pagination.page);
+      fetchUsers(props.pagination.page);
     };
     return {
       store,
       pagination,
       loading,
-      fetchLectureClasses,
-      LectureClasses,
+      fetchUsers,
+      onRequest,
+      users,
       $q,
       searchData,
       courseId,
-      onRequest,
     };
   },
   data() {
     return {
-      name: "Lecture Class",
+      name: "User",
       //table header
       //name , mobile , institution, action
       columns: [
         {
-          name: "title",
-          label: "Title",
-          field: "title",
+          name: "name",
+          label: "Name",
+          field: "name",
           align: "left",
           sortable: true,
         },
         {
-          name: "subject",
-          label: "Subject",
-          field: "subject",
+          name: "mobile",
+          label: "Mobile",
+          field: "mobile",
           align: "left",
           sortable: true,
         },
         {
-          name: "description",
-          label: "Description",
-          field: "description",
-          align: "left",
-          sortable: true,
-        },
-        {
-          name: "start_time",
-          label: "Start Date",
-          field: "start_time",
+          name: "institution",
+          label: "Institution",
+          field: "institution",
           align: "left",
           sortable: true,
         },
@@ -185,6 +167,7 @@ export default defineComponent({
           label: "Action",
           field: "action",
           align: "left",
+          sortable: true,
         },
       ],
       //table data
@@ -192,11 +175,11 @@ export default defineComponent({
   },
 
   methods: {
-    onDelete(id) {
+    onSubscribe(id) {
       this.$q
         .dialog({
           title: "Confirm",
-          message: "Would you like to turn on the wifi?",
+          message: "Would you like to subscribe this user?",
           cancel: true,
           persistent: true,
         })
@@ -211,7 +194,7 @@ export default defineComponent({
 
   mounted() {
     this.courseId = this.$route.params.courseId;
-    this.fetchLectureClasses();
+    this.fetchUsers();
   },
 });
 </script>

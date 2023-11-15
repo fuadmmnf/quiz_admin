@@ -237,6 +237,20 @@
                         </q-input>
                       </div>
                     </div>
+                    <div class="row q-col-gutter-md q-mt-auto">
+                      <div class="col-6">
+                        <!-- subject dropdown -->
+                        <q-select
+                          filled
+                          v-model="courseData.subject_id"
+                          :label="`Subject`"
+                          :options="subjectOptions"
+                          emit-value
+                          map-options
+                        />
+                      </div>
+                      <div class="col-6"></div>
+                    </div>
                   </q-card-section>
                 </q-card>
               </div>
@@ -254,6 +268,7 @@ import { ref } from "vue";
 import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 import { useQuasar } from "quasar";
+import _ from "lodash";
 
 export default defineComponent({
   name: "AddOrEdit Course",
@@ -272,7 +287,7 @@ export default defineComponent({
   },
   data() {
     return {
-      pageName: "Add or Course",
+      pageName: "Add/Edit Course",
       dense: true,
       name: "",
       model: "",
@@ -282,6 +297,7 @@ export default defineComponent({
         description: "",
         number_of_classes: "",
         number_of_exams: "",
+        subject_id: "",
         start_date: "",
         end_date: "",
         co_ordinator_name: "",
@@ -289,12 +305,65 @@ export default defineComponent({
         course_icon: ref(null),
         course_short_video: ref(null),
       },
+      subjectOptions: [],
     };
   },
   methods: {
     onSubmit() {
-      console.log("Submitted");
       console.log(this.courseData);
+      if (this.$route.params.id) {
+        api
+          .patch(`/courses/${this.$route.params.id}`, {
+            subject_id: this.courseData.subject_id,
+            title: this.courseData.title,
+            description: this.courseData.description,
+            num_classes: this.courseData.number_of_classes,
+            num_exams: this.courseData.number_of_exams,
+            coordinator_name: this.courseData.co_ordinator_name,
+            coordinator_number: this.courseData.co_ordinator_phone,
+            intro_video: "https://www.youtube.com/watch?v=9JSYB59QmZw",
+          })
+          .then((response) => {
+            console.log(response);
+            this.$q.notify({
+              message: "Course updated Successfully",
+              color: "positive",
+              icon: "check",
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => {
+            this.onReset();
+          });
+      } else {
+        api
+          .post("/courses", {
+            subject_id: this.courseData.subject_id,
+            title: this.courseData.title,
+            description: this.courseData.description,
+            num_classes: this.courseData.number_of_classes,
+            num_exams: this.courseData.number_of_exams,
+            coordinator_name: this.courseData.co_ordinator_name,
+            coordinator_number: this.courseData.co_ordinator_phone,
+            intro_video: "https://www.youtube.com/watch?v=9JSYB59QmZw",
+          })
+          .then((response) => {
+            console.log(response);
+            this.$q.notify({
+              message: "Course Added Successfully",
+              color: "positive",
+              icon: "check",
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => {
+            this.onReset();
+          });
+      }
     },
     onReset() {
       console.log("Reset");
@@ -304,6 +373,7 @@ export default defineComponent({
         description: "",
         number_of_classes: "",
         number_of_exams: "",
+        subject_id: "",
         start_date: "",
         end_date: "",
         co_ordinator_name: "",
@@ -318,14 +388,31 @@ export default defineComponent({
     onDescriptionChange(value, index, parentIndex) {
       this.courseData.description = value;
     },
+    getSubjects() {
+      api.get("/categories/subject").then((response) => {
+        response.data.data.map((category) => {
+          this.subjectOptions.push({
+            label: category.name,
+            value: category.id,
+          });
+        });
+      });
+    },
   },
   mounted() {
+    this.getSubjects();
     if (this.$route.params.id) {
-      //   api
-      //     .get("")
-      //     .then((response) => {
-      //       this.courseData = response.data.data;
-      //     });
+      api.get("/courses/" + this.$route.params.id).then((response) => {
+        const result = response.data.data;
+        this.courseData.title = result.title;
+        this.courseData.subject_id = result.subject_id;
+        this.courseData.description = result.description;
+        this.courseData.number_of_classes = result.num_classes;
+        this.courseData.number_of_exams = result.num_exams;
+        this.courseData.co_ordinator_name = result.coordinator_name;
+        this.courseData.co_ordinator_phone = result.coordinator_number;
+        this.courseData.course_short_video = result.intro_video;
+      });
     }
   },
 });
