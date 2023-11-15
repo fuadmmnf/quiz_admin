@@ -16,7 +16,7 @@
       </q-card-section>
     </q-card>
 
-    <q-separator spaced />
+    <q-separator spaced/>
     <!-- search card with filtering option filter icon -->
     <q-expansion-item
       expand-separator
@@ -48,6 +48,17 @@
                 <q-td key="type" :props="props">
                   {{ props.row.type }}
                 </q-td>
+                <q-td key="subject" :props="props">
+                  {{
+                    (props.row.subject === null || props.row.subject === undefined) ? "" : props.row.subject.data.name
+                  }}
+                </q-td>
+                <q-td key="category" :props="props">
+                  {{
+                    (props.row.category === null || props.row.category === undefined) ? "" : props.row.category.data.name
+                  }}
+                </q-td>
+
                 <q-td key="score" :props="props">
                   {{ props.row.score }}
                 </q-td>
@@ -68,7 +79,7 @@
               </q-tr>
             </template>
           </q-table>
-          <q-separator />
+          <q-separator/>
         </q-card-section>
       </q-card>
     </q-expansion-item>
@@ -119,7 +130,7 @@
               </q-tr>
             </template>
           </q-table>
-          <q-separator />
+          <q-separator/>
         </q-card-section>
       </q-card>
     </q-expansion-item>
@@ -143,6 +154,16 @@
           </q-td>
           <q-td key="type" :props="props">
             {{ props.row.type }}
+          </q-td>
+          <q-td key="category" :props="props">
+            {{
+              (props.row.category === null || props.row.category === undefined) ? "" : props.row.category.data.name
+            }}
+          </q-td>
+          <q-td key="subject" :props="props">
+            {{
+              (props.row.subject === null || props.row.subject === undefined) ? "" : props.row.subject.data.name
+            }}
           </q-td>
           <q-td key="score" :props="props">
             {{ props.row.score }}
@@ -177,10 +198,10 @@
 </template>
 
 <script>
-import { defineAsyncComponent, defineComponent, ref } from "vue";
-import { api } from "boot/axios";
-import { useRoute } from "vue-router";
-import { useQuasar } from "quasar";
+import {defineAsyncComponent, defineComponent, ref} from "vue";
+import {api} from "boot/axios";
+import {useRoute} from "vue-router";
+import {useQuasar} from "quasar";
 
 export default defineComponent({
   name: "AddEditQuestions",
@@ -225,7 +246,7 @@ export default defineComponent({
     const fetchExamQuestions = (page = 1) => {
       loading.value = true;
       api
-        .get("/exam-questions/" + route.params.id + "?include=question&limit=0")
+        .get("/exam-questions/" + route.params.id + "?include=question,question.subject,question.category&limit=0")
         .then((res) => {
           examQuestions.value = [];
           if (res.data.data.length > 0) {
@@ -244,7 +265,7 @@ export default defineComponent({
     const searchQuestions = async (searchData, page = 1) => {
       await api
         .get(
-          `/questions?searchJoin=and&search=${
+          `/questions?include=category,subject&searchJoin=and&search=${
             searchData.type.length ? "type:" + searchData.type : ""
           }${
             searchData.keywords.length ? ";content:" + searchData.keywords : ""
@@ -292,11 +313,11 @@ export default defineComponent({
       expanded: true,
       type: "",
       type_options: [
-        { label: "Single Best Answer", value: "single-best-answer" },
-        { label: "Multiple Answer", value: "multiple-answer" },
-        { label: "Multiple True/False", value: "multiple-true-false" },
-        { label: "Fill in the blanks", value: "written" },
-        { label: "Essay", value: "written" },
+        {label: "Single Best Answer", value: "single-best-answer"},
+        {label: "Multiple Answer", value: "multiple-answer"},
+        {label: "Multiple True/False", value: "multiple-true-false"},
+        {label: "Fill in the blanks", value: "written"},
+        {label: "Essay", value: "written"},
       ],
       pagination: {
         sortBy: "name",
@@ -321,6 +342,20 @@ export default defineComponent({
           align: "left",
           field: "type",
           sortable: true,
+        },
+        {
+          name: "subject",
+          label: "Subject",
+          field: "Subject",
+          align: "left",
+          // sortable: true,
+        },
+        {
+          name: "category",
+          label: "Category",
+          field: "Category",
+          align: "left",
+          // sortable: true,
         },
         {
           name: "score",
@@ -385,7 +420,7 @@ export default defineComponent({
   },
   methods: {
     edit(id) {
-      this.$router.push(`/Question/` + id);
+      this.$router.push(`/question/` + id);
     },
     deleteRow(id) {
       this.$q
@@ -480,7 +515,7 @@ export default defineComponent({
       this.examQuestions.map((item) => {
         question_ids.push(item.id);
       });
-      api.get("/exam-questions/" + item.id + "?include=question&limit=0").then(
+      api.get("/exam-questions/" + item.id + "?include=question,question.subject,question.category&limit=0").then(
         (res) => {
           if (res.data.data.length > 0) {
             res.data.data.forEach((item) => {

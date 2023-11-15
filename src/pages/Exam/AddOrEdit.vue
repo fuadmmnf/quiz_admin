@@ -7,7 +7,7 @@
       </q-card-section>
     </q-card>
 
-    <q-separator spaced/>
+    <q-separator spaced />
     <!-- search card with filtering option filter icon -->
     <q-expansion-item
       expand-separator
@@ -105,7 +105,7 @@
       </q-card>
     </q-expansion-item>
 
-    <q-separator spaced/>
+    <q-separator spaced />
     <q-form
       @submit.prevent="onSubmit"
       id="examForm"
@@ -126,6 +126,18 @@
 
                   <q-card-section>
                     <div class="row q-col-gutter-md">
+                      <div class="col-12">
+                        <q-select
+                          filled
+                          v-model="examData.course_id"
+                          :label="`Course`"
+                          :options="courseOptions"
+                          emit-value
+                          map-options
+                          clearable
+                          @clear="(val) => {examData.course_id = null}"
+                        />
+                      </div>
                       <!-- title, code, faculty, subject category, duration, start time, end time, start message , end message two columns -->
                       <div class="col-6">
                         <q-input
@@ -154,6 +166,8 @@
                           :options="facultyOptions"
                           emit-value
                           map-options
+                          clearable
+                          @clear="(val) => {examData.faculty_id = null}"
                         />
                       </div>
                       <div class="col-4">
@@ -164,6 +178,9 @@
                           :options="categoryOptions"
                           emit-value
                           map-options
+                          clearable
+                          @clear="(val) => {examData.category_id = null}"
+
                         />
                       </div>
                       <div class="col-4">
@@ -174,6 +191,8 @@
                           :options="subjectOptions"
                           emit-value
                           map-options
+                          clearable
+                          @clear="(val) => {examData.subject_id = null}"
                         />
                       </div>
                     </div>
@@ -335,7 +354,9 @@
                       <div class="col-6">
                         <q-select
                           filled
-                          v-model="examData.examConfiguration.question_display_type"
+                          v-model="
+                            examData.examConfiguration.question_display_type
+                          "
                           :label="`Question Display Type`"
                           :options="question_display_type_option"
                           emit-value
@@ -348,7 +369,10 @@
                       <div class="col-6">
                         <q-select
                           filled
-                          v-model="examData.examConfiguration.answer_script_visibility_time"
+                          v-model="
+                            examData.examConfiguration
+                              .answer_script_visibility_time
+                          "
                           :label="`Answer Script Visibility`"
                           :options="answer_script_visibility_option"
                           emit-value
@@ -360,7 +384,9 @@
                       <div class="col-6">
                         <q-select
                           filled
-                          v-model="examData.examConfiguration.marks_visibility_time"
+                          v-model="
+                            examData.examConfiguration.marks_visibility_time
+                          "
                           :label="`Marks Visibility`"
                           :options="marks_visibility_option"
                           emit-value
@@ -370,7 +396,9 @@
                       <div class="col-6">
                         <q-select
                           filled
-                          v-model="examData.examConfiguration.merit_visibility_time"
+                          v-model="
+                            examData.examConfiguration.merit_visibility_time
+                          "
                           :label="`Merits Visibility`"
                           :options="merits_visibility_option"
                           emit-value
@@ -378,22 +406,46 @@
                         />
                       </div>
                     </div>
-
+                    <!-- question display type - vertical or horizontal, if horizontal, can skip horizontal -->
+                    <div class="row q-col-gutter-md q-mt-auto">
+                      <div class="col-12">
+                        <q-select
+                          filled
+                          v-model="
+                            examData.examConfiguration.question_display_type
+                          "
+                          :label="`Question Display Type`"
+                          :options="question_display_type_option"
+                          emit-value
+                          map-options
+                          :rules="[
+                            (val) => !!val || 'Display type is required',
+                          ]"
+                        />
+                      </div>
+                    </div>
                     <!-- if horizontal, "can skip horizontal questions" and "show answer between horizontal question" -->
                     <div
                       class="row q-col-gutter-md q-mt-auto"
-                      v-if="examData.examConfiguration.question_display_type === 'horizontal'"
+                      v-if="
+                        examData.examConfiguration.question_display_type ===
+                        'horizontal'
+                      "
                     >
                       <div class="col-6">
                         <q-toggle
-                          v-model="examData.examConfiguration.can_skip_horizontal_question"
+                          v-model="
+                            examData.examConfiguration
+                              .can_skip_horizontal_question
+                          "
                           :label="`Can Skip Horizontal Questions`"
                         />
                       </div>
                       <div class="col-6">
                         <q-toggle
                           v-model="
-                            examData.examConfiguration.show_answer_between_horizontal_question
+                            examData.examConfiguration
+                              .show_answer_between_horizontal_question
                           "
                           :label="`Show Answer Between Horizontal Question`"
                         />
@@ -409,7 +461,9 @@
                       </div>
                       <div class="col-6">
                         <q-toggle
-                          v-model="examData.examConfiguration.can_retake_after_exam"
+                          v-model="
+                            examData.examConfiguration.can_retake_after_exam
+                          "
                           :label="`Can Retake After Exam`"
                         />
                       </div>
@@ -432,7 +486,9 @@
                     <div class="row q-col-gutter-md q-mt-auto">
                       <div class="col-6">
                         <q-toggle
-                          v-model="examData.examConfiguration.group_question_type"
+                          v-model="
+                            examData.examConfiguration.group_question_type
+                          "
                           :label="`Group Questions By Type`"
                         />
                       </div>
@@ -448,7 +504,7 @@
                         <q-select
                           filled
                           use-chips
-                          v-model="examData.merit_list_excluded_attributes"
+                          v-model="examData.examConfiguration.merit_list_excluded_attributes"
                           :label="`Merit List Excluded Attributes`"
                           :options="merit_list_excluded_attributes_option"
                           multiple
@@ -465,7 +521,7 @@
         </div>
       </div>
       <div class="row">
-        <q-btn label="Submit" type="submit" color="primary" form="examForm"/>
+        <q-btn label="Submit" type="submit" color="primary" form="examForm" />
         <q-btn
           label="Reset"
           type="reset"
@@ -475,18 +531,17 @@
           form="examForm"
         />
       </div>
-
     </q-form>
   </q-page>
 </template>
 
 <script>
 import OptionCard from "src/components/question/OptionCard.vue";
-import {defineComponent, defineAsyncComponent} from "vue";
-import {ref} from "@vue/reactivity";
-import {useStore} from "src/stores/store";
-import {api} from "boot/axios";
-import {useQuasar} from "quasar";
+import { defineComponent, defineAsyncComponent } from "vue";
+import { ref } from "@vue/reactivity";
+import { useStore } from "src/stores/store";
+import { api } from "boot/axios";
+import { useQuasar } from "quasar";
 import _ from "lodash";
 
 function initExamData() {
@@ -497,6 +552,7 @@ function initExamData() {
     parent_id: null,
     category_id: "",
     subject_id: "",
+    course_id: "",
     visibility_start_time: "",
     visibility_end_time: "",
     start_message: "",
@@ -516,8 +572,8 @@ function initExamData() {
       make_code_public: false,
       group_question_type: true,
       merit_list_excluded_attributes: null,
-    }
-  }
+    },
+  };
 }
 
 export default defineComponent({
@@ -528,7 +584,7 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const exams = store.exams;
-    const {$q} = useQuasar();
+    const { $q } = useQuasar();
     return {
       exams,
       $q,
@@ -546,32 +602,33 @@ export default defineComponent({
       categoryOptions: [],
       subjectOptions: [],
       visibility_option: [
-        {label: "Public", value: "public"},
-        {label: "Private", value: "private"},
+        { label: "Public", value: "public" },
+        { label: "Private", value: "private" },
       ],
+      courseOptions: [],
       answer_script_visibility_option: [
-        {label: "After Attempt", value: "after-attempt"},
-        {label: "After Exam", value: "after-exam"},
+        { label: "After Attempt", value: "after-attempt" },
+        { label: "After Exam", value: "after-exam" },
       ],
       marks_visibility_option: [
-        {label: "After Attempt", value: "after-attempt"},
-        {label: "After Exam", value: "after-exam"},
+        { label: "After Attempt", value: "after-attempt" },
+        { label: "After Exam", value: "after-exam" },
       ],
       merits_visibility_option: [
-        {label: "After Attempt", value: "after-attempt"},
-        {label: "After Exam", value: "after-exam"},
+        { label: "After Attempt", value: "after-attempt" },
+        { label: "After Exam", value: "after-exam" },
       ],
       question_display_type_option: [
-        {label: "Vertical", value: "vertical"},
-        {label: "Horizontal", value: "horizontal"},
+        { label: "Vertical", value: "vertical" },
+        { label: "Horizontal", value: "horizontal" },
       ],
       merit_list_excluded_attributes_option: [
-        {label: "Individual Name", value: "Individual Name"},
-        {label: "Position", value: "Position"},
-        {label: "Correct Answer", value: "Correct Answer"},
-        {label: "Neg Marking", value: "Neg Marking"},
-        {label: "Final Score", value: "Final Score"},
-        {label: "Time Needed", value: "Time Needed"},
+        { label: "Individual Name", value: "Individual Name" },
+        { label: "Position", value: "Position" },
+        { label: "Correct Answer", value: "Correct Answer" },
+        { label: "Neg Marking", value: "Neg Marking" },
+        { label: "Final Score", value: "Final Score" },
+        { label: "Time Needed", value: "Time Needed" },
       ],
     };
   },
@@ -604,7 +661,7 @@ export default defineComponent({
       this.examData = initExamData();
     },
     getFaculties() {
-      api.get("/categories/faculty").then((response) => {
+      return api.get("/categories/faculty").then((response) => {
         response.data.data.map((category) => {
           this.facultyOptions.push({
             label: category.name,
@@ -614,7 +671,7 @@ export default defineComponent({
       });
     },
     getCategories() {
-      api.get("/categories/category").then((response) => {
+      return api.get("/categories/category").then((response) => {
         response.data.data.map((category) => {
           this.categoryOptions.push({
             label: category.name,
@@ -624,7 +681,7 @@ export default defineComponent({
       });
     },
     getSubjects() {
-      api.get("/categories/subject").then((response) => {
+      return api.get("/categories/subject").then((response) => {
         response.data.data.map((category) => {
           this.subjectOptions.push({
             label: category.name,
@@ -633,19 +690,34 @@ export default defineComponent({
         });
       });
     },
+
+    getCourses() {
+      return api.get("/courses?orderBy=id&sortedBy=desc&limit=0").then((response) => {
+        response.data.data.map((course) => {
+          this.courseOptions.push({
+            label: course.title,
+            value: course.id,
+          });
+        });
+      });
+    },
   },
   mounted() {
-    this.getFaculties();
-    this.getCategories();
-    this.getSubjects();
-    if (this.$route.params.id) {
-      api
-        .get("/exams/" + this.$route.params.id + "?include=examConfiguration")
-        .then((response) => {
-          this.examData = response.data.data;
-          this.examData.examConfiguration = response.data.data.examConfiguration.data;
-        });
-    }
+    Promise.all([
+      this.getFaculties(),
+      this.getCategories(),
+      this.getSubjects(),
+      this.getCourses(),
+    ]).then(value => {
+      if (this.$route.params.id) {
+        api
+          .get("/exams/" + this.$route.params.id + "?include=examConfiguration")
+          .then((response) => {
+            this.examData = response.data.data;
+            this.examData.examConfiguration = response.data.data.examConfiguration.data;
+          });
+      }
+    });
   },
 });
 </script>

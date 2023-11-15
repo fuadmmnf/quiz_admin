@@ -9,14 +9,13 @@
           class="bg-grey-1"
         >
           <div class="q-pa-md">
-            <SearchExams @search="onSearch"/>
+            <SearchExams @search="onSearch" />
           </div>
         </q-expansion-item>
 
-        <q-separator spaced=""/>
+        <q-separator spaced="" />
         <q-card>
           <q-card-section>
-
             <!-- List of Exams -->
             <q-table
               :columns="columns"
@@ -36,6 +35,24 @@
                   <q-td key="title" :props="props">
                     {{ props.row.title }}
                   </q-td>
+                  <q-td key="title" :props="props">
+                    {{ props.row.code }}
+                  </q-td>
+                  <q-td key="category" :props="props">
+                    {{
+                      (props.row.category === null || props.row.category === undefined) ? "" : props.row.category.data.name
+                    }}
+                  </q-td>
+                  <q-td key="subject" :props="props">
+                    {{
+                      (props.row.subject === null || props.row.subject === undefined) ? "" : props.row.subject.data.name
+                    }}
+                  </q-td>
+                  <q-td key="faculty" :props="props">
+                    {{
+                      (props.row.faculty === null || props.row.faculty === undefined) ? "" : props.row.faculty.data.name
+                    }}
+                  </q-td>
                   <q-td key="visibility_start_time" :props="props">
                     {{ props.row.visibility_start_time }}
                   </q-td>
@@ -45,10 +62,15 @@
                   <q-td key="duration_in_minutes" :props="props">
                     {{ props.row.duration_in_minutes }}
                   </q-td>
+                  <q-td key="course" :props="props">
+                    {{
+                      (props.row.course === null || props.row.course === undefined) ? "" : props.row.course.data.name
+                    }}
+                  </q-td>
                   <q-td key="actions" :props="props">
                     <!-- move to draft -->
                     <q-btn
-                      v-if="examType != 'draft'"
+                      v-if="examType !== 'draft'"
                       color="primary"
                       size="md"
                       icon="drafts"
@@ -92,7 +114,7 @@
                       round
                       dense
                       flat
-                      :to="`/Exam/${examType}/${props.row.id}/AttemptedUsers`"
+                      :to="`/exam/${examType}/${props.row.id}/attempted-users`"
                     >
                       <q-tooltip
                         anchor="top middle"
@@ -126,7 +148,7 @@
                       round
                       dense
                       flat
-                      :to="`/Exam/${props.row.id}/EditQuestions`"
+                      :to="`/exam/${props.row.id}/edit-questions`"
                     >
                       <q-tooltip
                         anchor="top middle"
@@ -143,7 +165,7 @@
                       round
                       dense
                       flat
-                      :to="`/Exam/Checking/${props.row.id}/questions`"
+                      :to="`/exam/checking/${props.row.id}/questions`"
                       v-if="examType === 'checking'"
                     >
                       <q-tooltip
@@ -201,10 +223,10 @@
 </template>
 
 <script>
-import {defineAsyncComponent, defineComponent, ref} from "vue";
-import {useStore} from "src/stores/store";
-import {api} from "boot/axios";
-import {useQuasar} from "quasar";
+import { defineAsyncComponent, defineComponent, ref } from "vue";
+import { useStore } from "src/stores/store";
+import { api } from "boot/axios";
+import { useQuasar } from "quasar";
 
 export default {
   name: "ExamList",
@@ -221,7 +243,7 @@ export default {
   },
   setup(props) {
     const store = useStore();
-    const {$q} = useQuasar();
+    const { $q } = useQuasar();
     const exams = ref([]);
     const pagination = ref({
       page: 1,
@@ -243,7 +265,7 @@ export default {
       loading.value = true;
       api
         .get(
-          `/exams?include=examConfiguration&searchJoin=and&search=status:${
+          `/exams?include=examConfiguration,subject,category,faculty,course&searchJoin=and&search=status:${
             props.examType
           }${
             filter.value.keywords.length
@@ -296,35 +318,63 @@ export default {
           align: "left",
           field: (row) => row.title,
           format: (val) => `${val}`,
-          sortable: true,
+          // sortable: true,
         },
-        // {
-        //   name: "code",
-        //   align: "left",
-        //   label: "Code",
-        //   field: (row) => row.code,
-        //   sortable: true,
-        // },
+        {
+          name: "code",
+          align: "left",
+          label: "Code",
+          field: (row) => row.code,
+          // sortable: true,
+        },
+        {
+          name: "category",
+          align: "left",
+          label: "Category",
+          field: (row) => row.category,
+          // sortable: true,
+        },
+        {
+          name: "subject",
+          align: "left",
+          label: "Subject",
+          field: (row) => row.subject,
+          // sortable: true,
+        },
+        {
+          name: "faculty",
+          align: "left",
+          label: "Faculty",
+          field: (row) => row.faculty,
+          // sortable: true,
+        },
         {
           name: "visibility_start_time",
           align: "left",
           label: "Start Time",
           field: (row) => row.visibility_start_time,
-          sortable: true,
+          // sortable: true,
         },
         {
           name: "visibility_end_time",
           align: "left",
           label: "End Time",
-          field: (row) => row.visibility_start_time,
-          sortable: true,
+          field: (row) => row.visibility_end_time,
+          //sortable: true,
         },
         {
           name: "duration_in_minutes",
           align: "left",
           label: "Duration (In Minutes)",
           field: (row) => row.duration_in_minutes,
-          sortable: true,
+          // sortable: true,
+        },
+        {
+          name: "course",
+          align: "left",
+          label: "Course",
+          field: (row) => row.course,
+          // sortable: true,
         },
         {
           name: "actions",
@@ -371,7 +421,6 @@ export default {
         });
     },
 
-
     markAsCompleted(id) {
       api
         .patch(`/exams/${id}/status`, {
@@ -391,17 +440,17 @@ export default {
         });
     },
     recalculateMarks(exam_id) {
-      api.put(`/exam-markings`, {exam_id: exam_id, exam_attempt_ids: "*"}).then(() => {
-        // confirm
-        $q.notify({
-          message: "Marks recalculated successfully",
-          color: "green",
-          icon: "check",
+      api
+        .put(`/exam-markings`, { exam_id: exam_id, exam_attempt_ids: "*" })
+        .then(() => {
+          // confirm
+          $q.notify({
+            message: "Marks recalculated successfully",
+            color: "green",
+            icon: "check",
+          });
         });
-      });
     },
   },
 };
 </script>
-
-<style></style>
