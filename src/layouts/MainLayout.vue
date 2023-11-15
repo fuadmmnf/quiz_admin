@@ -38,14 +38,13 @@
             round
             dense
             flat
-            color="white"
-            icon="fab fa-twitter"
+            style="color: red !important"
             type="a"
-            href="https://twitter.com/pratik227"
+            href="https://github.com/sponsors/pratik227"
             target="_blank"
           >
+            <i class="fa fa-heart fa-2x fa-beat"></i>
           </q-btn>
-
           <q-btn round dense flat color="white" icon="notifications">
             <q-badge color="red" text-color="white" floating> 5 </q-badge>
             <q-menu>
@@ -102,12 +101,12 @@
         </q-item>
         <q-expansion-item icon="people" label="Roles">
           <q-item
-            to="/roles/admin"
+            to="/Roles/SubAdmin"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
             <q-item-section>
-              <q-item-label>Admins</q-item-label>
+              <q-item-label>SubAdmins</q-item-label>
             </q-item-section>
           </q-item>
           <q-item
@@ -210,7 +209,6 @@
             </q-item-section>
           </q-item>
         </q-expansion-item>
-
         <q-item to="/TreeTable" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
             <q-icon name="list" />
@@ -219,7 +217,6 @@
             <q-item-label>TreeTable</q-item-label>
           </q-item-section>
         </q-item>
-
         <q-item to="/institutions" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
             <q-icon name="list" />
@@ -332,6 +329,7 @@
             <q-item-label>Lecture Classes</q-item-label>
           </q-item-section>
         </q-item> -->
+
       </q-list>
     </q-drawer>
 

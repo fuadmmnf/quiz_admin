@@ -37,6 +37,18 @@
               v-model:pagination="pagination"
               @request="onRequest"
             >
+              <template v-slot:top-left>
+                <!-- total attempts -->
+                <div class="row">
+                  <div class="col-12">
+                    <q-badge
+                      color="grey-8"
+                      class="q-pa-sm"
+                      :label="`Total Attempts: ${attempts}`"
+                    />
+                  </div>
+                </div>
+              </template>
               <template v-slot:top-right>
                 <q-input
                   borderless
@@ -93,15 +105,6 @@
                     {{ 4 }}
                   </q-td>
                   <q-td key="actions" :props="props">
-                    <q-btn color="black" dense flat round icon="logout">
-                      <q-tooltip
-                        anchor="top middle"
-                        self="bottom middle"
-                        :offset="[10, 10]"
-                      >
-                        <strong class="">Export attempt</strong>
-                      </q-tooltip>
-                    </q-btn>
                     <q-btn
                       color="blue"
                       dense
@@ -125,15 +128,7 @@
                       round
                       icon="delete"
                       @click="deleteAttempt(props.row.attempt_id)"
-                    >
-                      <q-tooltip
-                        anchor="top middle"
-                        self="bottom middle"
-                        :offset="[10, 10]"
-                      >
-                        <strong class="">Delete attempt</strong>
-                      </q-tooltip>
-                    </q-btn>
+                    />
                   </q-td>
                 </q-tr>
               </template>
@@ -172,6 +167,7 @@ export default {
     const loading = ref(true);
     const filter = ref("");
     const route = useRoute();
+    const attempts = ref(0);
 
     const fetchusers = (page = 1) => {
       loading.value = true;
@@ -197,6 +193,7 @@ export default {
             rowsPerPage: meta.per_page,
             rowsNumber: meta.total,
           };
+          attempts.value = meta.total;
         })
         .catch((error) => {
           console.log(error);
@@ -223,7 +220,7 @@ export default {
                 real_id: item.examAttempt.data.user.data.id,
                 correct_answers: item.correct_answers,
                 marks: item.marks,
-                attempt_id: item.id,
+                attempt_id: item.examAttempt.data.id,
               });
             });
           }
@@ -233,6 +230,7 @@ export default {
             rowsPerPage: meta.per_page,
             rowsNumber: meta.total,
           };
+          attempts.value = meta.total;
           users.value.forEach((user, index) => {
             user.rank =
               (pagination.value.page - 1) * pagination.value.rowsPerPage +
@@ -249,30 +247,21 @@ export default {
     };
 
     const deleteAttempt = (id) => {
-      $q.dialog({
-        title: "Confirm",
-        message: "Are you sure you want to delete this attempt?",
-        cancel: true,
-        persistent: true,
-      }).onOk(() => {
-        api
-          .delete(`/exam-attempts/${id}`)
-          .then((res) => {
-            $q.notify({
-              message: "Attempt deleted successfully",
-              color: "green",
-              icon: "check",
-            });
-            if (route.params.type === "completed") {
-              fetchCompletedUsers(pagination.value.page);
-            } else {
-              fetchusers(pagination.value.page);
-            }
-          })
-          .catch((error) => {
-            console.log(error);
+      api
+        .delete(`/exam-attempts/${id}`)
+        .then((res) => {
+          $q.notify({
+            message: "Attempt deleted successfully",
+            color: "green",
+            icon: "check",
           });
-      });
+          if (route.params.type === "completed")
+            fetchCompletedUsers(pagination.value.page);
+          else fetchusers(pagination.value.page);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     };
 
     const onRequest = (props) => {
@@ -280,6 +269,11 @@ export default {
         fetchCompletedUsers(props.pagination.page);
       else fetchusers(props.pagination.page);
     };
+
+    const setTotalAttempts = (total) => {
+      this.$emit("totalAttempts", total);
+    };
+
     return {
       store,
       pagination,
@@ -292,6 +286,8 @@ export default {
       fetchCompletedUsers,
       deleteAttempt,
       feedback: ref(false),
+      setTotalAttempts,
+      attempts,
     };
   },
   mounted() {
