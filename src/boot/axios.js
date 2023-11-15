@@ -9,8 +9,11 @@ import { boot } from "quasar/wrappers";
 const api = axios.create({
   baseURL: process.env.DEV
     ? "https://dev-api.theeduaid.com/v1"
-    : process.env.BUILD_API_URL,
-  headers: {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"},
+    : "https://dev-api.theeduaid.com/v1",
+  headers: {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+  },
 });
 
 api.interceptors.request.use(
