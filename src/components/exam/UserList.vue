@@ -146,7 +146,7 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import {ref} from "vue";
 import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 import { useRoute } from "vue-router";
