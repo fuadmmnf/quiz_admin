@@ -377,13 +377,6 @@ export default {
           // sortable: true,
         },
         {
-          name: "course",
-          align: "left",
-          label: "Course",
-          field: (row) => row.id,
-          sortable: true,
-        },
-        {
           name: "actions",
           label: "Actions",
           align: "center",
