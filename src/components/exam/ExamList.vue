@@ -277,7 +277,7 @@ export default {
       loading.value = true;
       api
         .get(
-          `/exams?include=examConfiguration,subject,category,faculty&searchJoin=and&search=status:${
+          `/exams?include=examConfiguration,subject,category,faculty,course&searchJoin=and&search=status:${
             props.examType
           }${
             filter.value.keywords.length
