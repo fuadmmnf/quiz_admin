@@ -260,6 +260,18 @@ export default {
             filter.value.keywords.length
               ? ";title:" + filter.value.keywords
               : ""
+          }${
+            filter.value.faculty && filter.value.faculty.length
+              ? ";faculty_id:" + filter.value.faculty
+              : ""
+          }${
+            filter.value.subject && filter.value.subject.length
+              ? ";subject_id:" + filter.value.subject
+              : ""
+          }${
+            filter.value.category && filter.value.category.length
+              ? ";category_id:" + filter.value.category
+              : ""
           }&orderBy=id&sortedBy=desc&searchJoin=and&page=${page}`
         )
         .then((response) => {
