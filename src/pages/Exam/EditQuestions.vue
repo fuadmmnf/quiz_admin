@@ -45,8 +45,7 @@
                 <q-td key="sn" :props="props">
                   {{ props.row.sn }}
                 </q-td>
-                <q-td key="content" :props="props">
-                  {{ props.row.content }}
+                <q-td key="content" :props="props" v-html="props.row.content">
                 </q-td>
                 <q-td key="type" :props="props">
                   {{ props.row.type }}
@@ -161,9 +160,7 @@
           <q-td key="sn" :props="props">
             {{ props.row.sn }}
           </q-td>
-          <q-td key="content" :props="props">
-            {{ props.row.content.substring(0, 50) + "..." }}
-          </q-td>
+          <q-td key="content" :props="props" v-html="props.row.content"> </q-td>
           <q-td key="type" :props="props">
             {{ props.row.type }}
           </q-td>
