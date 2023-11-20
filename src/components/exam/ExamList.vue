@@ -76,7 +76,7 @@
                       props.row.course === null ||
                       props.row.course === undefined
                         ? ""
-                        : props.row.course.data.name
+                        : props.row.course.data.title
                     }}
                   </q-td>
                   <q-td key="actions" :props="props">
@@ -293,7 +293,7 @@ export default {
               ? ";subject_id:" + filter.value.subject
               : ""
           }${
-            filter.value.category &&  filter.value.category.length
+            filter.value.category && filter.value.category.length
               ? ";category_id:" + filter.value.category
               : ""
           }&orderBy=id&sortedBy=desc&page=${page}`
