@@ -64,7 +64,7 @@
                   </q-td>
                   <q-td key="course" :props="props">
                     {{
-                      (props.row.course === null || props.row.course === undefined) ? "" : props.row.course.data.name
+                      (props.row.course === null || props.row.course === undefined) ? "" : props.row.course.data.title
                     }}
                   </q-td>
                   <q-td key="actions" :props="props">
