@@ -154,6 +154,12 @@ const routes = [
         component: () => import("pages/Course/EnrolledUser.vue"),
       },
 
+      {
+        path: "/student-list",
+        name: "studentList",
+        component: () => import("pages/StudentList.vue"),
+      },
+
       // Not completed yet
       // {path: '/Taskboard', component: () => import('pages/TaskBoard.vue')},
     ],
