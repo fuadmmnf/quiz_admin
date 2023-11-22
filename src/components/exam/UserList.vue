@@ -104,6 +104,20 @@
                   >
                     {{ props.row.rating }}
                   </q-td>
+                  <q-td
+                    key="start_time"
+                    :props="props"
+                    v-if="route.params.type === 'completed'"
+                  >
+                    {{ "start_time" }}
+                  </q-td>
+                  <q-td
+                    key="end_time"
+                    :props="props"
+                    v-if="route.params.type === 'completed'"
+                  >
+                    {{ "end_time" }}
+                  </q-td>
                   <q-td key="actions" :props="props">
                     <q-btn
                       color="blue"
@@ -352,6 +366,20 @@ export default {
           align: "left",
           label: "Marks",
           field: (row) => row.marks,
+          sortable: true,
+        },
+        {
+          name: "start_time",
+          align: "left",
+          label: "Start time",
+          field: (row) => row.start_time,
+          sortable: true,
+        },
+        {
+          name: "end_time",
+          align: "left",
+          label: "End time",
+          field: (row) => row.end_time,
           sortable: true,
         },
         {
