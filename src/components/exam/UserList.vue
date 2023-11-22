@@ -102,7 +102,7 @@
                     :props="props"
                     v-if="route.params.type === 'completed'"
                   >
-                    {{ 4 }}
+                    {{ props.row.rating }}
                   </q-td>
                   <q-td key="actions" :props="props">
                     <q-btn
