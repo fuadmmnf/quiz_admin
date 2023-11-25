@@ -152,6 +152,15 @@
             <q-item-label>Subject</q-item-label>
           </q-item-section>
         </q-item>
+        <q-item to="/institutions" active-class="q-item-no-link-highlighting">
+          <q-item-section avatar>
+            <q-icon name="list" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Institutions</q-item-label>
+          </q-item-section>
+        </q-item>
+
         <q-item to="/question" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
             <q-icon name="question_answer" />
@@ -160,6 +169,19 @@
             <q-item-label>Question</q-item-label>
           </q-item-section>
         </q-item>
+
+        <q-expansion-item icon="menu_open" label="Question Bank">
+          <q-item
+            to="/question-bank"
+            class="q-ml-xl"
+            active-class="q-item-no-link-highlighting"
+          >
+            <q-item-section>
+              <q-item-label>Question bank 1</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-expansion-item>
+
         <!-- Exam -->
 
         <q-expansion-item icon="menu_open" label="Exams">
@@ -215,14 +237,6 @@
           </q-item-section>
           <q-item-section>
             <q-item-label>TreeTable</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item to="/institutions" active-class="q-item-no-link-highlighting">
-          <q-item-section avatar>
-            <q-icon name="list" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Institutions</q-item-label>
           </q-item-section>
         </q-item>
 

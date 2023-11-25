@@ -21,6 +21,10 @@ const routes = [
       //faculty path with id and edit
       { path: "/subject", component: () => import("pages/Subject.vue") },
       {
+        path: "/question-bank",
+        component: () => import("pages/QuestionBank/index.vue"),
+      },
+      {
         path: "/question",
         component: () => import("pages/Question/index.vue"),
       },

@@ -270,7 +270,6 @@ export default {
       faculty: "",
     });
     const onSearch = (search) => {
-      console.log("hukka", search);
       filter.value = search;
       fetchExams();
     };
