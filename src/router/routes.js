@@ -29,6 +29,10 @@ const routes = [
         component: () => import("pages/Blog/AddorEditBlog.vue"),
       },
       {
+        path: "/question-bank",
+        component: () => import("pages/TryQuestionBank.vue"),
+      },
+      {
         path: "/question",
         component: () => import("pages/Question/index.vue"),
       },
