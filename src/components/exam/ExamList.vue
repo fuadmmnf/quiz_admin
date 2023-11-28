@@ -214,6 +214,7 @@
                       round
                       dense
                       flat
+                      @click="onDelete(props.row.id)"
                     >
                       <q-tooltip
                         anchor="top middle"
@@ -462,6 +463,35 @@ export default {
         })
         .catch((err) => {
           console.log(err);
+        });
+    },
+    onDelete(id) {
+      this.$q
+        .dialog({
+          title: "Confirm",
+          message: "Would you like to delete this exam?",
+          cancel: true,
+          persistent: true,
+        })
+        .onOk(() => {
+          api
+            .delete(`/exams/${id}`, {
+              status: "completed",
+            })
+            .then((res) => {
+              this.$q.notify({
+                message: "Exam deleted successfully",
+                color: "positive",
+                icon: "check",
+              });
+              this.fetchExams();
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        })
+        .onCancel(() => {
+          console.log(">>>> Cancel");
         });
     },
     recalculateMarks(exam_id) {
