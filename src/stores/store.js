@@ -43,7 +43,7 @@ export const useStore = defineStore("store", {
       await api
         .get("/categories/faculty?limit=0")
         .then((response) => {
-          this.faculty = response.data.data;
+          this.faculties = response.data.data;
         })
         .catch((error) => {
           console.log(error);
@@ -53,7 +53,7 @@ export const useStore = defineStore("store", {
       await api
         .get("/categories/subject?limit=0")
         .then((response) => {
-          this.subject = response.data.data;
+          this.subjects = response.data.data;
         })
         .catch((error) => {
           console.log(error);
