@@ -37,6 +37,10 @@ const routes = [
         component: () => import("pages/QuestionBank/index.vue"),
       },
       {
+        path: "/question-bank-list/:id/edit-questions",
+        component: () => import("pages/QuestionBank/EditQuestion.vue"),
+      },
+      {
         path: "/question",
         component: () => import("pages/Question/index.vue"),
       },
@@ -156,7 +160,6 @@ const routes = [
       },
 
       {
-
         path: "/lecture-classes/:courseId",
         component: () => import("pages/LectureClass/index.vue"),
       },
