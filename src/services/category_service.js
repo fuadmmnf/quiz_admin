@@ -40,3 +40,28 @@ export async function getStudents(params = {}) {
     return { data: null, status: null, error };
   }
 }
+
+export async function getExams(params = {}) {
+  try {
+    const { data, status } = await api.get("/exams", {
+      params,
+    });
+
+    return { data, status, error: null };
+  } catch (error) {
+    return { data: null, status: null, error };
+  }
+}
+
+export async function getCourses(params = {}) {
+  try {
+    const { data, status } = await api.get("/courses", {
+      params,
+    });
+
+    return { data, status, error: null };
+  } catch (error) {
+    return { data: null, status: null, error };
+  }
+}
+

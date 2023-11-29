@@ -148,7 +148,7 @@ const routes = [
       },
       {
         path: "/send-message",
-        component: () => import("pages/SendMessage.vue"),
+        component: () => import("pages/TrySendMessage.vue"),
       },
 
       {
