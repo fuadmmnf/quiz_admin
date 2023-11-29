@@ -318,7 +318,17 @@
             <q-item-label>Blog</q-item-label>
           </q-item-section>
         </q-item>
-
+        <q-expansion-item icon="menu_open" label="Question Bank List">
+          <q-item
+            to="/question-bank-list"
+            class="q-ml-xl"
+            active-class="q-item-no-link-highlighting"
+          >
+            <q-item-section>
+              <q-item-label>Question bank 1</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-expansion-item>
         <q-item to="/question-bank" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
             <q-icon name="list" />
