@@ -47,6 +47,8 @@
                   lazy-rules
                   map-options
                   emit-value
+                  clearable
+                  @clear="searchData.category = ''"
                 />
               </div>
               <div class="col-4">
@@ -58,6 +60,8 @@
                   lazy-rules
                   map-options
                   emit-value
+                  clearable
+                  @clear="searchData.subject = ''"
                 />
               </div>
               <div class="col-4">
@@ -69,6 +73,8 @@
                   lazy-rules
                   map-options
                   emit-value
+                  clearable
+                  @clear="searchData.faculty = ''"
                 />
               </div>
             </div>
@@ -114,8 +120,8 @@ export default {
         keywords: "",
         type: "",
         category: "",
-        subjects: "",
-        faculties: "",
+        subject: "",
+        faculty: "",
       };
       this.$emit("search", this.searchData);
     },

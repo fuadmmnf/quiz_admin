@@ -1,12 +1,58 @@
 <template>
   <q-page class="q-pa-sm">
+    <q-dialog v-model="showDialog" :position="'top'">
+      <q-card flat bordered class="my-card" style="width: 60%">
+        <q-card-section>
+          <div class="text-h6">Select Student</div>
+        </q-card-section>
+
+        <q-separator inset />
+
+        <q-card-section>
+          <div class="q-gutter-sm">
+            <q-select
+              filled
+              v-model="selectedStudents"
+              input-debounce="0"
+              multiple
+              :options="options"
+              use-chips
+              stack-label
+              use-input
+              @filter="filterFn"
+              label="Search Student"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    No results
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </div>
+        </q-card-section>
+
+        <q-card-section>
+          <q-btn color="primary" label="Enroll" @click="enrollStudent" />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
     <q-card class="no-shadow" bordered>
       <q-card-section class="row items-center justify-between">
         <div class="text-h6 text-indigo-8">
           Subscribe User
           <div class="text-subtitle2">List of all users are shown here</div>
         </div>
-        <div class="row"></div>
+
+        <div class="row">
+          <q-btn
+            color="primary"
+            label="Enroll new student"
+            @click="showDialog = true"
+          />
+        </div>
       </q-card-section>
     </q-card>
 
@@ -87,6 +133,10 @@ export default defineComponent({
   setup() {
     const { $q } = useQuasar();
     const store = useStore();
+    const showDialog = ref(false);
+    const initialOptions = ref([]);
+    const options = ref([]);
+
     const users = ref([]);
     const pagination = ref({
       page: 1,
@@ -118,6 +168,26 @@ export default defineComponent({
           loading.value = false;
         });
     };
+    const fetchStudents = () => {
+      loading.value = true;
+      api
+        .get(`/users?search=roles.name:student&limit=0`)
+        .then((response) => {
+          initialOptions.value = response.data.data.map((user) => {
+            return {
+              label: user.name,
+              value: user.id,
+            };
+          });
+          options.value = initialOptions.value;
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          loading.value = false;
+        });
+    };
 
     const onRequest = (props) => {
       fetchUsers(props.pagination.page);
@@ -127,11 +197,31 @@ export default defineComponent({
       pagination,
       loading,
       fetchUsers,
+      fetchStudents,
       onRequest,
       users,
       $q,
       searchData,
       courseId,
+      showDialog,
+      selectedStudents: ref([]),
+      options,
+      initialOptions,
+      filterFn(val, update) {
+        if (val === "") {
+          update(() => {
+            options.value = initialOptions.value;
+          });
+          return;
+        }
+
+        update(() => {
+          const needle = val.toLowerCase();
+          options.value = initialOptions.value.filter(
+            (v) => v.label.toLowerCase().indexOf(needle) > -1
+          );
+        });
+      },
     };
   },
   data() {
@@ -175,6 +265,27 @@ export default defineComponent({
   },
 
   methods: {
+    enrollStudent() {
+      const data = {
+        course_id: this.courseId,
+        user_ids: this.selectedStudents.map((user) => user.value),
+      };
+      console.log("data sent to server", data);
+      api
+        .post("/course-users/", data)
+        .then((response) => {
+          console.log(response);
+          this.$q.notify({
+            message: "Course Added Successfully",
+            color: "positive",
+            icon: "check",
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {});
+    },
     onSubscribe(id) {
       this.$q
         .dialog({
@@ -195,6 +306,7 @@ export default defineComponent({
   mounted() {
     this.courseId = this.$route.params.courseId;
     this.fetchUsers();
+    this.fetchStudents();
   },
 });
 </script>

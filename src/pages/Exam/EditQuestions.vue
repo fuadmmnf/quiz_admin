@@ -16,7 +16,7 @@
       </q-card-section>
     </q-card>
 
-    <q-separator spaced/>
+    <q-separator spaced />
     <!-- search card with filtering option filter icon -->
     <q-expansion-item
       expand-separator
@@ -42,20 +42,28 @@
           >
             <template v-slot:body="props">
               <q-tr :props="props">
-                <q-td key="content" :props="props">
-                  {{ props.row.content }}
+                <q-td key="sn" :props="props">
+                  {{ props.row.sn }}
+                </q-td>
+                <q-td key="content" :props="props" v-html="props.row.content">
                 </q-td>
                 <q-td key="type" :props="props">
                   {{ props.row.type }}
                 </q-td>
                 <q-td key="subject" :props="props">
                   {{
-                    (props.row.subject === null || props.row.subject === undefined) ? "" : props.row.subject.data.name
+                    props.row.subject === null ||
+                    props.row.subject === undefined
+                      ? ""
+                      : props.row.subject.data.name
                   }}
                 </q-td>
                 <q-td key="category" :props="props">
                   {{
-                    (props.row.category === null || props.row.category === undefined) ? "" : props.row.category.data.name
+                    props.row.category === null ||
+                    props.row.category === undefined
+                      ? ""
+                      : props.row.category.data.name
                   }}
                 </q-td>
 
@@ -79,7 +87,7 @@
               </q-tr>
             </template>
           </q-table>
-          <q-separator/>
+          <q-separator />
         </q-card-section>
       </q-card>
     </q-expansion-item>
@@ -130,7 +138,7 @@
               </q-tr>
             </template>
           </q-table>
-          <q-separator/>
+          <q-separator />
         </q-card-section>
       </q-card>
     </q-expansion-item>
@@ -149,20 +157,25 @@
     >
       <template v-slot:body="props">
         <q-tr :props="props">
-          <q-td key="content" :props="props">
-            {{ props.row.content.substring(0, 50) + "..." }}
+          <q-td key="sn" :props="props">
+            {{ props.row.sn }}
           </q-td>
+          <q-td key="content" :props="props" v-html="props.row.content"> </q-td>
           <q-td key="type" :props="props">
             {{ props.row.type }}
           </q-td>
           <q-td key="category" :props="props">
             {{
-              (props.row.category === null || props.row.category === undefined) ? "" : props.row.category.data.name
+              props.row.category === null || props.row.category === undefined
+                ? ""
+                : props.row.category.data.name
             }}
           </q-td>
           <q-td key="subject" :props="props">
             {{
-              (props.row.subject === null || props.row.subject === undefined) ? "" : props.row.subject.data.name
+              props.row.subject === null || props.row.subject === undefined
+                ? ""
+                : props.row.subject.data.name
             }}
           </q-td>
           <q-td key="score" :props="props">
@@ -198,10 +211,10 @@
 </template>
 
 <script>
-import {defineAsyncComponent, defineComponent, ref} from "vue";
-import {api} from "boot/axios";
-import {useRoute} from "vue-router";
-import {useQuasar} from "quasar";
+import { defineAsyncComponent, defineComponent, ref } from "vue";
+import { api } from "boot/axios";
+import { useRoute } from "vue-router";
+import { useQuasar } from "quasar";
 
 export default defineComponent({
   name: "AddEditQuestions",
@@ -246,11 +259,16 @@ export default defineComponent({
     const fetchExamQuestions = (page = 1) => {
       loading.value = true;
       api
-        .get("/exam-questions/" + route.params.id + "?include=question,question.subject,question.category&limit=0")
+        .get(
+          "/exam-questions/" +
+            route.params.id +
+            "?include=question,question.subject,question.category&limit=0"
+        )
         .then((res) => {
           examQuestions.value = [];
           if (res.data.data.length > 0) {
-            res.data.data.forEach((item) => {
+            res.data.data.forEach((item, index) => {
+              item.question.data.sn = res.data.data.length - index;
               examQuestions.value.push(item.question.data);
             });
           }
@@ -272,8 +290,15 @@ export default defineComponent({
           }&orderBy=id&sortedBy=desc&page=${page}`
         )
         .then((res) => {
-          searchResults.value = res.data.data;
           const meta = res.data.meta.pagination;
+          searchResults.value = [];
+          if (res.data.data.length > 0) {
+            res.data.data.forEach((item, index) => {
+              item.sn =
+                meta.total - (meta.current_page - 1) * meta.per_page - index;
+              searchResults.value.push(item);
+            });
+          }
           questionPagination.value = {
             page: meta.current_page,
             rowsPerPage: meta.per_page,
@@ -313,11 +338,11 @@ export default defineComponent({
       expanded: true,
       type: "",
       type_options: [
-        {label: "Single Best Answer", value: "single-best-answer"},
-        {label: "Multiple Answer", value: "multiple-answer"},
-        {label: "Multiple True/False", value: "multiple-true-false"},
-        {label: "Fill in the blanks", value: "written"},
-        {label: "Essay", value: "written"},
+        { label: "Single Best Answer", value: "single-best-answer" },
+        { label: "Multiple Answer", value: "multiple-answer" },
+        { label: "Multiple True/False", value: "multiple-true-false" },
+        { label: "Fill in the blanks", value: "written" },
+        { label: "Essay", value: "written" },
       ],
       pagination: {
         sortBy: "name",
@@ -327,6 +352,13 @@ export default defineComponent({
       loading: false,
       show: false,
       columns: [
+        {
+          name: "sn",
+          label: "SN",
+          align: "left",
+          field: "sn",
+          sortable: true,
+        },
         {
           name: "content",
           required: true,
@@ -515,29 +547,35 @@ export default defineComponent({
       this.examQuestions.map((item) => {
         question_ids.push(item.id);
       });
-      api.get("/exam-questions/" + item.id + "?include=question,question.subject,question.category&limit=0").then(
-        (res) => {
-          if (res.data.data.length > 0) {
-            res.data.data.forEach((item) => {
-              if (
-                this.examQuestions.findIndex(
-                  (question) => question.id == item.question.data.id
-                ) == -1
-              ) {
-                this.examQuestions.push(item.question.data);
-              }
-            });
-            this.$q.notify({
-              color: "positive",
-              message: "Questions Added Successfully",
-              icon: "check",
-            });
+      api
+        .get(
+          "/exam-questions/" +
+            item.id +
+            "?include=question,question.subject,question.category&limit=0"
+        )
+        .then(
+          (res) => {
+            if (res.data.data.length > 0) {
+              res.data.data.forEach((item) => {
+                if (
+                  this.examQuestions.findIndex(
+                    (question) => question.id == item.question.data.id
+                  ) == -1
+                ) {
+                  this.examQuestions.push(item.question.data);
+                }
+              });
+              this.$q.notify({
+                color: "positive",
+                message: "Questions Added Successfully",
+                icon: "check",
+              });
+            }
+          },
+          (err) => {
+            console.log(err);
           }
-        },
-        (err) => {
-          console.log(err);
-        }
-      );
+        );
       if (question_ids.length > 0) {
       }
     },

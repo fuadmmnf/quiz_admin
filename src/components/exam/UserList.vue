@@ -97,12 +97,29 @@
                   >
                     {{ props.row.marks }}
                   </q-td>
+
                   <q-td
-                    key="rating"
+                    key="attempt_time"
                     :props="props"
                     v-if="route.params.type === 'completed'"
                   >
-                    {{ 4 }}
+                    {{ props.row.attempt_time }}
+                  </q-td>
+                  <q-td
+                    key="end_time"
+                    :props="props"
+                    v-if="route.params.type === 'completed'"
+                  >
+                    {{ "end_time" }}
+                  </q-td>
+                  <q-td
+                    key="ranking"
+                    :props="props"
+                    v-if="route.params.type === 'completed'"
+                  >
+                    {{
+                      props.row.ranking === null ? "----" : props.row.ranking
+                    }}
                   </q-td>
                   <q-td key="actions" :props="props">
                     <q-btn
@@ -211,16 +228,18 @@ export default {
         )
         .then((res) => {
           if (res.data.data.length > 0) {
-            console.log(res.data.data);
+            console.log("comple", res.data.data);
             users.value = [];
             res.data.data.forEach((item) => {
               users.value.push({
+                attempt_time: item.examAttempt.data.created_at,
                 name: item.examAttempt.data.user.data.name,
                 mobile: item.examAttempt.data.user.data.mobile,
                 real_id: item.examAttempt.data.user.data.id,
                 correct_answers: item.correct_answers,
                 marks: item.marks,
                 attempt_id: item.examAttempt.data.id,
+                ranking: item.ranking,
               });
             });
           }
@@ -355,10 +374,24 @@ export default {
           sortable: true,
         },
         {
-          name: "rating",
+          name: "attempt_time",
           align: "left",
-          label: "Rating",
-          field: (row) => row.rating,
+          label: "Attempt time",
+          field: (row) => row.attempt_time,
+          sortable: true,
+        },
+        {
+          name: "end_time",
+          align: "left",
+          label: "End time",
+          field: (row) => row.end_time,
+          sortable: true,
+        },
+        {
+          name: "ranking",
+          align: "center",
+          label: "Ranking",
+          field: (row) => row.ranking,
           sortable: true,
         },
         {

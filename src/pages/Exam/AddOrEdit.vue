@@ -135,7 +135,11 @@
                           emit-value
                           map-options
                           clearable
-                          @clear="(val) => {examData.course_id = null}"
+                          @clear="
+                            (val) => {
+                              examData.course_id = null;
+                            }
+                          "
                         />
                       </div>
                       <!-- title, code, faculty, subject category, duration, start time, end time, start message , end message two columns -->
@@ -167,7 +171,11 @@
                           emit-value
                           map-options
                           clearable
-                          @clear="(val) => {examData.faculty_id = null}"
+                          @clear="
+                            (val) => {
+                              examData.faculty_id = null;
+                            }
+                          "
                         />
                       </div>
                       <div class="col-4">
@@ -179,8 +187,11 @@
                           emit-value
                           map-options
                           clearable
-                          @clear="(val) => {examData.category_id = null}"
-
+                          @clear="
+                            (val) => {
+                              examData.category_id = null;
+                            }
+                          "
                         />
                       </div>
                       <div class="col-4">
@@ -192,7 +203,11 @@
                           emit-value
                           map-options
                           clearable
-                          @clear="(val) => {examData.subject_id = null}"
+                          @clear="
+                            (val) => {
+                              examData.subject_id = null;
+                            }
+                          "
                         />
                       </div>
                     </div>
@@ -692,14 +707,16 @@ export default defineComponent({
     },
 
     getCourses() {
-      return api.get("/courses?orderBy=id&sortedBy=desc&limit=0").then((response) => {
-        response.data.data.map((course) => {
-          this.courseOptions.push({
-            label: course.title,
-            value: course.id,
+      return api
+        .get("/courses?orderBy=id&sortedBy=desc&limit=0")
+        .then((response) => {
+          response.data.data.map((course) => {
+            this.courseOptions.push({
+              label: course.title,
+              value: course.id,
+            });
           });
         });
-      });
     },
   },
   mounted() {
@@ -708,13 +725,14 @@ export default defineComponent({
       this.getCategories(),
       this.getSubjects(),
       this.getCourses(),
-    ]).then(value => {
+    ]).then((value) => {
       if (this.$route.params.id) {
         api
           .get("/exams/" + this.$route.params.id + "?include=examConfiguration")
           .then((response) => {
             this.examData = response.data.data;
-            this.examData.examConfiguration = response.data.data.examConfiguration.data;
+            this.examData.examConfiguration =
+              response.data.data.examConfiguration.data;
           });
       }
     });
