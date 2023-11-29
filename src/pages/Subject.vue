@@ -72,11 +72,11 @@
 </template>
 
 <script>
-import TableActions from "components/tables/TableActions.vue";
-import { api } from "src/boot/axios";
+
 import { defineComponent, defineAsyncComponent, ref } from "vue";
 import { useQuasar } from "quasar";
 import { useStore } from "src/stores/store";
+import {addCategory, editCategory, loadSubjects} from "src/services/category_service";
 
 export default defineComponent({
   name: "Category",
@@ -110,20 +110,20 @@ export default defineComponent({
     ),
   },
   methods: {
-    getSubjects() {
-      api
-        .get("/categories/subject?limit=0")
-        .then((response) => {
-          this.allSubjects = response.data.data.map((c) => {
-            c.children = c.children.data !== undefined ? c.children.data : [];
-            return c;
-          });
-        })
-        .catch((error) => {
-          console.log(error);
+
+    async getSubjects() {
+      const {data, status, error} = await loadSubjects();
+
+      if(status === 200){
+        this.allSubjects = data.data.map((c) => {
+          c.children = c.children.data !== undefined ? c.children.data : [];
+          return c;
         });
+      }else{
+        console.error("Failed to fetch subjects. Status:", error);
+      }
     },
-    onSubmit(evt) {
+    async onSubmit(evt) {
       evt.preventDefault();
       let categoryType = "subject";
       if (this.selectedParentSubject != null) {
@@ -131,40 +131,48 @@ export default defineComponent({
       }
 
       if (this.isEditing) {
-        api
-          .patch(`/categories/${this.isEditing.id}`, {
-            name: this.name,
-            parent_id: this.selectedParentSubject,
-            type: categoryType,
-          })
-          .then((res) => {
-            this.$q.notify({
-              message: "Subject Updated Successfully",
-              color: "positive",
-              icon: "check",
-            });
-            this.name = "";
-            this.selectedParentSubject = null;
-            this.isEditing = null;
-            this.getSubjects();
+
+        const {status, error} = await editCategory(this.isEditing.id, {
+          name: this.name,
+          parent_id: this.selectedParentSubject,
+          type: categoryType,
+        });
+
+        if (status === 200) {
+          this.$q.notify({
+            message: "Subject Updated Successfully",
+            color: "positive",
+            icon: "check",
           });
+          this.name = "";
+          this.selectedParentSubject = null;
+          this.isEditing = null;
+          await this.getSubjects();
+        } else {
+          console.error("Failed to update category. Status:", status, "Error:", error);
+        }
+
       } else {
-        api
-          .post("/categories", {
-            name: this.name,
-            parent_id: this.selectedParentSubject,
-            type: categoryType,
-          })
-          .then((res) => {
-            this.$q.notify({
-              message: "Subject/Chapter Added Successfully",
-              color: "positive",
-              icon: "check",
-            });
-            this.name = "";
-            this.selectedParentSubject = null;
-            this.getSubjects();
+
+        const { status, error } = await addCategory({
+          name: this.name,
+          parent_id: this.selectedParentSubject,
+          type: categoryType,
+        });
+
+        if (status === 201) {
+          this.$q.notify({
+            message: "Subject/Chapter Added Successfully",
+            color: "positive",
+            icon: "check",
           });
+          this.name = "";
+          this.selectedParentSubject = null;
+          await this.getSubjects();
+        } else {
+          console.error("Failed to add category. Status:", status, "Error:", error);
+        }
+
       }
     },
     onReset(evt) {

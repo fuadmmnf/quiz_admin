@@ -160,8 +160,9 @@
 
 <script>
 import {onMounted, ref, watch} from "vue";
-import {getStudents, getExams, getCourses} from "src/services/category_service";
-
+import {getStudents} from "src/services/student_service";
+import {getCourses} from "src/services/course_services";
+import {getExams} from "src/services/exam_services";
 
 export default {
   setup() {
@@ -202,7 +203,7 @@ export default {
     const fetchExams = async () => {
 
       const queryParams = {
-        search: 'status:ongoing;upcoming;completed',
+        search: 'status:ongoing,upcoming,completed',
         orderBy: 'id',
         sortedBy: 'desc',
         limit: 50,

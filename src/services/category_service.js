@@ -1,6 +1,5 @@
 import { api } from "boot/axios";
 
-
 export async function loadFaculties(params = {}) {
   try {
     const { data, status } = await api.get("/categories/faculty?limit=0", {
@@ -28,12 +27,14 @@ export async function loadInstitution(params = {}) {
   }
 }
 
-export async function getStudents(params = {}) {
+export async function loadSubjects(params = {}) {
   try {
-    const { data, status } = await api.get("/students", {
-      params,
-    });
-    console.log(params);
+    const { data, status } = await api.get(
+      "/categories/subject?limit=0",
+      {
+        params,
+      }
+    );
 
     return { data, status, error: null };
   } catch (error) {
@@ -41,27 +42,25 @@ export async function getStudents(params = {}) {
   }
 }
 
-export async function getExams(params = {}) {
+export async function editCategory(categoryId, categoryData) {
   try {
-    const { data, status } = await api.get("/exams", {
-      params,
-    });
-
+    const { data, status } = await api.patch(`/categories/${categoryId}`, categoryData);
     return { data, status, error: null };
   } catch (error) {
     return { data: null, status: null, error };
   }
 }
 
-export async function getCourses(params = {}) {
+export async function addCategory(categoryData) {
   try {
-    const { data, status } = await api.get("/courses", {
-      params,
-    });
-
+    const { data, status } = await api.post("/categories", categoryData);
     return { data, status, error: null };
   } catch (error) {
     return { data: null, status: null, error };
   }
 }
+
+
+
+
 

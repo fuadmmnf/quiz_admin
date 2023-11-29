@@ -164,6 +164,7 @@ import { ref } from "vue";
 import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 import { useQuasar } from "quasar";
+import {createLectureClass, editLectureClass} from "src/services/course_services";
 
 export default defineComponent({
   name: "Add Lecture",
@@ -200,11 +201,34 @@ export default defineComponent({
     };
   },
   methods: {
-    onSubmit() {
+    async onSubmit() {
       console.log("Submitted");
       console.log(this.courseId);
       console.log(this.lectureData);
       if (this.$route.params.id) {
+
+        // const lectureId = this.$route.params.id;
+        // const { data, status, error } = await editLectureClass(lectureId, {
+        //   subject_id: this.courseData.subject_id,
+        //   title: this.courseData.title,
+        //   description: this.courseData.description,
+        //   num_classes: this.courseData.number_of_classes,
+        //   num_exams: this.courseData.number_of_exams,
+        //   coordinator_name: this.courseData.co_ordinator_name,
+        //   coordinator_number: this.courseData.co_ordinator_phone,
+        //   intro_video: "https://www.youtube.com/watch?v=9JSYB59QmZw",
+        // });
+        //
+        // if (status === 200) {
+        //   this.$q.notify({
+        //     message: "Lecture updated Successfully",
+        //     color: "positive",
+        //     icon: "check",
+        //   });
+        // } else {
+        //   console.error(error);
+        // }
+
         api
           .patch(`/courses/${this.$route.params.id}`, {
             subject_id: this.courseData.subject_id,
@@ -231,28 +255,26 @@ export default defineComponent({
             this.onReset();
           });
       } else {
-        api
-          .post("/class-lectures", {
-            course_id: this.courseId,
-            title: this.lectureData.title,
-            description: this.lectureData.description,
-            link: this.lectureData.zoom_link,
-            start_time: this.lectureData.start_date,
-          })
-          .then((response) => {
-            console.log(response);
-            this.$q.notify({
-              message: "Lecture class Added Successfully",
-              color: "positive",
-              icon: "check",
-            });
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-          .finally(() => {
-            this.onReset();
+
+        const {data, status, error} = await createLectureClass({
+          course_id: this.courseId,
+          title: this.lectureData.title,
+          description: this.lectureData.description,
+          link: this.lectureData.zoom_link,
+          start_time: this.lectureData.start_date,
+        });
+
+        if(status === 201){
+          this.$q.notify({
+            message: "Lecture class Added Successfully",
+            color: "positive",
+            icon: "check",
           });
+          this.onReset();
+        }else{
+          console.error(error);
+        }
+
       }
     },
     onReset() {

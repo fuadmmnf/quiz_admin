@@ -110,7 +110,7 @@ import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import SearchStudents from "components/SearchStudents.vue";
 import { useCategoryStore } from "stores/category";
-import {getStudents} from "src/services/category_service";
+import {getStudents} from "src/services/student_service";
 
 
 
@@ -237,7 +237,7 @@ export default {
 
 
       const searchParam = `${
-        filter.value.keywords.length ? "name:" + filter.value.keywords : ""
+        filter.value.keywords.length ? "user.mobile:" + filter.value.keywords : ""
       }${
         filter.value.faculty.length ? ";faculty_id:" + filter.value.faculty : ""
       }${
