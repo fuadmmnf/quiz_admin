@@ -9,111 +9,157 @@
         leaf-position="bottom"
         decoration="rounded-out"
       >
-        <q-toolbar-title class="example-title" style="padding: 5px 20px;">
-          <span class="ellipsis">Basic</span>
-        </q-toolbar-title>
+        <q-toolbar-title
+          class="example-title"
+          style="padding: 5px 20px;"
+        ><span class="ellipsis">Question Banks</span></q-toolbar-title>
       </q-ribbon>
     </q-toolbar>
     <q-card-section class="q-pb-sm">
-
+      <code-tabs :tagParts="tagParts"></code-tabs>
     </q-card-section>
     <q-card-section>
-      <q-table
-        flat
-        bordered
-        :rows="hierarchicalData"
-        :columns="columns"
-        row-key="label"
-
-      >
+      <q-hierarchy :columns="columns" :data="data" p>
         <template v-slot:body="props">
-          <q-tr :props="props">
-            <q-td auto-width>
-              <q-btn
-                size="sm"
-                color="accent"
-                round
-                dense
-                @click="props.row.__qmeta.expand = !props.row.__qmeta.expand"
-                :icon="props.row.__qmeta.expand ? 'remove' : 'add'"
-              />
-            </q-td>
-            <q-td v-for="col in props.cols" :key="col.name" :props="props">
-              {{ col.value }}
-              <q-btn size="sm" color="primary" round dense>
-                <q-icon name="edit" />
+          <td data-th="Name">
+            <div v-bind:style="props.setPadding(props.item)"
+                 :class="props.iconName(props.item)!=='done'?'q-pl-lg':''">
+              <q-btn @click="props.toggle(props.item)" v-if="props.iconName(props.item)!=='done'"
+                     :icon="props.iconName(props.item)" flat
+                     dense>
               </q-btn>
-              <q-btn size="sm" color="positive" round dense>
-                <q-icon name="add" />
-              </q-btn>
-            </q-td>
+              <q-icon class="q-mx-sm" size="xs" v-else name="list"></q-icon>
+              <span class="q-ml-sm">{{ props.item.label }}</span>
+            </div>
+          </td>
+          <td class="text-center">{{ props.item.description }}</td>
+          <td class="text-left">
+            <q-chip color="lime-9" square size="sm" class="text-white">
+              Add
+            </q-chip>
+            <q-chip color="lime-9" square size="sm" class="text-white">
+              Edit
+            </q-chip>
 
-          </q-tr>
-          <q-tr v-show="props.row.__qmeta.expand" :props="props">
-            <q-td colspan="100%">
-              <q-hierarchy
-                :columns="columns"
-                :data="props.row.children"
-              ></q-hierarchy>
-            </q-td>
+            <q-chip color="lime-9" square size="sm" class="text-white">
+              Delete
+            </q-chip>
 
-          </q-tr>
+            <q-chip color="lime-9" v-if="props.item.children === undefined || props.item.children.length === 0" square
+                    size="sm" class="text-white">
+              Questions
+            </q-chip>
+          </td>
         </template>
-      </q-table>
+      </q-hierarchy>
     </q-card-section>
   </q-card>
 </template>
 
 <script>
-import { ref } from "vue";
+import {ref} from "vue";
 
 export default {
   setup() {
     const columns = [
-      { name: 'name', label: 'Title', align: 'left', field: 'label', sortable: true },
-      { name: 'action', align: 'center', label: 'Action', field: 'action', sortable: true }
-    ];
-
-    const data = [
       {
-        label: 'BCS',
-
-        children: [
-          {
-            label: 'BCS1',
-            action: 'data',
-            children: [
-              { label: 'Bangla' },
-              { label: 'English' },
-              { label: 'GK' }
-            ]
-          },
-          {
-            label: 'BCS2',
-            children: []
-          }
-        ]
+        name: 'label',
+        label: 'Label',
+        align: 'left',
+        field: 'label',
+        // (optional) tell QHierarchy you want this column sortable
+        sortable: true
       },
       {
-        label: 'MBBS',
+        name: 'Description',
+        label: 'Description',
+        sortable: true,
+        field: 'description',
+        align: 'center'
+      },
+      {
+        name: 'note',
+        label: 'Note',
+        sortable: true,
+        field: 'note',
+        align: 'left'
+      }
+    ]
+    const data = [
+      {
+        label: "Node 1",
+        description: "Node 1 description",
+        note: "Node 1 note",
+        // id: 1,
         children: [
           {
-            label: 'MBBS1',
+            label: "Node 1.1",
+            description: "Node 1.1 description",
+            note: "Node 1.1 note",
+            // id: 2
+          },
+          {
+            label: "Node 1.2",
+            description: "Node 1.2 description",
+            note: "Node 1.2 note",
+            // id: 3,
             children: [
-              { label: 'Bangla' },
-              { label: 'English' },
-              { label: 'GK' }
-            ]
+              {
+                label: "Node 1.2.1",
+                description: "Node 1.2.1 description",
+                note: "Node 1.2.1 note",
+                // id: 4
+              },
+              {
+                label: "Node 1.2.2",
+                description: "Node 1.2.2 description",
+                note: "Node 1.2.2 note",
+                // id: 5
+              }
+            ],
           }
-        ]
+        ],
+      },
+      {
+        label: "Node 2",
+        description: "Node 2 description",
+        note: "Node 2 note",
+        // id: 6,
+        children: [
+          {
+            label: "Node 2.1",
+            description: "Node 2.1 description",
+            note: "Node 2.1 note",
+            // id: 7,
+            children: [
+              {
+                label: "Node 2.1.1",
+                description: "Node 2.1.1 description",
+                note: "Node 2.1.1 note",
+                // id: 8
+              },
+              {
+                label: "Node 2.1.2",
+                description: "Node 2.1.2 description",
+                note: "Node 2.1.2 note",
+                // id: 9
+              }
+            ],
+          },
+          {
+            label: "Node 2.2",
+            description: "Node 2.2 description",
+            note: "Node 2.2 note",
+            // id: 10
+          }
+        ],
       }
-    ];
+    ]
 
-    const hierarchicalData = ref(data.map(item => ({ ...item, __qmeta: { expand: false } })));
 
     return {
       columns,
-      hierarchicalData,
+      data,
 
     };
   },
@@ -193,7 +239,6 @@ export default {
 <!--        ]-->
 <!--      }-->
 <!--    ];-->
-
 
 
 <!--    return {-->
