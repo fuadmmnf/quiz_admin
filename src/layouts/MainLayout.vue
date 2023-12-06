@@ -319,14 +319,23 @@
           </q-item-section>
         </q-item>
 
-        <q-item to="/question-bank" active-class="q-item-no-link-highlighting">
-          <q-item-section avatar>
-            <q-icon name="list" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Question Bank</q-item-label>
-          </q-item-section>
-        </q-item>
+        <q-expansion-item icon="menu_open" label="Question Banks">
+          <q-item to="/question-bank/draft" active-class="q-item-no-link-highlighting">
+            <q-item-section avatar>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Draft</q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item to="/question-bank/published" active-class="q-item-no-link-highlighting">
+            <q-item-section avatar>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Published</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-expansion-item>
 
         <!-- <q-item
           to="/lecture-classes"
@@ -355,7 +364,7 @@ import Messages from "./Messages.vue";
 import { defineComponent, onMounted, ref } from "vue";
 import { useQuasar } from "quasar";
 import { useStore } from "src/stores/store";
-import { loadFaculties, loadInstitution} from "src/services/category_service";
+import { loadFaculties, loadInstitution} from "src/services/category_services";
 import {useCategoryStore} from "stores/category";
 
 export default defineComponent({

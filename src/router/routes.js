@@ -29,8 +29,12 @@ const routes = [
         component: () => import("pages/Blog/AddorEditBlog.vue"),
       },
       {
-        path: "/question-bank",
-        component: () => import("pages/TryQuestionBank.vue"),
+        path: "/question-bank/draft",
+        component: () => import("pages/draftBank.vue"),
+      },
+      {
+        path: "/question-bank/published",
+        component: () => import("pages/publishedBank.vue"),
       },
       {
         path: "/question",

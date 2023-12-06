@@ -110,7 +110,7 @@ import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import SearchStudents from "components/SearchStudents.vue";
 import { useCategoryStore } from "stores/category";
-import {getStudents} from "src/services/student_service";
+import {getStudents} from "src/services/student_services";
 
 
 

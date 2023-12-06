@@ -1,66 +1,133 @@
 <template>
-  <q-card :class="!$q.dark.isActive?'my-lg q-pa-md q-ma-sm bg-grey-2':'my-lg q-pa-md q-ma-sm bg-grey-8'">
-    <q-toolbar>
-      <q-ribbon
-        position="left"
-        color="rgba(0,0,0,.58)"
-        background-color="#c0c0c0"
-        leaf-color="#a0a0a0"
-        leaf-position="bottom"
-        decoration="rounded-out"
-      >
-        <q-toolbar-title
-          class="example-title"
-          style="padding: 5px 20px;"
-        ><span class="ellipsis">Question Banks</span></q-toolbar-title>
-      </q-ribbon>
-    </q-toolbar>
-    <q-card-section class="q-pb-sm">
-      <code-tabs :tagParts="tagParts"></code-tabs>
-    </q-card-section>
-    <q-card-section>
-      <q-hierarchy :columns="columns" :data="data" p>
-        <template v-slot:body="props">
-          <td data-th="Name">
-            <div v-bind:style="props.setPadding(props.item)"
-                 :class="props.iconName(props.item)!=='done'?'q-pl-lg':''">
-              <q-btn @click="props.toggle(props.item)" v-if="props.iconName(props.item)!=='done'"
-                     :icon="props.iconName(props.item)" flat
-                     dense>
-              </q-btn>
-              <q-icon class="q-mx-sm" size="xs" v-else name="list"></q-icon>
-              <span class="q-ml-sm">{{ props.item.label }}</span>
+
+  <q-linear-progress v-if="isLoading" dark rounded indeterminate color="secondary" class="q-mt-sm" />
+
+  <div v-if="!isLoading" class="row">
+
+    <div class="col-9">
+      <q-card :class="!$q.dark.isActive?'my-lg q-ma-sm bg-grey-2':'my-lg q-pa-md q-ma-sm bg-grey-8'">
+        <q-toolbar>
+          <q-ribbon
+            position="left"
+            color="rgba(0,0,0,.58)"
+            background-color="#c0c0c0"
+            leaf-color="#a0a0a0"
+            leaf-position="bottom"
+            decoration="rounded-out"
+          >
+            <q-toolbar-title
+              class="example-title"
+              style="padding: 5px 20px;"
+            ><span class="ellipsis">Question Banks</span></q-toolbar-title>
+          </q-ribbon>
+        </q-toolbar>
+        <q-card-section class="q-pb-sm">
+          <code-tabs :tagParts="tagParts"></code-tabs>
+        </q-card-section>
+        <q-card-section>
+          <q-hierarchy :columns="columns" :data="data" p>
+            <template v-slot:body="props">
+              <td data-th="Name">
+                <div v-bind:style="props.setPadding(props.item)"
+                     :class="props.iconName(props.item)!=='done'?'q-pl-lg':''">
+                  <q-btn @click="props.toggle(props.item)" v-if="props.iconName(props.item)!=='done'"
+                         :icon="props.iconName(props.item)" flat
+                         dense>
+                  </q-btn>
+                  <q-icon class="q-mx-sm" size="xs" v-else name="list"></q-icon>
+                  <span class="q-ml-sm">{{ props.item.label }}</span>
+                </div>
+              </td>
+              <td class="text-center">{{ props.item.description }}</td>
+              <td class="text-left">
+
+                <q-btn @click="handleAddButtonClick(props.item)" label="Add" size="10px" color="primary"/>
+                <q-btn @click="handleEditButtonClick(props.item)" label="Edit" size="10px" color="primary" class="q-ml-sm"/>
+                <q-btn  label="Delete" size="10px" color="primary" class="q-ml-sm" />
+                <q-btn v-if="props.item.children === undefined || props.item.children.length === 0" label="Questions" size="10px" class="q-ml-sm" />
+
+              </td>
+            </template>
+          </q-hierarchy>
+        </q-card-section>
+      </q-card>
+
+      <div class="q-pa-lg flex flex-center">
+        <q-pagination v-model="current" :max="totalPages" direction-links />
+      </div>
+    </div>
+
+    <div class="col-3">
+      <q-card class="q-mt-sm">
+        <q-card-section>
+          <div class="text-h6 text-indigo-8">
+             Add/Edit
+          </div>
+
+          <q-form
+
+            class="q-gutter-md q-mt-lg"
+          >
+            <q-input
+              outlined
+              v-model="name"
+              :label="`Question Bank Title`"
+
+              :rules="[(val) => !!val || 'Field is required']"
+            />
+
+            <q-input
+              outlined
+              v-model="code"
+              :label="`Code`"
+              :hint="`Code must be unique`"
+              :rules="[(val) => !!val || 'Field is required']"
+            />
+
+            <q-select
+              outlined
+              v-model="parentId"
+              :label="`Parent Category`"
+              :options="parentOptions"
+              map-options
+              emit-value
+              :disable="!isSelect"
+
+            />
+            <div>
+              <q-btn label="Submit" @click="onSubmit" type="submit" color="primary" />
+              <q-btn
+                label="Reset"
+                @click="onReset"
+                type="reset"
+                color="primary"
+                flat
+                class="q-ml-sm"
+              />
             </div>
-          </td>
-          <td class="text-center">{{ props.item.description }}</td>
-          <td class="text-left">
-            <q-chip color="lime-9" square size="sm" class="text-white">
-              Add
-            </q-chip>
-            <q-chip color="lime-9" square size="sm" class="text-white">
-              Edit
-            </q-chip>
+          </q-form>
+        </q-card-section>
+      </q-card>
+    </div>
+  </div>
 
-            <q-chip color="lime-9" square size="sm" class="text-white">
-              Delete
-            </q-chip>
-
-            <q-chip color="lime-9" v-if="props.item.children === undefined || props.item.children.length === 0" square
-                    size="sm" class="text-white">
-              Questions
-            </q-chip>
-          </td>
-        </template>
-      </q-hierarchy>
-    </q-card-section>
-  </q-card>
 </template>
 
 <script>
-import {ref} from "vue";
+import {onMounted, ref, toRefs, watch} from "vue";
+import {addQuestionBank, editQuestionBank, getQuestionBanks} from "src/services/questionBank_services";
 
 export default {
-  setup() {
+  props: {
+    statusApi: {
+      type: String,
+      required: true
+    }
+  },
+  computed: {
+
+  },
+  setup(props) {
     const columns = [
       {
         name: 'label',
@@ -78,174 +145,230 @@ export default {
         align: 'center'
       },
       {
-        name: 'note',
-        label: 'Note',
+        name: 'action',
+        label: 'Action',
         sortable: true,
-        field: 'note',
+        field: 'action',
         align: 'left'
       }
     ]
-    const data = [
-      {
-        label: "Node 1",
-        description: "Node 1 description",
-        note: "Node 1 note",
-        // id: 1,
-        children: [
-          {
-            label: "Node 1.1",
-            description: "Node 1.1 description",
-            note: "Node 1.1 note",
-            // id: 2
-          },
-          {
-            label: "Node 1.2",
-            description: "Node 1.2 description",
-            note: "Node 1.2 note",
-            // id: 3,
-            children: [
-              {
-                label: "Node 1.2.1",
-                description: "Node 1.2.1 description",
-                note: "Node 1.2.1 note",
-                // id: 4
-              },
-              {
-                label: "Node 1.2.2",
-                description: "Node 1.2.2 description",
-                note: "Node 1.2.2 note",
-                // id: 5
-              }
-            ],
-          }
-        ],
-      },
-      {
-        label: "Node 2",
-        description: "Node 2 description",
-        note: "Node 2 note",
-        // id: 6,
-        children: [
-          {
-            label: "Node 2.1",
-            description: "Node 2.1 description",
-            note: "Node 2.1 note",
-            // id: 7,
-            children: [
-              {
-                label: "Node 2.1.1",
-                description: "Node 2.1.1 description",
-                note: "Node 2.1.1 note",
-                // id: 8
-              },
-              {
-                label: "Node 2.1.2",
-                description: "Node 2.1.2 description",
-                note: "Node 2.1.2 note",
-                // id: 9
-              }
-            ],
-          },
-          {
-            label: "Node 2.2",
-            description: "Node 2.2 description",
-            note: "Node 2.2 note",
-            // id: 10
-          }
-        ],
+    // const data = [
+    //   {
+    //     label: "Node 1",
+    //     description: "Node 1 description",
+    //     action: "Node 1 note",
+    //     // id: 1,
+    //     children: [
+    //       {
+    //         label: "Node 1.1",
+    //         description: "Node 1.1 description",
+    //         action: "Node 1.1 note",
+    //         // id: 2
+    //       },
+    //       {
+    //         label: "Node 1.2",
+    //         description: "Node 1.2 description",
+    //         action: "Node 1.2 note",
+    //         // id: 3,
+    //         children: [
+    //           {
+    //             label: "Node 1.2.1",
+    //             description: "Node 1.2.1 description",
+    //             action: "Node 1.2.1 note",
+    //             // id: 4
+    //           },
+    //           {
+    //             label: "Node 1.2.2",
+    //             description: "Node 1.2.2 description",
+    //             action: "Node 1.2.2 note",
+    //             // id: 5
+    //           }
+    //         ],
+    //       }
+    //     ],
+    //   },
+    //   {
+    //     label: "Node 2",
+    //     description: "Node 2 description",
+    //     action: "Node 2 note",
+    //     // id: 6,
+    //     children: [
+    //       {
+    //         label: "Node 2.1",
+    //         description: "Node 2.1 description",
+    //         action: "Node 2.1 note",
+    //         // id: 7,
+    //         children: [
+    //           {
+    //             label: "Node 2.1.1",
+    //             description: "Node 2.1.1 description",
+    //             action: "Node 2.1.1 note",
+    //             // id: 8
+    //           },
+    //           {
+    //             label: "Node 2.1.2",
+    //             description: "Node 2.1.2 description",
+    //             action: "Node 2.1.2 note",
+    //             // id: 9
+    //           }
+    //         ],
+    //       },
+    //       {
+    //         label: "Node 2.2",
+    //         description: "Node 2.2 description",
+    //         action: "Node 2.2 note",
+    //         // id: 10
+    //       }
+    //     ],
+    //   }
+    // ]
+
+    const data = ref([]);
+    const name = ref("");
+    const code = ref("");
+    const parentId = ref("");
+    const isLoading = ref(false);
+    const isEditMode = ref(false);
+    const isSelect = ref(false);
+    const editingItemId = ref(null);
+    const current = ref(1);
+    const totalPages = ref(0);
+    const parentOptions = ref([]);
+
+    const { statusApi } = toRefs(props);
+
+    const handleAddButtonClick = (selectedItem) => {
+
+      parentOptions.value = [{
+        label: selectedItem.label,
+        value: selectedItem.id,
+      }];
+      // console.log(parentOptions.value);
+
+      parentId.value = selectedItem.id;
+      // console.log("Clicked");
+      isEditMode.value = false;
+      isSelect.value=true;
+
+    };
+
+
+    const handleEditButtonClick = (selectedItem) => {
+      name.value = selectedItem.label;
+      code.value = selectedItem.action;
+      parentId.value = selectedItem.parent_id;
+      editingItemId.value = selectedItem.id;
+      console.log(editingItemId.value);
+      isEditMode.value = true;
+      isSelect.value=false;
+    };
+
+    const transformData = (data) => {
+      return data.map(item => ({
+        id: item.id,
+        label: item.title,
+        description: item.status,
+        action: item.code,
+        children: transformData(item.children.data),
+      }));
+    };
+
+
+    const onReset = () => {
+      name.value = "";
+      code.value = "";
+      parentId.value = "";
+    };
+
+    const onSubmit = async ()=>{
+      if(isEditMode.value){
+        const { data, status, error } = await editQuestionBank({
+          id: editingItemId.value,
+          title: name.value,
+          code: code.value,
+
+          parent_id: parentId.value,
+        });
+
+        if (status === 200) {
+          console.log('Question bank edited successfully:', data);
+        } else {
+          console.error(error);
+        }
+      }else{
+        const {data, status, error} = await addQuestionBank({
+          title: name.value,
+          code: code.value,
+          parent_id: parentId.value,
+        });
+
+        if (status === 201) {
+          console.log('Question bank added successfully:', data);
+        }else{
+          console.error(error);
+        }
       }
-    ]
+    }
+
+    onMounted(async () => {
+    await getQuestionBankList(current.value);
+    });
+
+    const getQuestionBankList = async (newPage) =>{
+      isLoading.value = true;
+
+      const params = {
+        orderBy: 'id',
+        sortedBy: 'desc',
+        search: statusApi.value,
+        searchJoin: 'and',
+        page: newPage,
+
+      }
+
+      const { data: responseData, status, error } = await getQuestionBanks(params);
+
+      if(status === 200){
+        console.log(responseData);
+        data.value = transformData(responseData.data);
+
+        const {total_pages } = responseData.meta.pagination;
+
+        current.value = newPage;
+        totalPages.value = total_pages;
+
+      }
+      isLoading.value = false;
+    }
+
+    watch(current, (newPage, oldPage) => {
+      if (newPage !== oldPage) {
+        getQuestionBankList(newPage);
+      }
+    });
 
 
     return {
       columns,
       data,
-
+      name,
+      code,
+      parentId,
+      handleAddButtonClick,
+      handleEditButtonClick,
+      onReset,
+      onSubmit,
+      isLoading,
+      isEditMode,
+      current,
+      totalPages,
+      parentOptions,
+      isSelect
     };
   },
 };
 </script>
 
-<!--<template>-->
-<!--  <q-card :class="!$q.dark.isActive?'my-lg q-pa-md q-ma-sm bg-grey-2':'my-lg q-pa-md q-ma-sm bg-grey-8'">-->
-<!--    <q-toolbar>-->
+<style>
 
-<!--        <q-toolbar-title-->
-<!--          class="example-title"-->
-<!--          style="padding: 5px 20px;"-->
-<!--        ><span class="ellipsis">Basic</span></q-toolbar-title>-->
-
-<!--    </q-toolbar>-->
-
-<!--    <q-card-section>-->
-<!--      <q-hierarchy :columns="columns" :data="data">-->
-<!--        <template v-slot:action="props">-->
-<!--          <q-btn-->
-<!--            icon="mdi-pencil"-->
-
-<!--            class="q-ml-xs"-->
-<!--            size="sm"-->
-<!--          />-->
-<!--          <q-btn-->
-<!--            icon="mdi-plus"-->
-
-<!--            class="q-ml-xs"-->
-<!--            size="sm"-->
-<!--          />-->
-<!--        </template>-->
-<!--      </q-hierarchy>-->
-
-<!--    </q-card-section>-->
-<!--  </q-card>-->
-<!--</template>-->
-
-<!--<script>-->
-<!--export default {-->
-<!--  setup() {-->
-<!--    const columns = [-->
-<!--      {name: 'name', label: 'Title', align: 'left', field: 'label', sortable: true},-->
-<!--      {name: 'action', align: 'center', label: 'Action', field: 'action', sortable: true}-->
-<!--    ];-->
-
-<!--    const data = [-->
-<!--      {-->
-<!--        label: 'BCS',-->
-<!--        children: [-->
-<!--          {-->
-<!--            label: 'BCS1',-->
-<!--            children: [-->
-<!--              {label: 'Bangla'},-->
-<!--              {label: 'English'},-->
-<!--              {label: 'GK'}-->
-<!--            ]-->
-<!--          },-->
-<!--          {-->
-<!--            label: 'BCS2',-->
-<!--            children: []-->
-<!--          }-->
-<!--        ]-->
-<!--      },-->
-<!--      {-->
-<!--        label: 'MBBS',-->
-<!--        children: [-->
-<!--          {-->
-<!--            label: 'MBBS1',-->
-<!--            children: [-->
-<!--              {label: 'Bangla'},-->
-<!--              {label: 'English'},-->
-<!--              {label: 'GK'}-->
-<!--            ]-->
-<!--          }-->
-<!--        ]-->
-<!--      }-->
-<!--    ];-->
-
-
-<!--    return {-->
-<!--      columns,-->
-<!--      data,-->
-
-<!--    };-->
-<!--  }-->
-<!--}-->
-<!--</script>-->
+</style>

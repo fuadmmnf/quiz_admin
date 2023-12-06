@@ -76,7 +76,7 @@
 import { defineComponent, defineAsyncComponent, ref } from "vue";
 import { useQuasar } from "quasar";
 import { useStore } from "src/stores/store";
-import {addCategory, editCategory, loadSubjects} from "src/services/category_service";
+import {addCategory, editCategory, loadSubjects} from "src/services/category_services";
 
 export default defineComponent({
   name: "Category",
