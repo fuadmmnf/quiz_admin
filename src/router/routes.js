@@ -37,6 +37,15 @@ const routes = [
         component: () => import("pages/QuestionBank/index.vue"),
       },
       {
+        path: "/question-bank-list/add",
+        component: () => import("pages/QuestionBank/AddOrEdit.vue"),
+      },
+
+      {
+        path: "/question-bank-list/:id",
+        component: () => import("pages/QuestionBank/AddOrEdit.vue"),
+      },
+      {
         path: "/question-bank-list/:id/edit-questions",
         component: () => import("pages/QuestionBank/EditQuestion.vue"),
       },

@@ -89,14 +89,14 @@
                       round
                       dense
                       flat
-                      to=""
+                      :to="`/question-bank-list/${props.row.id}`"
                     >
                       <q-tooltip
                         anchor="top middle"
                         self="bottom middle"
                         :offset="[10, 10]"
                       >
-                        <strong class="">Edit Questions</strong>
+                        <strong class="">Edit Questions Bank</strong>
                       </q-tooltip>
                     </q-btn>
                     <q-btn
