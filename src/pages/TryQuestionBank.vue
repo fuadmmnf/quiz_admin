@@ -41,10 +41,11 @@
               <td class="text-center">{{ props.item.description }}</td>
               <td class="text-left">
 
-                <q-btn @click="handleAddButtonClick(props.item)" label="Add" size="10px" color="primary"/>
-                <q-btn @click="handleEditButtonClick(props.item)" label="Edit" size="10px" color="primary" class="q-ml-sm"/>
-                <q-btn  label="Delete" size="10px" color="primary" class="q-ml-sm" />
+                <q-btn @click="handleAddButtonClick(props.item)" flat round icon="add" size="10px"><q-tooltip>Add</q-tooltip></q-btn>
+                <q-btn @click="handleEditButtonClick(props.item)" flat round icon="edit" size="10px" class="q-ml-sm"><q-tooltip>Edit</q-tooltip></q-btn>
+                <q-btn flat round icon="delete" size="10px" color="primary" class="q-ml-sm"><q-tooltip>Delete</q-tooltip></q-btn>
                 <q-btn v-if="props.item.children === undefined || props.item.children.length === 0" label="Questions" size="10px" class="q-ml-sm" />
+                <q-btn v-if="statusApi==='status:draft'" @click="handlePublishButtonClick(props.item)" flat round icon="file_upload" size="10px" color="primary" class="q-ml-sm"><q-tooltip>Publish</q-tooltip></q-btn>
 
               </td>
             </template>
@@ -76,13 +77,6 @@
               :rules="[(val) => !!val || 'Field is required']"
             />
 
-            <q-input
-              outlined
-              v-model="code"
-              :label="`Code`"
-              :hint="`Code must be unique`"
-              :rules="[(val) => !!val || 'Field is required']"
-            />
 
             <q-select
               outlined
@@ -115,7 +109,12 @@
 
 <script>
 import {onMounted, ref, toRefs, watch} from "vue";
-import {addQuestionBank, editQuestionBank, getQuestionBanks} from "src/services/questionBank_services";
+import {
+  addQuestionBank,
+  editQuestionBank,
+  getQuestionBanks,
+  updateQuestionBankStatus
+} from "src/services/questionBank_services";
 
 export default {
   props: {
@@ -225,7 +224,6 @@ export default {
 
     const data = ref([]);
     const name = ref("");
-    const code = ref("");
     const parentId = ref("");
     const isLoading = ref(false);
     const isEditMode = ref(false);
@@ -255,12 +253,26 @@ export default {
 
     const handleEditButtonClick = (selectedItem) => {
       name.value = selectedItem.label;
-      code.value = selectedItem.action;
       parentId.value = selectedItem.parent_id;
       editingItemId.value = selectedItem.id;
       console.log(editingItemId.value);
       isEditMode.value = true;
       isSelect.value=false;
+    };
+
+    const handlePublishButtonClick = async (selectedItem) => {
+      const questionBankId = selectedItem.id;
+
+      const {status, error} = await updateQuestionBankStatus(questionBankId, {
+        status: "published",
+      });
+
+      if (status === 200) {
+        console.log("Question bank published successfully.");
+        await getQuestionBankList(current.value);
+      } else {
+        console.error("Error publishing question bank:", error);
+      }
     };
 
     const transformData = (data) => {
@@ -276,7 +288,6 @@ export default {
 
     const onReset = () => {
       name.value = "";
-      code.value = "";
       parentId.value = "";
     };
 
@@ -285,7 +296,6 @@ export default {
         const { data, status, error } = await editQuestionBank({
           id: editingItemId.value,
           title: name.value,
-          code: code.value,
 
           parent_id: parentId.value,
         });
@@ -298,7 +308,6 @@ export default {
       }else{
         const {data, status, error} = await addQuestionBank({
           title: name.value,
-          code: code.value,
           parent_id: parentId.value,
         });
 
@@ -352,10 +361,10 @@ export default {
       columns,
       data,
       name,
-      code,
       parentId,
       handleAddButtonClick,
       handleEditButtonClick,
+      handlePublishButtonClick,
       onReset,
       onSubmit,
       isLoading,
