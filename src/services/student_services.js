@@ -12,3 +12,15 @@ export async function getStudents(params = {}) {
     return { data: null, status: null, error };
   }
 }
+
+export async function registerStudent(registerStudentRequest) {
+  try {
+    const { data, status } = await api.post(
+      "/students",
+      registerStudentRequest
+    );
+    return { data, status, error: null };
+  } catch (error) {
+    return { data: null, status: null, error };
+  }
+}
