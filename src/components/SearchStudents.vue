@@ -3,8 +3,8 @@
     <q-card-section>
       <div class="row q-col-gutter-md">
         <div class="col-12">
-          <q-input filled v-model="searchData.keywords" :label="`Search Exams`">
-            <template v-slot:append>
+          <q-input v-model="searchData.keywords" filled :label="`Search Students`">
+            <template #append>
               <!-- filter icon -->
 
               <q-btn
@@ -32,49 +32,35 @@
 
           <!-- filtering options div -->
           <q-expansion-item
-            class="q-mt-sm text-grey-6"
             v-model="expanded"
+            class="q-mt-sm text-grey-6"
             icon="filter_list"
             label="Filtering Options"
           >
             <div class="row q-col-gutter-md q-mt-sm">
+
               <div class="col-4">
                 <q-select
+                  v-model="searchData.institution"
                   filled
-                  v-model="searchData.category"
-                  :options="categoryOptions"
-                  :label="`Category`"
+                  :options="categoryStore.getInstitutionOptions"
+                  :label="`Institution`"
                   lazy-rules
                   map-options
                   emit-value
                   clearable
-                  @clear="searchData.category = ''"
                 />
               </div>
               <div class="col-4">
                 <q-select
-                  filled
-                  v-model="searchData.subject"
-                  :options="subjectOptions"
-                  :label="`Subject`"
-                  lazy-rules
-                  map-options
-                  emit-value
-                  clearable
-                  @clear="searchData.subject = ''"
-                />
-              </div>
-              <div class="col-4">
-                <q-select
-                  filled
                   v-model="searchData.faculty"
-                  :options="facultyOptions"
+                  filled
+                  :options="categoryStore.getFacultyOptions"
                   :label="`Faculty`"
                   lazy-rules
                   map-options
                   emit-value
                   clearable
-                  @clear="searchData.faculty = ''"
                 />
               </div>
             </div>
@@ -86,67 +72,45 @@
 </template>
 
 <script>
-import { useStore } from "src/stores/store";
+import { useCategoryStore } from "stores/category";
+import { ref } from "vue";
 
 export default {
-  name: "SearchExams",
-  props: {},
+  name: "Search",
+
   setup() {
-    const store = useStore();
-    return { store };
-  },
-  data() {
+    const categoryStore = useCategoryStore();
+    const expanded = ref(true);
+    const searchData = ref({
+      keywords: "",
+      type: "",
+      institution: "",
+      faculty: "",
+    });
+
     return {
-      name: "",
-      expanded: true,
-      categoryOptions: [],
-      subjectOptions: [],
-      facultyOptions: [],
-      searchData: {
-        keywords: "",
-        type: "",
-        category: "",
-        subject: "",
-        faculty: "",
-      },
+      name,
+      categoryStore,
+      expanded,
+      searchData,
     };
   },
+
   methods: {
     onSearch() {
       this.$emit("search", this.searchData);
     },
+
     onReset() {
       this.searchData = {
         keywords: "",
         type: "",
-        category: "",
-        subject: "",
+        institution: "",
         faculty: "",
       };
       this.$emit("search", this.searchData);
     },
   },
-  mounted() {
-    this.store.categories.map((category) => {
-      this.categoryOptions.push({
-        label: category.name,
-        value: category.id,
-      });
-    });
-    this.store.subjects.map((subject) => {
-      this.subjectOptions.push({
-        label: subject.name,
-        value: subject.id,
-      });
-    });
-    this.store.faculties.map((faculty) => {
-      this.facultyOptions.push({
-        label: faculty.name,
-        value: faculty.id,
-      });
-    });
-  },
 };
 </script>
-
-<style></style>
+<style scoped></style>

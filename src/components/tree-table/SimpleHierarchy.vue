@@ -4,22 +4,22 @@
       <template v-slot:body="props">
         <td data-th="Name">
           <div
-              v-bind:style="props.setPadding(props.item)"
-              :class="props.iconName(props.item) != 'done' ? 'q-pl-lg' : ''"
+            v-bind:style="props.setPadding(props.item)"
+            :class="props.iconName(props.item) != 'done' ? 'q-pl-lg' : ''"
           >
             <q-btn
-                @click="props.toggle(props.item)"
-                v-if="props.iconName(props.item) != 'done'"
-                :icon="props.iconName(props.item)"
-                flat
-                dense
+              @click="props.toggle(props.item)"
+              v-if="props.iconName(props.item) != 'done'"
+              :icon="props.iconName(props.item)"
+              flat
+              dense
             >
             </q-btn>
             <span class="q-ml-sm">{{ props.item.name }}</span>
           </div>
         </td>
         <td class="text-center">
-          <!-- <q-btn
+          <q-btn
             @click="editItem(props.item)"
             icon="edit"
             size="sm"
@@ -28,24 +28,24 @@
             round
             color="primary"
           >
-          </q-btn> -->
+          </q-btn>
           <q-btn
-              @click="deleteItem(props.item)"
-              icon="delete"
-              size="sm"
-              flat
-              dense
-              round
-              color="negative"
+            @click="deleteItem(props.item)"
+            icon="delete"
+            size="sm"
+            flat
+            dense
+            round
+            color="negative"
           >
           </q-btn></td
-        ></template>
+      ></template>
     </q-hierarchy>
   </span>
 </template>
 
 <script>
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 
 export default {
   props: {
@@ -74,8 +74,8 @@ export default {
           align: "center",
           filterable: false,
         },
-      ]
-    }
+      ],
+    };
   },
   methods: {
     editItem(row) {
@@ -86,7 +86,7 @@ export default {
     },
   },
   mounted() {
-    console.log(this.tableData);
+    console.log("table data", this.tableData);
   },
 };
 </script>

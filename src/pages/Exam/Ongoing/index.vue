@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { defineComponent } from "vue";
+
 import ExamList from "src/components/exam/ExamList.vue";
 
 export default {

@@ -18,20 +18,20 @@
       </q-card-section>
     </q-card>
 
-    <q-separator spaced/>
+    <q-separator spaced />
 
-    <user-list @totalAttempts="totalAttempts"></user-list>
+    <user-list ref="userListRef" @totalAttempts="totalAttempts"></user-list>
   </q-page>
 </template>
 
 <script>
-import {defineComponent, ref} from "vue";
-import {useStore} from "src/stores/store";
-import {api} from "boot/axios";
+import { defineComponent, ref } from "vue";
+import { useStore } from "src/stores/store";
+import { api } from "boot/axios";
 import UserList from "src/components/exam/UserList.vue";
-import {useQuasar} from "quasar";
-import {route} from "quasar/wrappers";
-import {useRoute, useRouter} from "vue-router";
+import { useQuasar } from "quasar";
+import { route } from "quasar/wrappers";
+import { useRoute, useRouter } from "vue-router";
 
 export default {
   name: "CompletedExams",
@@ -44,8 +44,15 @@ export default {
     const route = useRoute();
     const router = useRouter();
     const attempts = ref(0);
+    const userListRef = ref(null);
 
     const recalculateMarks = async () => {
+      const process = $q.dialog({
+        message: "Recalculating marks...",
+        progress: true,
+        persistent: true,
+        ok: false,
+      });
       api
         .put(`/exam-markings`, {
           exam_id: route.params.id,
@@ -58,9 +65,14 @@ export default {
             color: "green",
             icon: "check",
           });
-          router.push(`/exam/completed`);
+        })
+        .finally(() => {
+          if (userListRef.value) {
+            userListRef.value.fetchCompletedUsers();
+            process.hide();
+          }
         });
-    }
+    };
     const totalAttempts = async (total) => {
       attempts.value = await total;
     };
@@ -69,9 +81,10 @@ export default {
       recalculateMarks,
       totalAttempts,
       attempts,
+      userListRef,
     };
-  }
-}
+  },
+};
 </script>
 
 <style></style>
