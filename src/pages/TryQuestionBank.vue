@@ -306,10 +306,13 @@ export default {
           console.error(error);
         }
       }else{
+
         const {data, status, error} = await addQuestionBank({
           title: name.value,
+          code: 1234,
           parent_id: parentId.value,
         });
+
 
         if (status === 201) {
           console.log('Question bank added successfully:', data);
