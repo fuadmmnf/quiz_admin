@@ -177,7 +177,25 @@ export default defineComponent({
       this.selectedParentSubject = row.parent_id !== "" ? row.parent_id : null;
       this.isEditing = { status: true, id: row.id };
     },
-    deleteItem(row) {},
+    deleteItem(row) {
+      this.$q
+        .dialog({
+          title: "Confirm",
+          message: "Are you sure you want to delete this subject?",
+          cancel: true,
+          persistent: true,
+        })
+        .onOk(() => {
+          api.delete(`/categories/${row.id}`).then((res) => {
+            this.$q.notify({
+              message: "Subject Deleted Successfully",
+              color: "negative",
+              icon: "check",
+            });
+            this.getSubjects();
+          });
+        });
+    },
   },
   mounted() {
     this.getSubjects();
