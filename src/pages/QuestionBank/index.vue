@@ -9,7 +9,12 @@
           </div>
         </div>
         <div class="row">
-          <q-btn color="primary" label="Add Question Bank" icon="add" to="" />
+          <q-btn
+            color="primary"
+            label="Add Question Bank"
+            icon="add"
+            to="/question-bank-list/add"
+          />
         </div>
       </q-card-section>
     </q-card>

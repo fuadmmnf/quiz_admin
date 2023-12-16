@@ -3,7 +3,7 @@
     <q-card class="no-shadow" bordered>
       <!-- add edit header with submit and reset buttons on right -->
       <q-card-section class="row items-center justify-between">
-        <div class="text-h6">Add/Edit Questions in Exam</div>
+        <div class="text-h6">Add/Edit Questions in Question Bank</div>
         <div class="row">
           <q-btn
             label="Update Question"
@@ -95,17 +95,17 @@
     <q-expansion-item
       expand-separator
       icon="search"
-      label="Search Exams"
+      label="Search Question Bank"
       class="q-card"
     >
-      <search-exams @search="searchExams"></search-exams>
+      <search-exams @search="searchQuestionBank"></search-exams>
       <q-card>
         <q-card-section>
           <!-- table -->
           <q-table
-            v-if="searchExamResults.length > 0"
-            :rows="searchExamResults"
-            :columns="examColumns"
+            v-if="searchQuestionBankResults.length > 0"
+            :rows="searchQuestionBankResults"
+            :columns="questionBankColumns"
             rows-per-page-options="[10]"
             row-key="id"
             wrap-cells
@@ -132,7 +132,7 @@
                     color="primary"
                     label="Add"
                     icon="add"
-                    @click="addExamQuestions(props.row)"
+                    @click="addQuestionBankQuestions(props.row)"
                   />
                 </q-td>
               </q-tr>
@@ -145,7 +145,7 @@
     <q-separator></q-separator>
     <!-- questions table with serial, type, name, cateogry, actions -->
     <q-table
-      :rows="examQuestions"
+      :rows="questionBankQuestions"
       :columns="columns"
       :loading="loading"
       row-key="real_id"
@@ -248,7 +248,7 @@ export default defineComponent({
       faculty: "",
     });
     const loading = ref(true);
-    const examQuestions = ref([]);
+    const questionBankQuestions = ref([]);
     const route = useRoute();
     const searchResults = ref([]);
     const onQuestionSearch = (search) => {
@@ -256,20 +256,18 @@ export default defineComponent({
       searchQuestions(search, 1);
     };
 
-    const fetchExamQuestions = (page = 1) => {
+    const fetchQuestionBankQuestions = (page = 1) => {
       loading.value = true;
       api
         .get(
-          "/exam-questions/" +
-            route.params.id +
-            "?include=question,question.subject,question.category&limit=0"
+          `/questionbank-questions?include=question&search=questionbank_id:${route.params.id}&searchJoin=and&limit=0`
         )
         .then((res) => {
-          examQuestions.value = [];
+          questionBankQuestions.value = [];
           if (res.data.data.length > 0) {
             res.data.data.forEach((item, index) => {
               item.question.data.sn = res.data.data.length - index;
-              examQuestions.value.push(item.question.data);
+              questionBankQuestions.value.push(item.question.data);
             });
           }
         })
@@ -310,7 +308,7 @@ export default defineComponent({
         });
     };
     const onRequest = (props) => {
-      fetchExamQuestions(props.pagination.page);
+      fetchQuestionBankQuestions(props.pagination.page);
     };
     const onQuestionRequest = (props) => {
       searchQuestions(questionFilter.value, props.pagination.page);
@@ -319,8 +317,8 @@ export default defineComponent({
       pagination,
       filter,
       loading,
-      fetchExamQuestions,
-      examQuestions,
+      fetchQuestionBankQuestions,
+      questionBankQuestions,
       onRequest,
       $q,
       searchQuestions,
@@ -347,7 +345,7 @@ export default defineComponent({
       pagination: {
         sortBy: "name",
       },
-      searchExamResults: [],
+      searchQuestionBankResults: [],
       filter: "",
       loading: false,
       show: false,
@@ -414,7 +412,7 @@ export default defineComponent({
           sortable: true,
         },
       ],
-      examColumns: [
+      questionBankColumns: [
         {
           name: "title",
           required: true,
@@ -463,8 +461,8 @@ export default defineComponent({
           persistent: true,
         })
         .onOk(() => {
-          this.examQuestions.splice(
-            this.examQuestions.findIndex((item) => item.id == id),
+          this.questionBankQuestions.splice(
+            this.questionBankQuestions.findIndex((item) => item.id == id),
             1
           );
           this.$q.notify({
@@ -478,7 +476,7 @@ export default defineComponent({
         });
     },
 
-    searchExams(searchData) {
+    searchQuestionBank(searchData) {
       if (
         searchData.keywords == "" &&
         searchData.category == "" &&
@@ -486,15 +484,15 @@ export default defineComponent({
         searchData.faculty == "" &&
         searchData.subject == ""
       ) {
-        this.searchExamResults = [];
+        this.searchQuestionBankResults = [];
         return;
       }
       api
         .get(
-          `/exams?searchJoin=and&search=title:${searchData.keywords}&orderBy=id&sortedBy=desc&limit=0`
+          `/questionbanks?searchJoin=and&search=title:${searchData.keywords}&orderBy=id&sortedBy=desc&limit=0`
         )
         .then((res) => {
-          this.searchExamResults = res.data.data;
+          this.searchQuestionBankResults = res.data.data;
           console.log(res.data.data);
         })
         .catch((err) => {
@@ -503,9 +501,11 @@ export default defineComponent({
     },
     addQuestion(item) {
       if (
-        this.examQuestions.findIndex((question) => question.id == item.id) === -1
+        this.questionBankQuestions.findIndex(
+          (question) => question.id == item.id
+        ) == -1
       ) {
-        this.examQuestions.push(item);
+        this.questionBankQuestions.push(item);
         this.$q.notify({
           color: "positive",
           message: "Question Added Successfully",
@@ -521,12 +521,12 @@ export default defineComponent({
     },
     updateQuestionList() {
       var question_ids = [];
-      this.examQuestions.map((item) => {
+      this.questionBankQuestions.map((item) => {
         question_ids.push(item.id);
       });
       api
-        .post("/exam-questions", {
-          exam_id: this.$route.params.id,
+        .post("/questionbank-questions", {
+          questionbank_id: this.$route.params.id,
           question_ids: question_ids,
         })
         .then((res) => {
@@ -536,33 +536,31 @@ export default defineComponent({
             icon: "check",
           });
           // this.searchResults.splice(this.searchResults.indexOf(item), 1);
-          this.fetchExamQuestions();
+          this.fetchQuestionBankQuestions();
         })
         .catch((err) => {
           console.log(err);
         });
     },
-    addExamQuestions(item) {
+    addQuestionBankQuestions(item) {
       var question_ids = [];
-      this.examQuestions.map((item) => {
+      this.questionBankQuestions.map((item) => {
         question_ids.push(item.id);
       });
       api
         .get(
-          "/exam-questions/" +
-            item.id +
-            "?include=question,question.subject,question.category&limit=0"
+          `/questionbank-questions?include=question&search=questionbank_id:${item.id}&searchJoin=and&limit=0`
         )
         .then(
           (res) => {
             if (res.data.data.length > 0) {
               res.data.data.forEach((item) => {
                 if (
-                  this.examQuestions.findIndex(
+                  this.questionBankQuestions.findIndex(
                     (question) => question.id == item.question.data.id
                   ) == -1
                 ) {
-                  this.examQuestions.push(item.question.data);
+                  this.questionBankQuestions.push(item.question.data);
                 }
               });
               this.$q.notify({
@@ -581,7 +579,7 @@ export default defineComponent({
     },
   },
   async mounted() {
-    this.fetchExamQuestions();
+    this.fetchQuestionBankQuestions();
     await this.searchQuestions(this.questionFilter, 1);
   },
 });
