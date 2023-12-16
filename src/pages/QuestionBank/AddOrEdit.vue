@@ -1,0 +1,262 @@
+<template>
+  <q-page class="q-pa-sm">
+    <q-card class="no-shadow" bordered>
+      <!-- add edit header with submit and reset buttons on right -->
+      <q-card-section class="row items-center justify-between">
+        <div class="text-h6">Add/Edit Question bank</div>
+        <div class="row">
+          <q-btn
+            label="Submit"
+            type="submit"
+            color="primary"
+            form="questionBankForm"
+          />
+          <q-btn
+            label="Reset"
+            type="reset"
+            color="primary"
+            flat
+            class="q-ml-sm"
+            form="questionBankForm"
+          />
+        </div>
+      </q-card-section>
+    </q-card>
+
+    <q-separator spaced />
+    <q-form
+      @submit.prevent="onSubmit"
+      id="questionBankForm"
+      @reset="onReset"
+      class="q-gutter-md q-mt-lg"
+    >
+      <div class="q-pa-none">
+        <div class="row q-col-gutter-md">
+          <div class="col-12">
+            <!-- card with two columns-->
+            <div class="row q-col-gutter-md">
+              <div class="col-12">
+                <q-card class="no-shadow" bordered>
+                  <!-- heading -->
+                  <q-card-section class="row items-center justify-between">
+                    <div class="text-h6">Question Bank Details</div>
+                  </q-card-section>
+
+                  <q-card-section>
+                    <div class="row q-col-gutter-md">
+                      <div class="col-6">
+                        <q-input
+                          filled
+                          v-model="questionBankData.title"
+                          :label="`Title`"
+                          :rules="[(val) => !!val || 'Title is required']"
+                        />
+                      </div>
+                      <div class="col-6">
+                        <q-input
+                          filled
+                          v-model="questionBankData.code"
+                          :label="`Code`"
+                          :rules="[(val) => !!val || 'Code is required']"
+                        />
+                      </div>
+                    </div>
+
+                    <div class="row q-col-gutter-md q-mt-auto">
+                      <div class="col-4">
+                        <!-- subject dropdown -->
+                        <q-select
+                          filled
+                          v-model="questionBankData.subject_id"
+                          :label="`Subject`"
+                          :options="subjectOptions"
+                          emit-value
+                          map-options
+                        />
+                      </div>
+                      <div class="col-4">
+                        <!-- subject dropdown -->
+                        <q-select
+                          filled
+                          v-model="questionBankData.category_id"
+                          :label="`Category`"
+                          :options="categoryOptions"
+                          emit-value
+                          map-options
+                        />
+                      </div>
+                      <div class="col-4">
+                        <!-- subject dropdown -->
+                        <q-select
+                          filled
+                          v-model="questionBankData.course_id"
+                          :label="`Course`"
+                          :options="courseOptions"
+                          emit-value
+                          map-options
+                        />
+                      </div>
+                    </div>
+                  </q-card-section>
+                </q-card>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </q-form>
+  </q-page>
+</template>
+
+<script>
+import { defineComponent, defineAsyncComponent } from "vue";
+import { ref } from "vue";
+import { useStore } from "src/stores/store";
+import { api } from "boot/axios";
+import { useQuasar } from "quasar";
+import _ from "lodash";
+
+export default defineComponent({
+  name: "AddOrEdit Question Bank",
+
+  setup() {
+    const store = useStore();
+    const { $q } = useQuasar();
+    return {
+      $q,
+    };
+  },
+  data() {
+    return {
+      pageName: "Add/Edit Question Bank",
+      dense: true,
+      name: "",
+      model: "",
+      expanded: false,
+      questionBankData: {
+        title: "",
+        subject_id: "",
+        category_id: "",
+        course_id: "",
+        code: "",
+      },
+      subjectOptions: [],
+      categoryOptions: [],
+      courseOptions: [],
+    };
+  },
+  methods: {
+    onSubmit() {
+      console.log(this.questionBankData);
+      if (this.$route.params.id) {
+        api
+          .patch(`/questionbanks/${this.$route.params.id}`, {
+            subject_id: this.questionBankData.subject_id,
+            category_id: this.questionBankData.category_id,
+            course_id: this.questionBankData.course_id,
+            title: this.questionBankData.title,
+            code: this.questionBankData.code,
+          })
+          .then((response) => {
+            console.log(response);
+            this.$q.notify({
+              message: "Question Bank updated Successfully",
+              color: "positive",
+              icon: "check",
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => {
+            this.onReset();
+          });
+      } else {
+        api
+          .post("/questionbanks", {
+            subject_id: this.questionBankData.subject_id,
+            category_id: this.questionBankData.category_id,
+            course_id: this.questionBankData.course_id,
+            title: this.questionBankData.title,
+            code: this.questionBankData.code,
+            parent_id: null,
+          })
+          .then((response) => {
+            console.log(response);
+            this.$q.notify({
+              message: "Question Bank Added Successfully",
+              color: "positive",
+              icon: "check",
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => {
+            this.onReset();
+          });
+      }
+    },
+    onReset() {
+      console.log("Reset");
+      this.questionBankData = {
+        id: "",
+        title: "",
+        subject_id: "",
+        category_id: "",
+        course_id: "",
+        code: "",
+      };
+    },
+
+    getSubjects() {
+      api.get("/categories/subject").then((response) => {
+        response.data.data.map((category) => {
+          this.subjectOptions.push({
+            label: category.name,
+            value: category.id,
+          });
+        });
+      });
+    },
+
+    getCourses() {
+      api.get("/courses?orderBy=id&sortedBy=desc&limit=0").then((response) => {
+        response.data.data.map((course) => {
+          this.courseOptions.push({
+            label: course.title,
+            value: course.id,
+          });
+        });
+      });
+    },
+    getCategories() {
+      api.get("/categories/category").then((response) => {
+        response.data.data.map((category) => {
+          this.categoryOptions.push({
+            label: category.name,
+            value: category.id,
+          });
+        });
+      });
+    },
+  },
+  mounted() {
+    this.getSubjects();
+    this.getCategories();
+    this.getCourses();
+    if (this.$route.params.id) {
+      api.get("/questionbanks/" + this.$route.params.id).then((response) => {
+        const result = response.data.data;
+        this.questionBankData.title = result.title;
+        this.questionBankData.code = result.code;
+        this.questionBankData.subject_id = result.subject_id;
+        this.questionBankData.category_id = result.category_id;
+        this.questionBankData.course_id = result.course_id;
+      });
+    }
+  },
+});
+</script>
+
+<style></style>

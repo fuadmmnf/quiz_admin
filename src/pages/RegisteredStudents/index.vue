@@ -236,6 +236,25 @@ export default defineComponent({
     ),
     SearchQuestions,
   },
+  methods: {
+    onDelete(id) {
+      // confirm
+      this.$q
+        .dialog({
+          title: "Confirm",
+          message: "Are you sure you want to delete this student?",
+          cancel: true,
+          persistent: true,
+        })
+        .onOk(() => {
+          this.$q.notify({
+            message: "Student Deleted Successfully",
+            color: "negative",
+            icon: "check",
+          });
+        });
+    },
+  },
 
   mounted() {
     this.fetchStudents();
