@@ -30,16 +30,16 @@ const routes = [
       },
       {
         path: "/questionbanks/draft",
-        component: () => import("pages/draftBank.vue"),
+        component: () => import("pages/QuestionBank/draftBank.vue"),
       },
       {
         path: "/questionbanks/published",
-        component: () => import("pages/publishedBank.vue"),
+        component: () => import("pages/QuestionBank/publishedBank.vue"),
       },
-      {
-        path: "/questionbanks",
-        component: () => import("pages/QuestionBank/index.vue"),
-      },
+      // {
+      //   path: "/questionbanks",
+      //   component: () => import("pages/QuestionBank/index.vue"),
+      // },
       {
         path: "/questionbanks/add",
         component: () => import("pages/QuestionBank/AddOrEdit.vue"),

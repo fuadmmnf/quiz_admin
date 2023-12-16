@@ -22,6 +22,14 @@
           </q-ribbon>
         </q-toolbar>
         <q-card-section class="q-pb-sm">
+          <div class="row">
+            <q-btn
+              color="primary"
+              label="Add Question Bank"
+              icon="add"
+              to="/questionbanks/add"
+            />
+          </div>
           <code-tabs :tagParts="tagParts"></code-tabs>
         </q-card-section>
         <q-card-section>
@@ -137,33 +145,33 @@ export default {
         align: 'left',
         field: 'label',
         // (optional) tell QHierarchy you want this column sortable
-        sortable: true
+        // sortable: true
       },
       {
         name: 'Description',
         label: 'Status',
-        sortable: true,
+        // sortable: true,
         field: 'description',
         align: 'center'
       },
       {
         name: 'Code',
         label: 'Code',
-        sortable: true,
+        // sortable: true,
         field: 'code',
         align: 'center'
       },
       {
         name: 'Subject',
         label: 'Subject',
-        sortable: true,
+        // sortable: true,
         field: 'subject',
         align: 'center'
       },
       {
         name: 'action',
         label: 'Action',
-        sortable: true,
+        // sortable: true,
         field: 'action',
         align: 'left'
       }
@@ -304,7 +312,7 @@ export default {
         sortedBy: 'desc',
         search: statusApi.value,
         searchJoin: 'and',
-        include: 'subject,faculty',
+        include: 'subject,category',
         limit: 50,
         page: newPage,
 
