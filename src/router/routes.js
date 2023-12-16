@@ -41,16 +41,16 @@ const routes = [
         component: () => import("pages/QuestionBank/index.vue"),
       },
       {
-        path: "/question-bank-list/add",
+        path: "/question-bank/add",
         component: () => import("pages/QuestionBank/AddOrEdit.vue"),
       },
 
+      // {
+      //   path: "/question-bank/:id",
+      //   component: () => import("pages/QuestionBank/AddOrEdit.vue"),
+      // },
       {
-        path: "/question-bank-list/:id",
-        component: () => import("pages/QuestionBank/AddOrEdit.vue"),
-      },
-      {
-        path: "/question-bank-list/:id/edit-questions",
+        path: "/question-bank/:id/edit-questions",
         component: () => import("pages/QuestionBank/EditQuestion.vue"),
       },
       {

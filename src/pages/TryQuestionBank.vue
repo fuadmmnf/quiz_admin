@@ -1,12 +1,40 @@
 <template>
-
-  <q-linear-progress v-if="isLoading" dark rounded indeterminate color="secondary" class="q-mt-sm" />
+  <q-linear-progress
+    v-if="isLoading"
+    dark
+    rounded
+    indeterminate
+    color="secondary"
+    class="q-mt-sm"
+  />
 
   <div v-if="!isLoading" class="row">
-
     <div class="col-9">
-      <q-card :class="!$q.dark.isActive?'my-lg q-ma-sm bg-grey-2':'my-lg q-pa-md q-ma-sm bg-grey-8'">
-        <q-toolbar>
+      <q-card
+        :class="
+          !$q.dark.isActive
+            ? 'my-lg q-ma-sm bg-grey-2'
+            : 'my-lg q-pa-md q-ma-sm bg-grey-8'
+        "
+        ><q-card class="no-shadow" bordered>
+          <q-card-section class="row items-center justify-between">
+            <div class="text-h6 text-indigo-8">
+              Question Banks
+              <div class="text-subtitle2">
+                List of all question banks are shown here
+              </div>
+            </div>
+            <div class="row">
+              <q-btn
+                color="primary"
+                label="Add Question Bank"
+                icon="add"
+                to="/question-bank/add"
+              />
+            </div>
+          </q-card-section>
+        </q-card>
+        <!-- <q-toolbar>
           <q-ribbon
             position="left"
             color="rgba(0,0,0,.58)"
@@ -15,12 +43,19 @@
             leaf-position="bottom"
             decoration="rounded-out"
           >
-            <q-toolbar-title
-              class="example-title"
-              style="padding: 5px 20px;"
-            ><span class="ellipsis">Question Banks</span></q-toolbar-title>
+            <q-toolbar-title class="example-title" style="padding: 5px 20px"
+              ><span class="ellipsis">Question Banks</span></q-toolbar-title
+            >
+            <div class="row">
+              <q-btn
+                color="primary"
+                label="Add Question Bank"
+                icon="add"
+                to="/question-bank-list/add"
+              />
+            </div>
           </q-ribbon>
-        </q-toolbar>
+        </q-toolbar> -->
         <q-card-section class="q-pb-sm">
           <code-tabs :tagParts="tagParts"></code-tabs>
         </q-card-section>
@@ -28,11 +63,19 @@
           <q-hierarchy :columns="columns" :data="data" p>
             <template v-slot:body="props">
               <td data-th="Name">
-                <div v-bind:style="props.setPadding(props.item)"
-                     :class="props.iconName(props.item)!=='done'?'q-pl-lg':''">
-                  <q-btn @click="props.toggle(props.item)" v-if="props.iconName(props.item)!=='done'"
-                         :icon="props.iconName(props.item)" flat
-                         dense>
+                <div
+                  v-bind:style="props.setPadding(props.item)"
+                  :class="
+                    props.iconName(props.item) !== 'done' ? 'q-pl-lg' : ''
+                  "
+                >
+                  <q-btn
+                    @click="props.toggle(props.item)"
+                    v-if="props.iconName(props.item) !== 'done'"
+                    :icon="props.iconName(props.item)"
+                    flat
+                    dense
+                  >
                   </q-btn>
                   <q-icon class="q-mx-sm" size="xs" v-else name="list"></q-icon>
                   <span class="q-ml-sm">{{ props.item.label }}</span>
@@ -40,13 +83,53 @@
               </td>
               <td class="text-center">{{ props.item.description }}</td>
               <td class="text-left">
-
-                <q-btn @click="handleAddButtonClick(props.item)" flat round icon="add" size="10px"><q-tooltip>Add</q-tooltip></q-btn>
-                <q-btn @click="handleEditButtonClick(props.item)" flat round icon="edit" size="10px" class="q-ml-sm"><q-tooltip>Edit</q-tooltip></q-btn>
-                <q-btn flat round icon="delete" size="10px" color="primary" class="q-ml-sm"><q-tooltip>Delete</q-tooltip></q-btn>
-                <q-btn v-if="props.item.children === undefined || props.item.children.length === 0" label="Questions" size="10px" class="q-ml-sm" />
-                <q-btn v-if="statusApi==='status:draft'" @click="handlePublishButtonClick(props.item)" flat round icon="file_upload" size="10px" color="primary" class="q-ml-sm"><q-tooltip>Publish</q-tooltip></q-btn>
-
+                <q-btn
+                  @click="handleAddButtonClick(props.item)"
+                  flat
+                  round
+                  icon="add"
+                  size="10px"
+                  ><q-tooltip>Add</q-tooltip></q-btn
+                >
+                <q-btn
+                  @click="handleEditButtonClick(props.item)"
+                  flat
+                  round
+                  icon="edit"
+                  size="10px"
+                  class="q-ml-sm"
+                  ><q-tooltip>Edit</q-tooltip></q-btn
+                >
+                <q-btn
+                  flat
+                  round
+                  icon="delete"
+                  size="10px"
+                  color="primary"
+                  class="q-ml-sm"
+                  ><q-tooltip>Delete</q-tooltip></q-btn
+                >
+                <q-btn
+                  v-if="
+                    props.item.children === undefined ||
+                    props.item.children.length === 0
+                  "
+                  label="Questions"
+                  size="10px"
+                  class="q-ml-sm"
+                  :to="`/question-bank/${props.item.id}/edit-questions`"
+                />
+                <q-btn
+                  v-if="statusApi === 'status:draft'"
+                  @click="handlePublishButtonClick(props.item)"
+                  flat
+                  round
+                  icon="file_upload"
+                  size="10px"
+                  color="primary"
+                  class="q-ml-sm"
+                  ><q-tooltip>Publish</q-tooltip></q-btn
+                >
               </td>
             </template>
           </q-hierarchy>
@@ -61,22 +144,15 @@
     <div class="col-3">
       <q-card class="q-mt-sm">
         <q-card-section>
-          <div class="text-h6 text-indigo-8">
-             Add/Edit
-          </div>
+          <div class="text-h6 text-indigo-8">Add/Edit</div>
 
-          <q-form
-
-            class="q-gutter-md q-mt-lg"
-          >
+          <q-form class="q-gutter-md q-mt-lg">
             <q-input
               outlined
               v-model="name"
               :label="`Question Bank Title`"
-
               :rules="[(val) => !!val || 'Field is required']"
             />
-
 
             <q-select
               outlined
@@ -86,10 +162,14 @@
               map-options
               emit-value
               :disable="!isSelect"
-
             />
             <div>
-              <q-btn label="Submit" @click="onSubmit" type="submit" color="primary" />
+              <q-btn
+                label="Submit"
+                @click="onSubmit"
+                type="submit"
+                color="primary"
+              />
               <q-btn
                 label="Reset"
                 @click="onReset"
@@ -104,53 +184,50 @@
       </q-card>
     </div>
   </div>
-
 </template>
 
 <script>
-import {onMounted, ref, toRefs, watch} from "vue";
+import { onMounted, ref, toRefs, watch } from "vue";
 import {
   addQuestionBank,
   editQuestionBank,
   getQuestionBanks,
-  updateQuestionBankStatus
+  updateQuestionBankStatus,
 } from "src/services/questionBank_services";
 
 export default {
   props: {
     statusApi: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
-  computed: {
-
-  },
+  computed: {},
   setup(props) {
     const columns = [
       {
-        name: 'label',
-        label: 'Label',
-        align: 'left',
-        field: 'label',
+        name: "label",
+        label: "Label",
+        align: "left",
+        field: "label",
         // (optional) tell QHierarchy you want this column sortable
-        sortable: true
+        sortable: true,
       },
       {
-        name: 'Description',
-        label: 'Description',
+        name: "Description",
+        label: "Description",
         sortable: true,
-        field: 'description',
-        align: 'center'
+        field: "description",
+        align: "center",
       },
       {
-        name: 'action',
-        label: 'Action',
+        name: "action",
+        label: "Action",
         sortable: true,
-        field: 'action',
-        align: 'left'
-      }
-    ]
+        field: "action",
+        align: "left",
+      },
+    ];
     // const data = [
     //   {
     //     label: "Node 1",
@@ -236,20 +313,19 @@ export default {
     const { statusApi } = toRefs(props);
 
     const handleAddButtonClick = (selectedItem) => {
-
-      parentOptions.value = [{
-        label: selectedItem.label,
-        value: selectedItem.id,
-      }];
+      parentOptions.value = [
+        {
+          label: selectedItem.label,
+          value: selectedItem.id,
+        },
+      ];
       // console.log(parentOptions.value);
 
       parentId.value = selectedItem.id;
       // console.log("Clicked");
       isEditMode.value = false;
-      isSelect.value=true;
-
+      isSelect.value = true;
     };
-
 
     const handleEditButtonClick = (selectedItem) => {
       name.value = selectedItem.label;
@@ -257,13 +333,13 @@ export default {
       editingItemId.value = selectedItem.id;
       console.log(editingItemId.value);
       isEditMode.value = true;
-      isSelect.value=false;
+      isSelect.value = false;
     };
 
     const handlePublishButtonClick = async (selectedItem) => {
       const questionBankId = selectedItem.id;
 
-      const {status, error} = await updateQuestionBankStatus(questionBankId, {
+      const { status, error } = await updateQuestionBankStatus(questionBankId, {
         status: "published",
       });
 
@@ -276,7 +352,7 @@ export default {
     };
 
     const transformData = (data) => {
-      return data.map(item => ({
+      return data.map((item) => ({
         id: item.id,
         label: item.title,
         description: item.status,
@@ -285,14 +361,13 @@ export default {
       }));
     };
 
-
     const onReset = () => {
       name.value = "";
       parentId.value = "";
     };
 
-    const onSubmit = async ()=>{
-      if(isEditMode.value){
+    const onSubmit = async () => {
+      if (isEditMode.value) {
         const { data, status, error } = await editQuestionBank({
           id: editingItemId.value,
           title: name.value,
@@ -301,65 +376,63 @@ export default {
         });
 
         if (status === 200) {
-          console.log('Question bank edited successfully:', data);
+          console.log("Question bank edited successfully:", data);
         } else {
           console.error(error);
         }
-      }else{
-
-        const {data, status, error} = await addQuestionBank({
+      } else {
+        const { data, status, error } = await addQuestionBank({
           title: name.value,
           code: 1234,
           parent_id: parentId.value,
         });
 
-
         if (status === 201) {
-          console.log('Question bank added successfully:', data);
-        }else{
+          console.log("Question bank added successfully:", data);
+        } else {
           console.error(error);
         }
       }
-    }
+    };
 
     onMounted(async () => {
-    await getQuestionBankList(current.value);
+      await getQuestionBankList(current.value);
     });
 
-    const getQuestionBankList = async (newPage) =>{
+    const getQuestionBankList = async (newPage) => {
       isLoading.value = true;
 
       const params = {
-        orderBy: 'id',
-        sortedBy: 'desc',
+        orderBy: "id",
+        sortedBy: "desc",
         search: statusApi.value,
-        searchJoin: 'and',
-        limit: 50,
+        searchJoin: "and",
         page: newPage,
+      };
 
-      }
+      const {
+        data: responseData,
+        status,
+        error,
+      } = await getQuestionBanks(params);
 
-      const { data: responseData, status, error } = await getQuestionBanks(params);
-
-      if(status === 200){
+      if (status === 200) {
         console.log(responseData);
         data.value = transformData(responseData.data);
 
-        const {total_pages } = responseData.meta.pagination;
+        const { total_pages } = responseData.meta.pagination;
 
         current.value = newPage;
         totalPages.value = total_pages;
-
       }
       isLoading.value = false;
-    }
+    };
 
     watch(current, (newPage, oldPage) => {
       if (newPage !== oldPage) {
         getQuestionBankList(newPage);
       }
     });
-
 
     return {
       columns,
@@ -376,12 +449,10 @@ export default {
       current,
       totalPages,
       parentOptions,
-      isSelect
+      isSelect,
     };
   },
 };
 </script>
 
-<style>
-
-</style>
+<style></style>
