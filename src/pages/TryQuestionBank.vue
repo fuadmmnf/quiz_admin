@@ -334,6 +334,7 @@ export default {
         sortedBy: 'desc',
         search: statusApi.value,
         searchJoin: 'and',
+        limit: 50,
         page: newPage,
 
       }
