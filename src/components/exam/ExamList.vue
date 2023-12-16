@@ -144,6 +144,7 @@
                       dense
                       flat
                       :to="`/Exam/${props.row.id}`"
+                      v-if="examType==='draft'"
                     >
                       <q-tooltip
                         anchor="top middle"

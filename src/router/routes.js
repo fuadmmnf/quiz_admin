@@ -29,28 +29,29 @@ const routes = [
         component: () => import("pages/Blog/AddorEditBlog.vue"),
       },
       {
-        path: "/question-bank/draft",
+        path: "/questionbanks/draft",
         component: () => import("pages/draftBank.vue"),
       },
       {
-        path: "/question-bank/published",
+        path: "/questionbanks/published",
         component: () => import("pages/publishedBank.vue"),
       },
       {
-        path: "/question-bank-list",
+        path: "/questionbanks",
         component: () => import("pages/QuestionBank/index.vue"),
       },
       {
-        path: "/question-bank/add",
+        path: "/questionbanks/add",
         component: () => import("pages/QuestionBank/AddOrEdit.vue"),
       },
 
       // {
-      //   path: "/question-bank/:id",
+      //   path: "/question-bank-list/:id",
       //   component: () => import("pages/QuestionBank/AddOrEdit.vue"),
       // },
       {
-        path: "/question-bank/:id/edit-questions",
+        path: "/questionbanks/:id/edit-questions",
+        name: 'questionbank-questions',
         component: () => import("pages/QuestionBank/EditQuestion.vue"),
       },
       {
