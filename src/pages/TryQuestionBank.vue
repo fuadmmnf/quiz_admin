@@ -16,8 +16,25 @@
             ? 'my-lg q-ma-sm bg-grey-2'
             : 'my-lg q-pa-md q-ma-sm bg-grey-8'
         "
-      >
-        <q-toolbar>
+        ><q-card class="no-shadow" bordered>
+          <q-card-section class="row items-center justify-between">
+            <div class="text-h6 text-indigo-8">
+              Question Banks
+              <div class="text-subtitle2">
+                List of all question banks are shown here
+              </div>
+            </div>
+            <div class="row">
+              <q-btn
+                color="primary"
+                label="Add Question Bank"
+                icon="add"
+                to="/question-bank/add"
+              />
+            </div>
+          </q-card-section>
+        </q-card>
+        <!-- <q-toolbar>
           <q-ribbon
             position="left"
             color="rgba(0,0,0,.58)"
@@ -29,8 +46,16 @@
             <q-toolbar-title class="example-title" style="padding: 5px 20px"
               ><span class="ellipsis">Question Banks</span></q-toolbar-title
             >
+            <div class="row">
+              <q-btn
+                color="primary"
+                label="Add Question Bank"
+                icon="add"
+                to="/question-bank-list/add"
+              />
+            </div>
           </q-ribbon>
-        </q-toolbar>
+        </q-toolbar> -->
         <q-card-section class="q-pb-sm">
           <code-tabs :tagParts="tagParts"></code-tabs>
         </q-card-section>
