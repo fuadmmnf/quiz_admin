@@ -39,14 +39,16 @@
                 </div>
               </td>
               <td class="text-center">{{ props.item.description }}</td>
+              <td class="text-center">{{ props.item.code }}</td>
+              <td class="text-center">{{ props.item.subject }}</td>
               <td class="text-left">
 
                 <q-btn @click="handleAddButtonClick(props.item)" flat round icon="add" size="10px"><q-tooltip>Add</q-tooltip></q-btn>
                 <q-btn @click="handleEditButtonClick(props.item)" flat round icon="edit" size="10px" class="q-ml-sm"><q-tooltip>Edit</q-tooltip></q-btn>
                 <q-btn flat round icon="delete" size="10px" color="primary" class="q-ml-sm"><q-tooltip>Delete</q-tooltip></q-btn>
-                <q-btn v-if="props.item.children === undefined || props.item.children.length === 0" label="Questions" size="10px" class="q-ml-sm" />
-                <q-btn v-if="statusApi==='status:draft'" @click="handlePublishButtonClick(props.item)" flat round icon="file_upload" size="10px" color="primary" class="q-ml-sm"><q-tooltip>Publish</q-tooltip></q-btn>
-
+                <q-btn v-if="props.item.children === undefined || props.item.children.length === 0" flat round icon="fa-solid fa-book-open" size="9px" color="primary" @click="handleQuestionsButtonClick(props.item.id)" class="q-ml-sm"><q-tooltip>Questions</q-tooltip></q-btn>
+                <q-btn v-if="props.item.parentId === '' && statusApi==='status:draft'" @click="handlePublishButtonClick(props.item)" flat round icon="file_upload" size="10px" color="primary" class="q-ml-sm"><q-tooltip>Publish</q-tooltip></q-btn>
+                <q-btn v-if="props.item.parentId === '' && statusApi==='status:published'" @click="handleMovetoDraftButtonClick(props.item)" flat round icon="move_to_inbox" size="10px" color="primary" class="q-ml-sm"><q-tooltip>Move to Draft</q-tooltip></q-btn>
               </td>
             </template>
           </q-hierarchy>
@@ -58,7 +60,7 @@
       </div>
     </div>
 
-    <div class="col-3">
+    <div v-if="statusApi==='status:draft'" class="col-3">
       <q-card class="q-mt-sm">
         <q-card-section>
           <div class="text-h6 text-indigo-8">
@@ -115,6 +117,7 @@ import {
   getQuestionBanks,
   updateQuestionBankStatus
 } from "src/services/questionBank_services";
+import {useRouter} from "vue-router";
 
 export default {
   props: {
@@ -130,7 +133,7 @@ export default {
     const columns = [
       {
         name: 'label',
-        label: 'Label',
+        label: 'Title',
         align: 'left',
         field: 'label',
         // (optional) tell QHierarchy you want this column sortable
@@ -138,9 +141,23 @@ export default {
       },
       {
         name: 'Description',
-        label: 'Description',
+        label: 'Status',
         sortable: true,
         field: 'description',
+        align: 'center'
+      },
+      {
+        name: 'Code',
+        label: 'Code',
+        sortable: true,
+        field: 'code',
+        align: 'center'
+      },
+      {
+        name: 'Subject',
+        label: 'Subject',
+        sortable: true,
+        field: 'subject',
         align: 'center'
       },
       {
@@ -151,76 +168,6 @@ export default {
         align: 'left'
       }
     ]
-    // const data = [
-    //   {
-    //     label: "Node 1",
-    //     description: "Node 1 description",
-    //     action: "Node 1 note",
-    //     // id: 1,
-    //     children: [
-    //       {
-    //         label: "Node 1.1",
-    //         description: "Node 1.1 description",
-    //         action: "Node 1.1 note",
-    //         // id: 2
-    //       },
-    //       {
-    //         label: "Node 1.2",
-    //         description: "Node 1.2 description",
-    //         action: "Node 1.2 note",
-    //         // id: 3,
-    //         children: [
-    //           {
-    //             label: "Node 1.2.1",
-    //             description: "Node 1.2.1 description",
-    //             action: "Node 1.2.1 note",
-    //             // id: 4
-    //           },
-    //           {
-    //             label: "Node 1.2.2",
-    //             description: "Node 1.2.2 description",
-    //             action: "Node 1.2.2 note",
-    //             // id: 5
-    //           }
-    //         ],
-    //       }
-    //     ],
-    //   },
-    //   {
-    //     label: "Node 2",
-    //     description: "Node 2 description",
-    //     action: "Node 2 note",
-    //     // id: 6,
-    //     children: [
-    //       {
-    //         label: "Node 2.1",
-    //         description: "Node 2.1 description",
-    //         action: "Node 2.1 note",
-    //         // id: 7,
-    //         children: [
-    //           {
-    //             label: "Node 2.1.1",
-    //             description: "Node 2.1.1 description",
-    //             action: "Node 2.1.1 note",
-    //             // id: 8
-    //           },
-    //           {
-    //             label: "Node 2.1.2",
-    //             description: "Node 2.1.2 description",
-    //             action: "Node 2.1.2 note",
-    //             // id: 9
-    //           }
-    //         ],
-    //       },
-    //       {
-    //         label: "Node 2.2",
-    //         description: "Node 2.2 description",
-    //         action: "Node 2.2 note",
-    //         // id: 10
-    //       }
-    //     ],
-    //   }
-    // ]
 
     const data = ref([]);
     const name = ref("");
@@ -232,6 +179,7 @@ export default {
     const current = ref(1);
     const totalPages = ref(0);
     const parentOptions = ref([]);
+    const router = useRouter();
 
     const { statusApi } = toRefs(props);
 
@@ -275,13 +223,35 @@ export default {
       }
     };
 
+    const handleMovetoDraftButtonClick = async (selectedItem) => {
+      const questionBankId = selectedItem.id;
+
+      const {status, error} = await updateQuestionBankStatus(questionBankId, {
+        status: "draft",
+      });
+
+      if (status === 200) {
+        console.log("Question bank moved to draft successfully.");
+        await getQuestionBankList(current.value);
+      } else {
+        console.error("Error moving to draft question bank:", error);
+      }
+    };
+
+    const handleQuestionsButtonClick = (questionBankId) => {
+      // Programmatically navigate to the edit-questions page
+      router.push({ name: 'questionbank-questions', params: { id: questionBankId } });
+    };
+
     const transformData = (data) => {
       return data.map(item => ({
         id: item.id,
         label: item.title,
         description: item.status,
-        action: item.code,
+        code: item.code ? item.code : 'null',
+        subject: item.subject ? item.subject.data.name : 'null',
         children: transformData(item.children.data),
+        parentId: item.parent_id,
       }));
     };
 
@@ -334,6 +304,7 @@ export default {
         sortedBy: 'desc',
         search: statusApi.value,
         searchJoin: 'and',
+        include: 'subject,faculty',
         limit: 50,
         page: newPage,
 
@@ -369,6 +340,8 @@ export default {
       handleAddButtonClick,
       handleEditButtonClick,
       handlePublishButtonClick,
+      handleMovetoDraftButtonClick,
+      handleQuestionsButtonClick,
       onReset,
       onSubmit,
       isLoading,
