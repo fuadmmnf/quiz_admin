@@ -1,10 +1,10 @@
 <template>
 
-  <q-linear-progress v-if="isLoading" dark rounded indeterminate color="secondary" class="q-mt-sm" />
+  <q-linear-progress v-if="isLoading" dark rounded indeterminate color="secondary" class="q-mt-sm"/>
 
-  <div v-if="!isLoading" class="row">
+  <div v-if="!isLoading">
 
-    <div class="col-9">
+    <div>
       <q-card :class="!$q.dark.isActive?'my-lg q-ma-sm bg-grey-2':'my-lg q-pa-md q-ma-sm bg-grey-8'">
         <q-toolbar>
           <q-ribbon
@@ -51,12 +51,30 @@
               <td class="text-center">{{ props.item.subject }}</td>
               <td class="text-left">
 
-                <q-btn @click="handleAddButtonClick(props.item)" flat round icon="add" size="10px"><q-tooltip>Add</q-tooltip></q-btn>
-                <q-btn @click="handleEditButtonClick(props.item)" flat round icon="edit" size="10px" class="q-ml-sm"><q-tooltip>Edit</q-tooltip></q-btn>
-                <q-btn flat round icon="delete" size="10px" color="primary" class="q-ml-sm"><q-tooltip>Delete</q-tooltip></q-btn>
-                <q-btn v-if="props.item.children === undefined || props.item.children.length === 0" flat round icon="fa-solid fa-book-open" size="9px" color="primary" @click="handleQuestionsButtonClick(props.item.id)" class="q-ml-sm"><q-tooltip>Questions</q-tooltip></q-btn>
-                <q-btn v-if="props.item.parentId === '' && statusApi==='status:draft'" @click="handlePublishButtonClick(props.item)" flat round icon="file_upload" size="10px" color="primary" class="q-ml-sm"><q-tooltip>Publish</q-tooltip></q-btn>
-                <q-btn v-if="props.item.parentId === '' && statusApi==='status:published'" @click="handleMovetoDraftButtonClick(props.item)" flat round icon="move_to_inbox" size="10px" color="primary" class="q-ml-sm"><q-tooltip>Move to Draft</q-tooltip></q-btn>
+                <q-btn @click="handleAddButtonClick(props.item)" flat round icon="add" size="10px">
+                  <q-tooltip>Add</q-tooltip>
+                </q-btn>
+                <q-btn @click="handleEditButtonClick(props.item)" flat round icon="edit" size="10px" class="q-ml-sm">
+                  <q-tooltip>Edit</q-tooltip>
+                </q-btn>
+                <q-btn flat round icon="delete" size="10px" color="primary" class="q-ml-sm">
+                  <q-tooltip>Delete</q-tooltip>
+                </q-btn>
+                <q-btn v-if="props.item.children === undefined || props.item.children.length === 0" flat round
+                       icon="fa-solid fa-book-open" size="9px" color="primary"
+                       @click="handleQuestionsButtonClick(props.item.id)" class="q-ml-sm">
+                  <q-tooltip>Questions</q-tooltip>
+                </q-btn>
+                <q-btn v-if="props.item.parentId === '' && statusApi==='status:draft'"
+                       @click="handlePublishButtonClick(props.item)" flat round icon="file_upload" size="10px"
+                       color="primary" class="q-ml-sm">
+                  <q-tooltip>Publish</q-tooltip>
+                </q-btn>
+                <q-btn v-if="props.item.parentId === '' && statusApi==='status:published'"
+                       @click="handleMovetoDraftButtonClick(props.item)" flat round icon="move_to_inbox" size="10px"
+                       color="primary" class="q-ml-sm">
+                  <q-tooltip>Move to Draft</q-tooltip>
+                </q-btn>
               </td>
             </template>
           </q-hierarchy>
@@ -64,55 +82,66 @@
       </q-card>
 
       <div class="q-pa-lg flex flex-center">
-        <q-pagination v-model="current" :max="totalPages" direction-links />
+        <q-pagination v-model="current" :max="totalPages" direction-links/>
       </div>
     </div>
+    <q-dialog v-model="showAddEditDialog">
+      <div v-if="statusApi==='status:draft'" class="col-3">
+        <q-card class="q-mt-sm" style="width: 600px; max-width: 70vw;">
+          <q-bar>
+            Add/Edit Question bank
+            <q-space/>
 
-    <div v-if="statusApi==='status:draft'" class="col-3">
-      <q-card class="q-mt-sm">
-        <q-card-section>
-          <div class="text-h6 text-indigo-8">
-            Add/Edit
-          </div>
+            <q-btn dense flat icon=" close
+        " v-close-popup>
+              <q-tooltip>Close</q-tooltip>
+            </q-btn>
+          </q-bar>
+          <q-card-section>
+            <!--            <div class="text-h6 text-indigo-8">-->
+            <!--            </div>-->
 
-          <q-form
+            <q-form
+              @submit="onSubmit"
+              @reset="onReset"
+              class="q-gutter-md q-mt-lg"
+            >
+              <q-input
+                outlined
+                v-model="name"
+                :label="`Question Bank Title`"
 
-            class="q-gutter-md q-mt-lg"
-          >
-            <q-input
-              outlined
-              v-model="name"
-              :label="`Question Bank Title`"
-
-              :rules="[(val) => !!val || 'Field is required']"
-            />
-
-
-            <q-select
-              outlined
-              v-model="parentId"
-              :label="`Parent Category`"
-              :options="parentOptions"
-              map-options
-              emit-value
-              :disable="!isSelect"
-
-            />
-            <div>
-              <q-btn label="Submit" @click="onSubmit" type="submit" color="primary" />
-              <q-btn
-                label="Reset"
-                @click="onReset"
-                type="reset"
-                color="primary"
-                flat
-                class="q-ml-sm"
+                :rules="[(val) => !!val || 'Field is required']"
               />
-            </div>
-          </q-form>
-        </q-card-section>
-      </q-card>
-    </div>
+
+
+              <q-select
+                v-if="!isEditMode"
+                outlined
+                v-model="parentId"
+                :label="`Parent Category`"
+                :options="parentOptions"
+                map-options
+                emit-value
+                :disable="!isSelect"
+
+              />
+              <div>
+                <q-btn label="Submit" type="submit" color="primary"/>
+                <q-btn
+                  label="Reset"
+                  type="reset"
+                  color="primary"
+                  flat
+                  class="q-ml-sm"
+                />
+              </div>
+            </q-form>
+          </q-card-section>
+        </q-card>
+      </div>
+    </q-dialog>
+
   </div>
 
 </template>
@@ -134,9 +163,7 @@ export default {
       required: true
     }
   },
-  computed: {
-
-  },
+  computed: {},
   setup(props) {
     const columns = [
       {
@@ -145,33 +172,33 @@ export default {
         align: 'left',
         field: 'label',
         // (optional) tell QHierarchy you want this column sortable
-        sortable: true
+        // sortable: true
       },
       {
         name: 'Description',
         label: 'Status',
-        sortable: true,
+        // sortable: true,
         field: 'description',
         align: 'center'
       },
       {
         name: 'Code',
         label: 'Code',
-        sortable: true,
+        // sortable: true,
         field: 'code',
         align: 'center'
       },
       {
         name: 'Subject',
         label: 'Subject',
-        sortable: true,
+        // sortable: true,
         field: 'subject',
         align: 'center'
       },
       {
         name: 'action',
         label: 'Action',
-        sortable: true,
+        // sortable: true,
         field: 'action',
         align: 'left'
       }
@@ -186,13 +213,14 @@ export default {
     const editingItemId = ref(null);
     const current = ref(1);
     const totalPages = ref(0);
+    const showAddEditDialog = ref(false);
     const parentOptions = ref([]);
     const router = useRouter();
 
-    const { statusApi } = toRefs(props);
+    const {statusApi} = toRefs(props);
 
     const handleAddButtonClick = (selectedItem) => {
-
+      showAddEditDialog.value = true;
       parentOptions.value = [{
         label: selectedItem.label,
         value: selectedItem.id,
@@ -202,18 +230,20 @@ export default {
       parentId.value = selectedItem.id;
       // console.log("Clicked");
       isEditMode.value = false;
-      isSelect.value=true;
+      isSelect.value = true;
 
     };
 
 
     const handleEditButtonClick = (selectedItem) => {
+      showAddEditDialog.value = true;
       name.value = selectedItem.label;
       parentId.value = selectedItem.parent_id;
+
       editingItemId.value = selectedItem.id;
       console.log(editingItemId.value);
       isEditMode.value = true;
-      isSelect.value=false;
+      isSelect.value = false;
     };
 
     const handlePublishButtonClick = async (selectedItem) => {
@@ -248,7 +278,7 @@ export default {
 
     const handleQuestionsButtonClick = (questionBankId) => {
       // Programmatically navigate to the edit-questions page
-      router.push({ name: 'questionbank-questions', params: { id: questionBankId } });
+      router.push({name: 'questionbank-questions', params: {id: questionBankId}});
     };
 
     const transformData = (data) => {
@@ -269,9 +299,9 @@ export default {
       parentId.value = "";
     };
 
-    const onSubmit = async ()=>{
-      if(isEditMode.value){
-        const { data, status, error } = await editQuestionBank({
+    const onSubmit = async () => {
+      if (isEditMode.value) {
+        const {data, status, error} = await editQuestionBank({
           id: editingItemId.value,
           title: name.value,
 
@@ -279,32 +309,34 @@ export default {
         });
 
         if (status === 200) {
-          console.log('Question bank edited successfully:', data);
+          getQuestionBankList(current.value);
         } else {
           console.error(error);
         }
-      }else{
+      } else {
 
         const {data, status, error} = await addQuestionBank({
           title: name.value,
-          code: 1234,
+          code: '',
           parent_id: parentId.value,
         });
 
 
         if (status === 201) {
-          console.log('Question bank added successfully:', data);
-        }else{
+          current.value = 1;
+          getQuestionBankList(current.value);
+
+        } else {
           console.error(error);
         }
       }
     }
 
-    onMounted(async () => {
-      await getQuestionBankList(current.value);
+    onMounted(() => {
+      getQuestionBankList(current.value);
     });
 
-    const getQuestionBankList = async (newPage) =>{
+    const getQuestionBankList = async (newPage) => {
       isLoading.value = true;
 
       const params = {
@@ -318,13 +350,13 @@ export default {
 
       }
 
-      const { data: responseData, status, error } = await getQuestionBanks(params);
+      const {data: responseData, status, error} = await getQuestionBanks(params);
 
-      if(status === 200){
+      if (status === 200) {
         console.log(responseData);
         data.value = transformData(responseData.data);
 
-        const {total_pages } = responseData.meta.pagination;
+        const {total_pages} = responseData.meta.pagination;
 
         current.value = newPage;
         totalPages.value = total_pages;
@@ -345,6 +377,7 @@ export default {
       data,
       name,
       parentId,
+      showAddEditDialog,
       handleAddButtonClick,
       handleEditButtonClick,
       handlePublishButtonClick,

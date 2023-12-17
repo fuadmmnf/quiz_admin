@@ -250,7 +250,14 @@ export default {
           persistent: true,
         })
         .onOk(() => {
-          this.fetchInstitutions();
+          api.delete(`/categories/${id}`).then((res) => {
+            this.$q.notify({
+              message: "Institution Deleted Successfully",
+              color: "negative",
+              icon: "check",
+            });
+            this.fetchInstitutions();
+          });
         });
     },
   },

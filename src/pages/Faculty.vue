@@ -168,7 +168,26 @@ export default defineComponent({
       this.selectedParentCategory = row.parent_id !== "" ? row.parent_id : null;
       this.isEditing = { status: true, id: row.id };
     },
-    deleteItem(row) {},
+    deleteItem(row) {
+      this.$q
+        .dialog({
+          title: "Confirm",
+          message: "Are you sure you want to delete this faculty?",
+          cancel: true,
+          persistent: true,
+        })
+        .onOk(() => {
+          api.delete(`/categories/${row.id}`).then((res) => {
+            this.$q.notify({
+              message: "Faculty Deleted Successfully",
+              color: "negative",
+              icon: "check",
+            });
+            this.tableData = [];
+            this.setDataList();
+          });
+        });
+    },
     setDataList() {
       api.get("/categories/faculty?limit=0").then((res) => {
         res.data.data.map((item) => {
