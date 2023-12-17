@@ -317,7 +317,7 @@ export default {
 
         const {data, status, error} = await addQuestionBank({
           title: name.value,
-          code: 1234,
+          code: '',
           parent_id: parentId.value,
         });
 
