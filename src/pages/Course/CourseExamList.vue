@@ -9,7 +9,17 @@
           </div>
         </div>
         <div class="row">
-          <q-btn color="primary" label="Add Exam" icon="add" to="/exam/add" />
+          <q-btn
+            color="primary"
+            label="Add Exam"
+            icon="add"
+            @click="
+              this.$router.push({
+                path: '/exam/add',
+                query: { courseId: courseId },
+              })
+            "
+          />
         </div>
       </q-card-section>
     </q-card>

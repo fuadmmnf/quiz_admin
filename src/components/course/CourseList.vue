@@ -157,6 +157,23 @@
                     </q-btn>
                     <q-btn
                       color="primary"
+                      size="md"
+                      icon="fa-solid fa-question"
+                      round
+                      dense
+                      flat
+                      :to="`/course-questionbanks/${props.row.id}`"
+                    >
+                      <q-tooltip
+                        anchor="top middle"
+                        self="bottom middle"
+                        :offset="[10, 10]"
+                      >
+                        <strong class="">Course Questionbanks</strong>
+                      </q-tooltip>
+                    </q-btn>
+                    <q-btn
+                      color="primary"
                       size="sm"
                       icon="edit"
                       round
