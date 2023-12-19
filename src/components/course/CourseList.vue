@@ -387,7 +387,19 @@ export default defineComponent({
           persistent: true,
         })
         .onOk(() => {
-          console.log(">>>> OK", id);
+          api
+            .delete(`/courses/${id}`)
+            .then((res) => {
+              this.$q.notify({
+                message: "Course deleted successfully",
+                color: "positive",
+                icon: "check",
+              });
+              this.fetchCourses();
+            })
+            .catch((err) => {
+              console.log(err);
+            });
         })
         .onCancel(() => {
           console.log(">>>> Cancel");
