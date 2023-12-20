@@ -43,7 +43,7 @@
           >
             <div class="row q-col-gutter-md q-mt-sm">
               <!-- question type -->
-              <div class="col-3">
+              <div class="col-4">
                 <q-select
                   filled
                   v-model="searchData.type"
@@ -52,9 +52,11 @@
                   lazy-rules
                   map-options
                   emit-value
+                  clearable
+                  @clear="searchData.type = ''"
                 />
               </div>
-              <div class="col-3">
+              <div class="col-4">
                 <q-select
                   filled
                   v-model="searchData.category"
@@ -63,9 +65,11 @@
                   lazy-rules
                   map-options
                   emit-value
+                  clearable
+                  @clear="searchData.category = ''"
                 />
               </div>
-              <div class="col-3">
+              <div class="col-4">
                 <q-select
                   filled
                   v-model="searchData.subject"
@@ -74,17 +78,8 @@
                   lazy-rules
                   map-options
                   emit-value
-                />
-              </div>
-              <div class="col-3">
-                <q-select
-                  filled
-                  v-model="searchData.faculty"
-                  :options="facultyOptions"
-                  :label="`Faculty`"
-                  lazy-rules
-                  map-options
-                  emit-value
+                  clearable
+                  @clear="searchData.subject = ''"
                 />
               </div>
             </div>
@@ -124,13 +119,11 @@ export default {
       ],
       categoryOptions: [],
       subjectOptions: [],
-      facultyOptions: [],
       searchData: {
         keywords: "",
         type: "",
         category: "",
         subject: "",
-        faculty: "",
       },
     };
   },
@@ -143,8 +136,7 @@ export default {
         keywords: "",
         type: "",
         category: "",
-        subjects: "",
-        faculties: "",
+        subject: "",
       };
       this.$emit("search", this.searchData);
     },
@@ -160,12 +152,6 @@ export default {
       this.subjectOptions.push({
         label: subject.name,
         value: subject.id,
-      });
-    });
-    this.store.faculties.map((faculty) => {
-      this.facultyOptions.push({
-        label: faculty.name,
-        value: faculty.id,
       });
     });
   },
