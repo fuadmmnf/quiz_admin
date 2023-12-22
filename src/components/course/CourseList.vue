@@ -232,14 +232,17 @@ export default defineComponent({
     });
     const loading = ref(true);
     const searchData = ref({ keywords: "" });
-    const onSearch = (search) => {
-      console.log(search);
-    };
+
     const fetchCourses = (page = 1) => {
+      console.log(searchData.value);
       loading.value = true;
       api
         .get(
-          `/courses?search=status:${props.courseType}&orderBy=id&sortedBy=desc&page=${page}`
+          `/courses?search=status:${props.courseType}${
+            searchData.value.keywords.length
+              ? ";title:" + searchData.value.keywords
+              : ""
+          }&orderBy=id&sortedBy=desc&page=${page}`
         )
         .then((response) => {
           console.log(`${props.courseType} courses`, response.data);
@@ -267,7 +270,6 @@ export default defineComponent({
       loading,
       fetchCourses,
       onRequest,
-      onSearch,
       courses,
       $q,
       searchData,
@@ -404,6 +406,10 @@ export default defineComponent({
         .onCancel(() => {
           console.log(">>>> Cancel");
         });
+    },
+    onSearch(search) {
+      this.searchData.keywords = search.keywords;
+      this.fetchCourses();
     },
   },
 

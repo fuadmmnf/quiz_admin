@@ -190,65 +190,6 @@ export default defineComponent({
         .catch((error) => {
           console.log(error);
         });
-      // if (
-      //   searchData.value.keywords != "" ||
-      //   searchData.value.type != "" ||
-      //   searchData.value.category != "" ||
-      //   searchData.value.subject != ""
-      // ) {
-      //   api
-      //     .get(
-      //       "/questions?include=category,subject&searchJoin=and&search=type:" +
-      //         searchData.value.type +
-      //         ";content:" +
-      //         searchData.value.keywords +
-      //         ";category_id:" +
-      //         searchData.value.category +
-      //         ";subject_id:" +
-      //         searchData.value.subject +
-      //         "&page=" +
-      //         page +
-      //         "&orderBy=id&sortedBy=desc&limit=50"
-      //     )
-      //     .then((response) => {
-      //       questions.value = response.data.data;
-      //       const meta = response.data.meta.pagination;
-      //       console.log(meta.current_page);
-      //       pagination.value = {
-      //         page: meta.current_page,
-      //         rowsPerPage: meta.per_page,
-      //         rowsNumber: meta.total,
-      //       };
-      //     })
-      //     .finally(() => {
-      //       loading.value = false;
-      //     })
-      //     .catch((error) => {
-      //       console.log(error);
-      //     });
-      // } else {
-      //   api
-      //     .get(
-      //       "/questions?include=category,subject&orderBy=id&sortedBy=desc&limit=50&page=" +
-      //         page
-      //     )
-      //     .then((response) => {
-      //       questions.value = response.data.data;
-      //       const meta = response.data.meta.pagination;
-      //       console.log(meta.current_page);
-      //       pagination.value = {
-      //         page: meta.current_page,
-      //         rowsPerPage: meta.per_page,
-      //         rowsNumber: meta.total,
-      //       };
-      //     })
-      //     .finally(() => {
-      //       loading.value = false;
-      //     })
-      //     .catch((error) => {
-      //       console.log(error);
-      //     });
-      // }
     };
     const loading = ref(true);
 
