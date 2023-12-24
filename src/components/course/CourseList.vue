@@ -42,12 +42,6 @@
                   <q-td key="num_exams" :props="props">
                     {{ props.row.num_exams }}
                   </q-td>
-                  <q-td key="start_date" :props="props">
-                    {{ props.row.start_date }}
-                  </q-td>
-                  <q-td key="end_date" :props="props">
-                    {{ props.row.end_date }}
-                  </q-td>
 
                   <q-td key="action" :props="props">
                     <q-btn
@@ -299,20 +293,6 @@ export default defineComponent({
           name: "num_exams",
           label: "Number of Exams",
           field: "num_exams",
-          align: "left",
-          sortable: true,
-        },
-        {
-          name: "start_date",
-          label: "Start Date",
-          field: "start_date",
-          align: "left",
-          sortable: true,
-        },
-        {
-          name: "end_date",
-          label: "End Date",
-          field: "end_date",
           align: "left",
           sortable: true,
         },
