@@ -282,13 +282,13 @@ export default {
     };
 
     const transformData = (data) => {
-      return data.map(item => ({
+      return data === undefined ? [] : data.map(item => ({
         id: item.id,
         label: item.title,
         description: item.status,
         code: item.code ? item.code : 'null',
         subject: item.subject ? item.subject.data.name : 'null',
-        children: transformData(item.children.data),
+        children: (item.children.data === undefined ? [] : transformData(item.children.data)),
         parentId: item.parent_id,
       }));
     };
