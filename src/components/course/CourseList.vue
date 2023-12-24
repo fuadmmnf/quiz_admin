@@ -156,7 +156,12 @@
                       round
                       dense
                       flat
-                      :to="`/course-questionbanks/${props.row.id}`"
+                      @click="
+                        this.$router.push({
+                          path: '/questionbanks',
+                          query: { courseId: props.row.id },
+                        })
+                      "
                     >
                       <q-tooltip
                         anchor="top middle"

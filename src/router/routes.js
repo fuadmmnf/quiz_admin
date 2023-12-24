@@ -36,6 +36,10 @@ const routes = [
         path: "/questionbanks/published",
         component: () => import("pages/QuestionBank/publishedBank.vue"),
       },
+      {
+        path: "/questionbanks",
+        component: () => import("pages/QuestionBank/AllBank.vue"),
+      },
       // {
       //   path: "/questionbanks",
       //   component: () => import("pages/QuestionBank/index.vue"),

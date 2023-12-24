@@ -37,7 +37,12 @@
               color="primary"
               label="Add Question Bank"
               icon="add"
-              to="/questionbanks/add"
+              @click="
+                this.$router.push({
+                  path: '/questionbanks/add',
+                  query: { courseId: this.$route.query.courseId },
+                })
+              "
             />
           </div>
           <code-tabs :tagParts="tagParts"></code-tabs>
@@ -215,6 +220,7 @@
 
 <script>
 import { onMounted, ref, toRefs, watch } from "vue";
+
 import {
   addQuestionBank,
   editQuestionBank,
@@ -222,7 +228,7 @@ import {
   updateQuestionBankStatus,
   deleteQuestionBank,
 } from "src/services/questionBank_services";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { useQuasar } from "quasar";
 
 export default {
@@ -286,6 +292,7 @@ export default {
     const showAddEditDialog = ref(false);
     const parentOptions = ref([]);
     const router = useRouter();
+    const route = useRoute();
 
     const { statusApi } = toRefs(props);
 
@@ -388,7 +395,7 @@ export default {
         description: item.status,
         code: item.code ? item.code : "null",
         subject: item.subject ? item.subject.data.name : "null",
-        children: transformData(item.children.data),
+        children: item.children ? transformData(item.children.data) : [],
         parentId: item.parent_id,
       }));
     };
@@ -440,10 +447,14 @@ export default {
         sortedBy: "desc",
         search: statusApi.value,
         searchJoin: "and",
-        include: "subject,category",
+        include: "subject,category,children",
         limit: 50,
         page: newPage,
       };
+
+      if (statusApi.value === "status:all" && route.query.courseId) {
+        params.search = `course_id:${route.query.courseId}`;
+      }
 
       const {
         data: responseData,
