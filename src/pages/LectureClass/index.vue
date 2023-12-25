@@ -90,7 +90,7 @@ import { defineComponent, defineAsyncComponent, ref, computed } from "vue";
 import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 import { useQuasar } from "quasar";
-import {getLectureClasses} from "src/services/course_services";
+import { getLectureClasses } from "src/services/course_services";
 
 export default defineComponent({
   name: "LectureClasses",
@@ -224,7 +224,19 @@ export default defineComponent({
           persistent: true,
         })
         .onOk(() => {
-          console.log(">>>> OK", id);
+          api
+            .delete(`/class-lectures/${id}`)
+            .then((res) => {
+              this.$q.notify({
+                message: "Lecture class deleted successfully",
+                color: "positive",
+                icon: "check",
+              });
+              this.fetchLectureClasses();
+            })
+            .catch((err) => {
+              console.log(err);
+            });
         })
         .onCancel(() => {
           console.log(">>>> Cancel");

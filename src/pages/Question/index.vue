@@ -17,7 +17,7 @@
       </q-card-section>
     </q-card>
 
-    <q-separator spaced/>
+    <q-separator spaced />
     <q-expansion-item
       expand-separator
       icon="search"
@@ -26,7 +26,7 @@
     >
       <search-questions @search="onSearch"></search-questions>
     </q-expansion-item>
-    <q-separator spaced/>
+    <q-separator spaced />
 
     <div class="q-pa-none">
       <div class="row q-col-gutter-md">
@@ -57,19 +57,29 @@
                     <!--                          : props.row.content-->
                     <!--                      }}-->
                     <!--                    </q-td>-->
-                    <q-td key="content" :props="props" v-html="props.row.content">
+                    <q-td
+                      key="content"
+                      :props="props"
+                      v-html="props.row.content"
+                    >
                     </q-td>
                     <q-td key="type" :props="props">
                       {{ props.row.type }}
                     </q-td>
                     <q-td key="subject" :props="props">
                       {{
-                        (props.row.subject === null || props.row.subject === undefined) ? "" : props.row.subject.data.name
+                        props.row.subject === null ||
+                        props.row.subject === undefined
+                          ? ""
+                          : props.row.subject.data.name
                       }}
                     </q-td>
                     <q-td key="category" :props="props">
                       {{
-                        (props.row.category === null || props.row.category === undefined) ? "" : props.row.category.data.name
+                        props.row.category === null ||
+                        props.row.category === undefined
+                          ? ""
+                          : props.row.category.data.name
                       }}
                     </q-td>
                     <q-td key="score" :props="props">
@@ -111,16 +121,16 @@
 </template>
 
 <script>
-import {defineComponent, defineAsyncComponent, ref, computed} from "vue";
-import {useStore} from "src/stores/store";
-import {api} from "boot/axios";
-import {useQuasar} from "quasar";
+import { defineComponent, defineAsyncComponent, ref, computed } from "vue";
+import { useStore } from "src/stores/store";
+import { api } from "boot/axios";
+import { useQuasar } from "quasar";
 import SearchQuestions from "components/question/SearchQuestions.vue";
 
 export default defineComponent({
   name: "Question",
   setup() {
-    const {$q} = useQuasar();
+    const { $q } = useQuasar();
     const store = useStore();
     const questions = ref([]);
     const pagination = ref({
@@ -128,56 +138,58 @@ export default defineComponent({
       rowsPerPage: 10,
       rowsNumber: 0,
     });
-    const searchData = ref({type: "", keywords: ""});
+    const searchData = ref({
+      type: "",
+      keywords: "",
+      category: "",
+      subject: "",
+    });
     const fetchQuestions = (page = 1) => {
       loading.value = true;
-      if (searchData.value.keywords != "" || searchData.value.type != "") {
-        api
-          .get(
-            "/questions?include=category,subject&searchJoin=and&search=type:" +
-            searchData.value.type +
-            ";content:" +
-            searchData.value.keywords +
-            "&page=" +
-            page +
-            "&orderBy=id&sortedBy=desc&limit=50"
-          )
-          .then((response) => {
-            questions.value = response.data.data;
-            const meta = response.data.meta.pagination;
-            console.log(meta.current_page);
-            pagination.value = {
-              page: meta.current_page,
-              rowsPerPage: meta.per_page,
-              rowsNumber: meta.total,
-            };
-          })
-          .finally(() => {
-            loading.value = false;
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      } else {
-        api
-          .get("/questions?include=category,subject&orderBy=id&sortedBy=desc&limit=50&page=" + page)
-          .then((response) => {
-            questions.value = response.data.data;
-            const meta = response.data.meta.pagination;
-            console.log(meta.current_page);
-            pagination.value = {
-              page: meta.current_page,
-              rowsPerPage: meta.per_page,
-              rowsNumber: meta.total,
-            };
-          })
-          .finally(() => {
-            loading.value = false;
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }
+      // "/questions?include=category,subject&searchJoin=and&search=type:" +
+      //         searchData.value.type.length ? searchData.value.type  +
+      //         ";content:" +
+      //         searchData.value.keywords +
+      //         searchData.value.category.length === 0 ? ";category_id:" + searchData.value.category : "" +
+      //         searchData.value.subject.length === 0 ? ";subject_id:" + searchData.value.subject : ""+
+      //         "&page=" +
+      //         page +
+      //         "&orderBy=id&sortedBy=desc&limit=50"
+      console.log(searchData.value);
+      api
+        .get(
+          `/questions?include=category,subject&searchJoin=and&search=${
+            searchData.value.type.length ? "type:" + searchData.value.type : ""
+          }${
+            searchData.value.keywords.length
+              ? ";content:" + searchData.value.keywords
+              : ""
+          }${
+            searchData.value.category && searchData.value.category.length
+              ? ";category_id:" + searchData.value.category
+              : ""
+          }${
+            searchData.value.subject && searchData.value.subject.length
+              ? ";subject_id:" + searchData.value.subject
+              : ""
+          }&page=${page}"&orderBy=id&sortedBy=desc&limit=50`
+        )
+        .then((response) => {
+          questions.value = response.data.data;
+          const meta = response.data.meta.pagination;
+          console.log(meta.current_page);
+          pagination.value = {
+            page: meta.current_page,
+            rowsPerPage: meta.per_page,
+            rowsNumber: meta.total,
+          };
+        })
+        .finally(() => {
+          loading.value = false;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     };
     const loading = ref(true);
 
@@ -263,7 +275,7 @@ export default defineComponent({
   },
   methods: {
     onEdit() {
-      this.$router.push({name: "question-edit"});
+      this.$router.push({ name: "question-edit" });
     },
     onDelete(row) {
       this.$q
@@ -285,7 +297,11 @@ export default defineComponent({
         });
     },
     onSearch(search) {
-      this.searchData = search;
+      this.searchData.type = search.type;
+      this.searchData.keywords = search.keywords;
+      this.searchData.category = search.category;
+      this.searchData.subject = search.subject;
+
       console.log(this.searchData);
       this.fetchQuestions();
     },

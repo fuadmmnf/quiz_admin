@@ -9,7 +9,17 @@
           </div>
         </div>
         <div class="row">
-          <q-btn color="primary" label="Add Exam" icon="add" to="/exam/add" />
+          <q-btn
+            color="primary"
+            label="Add Exam"
+            icon="add"
+            @click="
+              this.$router.push({
+                path: '/exam/add',
+                query: { courseId: courseId },
+              })
+            "
+          />
         </div>
       </q-card-section>
     </q-card>
@@ -196,6 +206,7 @@
                         round
                         dense
                         flat
+                        @click="onDelete(props.row.id)"
                       >
                         <q-tooltip
                           anchor="top middle"
@@ -360,6 +371,35 @@ export default {
     };
   },
   methods: {
+    onDelete(id) {
+      this.$q
+        .dialog({
+          title: "Confirm",
+          message: "Would you like to delete this exam?",
+          cancel: true,
+          persistent: true,
+        })
+        .onOk(() => {
+          api
+            .delete(`/exams/${id}`, {
+              status: "completed",
+            })
+            .then((res) => {
+              this.$q.notify({
+                message: "Exam deleted successfully",
+                color: "positive",
+                icon: "check",
+              });
+              this.fetchExams();
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        })
+        .onCancel(() => {
+          console.log(">>>> Cancel");
+        });
+    },
     moveToDraft(id) {
       api
         .patch(`/exams/${id}/status`, {

@@ -89,7 +89,23 @@
                     </q-td>
 
                     <q-td key="action" :props="props">
-                      N/A
+                      <q-btn
+                        color="negative"
+                        size="md"
+                        icon="delete"
+                        round
+                        dense
+                        flat
+                        @click="onDelete(props.row.id)"
+                      >
+                        <q-tooltip
+                          anchor="top middle"
+                          self="bottom middle"
+                          :offset="[10, 10]"
+                        >
+                          <strong class="">Delete</strong>
+                        </q-tooltip>
+                      </q-btn>
                       <!-- <q-btn
                         color="green"
                         size="sm"
@@ -265,6 +281,33 @@ export default defineComponent({
   },
 
   methods: {
+    onDelete(id) {
+      this.$q
+        .dialog({
+          title: "Confirm",
+          message: "Would you like to delete?",
+          cancel: true,
+          persistent: true,
+        })
+        .onOk(() => {
+          api
+            .delete(`/course-users/${id}`)
+            .then((res) => {
+              this.$q.notify({
+                message: "User deleted successfully",
+                color: "positive",
+                icon: "check",
+              });
+              this.fetchUsers();
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        })
+        .onCancel(() => {
+          console.log(">>>> Cancel");
+        });
+    },
     enrollStudent() {
       const data = {
         course_id: this.courseId,
@@ -276,7 +319,7 @@ export default defineComponent({
         .then((response) => {
           console.log(response);
           this.$q.notify({
-            message: "Course Added Successfully",
+            message: "Student Enrolled Successfully",
             color: "positive",
             icon: "check",
           });
@@ -284,7 +327,9 @@ export default defineComponent({
         .catch((err) => {
           console.log(err);
         })
-        .finally(() => {});
+        .finally(() => {
+          this.fetchUsers();
+        });
     },
     onSubscribe(id) {
       this.$q
