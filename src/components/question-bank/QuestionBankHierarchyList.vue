@@ -288,7 +288,7 @@ export default {
         description: item.status,
         code: item.code ? item.code : 'null',
         subject: item.subject ? item.subject.data.name : 'null',
-        children: (item.children.data === undefined ? [] : transformData(item.children.data)),
+        children: (item.children === undefined || item.children.data === undefined ? [] : transformData(item.children.data)),
         parentId: item.parent_id,
       }));
     };
