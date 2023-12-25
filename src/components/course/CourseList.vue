@@ -241,7 +241,7 @@ export default defineComponent({
             searchData.value.keywords.length
               ? ";title:" + searchData.value.keywords
               : ""
-          }&orderBy=id&sortedBy=desc&page=${page}`
+          }&searchJoin=and&orderBy=id&sortedBy=desc&page=${page}`
         )
         .then((response) => {
           console.log(`${props.courseType} courses`, response.data);
