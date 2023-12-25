@@ -72,11 +72,13 @@
                     </div>
                     <div class="row q-col-gutter-md">
                       <div class="col-6">
-                        <q-input
+                        <q-select
                           filled
-                          v-model="lectureData.subject"
-                          :label="`Subject `"
-                          :rules="[(val) => !!val || 'Subject is required']"
+                          v-model="lectureData.subject_id"
+                          :label="`Subject`"
+                          :options="subjectOptions"
+                          emit-value
+                          map-options
                         />
                       </div>
                       <div class="col-6">
@@ -164,7 +166,10 @@ import { ref } from "vue";
 import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 import { useQuasar } from "quasar";
-import {createLectureClass, editLectureClass} from "src/services/course_services";
+import {
+  createLectureClass,
+  editLectureClass,
+} from "src/services/course_services";
 
 export default defineComponent({
   name: "Add Lecture",
@@ -193,11 +198,11 @@ export default defineComponent({
       lectureData: {
         title: "",
         description: "",
-        subject: "",
+        subject_id: "",
         start_date: "",
         zoom_link: "",
-
       },
+      subjectOptions: [],
     };
   },
   methods: {
@@ -206,7 +211,6 @@ export default defineComponent({
       console.log(this.courseId);
       console.log(this.lectureData);
       if (this.$route.params.id) {
-
         // const lectureId = this.$route.params.id;
         // const { data, status, error } = await editLectureClass(lectureId, {
         //   subject_id: this.courseData.subject_id,
@@ -255,26 +259,25 @@ export default defineComponent({
             this.onReset();
           });
       } else {
-
-        const {data, status, error} = await createLectureClass({
+        const { data, status, error } = await createLectureClass({
           course_id: this.courseId,
           title: this.lectureData.title,
           description: this.lectureData.description,
           link: this.lectureData.zoom_link,
           start_time: this.lectureData.start_date,
+          subject_id: this.lectureData.subject_id,
         });
 
-        if(status === 201){
+        if (status === 201) {
           this.$q.notify({
             message: "Lecture class Added Successfully",
             color: "positive",
             icon: "check",
           });
           this.onReset();
-        }else{
+        } else {
           console.error(error);
         }
-
       }
     },
     onReset() {
@@ -282,7 +285,7 @@ export default defineComponent({
       this.lectureData = {
         title: "",
         description: "",
-        subject: "",
+        subject_id: "",
         start_date: "",
         zoom_link: "",
       };
@@ -293,8 +296,19 @@ export default defineComponent({
     onDescriptionChange(value, index, parentIndex) {
       this.lectureData.description = value;
     },
+    getSubjects() {
+      api.get("/categories/subject").then((response) => {
+        response.data.data.map((category) => {
+          this.subjectOptions.push({
+            label: category.name,
+            value: category.id,
+          });
+        });
+      });
+    },
   },
   mounted() {
+    this.getSubjects();
     this.courseId = this.$route.params.courseId;
     if (this.$route.params.id) {
       //   api

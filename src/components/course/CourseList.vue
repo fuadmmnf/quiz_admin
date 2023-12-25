@@ -42,12 +42,6 @@
                   <q-td key="num_exams" :props="props">
                     {{ props.row.num_exams }}
                   </q-td>
-                  <q-td key="start_date" :props="props">
-                    {{ props.row.start_date }}
-                  </q-td>
-                  <q-td key="end_date" :props="props">
-                    {{ props.row.end_date }}
-                  </q-td>
 
                   <q-td key="action" :props="props">
                     <q-btn
@@ -157,6 +151,28 @@
                     </q-btn>
                     <q-btn
                       color="primary"
+                      size="md"
+                      icon="fa-solid fa-question"
+                      round
+                      dense
+                      flat
+                      @click="
+                        this.$router.push({
+                          path: '/questionbanks',
+                          query: { courseId: props.row.id },
+                        })
+                      "
+                    >
+                      <q-tooltip
+                        anchor="top middle"
+                        self="bottom middle"
+                        :offset="[10, 10]"
+                      >
+                        <strong class="">Course Questionbanks</strong>
+                      </q-tooltip>
+                    </q-btn>
+                    <q-btn
+                      color="primary"
                       size="sm"
                       icon="edit"
                       round
@@ -215,14 +231,17 @@ export default defineComponent({
     });
     const loading = ref(true);
     const searchData = ref({ keywords: "" });
-    const onSearch = (search) => {
-      console.log(search);
-    };
+
     const fetchCourses = (page = 1) => {
+      console.log(searchData.value);
       loading.value = true;
       api
         .get(
-          `/courses?search=status:${props.courseType}&orderBy=id&sortedBy=desc&page=${page}`
+          `/courses?search=status:${props.courseType}${
+            searchData.value.keywords.length
+              ? ";title:" + searchData.value.keywords
+              : ""
+          }&searchJoin=and&orderBy=id&sortedBy=desc&page=${page}`
         )
         .then((response) => {
           console.log(`${props.courseType} courses`, response.data);
@@ -250,7 +269,6 @@ export default defineComponent({
       loading,
       fetchCourses,
       onRequest,
-      onSearch,
       courses,
       $q,
       searchData,
@@ -280,20 +298,6 @@ export default defineComponent({
           name: "num_exams",
           label: "Number of Exams",
           field: "num_exams",
-          align: "left",
-          sortable: true,
-        },
-        {
-          name: "start_date",
-          label: "Start Date",
-          field: "start_date",
-          align: "left",
-          sortable: true,
-        },
-        {
-          name: "end_date",
-          label: "End Date",
-          field: "end_date",
           align: "left",
           sortable: true,
         },
@@ -370,11 +374,27 @@ export default defineComponent({
           persistent: true,
         })
         .onOk(() => {
-          console.log(">>>> OK", id);
+          api
+            .delete(`/courses/${id}`)
+            .then((res) => {
+              this.$q.notify({
+                message: "Course deleted successfully",
+                color: "positive",
+                icon: "check",
+              });
+              this.fetchCourses();
+            })
+            .catch((err) => {
+              console.log(err);
+            });
         })
         .onCancel(() => {
           console.log(">>>> Cancel");
         });
+    },
+    onSearch(search) {
+      this.searchData.keywords = search.keywords;
+      this.fetchCourses();
     },
   },
 

@@ -245,6 +245,9 @@ export default defineComponent({
     this.getSubjects();
     this.getCategories();
     this.getCourses();
+    if (this.$route.query.courseId) {
+      this.questionBankData.course_id = this.$route.query.courseId;
+    }
     if (this.$route.params.id) {
       api.get("/questionbanks/" + this.$route.params.id).then((response) => {
         const result = response.data.data;
