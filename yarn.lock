@@ -912,11 +912,6 @@ end-of-stream@^1.4.1:
   dependencies:
     once "^1.4.0"
 
-esbuild-windows-32@0.14.51:
-  version "0.14.51"
-  resolved "https://registry.npmjs.org/esbuild-windows-32/-/esbuild-windows-32-0.14.51.tgz"
-  integrity sha512-4rtwSAM35A07CBt1/X8RWieDj3ZUHQqUOaEo5ZBs69rt5WAFjP4aqCIobdqOy4FdhYw1yF8Z0xFBTyc9lgPtEg==
-
 esbuild-windows-64@0.14.51:
   version "0.14.51"
   resolved "https://registry.npmjs.org/esbuild-windows-64/-/esbuild-windows-64-0.14.51.tgz"

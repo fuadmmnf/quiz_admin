@@ -18,10 +18,10 @@
 </template>
 
 <script>
-import { defineComponent } from "vue";
+
 import { useStore } from "src/stores/store";
-import { api } from "boot/axios";
 import ExamList from "src/components/exam/ExamList.vue";
+import {getExams} from "src/services/exam_services";
 
 export default {
   name: "Checking",
@@ -32,15 +32,11 @@ export default {
     const store = useStore();
     return { store };
   },
-  mounted() {
-    api
-      .get(
-        "/exams?include=subject&search=status:checking&orderBy=id&sortedBy=desc"
-      )
-      .then((response) => {
-        this.exams = response.data.data;
-      });
+
+  mounted(){
+    this.fetchExams();
   },
+
   data() {
     return {
       exams: [],
@@ -85,6 +81,26 @@ export default {
       ],
     };
   },
+
+  methods:{
+     async fetchExams() {
+       const param = {
+         include: 'subject',
+         search: 'status:checking',
+         orderBy: 'id',
+         sortedBy: 'desc',
+       };
+
+       const {data, status, error} = await getExams(param);
+
+       if (status === 200) {
+         console.log(data);
+         this.exams = data.data;
+       } else {
+         console.error(error.message);
+       }
+     }
+  }
 };
 </script>
 

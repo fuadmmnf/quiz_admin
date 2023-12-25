@@ -43,8 +43,26 @@
                     <q-item-label>Custom Users</q-item-label>
                   </q-item-section>
                 </q-item>
+
+                <q-item tag="label" v-ripple>
+                  <q-item-section avatar>
+                    <q-radio v-model="receiverOption" val="examWise" color="teal" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Exam Wise</q-item-label>
+                  </q-item-section>
+                </q-item>
+
+                <q-item tag="label" v-ripple>
+                  <q-item-section avatar>
+                    <q-radio v-model="receiverOption" val="courseWise" color="teal" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Course Wise</q-item-label>
+                  </q-item-section>
+                </q-item>
               </q-list>
-              <div v-if="receiverOption == 'custom'">
+              <div v-if="receiverOption === 'custom'">
                 <q-select
                   filled
                   v-model="modelMultiple"
@@ -74,57 +92,95 @@
           </q-card>
         </div>
         <div class="col-6">
-          <q-card class="no-shadow" bordered>
-            <q-card-section class="row items-center justify-between">
-              <div class="text-h6">Template Configuration</div>
-            </q-card-section>
-            <q-card-section>
-              <q-select
-                filled
-                v-model="model"
-                use-input
-                input-debounce="0"
-                label="Select template"
-                :options="templatesOptions"
-                @filter="filterTemplateFn"
-                behavior="menu"
-              >
-                <template v-slot:no-option>
-                  <q-item>
-                    <q-item-section class="text-grey">
-                      No results
-                    </q-item-section>
-                  </q-item>
-                </template>
-              </q-select>
-            </q-card-section>
-            <q-card-section v-if="model">
-              <div class="text-subtitle2 q-mb-md">
-                SMS template : {{ model }}
-              </div>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Esse,
-              quia atque recusandae inventore totam ut perferendis, sit ipsam
-              nisi aut accusantium tempora, reprehenderit consequuntur animi
-              excepturi quo voluptatem. In, voluptatem?
 
-              <q-separator class="q-my-md" />
-              <div class="row">
-                <q-btn
-                  color="primary"
-                  label="Send"
-                  icon="send"
-                  @click="onSend()"
-                />
-                <q-btn
-                  label="Clear"
-                  color="primary"
-                  class="q-ml-sm"
-                  @click="model = null"
-                />
-              </div>
-            </q-card-section>
+         <q-card class="no-shadow" bordered>
+           <q-card-section class="">
+             <div class="text-h6">Message Content</div>
+             <q-list class="row q-mt-md">
+               <q-item tag="label" v-ripple>
+                 <q-item-section avatar>
+                   <q-radio  val="push" />
+                 </q-item-section>
+                 <q-item-section>
+                   <q-item-label>Push Notification</q-item-label>
+                 </q-item-section>
+               </q-item>
 
-          </q-card>
+               <q-item tag="label" v-ripple>
+                 <q-item-section avatar>
+                   <q-radio
+                     val="custom"
+                   />
+                 </q-item-section>
+                 <q-item-section>
+                   <q-item-label>Custom Message</q-item-label>
+                 </q-item-section>
+               </q-item>
+             </q-list>
+           </q-card-section>
+           <q-card-section>
+             <q-input
+               filled
+
+               type="textarea"
+               label="Write your message here"
+               rows="4"
+
+             />
+           </q-card-section>
+         </q-card>
+
+<!--          <q-card class="no-shadow" bordered>-->
+<!--            <q-card-section class="row items-center justify-between">-->
+<!--              <div class="text-h6">Template Configuration</div>-->
+<!--            </q-card-section>-->
+<!--            <q-card-section>-->
+<!--              <q-select-->
+<!--                filled-->
+<!--                v-model="model"-->
+<!--                use-input-->
+<!--                input-debounce="0"-->
+<!--                label="Select template"-->
+<!--                :options="templatesOptions"-->
+<!--                @filter="filterTemplateFn"-->
+<!--                behavior="menu"-->
+<!--              >-->
+<!--                <template v-slot:no-option>-->
+<!--                  <q-item>-->
+<!--                    <q-item-section class="text-grey">-->
+<!--                      No results-->
+<!--                    </q-item-section>-->
+<!--                  </q-item>-->
+<!--                </template>-->
+<!--              </q-select>-->
+<!--            </q-card-section>-->
+<!--            <q-card-section v-if="model">-->
+<!--              <div class="text-subtitle2 q-mb-md">-->
+<!--                SMS template : {{ model }}-->
+<!--              </div>-->
+<!--              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Esse,-->
+<!--              quia atque recusandae inventore totam ut perferendis, sit ipsam-->
+<!--              nisi aut accusantium tempora, reprehenderit consequuntur animi-->
+<!--              excepturi quo voluptatem. In, voluptatem?-->
+
+<!--              <q-separator class="q-my-md" />-->
+<!--              <div class="row">-->
+<!--                <q-btn-->
+<!--                  color="primary"-->
+<!--                  label="Send"-->
+<!--                  icon="send"-->
+<!--                  @click="onSend()"-->
+<!--                />-->
+<!--                <q-btn-->
+<!--                  label="Clear"-->
+<!--                  color="primary"-->
+<!--                  class="q-ml-sm"-->
+<!--                  @click="model = null"-->
+<!--                />-->
+<!--              </div>-->
+<!--            </q-card-section>-->
+
+<!--          </q-card>-->
         </div>
       </div>
     </div>

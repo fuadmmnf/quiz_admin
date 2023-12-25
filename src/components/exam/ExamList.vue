@@ -40,17 +40,26 @@
                   </q-td>
                   <q-td key="category" :props="props">
                     {{
-                      (props.row.category === null || props.row.category === undefined) ? "" : props.row.category.data.name
+                      props.row.category === null ||
+                      props.row.category === undefined
+                        ? ""
+                        : props.row.category.data.name
                     }}
                   </q-td>
                   <q-td key="subject" :props="props">
                     {{
-                      (props.row.subject === null || props.row.subject === undefined) ? "" : props.row.subject.data.name
+                      props.row.subject === null ||
+                      props.row.subject === undefined
+                        ? ""
+                        : props.row.subject.data.name
                     }}
                   </q-td>
                   <q-td key="faculty" :props="props">
                     {{
-                      (props.row.faculty === null || props.row.faculty === undefined) ? "" : props.row.faculty.data.name
+                      props.row.faculty === null ||
+                      props.row.faculty === undefined
+                        ? ""
+                        : props.row.faculty.data.name
                     }}
                   </q-td>
                   <q-td key="visibility_start_time" :props="props">
@@ -64,7 +73,10 @@
                   </q-td>
                   <q-td key="course" :props="props">
                     {{
-                      (props.row.course === null || props.row.course === undefined) ? "" : props.row.course.data.name
+                      props.row.course === null ||
+                      props.row.course === undefined
+                        ? ""
+                        : props.row.course.data.title
                     }}
                   </q-td>
                   <q-td key="actions" :props="props">
@@ -132,6 +144,7 @@
                       dense
                       flat
                       :to="`/Exam/${props.row.id}`"
+                      v-if="examType==='draft'"
                     >
                       <q-tooltip
                         anchor="top middle"
@@ -202,6 +215,7 @@
                       round
                       dense
                       flat
+                      @click="onDelete(props.row.id)"
                     >
                       <q-tooltip
                         anchor="top middle"
@@ -270,6 +284,18 @@ export default {
           }${
             filter.value.keywords.length
               ? ";title:" + filter.value.keywords
+              : ""
+          }${
+            filter.value.faculty && filter.value.faculty.length
+              ? ";faculty_id:" + filter.value.faculty
+              : ""
+          }${
+            filter.value.subject && filter.value.subject.length
+              ? ";subject_id:" + filter.value.subject
+              : ""
+          }${
+            filter.value.category && filter.value.category.length
+              ? ";category_id:" + filter.value.category
               : ""
           }&orderBy=id&sortedBy=desc&page=${page}`
         )
@@ -376,13 +402,7 @@ export default {
           field: (row) => row.course,
           // sortable: true,
         },
-        {
-          name: "course",
-          align: "left",
-          label: "Course",
-          field: (row) => row.id,
-          sortable: true,
-        },
+
         {
           name: "actions",
           label: "Actions",
@@ -444,6 +464,35 @@ export default {
         })
         .catch((err) => {
           console.log(err);
+        });
+    },
+    onDelete(id) {
+      this.$q
+        .dialog({
+          title: "Confirm",
+          message: "Would you like to delete this exam?",
+          cancel: true,
+          persistent: true,
+        })
+        .onOk(() => {
+          api
+            .delete(`/exams/${id}`, {
+              status: "completed",
+            })
+            .then((res) => {
+              this.$q.notify({
+                message: "Exam deleted successfully",
+                color: "positive",
+                icon: "check",
+              });
+              this.fetchExams();
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        })
+        .onCancel(() => {
+          console.log(">>>> Cancel");
         });
     },
     recalculateMarks(exam_id) {

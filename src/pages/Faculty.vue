@@ -25,7 +25,9 @@
         <div class="col-5">
           <q-card>
             <q-card-section>
-              <div class="text-h6 text-indigo-8">Add/Edit Faculty</div>
+              <div class="text-h6 text-indigo-8">
+                {{ isEditing ? "Edit" : "Add" }} Faculty
+              </div>
 
               <q-form
                 @submit="onSubmit"
@@ -96,6 +98,8 @@ export default defineComponent({
       tableData: [],
       selectedParentCategory: ref(null),
       parentCategoryOptions: [],
+
+      isEditing: ref(null),
     };
   },
   components: {
@@ -116,37 +120,81 @@ export default defineComponent({
       if (this.selectedParentCategory != null) {
         categoryType = "discipline";
       }
-      api
-        .post("/categories", {
-          name: this.name,
-          parent_id: this.selectedParentCategory,
-          type: categoryType,
-        })
-        .then((res) => {
-          this.$q.notify({
-            message: "Category Added Successfully",
-            color: "positive",
-            icon: "check",
+      if (this.isEditing) {
+        api
+          .patch(`/categories/${this.isEditing.id}`, {
+            name: this.name,
+            type: categoryType,
+            parent_id: this.selectedParentCategory,
+          })
+          .then((res) => {
+            this.$q.notify({
+              message: "Faculty Updated Successfully",
+              color: "positive",
+              icon: "check",
+            });
+            this.name = "";
+            this.tableData = [];
+            this.setDataList();
+            this.isEditing = null;
           });
-          this.name = "";
-          this.tableData = [];
-          this.setDataList();
-        });
+      } else {
+        api
+          .post("/categories", {
+            name: this.name,
+            parent_id: this.selectedParentCategory,
+            type: categoryType,
+          })
+          .then((res) => {
+            this.$q.notify({
+              message: "Faculty  Added Successfully",
+              color: "positive",
+              icon: "check",
+            });
+            this.name = "";
+            this.tableData = [];
+            this.setDataList();
+          });
+      }
     },
     onReset(evt) {
-      console.log("@reset - do something here", evt);
+      this.name = "";
+      this.selectedParentCategory = null;
+      this.isEditing = null;
     },
-    editItem(item) {
-      this.name = item.name;
-      this.selectedParentCategory = item.parent_id;
+    editItem(row) {
+      console.log("fffrow", row);
+      this.name = row.name;
+      this.selectedParentCategory = row.parent_id !== "" ? row.parent_id : null;
+      this.isEditing = { status: true, id: row.id };
     },
-    deleteItem(row) {},
+    deleteItem(row) {
+      this.$q
+        .dialog({
+          title: "Confirm",
+          message: "Are you sure you want to delete this faculty?",
+          cancel: true,
+          persistent: true,
+        })
+        .onOk(() => {
+          api.delete(`/categories/${row.id}`).then((res) => {
+            this.$q.notify({
+              message: "Faculty Deleted Successfully",
+              color: "negative",
+              icon: "check",
+            });
+            this.tableData = [];
+            this.setDataList();
+          });
+        });
+    },
     setDataList() {
       api.get("/categories/faculty?limit=0").then((res) => {
         res.data.data.map((item) => {
           this.tableData.push({
             name: item.name,
             id: item.id,
+            parent_id: item.parent_id,
             children: [],
           });
         });
@@ -156,6 +204,7 @@ export default defineComponent({
               if (parent.id == item.parent_id) {
                 parent.children.push({
                   name: item.name,
+                  parent_id: item.parent_id,
                   id: item.id,
                 });
               }

@@ -300,6 +300,43 @@
             <q-item-label>Activity</q-item-label>
           </q-item-section>
         </q-item>
+
+        <q-item to="/student-list" active-class="q-item-no-link-highlighting">
+          <q-item-section avatar>
+            <q-icon name="list" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Student List</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-item to="/blog" active-class="q-item-no-link-highlighting">
+          <q-item-section avatar>
+            <q-icon name="list" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Blog</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-expansion-item icon="menu_open" label="Question Banks">
+          <q-item to="/questionbanks/draft" active-class="q-item-no-link-highlighting">
+            <q-item-section avatar>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Draft</q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item to="/questionbanks/published" active-class="q-item-no-link-highlighting">
+            <q-item-section avatar>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Published</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-expansion-item>
+
         <!-- <q-item
           to="/lecture-classes"
           active-class="q-item-no-link-highlighting"
@@ -327,6 +364,8 @@ import Messages from "./Messages.vue";
 import { defineComponent, onMounted, ref } from "vue";
 import { useQuasar } from "quasar";
 import { useStore } from "src/stores/store";
+import { loadFaculties, loadInstitution} from "src/services/category_services";
+import {useCategoryStore} from "stores/category";
 
 export default defineComponent({
   name: "MainLayout",
@@ -341,15 +380,37 @@ export default defineComponent({
     const $q = useQuasar();
     const store = useStore();
     const user = ref(null);
+    const category = useCategoryStore();
 
     onMounted(async () => {
       // Call the action to fetch the user data
       await store.getAuthenticatedUser();
 
+
+      const {
+        data: facultyData,
+        status: facultyStatus,
+        error: facultyError,
+      } = await loadFaculties({});
+      if (facultyStatus === 200) {
+        // console.log("Faculty", facultyData);
+        category.setFaculties(facultyData.data);
+      }
+
+      const {
+        data: institutionData,
+        status: institutionStatus,
+        error: institutionError,
+      } = await loadInstitution({});
+      if (institutionStatus === 200) {
+        // console.log("Institution", institutionData);
+        category.setInstitution(institutionData.data);
+      }
+
       // Now, you can access the user object
       if (store.user) {
         user.value = store.user;
-        console.log(user.value.name);
+        // console.log(user.value.name);
       }
     });
 

@@ -10,7 +10,10 @@ const api = axios.create({
   baseURL: process.env.DEV
     ? process.env.DEV_API_URL
     : process.env.BUILD_API_URL,
-  headers: {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"},
+  headers: {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+  },
 });
 
 api.interceptors.request.use(

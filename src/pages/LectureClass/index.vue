@@ -90,6 +90,7 @@ import { defineComponent, defineAsyncComponent, ref, computed } from "vue";
 import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 import { useQuasar } from "quasar";
+import {getLectureClasses} from "src/services/course_services";
 
 export default defineComponent({
   name: "LectureClasses",
@@ -106,8 +107,30 @@ export default defineComponent({
     const courseId = ref("");
 
     const loading = ref(true);
-    const fetchLectureClasses = (page = 1) => {
+    const fetchLectureClasses = async (page = 1) => {
       loading.value = true;
+
+      // const {data, status, error} = await getLectureClasses({
+      //   search: `course_id:${courseId.value}`,
+      //   orderBy: "id",
+      //   sortedBy: "desc",
+      //   page,
+      // });
+      //
+      // if(status === 200){
+      //   console.log(data);
+      //   LectureClasses.value = data.data;
+      //   const meta = data.meta.pagination;
+      //   pagination.value = {
+      //     page: meta.current_page,
+      //     rowsPerPage: meta.per_page,
+      //     rowsNumber: meta.total,
+      //   };
+      //
+      //   loading.value = false;
+      // }else{
+      //   console.error(error);
+      // }
 
       api
         .get(
@@ -196,7 +219,7 @@ export default defineComponent({
       this.$q
         .dialog({
           title: "Confirm",
-          message: "Would you like to turn on the wifi?",
+          message: "Would you like to delete the class?",
           cancel: true,
           persistent: true,
         })

@@ -3,15 +3,15 @@
     <q-card class="no-shadow" bordered>
       <q-card-section class="row items-center justify-between">
         <div class="text-h6 text-indigo-8">
-          Questions
-          <div class="text-subtitle2">List of all questions are shown here</div>
+          Blogs
+          <div class="text-subtitle2">List of all blogs are shown here</div>
         </div>
         <div class="row">
           <q-btn
             color="primary"
-            label="Add Question"
+            label="Add Blog"
             icon="add"
-            to="/question/add"
+            to="/blog/add"
           />
         </div>
       </q-card-section>
@@ -21,7 +21,7 @@
     <q-expansion-item
       expand-separator
       icon="search"
-      label="Search Questions"
+      label="Search Blogs"
       class="q-card"
     >
       <search-questions @search="onSearch"></search-questions>
@@ -48,15 +48,7 @@
                 <!-- table data -->
                 <template v-slot:body="props">
                   <q-tr :props="props">
-                    <!-- serial -->
 
-                    <!--                    <q-td key="content" :props="props">-->
-                    <!--                      {{-->
-                    <!--                        props.row.content.length > 50-->
-                    <!--                          ? props.row.content.substring(0, 50) + "..."-->
-                    <!--                          : props.row.content-->
-                    <!--                      }}-->
-                    <!--                    </q-td>-->
                     <q-td key="content" :props="props" v-html="props.row.content">
                     </q-td>
                     <q-td key="type" :props="props">
@@ -112,7 +104,7 @@
 
 <script>
 import {defineComponent, defineAsyncComponent, ref, computed} from "vue";
-import {useStore} from "src/stores/store";
+import {useStore} from "stores/store";
 import {api} from "boot/axios";
 import {useQuasar} from "quasar";
 import SearchQuestions from "components/question/SearchQuestions.vue";
@@ -140,7 +132,7 @@ export default defineComponent({
             searchData.value.keywords +
             "&page=" +
             page +
-            "&orderBy=id&sortedBy=desc&limit=50"
+            "&orderBy=id&sortedBy=desc&limit=30"
           )
           .then((response) => {
             questions.value = response.data.data;
@@ -160,7 +152,7 @@ export default defineComponent({
           });
       } else {
         api
-          .get("/questions?include=category,subject&orderBy=id&sortedBy=desc&limit=50&page=" + page)
+          .get("/questions?include=category,subject&orderBy=id&sortedBy=desc&page=" + page)
           .then((response) => {
             questions.value = response.data.data;
             const meta = response.data.meta.pagination;
@@ -269,7 +261,7 @@ export default defineComponent({
       this.$q
         .dialog({
           title: "Confirm Delete",
-          message: "Are you sure you want to delete this question?",
+          message: "Are you sure you want to delete this blog?",
           cancel: true,
           persistent: true,
         })
