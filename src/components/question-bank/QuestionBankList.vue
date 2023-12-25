@@ -21,10 +21,13 @@
               :columns="columns"
               :rows="questionBanks"
               row-key="real_id"
+              rows-per-page-options="[10]"
               :loading="loading"
               wrap-cells
               no-data-label="No data available"
               class="shadow-0"
+              v-model:pagination="pagination"
+              @request="onRequest"
             >
               <!-- table data -->
               <template v-slot:body="props">
@@ -40,29 +43,18 @@
                   <q-td key="title" :props="props">
                     {{ props.row.code }}
                   </q-td>
-                  <q-td key="category" :props="props">
+                  <q-td key="category_id" :props="props">
                     {{
-                      props.row.category === null ||
-                      props.row.category === undefined
-                        ? ""
-                        : props.row.category
+                      props.row.category_id === "" ? "" : props.row.category_id
                     }}
                   </q-td>
-                  <q-td key="subject" :props="props">
+                  <q-td key="subject_id" :props="props">
                     {{
-                      props.row.subject === null ||
-                      props.row.subject === undefined
-                        ? ""
-                        : props.row.subject
+                      props.row.subject_id === "" ? "" : props.row.subject_id
                     }}
                   </q-td>
-                  <q-td key="faculty" :props="props">
-                    {{
-                      props.row.faculty === null ||
-                      props.row.faculty === undefined
-                        ? ""
-                        : props.row.faculty
-                    }}
+                  <q-td key="course_id" :props="props">
+                    {{ props.row.course_id === "" ? "" : props.row.course_id }}
                   </q-td>
                   <q-td key="visibility_start_time" :props="props">
                     {{ props.row.visibility_start_time }}
@@ -97,14 +89,14 @@
                       round
                       dense
                       flat
-                      to="`/#`"
+                      :to="`/question-bank-list/${props.row.id}`"
                     >
                       <q-tooltip
                         anchor="top middle"
                         self="bottom middle"
                         :offset="[10, 10]"
                       >
-                        <strong class="">Edit Question Bank</strong>
+                        <strong class="">Edit Questions Bank</strong>
                       </q-tooltip>
                     </q-btn>
                     <q-btn
@@ -114,7 +106,7 @@
                       round
                       dense
                       flat
-                      :to="`/#`"
+                      :to="`/question-bank-list/${props.row.id}/edit-questions`"
                     >
                       <q-tooltip
                         anchor="top middle"
@@ -166,7 +158,7 @@ export default {
       import("src/components/exam/SearchExams.vue")
     ),
   },
-  setup(props) {
+  setup() {
     const store = useStore();
     const { $q } = useQuasar();
     const questionBanks = ref([]);
@@ -188,79 +180,25 @@ export default {
     };
     const fetchQuestionBanks = (page = 1) => {
       loading.value = true;
-      //   api
-      //     .get(
-      //       `/exams?include=examConfiguration,subject,category,faculty,course&searchJoin=and&search=status:${
-      //         props.examType
-      //       }${
-      //         filter.value.keywords.length
-      //           ? ";title:" + filter.value.keywords
-      //           : ""
-      //       }${
-      //         filter.value.faculty && filter.value.faculty.length
-      //           ? ";faculty_id:" + filter.value.faculty
-      //           : ""
-      //       }${
-      //         filter.value.subject && filter.value.subject.length
-      //           ? ";subject_id:" + filter.value.subject
-      //           : ""
-      //       }${
-      //         filter.value.category && filter.value.category.length
-      //           ? ";category_id:" + filter.value.category
-      //           : ""
-      //       }&orderBy=id&sortedBy=desc&page=${page}`
-      //     )
-      //     .then((response) => {
-      //       exams.value = response.data.data;
-      //       const meta = response.data.meta.pagination;
-      //       pagination.value = {
-      //         page: meta.current_page,
-      //         rowsPerPage: meta.per_page,
-      //         rowsNumber: meta.total,
-      //       };
-      //     })
-      //     .catch((error) => {
-      //       console.log(error);
-      //     })
-      //     .finally(() => {
-      //       loading.value = false;
-      //     });
-
-      questionBanks.value = [
-        {
-          title: "Question Bank 1",
-          code: "Q001",
-          category: "Category 1",
-          subject: "Subject 1",
-          faculty: "Faculty 1",
-          visibility_start_time: "2023-06-01",
-          visibility_end_time: "2023-06-30",
-          real_id: 1,
-        },
-
-        {
-          title: "Question Bank 2",
-          code: "Q002",
-          category: "Category 2",
-          subject: "Subject 2",
-          faculty: "Faculty 2",
-          visibility_start_time: "1023-06-01",
-          visibility_end_time: "1023-06-30",
-          real_id: 2,
-        },
-
-        {
-          title: "Question Bank 3",
-          code: "Q003",
-          category: "Category 3",
-          subject: "Subject 3",
-          faculty: "Faculty 3",
-          visibility_start_time: "2024-06-21",
-          visibility_end_time: "2024-08-30",
-          real_id: 3,
-        },
-      ];
-      loading.value = false;
+      api
+        .get(
+          `/questionbanks?orderBy=id&sortedBy=desc&search=status:draft&searchJoin=and&page=${page}`
+        )
+        .then((response) => {
+          questionBanks.value = response.data.data;
+          const meta = response.data.meta.pagination;
+          pagination.value = {
+            page: meta.current_page,
+            rowsPerPage: meta.per_page,
+            rowsNumber: meta.total,
+          };
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          loading.value = false;
+        });
     };
 
     const onRequest = (props) => {
@@ -301,26 +239,20 @@ export default {
           // sortable: true,
         },
         {
-          name: "category",
+          name: "category_id",
           align: "left",
           label: "Category",
-          field: (row) => row.category,
+          field: (row) => row.category_id,
           // sortable: true,
         },
         {
-          name: "subject",
+          name: "subject_id",
           align: "left",
           label: "Subject",
-          field: (row) => row.subject,
+          field: (row) => row.subject_id,
           // sortable: true,
         },
-        {
-          name: "faculty",
-          align: "left",
-          label: "Faculty",
-          field: (row) => row.faculty,
-          // sortable: true,
-        },
+
         {
           name: "visibility_start_time",
           align: "left",

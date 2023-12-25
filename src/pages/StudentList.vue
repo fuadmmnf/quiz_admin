@@ -301,6 +301,7 @@ export default {
         orderBy: "id",
         sortedBy: "desc",
         searchJoin: "and",
+        limit: 50,
         page,
       };
 

@@ -55,6 +55,7 @@
 import { defineComponent, ref } from "vue";
 import { api } from "src/boot/axios";
 import { useQuasar } from "quasar";
+import {deleteUser, getUsers} from "src/services/auth_services";
 
 export default {
   name: "RoleList",
@@ -94,8 +95,29 @@ export default {
         sortable: false,
       },
     ]);
-    const fetchRoles = (page = 1) => {
+    const fetchRoles = async (page = 1) => {
       loading.value = true;
+
+      // const {data, status, error} = await getUsers({
+      //   search: `roles.name:${props.role}`,
+      //   include: "roles",
+      //   page: page,
+      // });
+      //
+      // if (status === 200) {
+      //   console.log("success", data);
+      //   roles.value = data.data;
+      //   const meta = data.meta.pagination;
+      //   pagination.value = {
+      //     page: meta.current_page,
+      //     rowsPerPage: meta.per_page,
+      //     rowsNumber: meta.total,
+      //   };
+      //   loading.value = false;
+      // } else {
+      //   console.error("Failed to fetch roles:", error);
+      // }
+
       api
         .get(
           `/users?search=roles.name:${props.role}&include=roles&page=${page}`
@@ -146,7 +168,17 @@ export default {
           cancel: true,
           persistent: true,
         })
-        .onOk(() => {
+        .onOk(async () => {
+
+          // const {status, error} = await deleteUser(id);
+          // if (status === 200) {
+          //   this.$q.notify({
+          //     color: "positive",
+          //     message: "User deleted successfully",
+          //   });
+          //   fetchRoles(); // Refresh the role list after deletion
+          // },
+
           api
             .delete(`/users/${id}`)
             .then((res) => {

@@ -664,7 +664,7 @@ export default defineComponent({
       this.questions[idx] = {...this.questions[idx], selected_subject: val, subject_id: null};
     },
     onSubmit: _.debounce(function () {
-      // const origQuestions = [...this.questions];
+      const origQuestions = [...this.questions];
       this.questions = this.questions.map((q) => {
         q.category_id = (q.category_id == null ? q.selected_category : q.category_id)
         q.subject_id = (q.subject_id == null ? q.selected_subject : q.subject_id)
@@ -683,12 +683,13 @@ export default defineComponent({
         api
           .put(`/questions/${this.question_id}`, this.questions[0])
           .then((response) => {
+
             this.$q.notify({
               message: "Question Updated Successfully",
               color: "positive",
               icon: "check",
             });
-            this.$router.push("/question");
+            // this.$router.push("/question");
           });
       } else {
         if (this.questions[0].type === "multilayered-type-1") {
@@ -722,12 +723,17 @@ export default defineComponent({
                 color: "positive",
                 icon: "check",
               });
+              this.questions = [...origQuestions];
+
               this.onContentReset();
             }
 
+          }).catch(e => {
+            this.questions = [...origQuestions];
           });
         }
       }
+      this.questions = [...origQuestions];
 
     }, 2000),
     addQuestion(event) {

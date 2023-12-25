@@ -173,11 +173,32 @@ export default defineComponent({
       this.isEditing = null;
     },
     editItem(row) {
+      console.log("fffrow", row);
       this.name = row.name;
       this.selectedParentCategory = row.parent_id !== "" ? row.parent_id : null;
       this.isEditing = { status: true, id: row.id };
     },
-    deleteItem(row) {},
+    deleteItem(row) {
+      // confirm
+      this.$q
+        .dialog({
+          title: "Confirm",
+          message: "Are you sure you want to delete this category?",
+          cancel: true,
+          persistent: true,
+        })
+        .onOk(() => {
+          api.delete(`/categories/${row.id}`).then((res) => {
+            this.$q.notify({
+              message: "Category Deleted Successfully",
+              color: "negative",
+              icon: "check",
+            });
+
+            this.getCategories();
+          });
+        });
+    },
   },
   mounted() {
     this.getCategories();

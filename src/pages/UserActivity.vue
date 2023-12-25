@@ -68,6 +68,7 @@
 import { api } from "src/boot/axios";
 import { onMounted, ref, watch, computed } from "vue";
 import { date } from 'quasar';
+import {getUsers} from "src/services/auth_services";
 
 
 
@@ -88,7 +89,7 @@ export default {
         label: "User",
         field: "causer",
         sortable: true,
-        format: (val) => (val !== null ? val : "null"),
+        format: (val) => (val && val.data ? val.data.name : "null"),
       },
       {
         name: "resourceType",
@@ -105,7 +106,7 @@ export default {
       },
     ];
 
-
+    const isLoading = ref(false);
     const rows = ref([]);
     const startDate = ref(null);
     const endDate = ref(null);
@@ -128,20 +129,35 @@ export default {
 
     const fetchUsers = async () => {
       try {
-        const response = await api.get("/users?search=roles.name:subadmin,moderator&limit=0");
-        if (response && response.data.data) {
-          console.log("Test", response);
+        // const response = await api.get("/users?search=roles.name:subadmin,moderator&limit=0");
 
-          const userData = response.data.data;
+        const {data, status, error} = await getUsers({
+          search: 'roles.name:subadmin,moderator',
+          limit: 0
+        });
+
+        if(status===200){
+          const userData = data.data;
           const transformedData = userData.map(user => ({
             label: user.name,
             value: user.id,
           }));
 
           subjectOptions.value = subjectOptions.value.concat(transformedData);
-          console.log(transformedData);
-
         }
+        // if (response && response.data.data) {
+        //   console.log("Test", response);
+        //
+        //   const userData = response.data.data;
+        //   const transformedData = userData.map(user => ({
+        //     label: user.name,
+        //     value: user.id,
+        //   }));
+        //
+        //   subjectOptions.value = subjectOptions.value.concat(transformedData);
+        //   console.log(transformedData);
+        //
+        // }
       } catch (error) {
         console.error("Failed to fetch subjects:", error);
       }
@@ -179,8 +195,8 @@ export default {
         }
 
         const apiEndpoint = dateRangeFilter
-          ? `/activity_logs?orderBy=id&sortedBy=desc&searchJoin=and&${causerId}${dateRangeFilter}&page=${page}`
-          : `/activity_logs?orderBy=id&sortedBy=desc&page=${page}`;
+          ? `/activity_logs?orderBy=id&sortedBy=desc&searchJoin=and&${causerId}${dateRangeFilter}&page=${page}&limit=50`
+          : `/activity_logs?orderBy=id&sortedBy=desc&page=${page}&limit=50`;
 
 
 
@@ -228,7 +244,7 @@ export default {
       startDate,
       endDate,
       model,
-
+      isLoading,
       fetchActivityLogs,
       pagination,
       onRequest,
