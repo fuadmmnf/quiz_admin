@@ -112,15 +112,7 @@
                   >
                     {{ "end_time" }}
                   </q-td>
-                  <q-td
-                    key="ranking"
-                    :props="props"
-                    v-if="route.params.type === 'completed'"
-                  >
-                    {{
-                      props.row.ranking === null ? "----" : props.row.ranking
-                    }}
-                  </q-td>
+
                   <q-td key="actions" :props="props">
                     <q-btn
                       color="blue"
@@ -158,7 +150,7 @@
 </template>
 
 <script>
-import {ref} from "vue";
+import { ref } from "vue";
 import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 import { useRoute } from "vue-router";
@@ -385,13 +377,6 @@ export default {
           align: "left",
           label: "End time",
           field: (row) => row.end_time,
-          sortable: true,
-        },
-        {
-          name: "ranking",
-          align: "center",
-          label: "Ranking",
-          field: (row) => row.ranking,
           sortable: true,
         },
         {
