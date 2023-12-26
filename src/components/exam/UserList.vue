@@ -55,6 +55,7 @@
                   dense
                   debounce="300"
                   v-model="filter"
+                  @keyup.enter="onFilter"
                   placeholder="Search"
                 >
                   <template v-slot:append>
@@ -182,7 +183,9 @@ export default {
       loading.value = true;
       api
         .get(
-          `/exam-attempts?search=exam_id:${route.params.id}&include=user&page=${page}`
+          `/exam-attempts?search=exam_id:${route.params.id}${
+            filter.value.length ? ";user.mobile:" + filter.value : ""
+          }&searchJoin=and&include=user&page=${page}`
         )
         .then((res) => {
           if (res.data.data.length > 0) {
@@ -216,7 +219,11 @@ export default {
       loading.value = true;
       api
         .get(
-          `/exams/${route.params.id}/ranking?include=examAttempt,examAttempt.user&page=${page}`
+          `/exams/${route.params.id}/ranking?${
+            filter.value.length
+              ? "search=exam_attempt.user.mobile:" + filter.value
+              : ""
+          }&searchJoin=and&include=examAttempt,examAttempt.user&page=${page}`
         )
         .then((res) => {
           if (res.data.data.length > 0) {
@@ -304,6 +311,13 @@ export default {
   mounted() {
     if (this.route.params.type === "completed") this.fetchCompletedUsers();
     else this.fetchusers();
+  },
+  methods: {
+    onFilter() {
+      console.log(this.filter);
+      if (this.route.params.type === "completed") this.fetchCompletedUsers();
+      else this.fetchusers();
+    },
   },
   data() {
     return {
