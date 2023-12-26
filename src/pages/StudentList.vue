@@ -14,7 +14,6 @@
         <q-dialog v-model="addStudentDialog" persistent>
           <q-card style="min-width: 350px">
             <q-card-section class="q-pa-md">
-
               <q-input v-model="name" label="Student Name" />
               <q-input v-model="mobile" label="Mobile" />
               <q-input v-model="nid" label="NID" />
@@ -24,8 +23,7 @@
                 label="Gender"
                 required
               />
-                <q-input v-model="password" type="password" label="Password" />
-
+              <q-input v-model="password" type="password" label="Password" />
 
               <q-space />
 
@@ -41,7 +39,6 @@
                   label="Cancel"
                   @click="closeAddStudentDialog"
                 />
-
               </div>
             </q-card-section>
           </q-card>
@@ -62,7 +59,6 @@
 
             <q-separator spaced="" />
             <q-card>
-
               <q-table
                 ref="tableRef"
                 v-model:pagination="pagination"
@@ -78,19 +74,15 @@
                 title="Student List"
                 @request="fetchData"
               >
-
-
                 <template #body-cell-faculty_id="props">
                   <q-td :props="props">
                     {{ getFacultyName(props.row.faculty_id) }}
-
                   </q-td>
                 </template>
 
                 <template #body-cell-institution_id="props">
                   <q-td :props="props">
                     {{ getInstitutionName(props.row.institution_id) }}
-
                   </q-td>
                 </template>
 
@@ -98,8 +90,8 @@
                   <q-td :props="props">
                     <q-btn
                       :to="{
-                        name: 'exam-detail',
-                        params: { exam_id: props.row.id },
+                        name: 'studentEdit',
+                        params: { id: props.row.id },
                       }"
                       color="primary"
                       label="Edit"
@@ -124,12 +116,12 @@
                             <q-item-label caption>
                               <q-btn
                                 :to="{
-                                  name: 'exam-detail',
-                                  params: { exam_id: props.row.id },
+                                  name: 'studentEdit',
+                                  params: { id: props.row.id },
                                 }"
                                 color="primary"
                                 label="Edit"
-                              /></q-item-label>
+                            /></q-item-label>
                           </q-item-section>
                         </q-item>
                       </q-list>
@@ -137,8 +129,6 @@
                   </div>
                 </template>
               </q-table>
-
-
             </q-card>
           </div>
         </div>
@@ -153,10 +143,8 @@ import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import SearchStudents from "components/SearchStudents.vue";
 import { useCategoryStore } from "stores/category";
-import {getStudents, registerStudent} from "src/services/student_services";
-import {Notify} from "quasar";
-
-
+import { getStudents, registerStudent } from "src/services/student_services";
+import { Notify } from "quasar";
 
 const filter = ref("");
 const loading = ref(false);
@@ -168,10 +156,7 @@ const pagination = ref({
   rowsNumber: 1,
 });
 
-
-
 const columns = [
-
   {
     name: "username",
     label: "Student Name",
@@ -234,12 +219,11 @@ export default {
     const categoryStore = useCategoryStore();
     const tableRef = ref(); // {draft: Object(), ongoing: Object(), }
     const addStudentDialog = ref(false);
-    const name=ref('');
-    const mobile=ref('');
-    const nid = ref('');
-    const gender = ref('');
-    const password = ref('');
-
+    const name = ref("");
+    const mobile = ref("");
+    const nid = ref("");
+    const gender = ref("");
+    const password = ref("");
 
     const students = ref([]);
     const filter = ref({
@@ -249,26 +233,19 @@ export default {
     });
 
     onMounted(() => {
-
       tableRef.value.requestServerInteraction();
 
       // console.log(categoryStore.faculties);
       // console.log(categoryStore.institutions);
     });
 
-
-
-
-        pagination.value = {
-          sortBy: "desc",
-          descending: false,
-          page: 1,
-          rowsPerPage: 15,
-          rowsNumber: 1,
-        };
-
-
-
+    pagination.value = {
+      sortBy: "desc",
+      descending: false,
+      page: 1,
+      rowsPerPage: 15,
+      rowsNumber: 1,
+    };
 
     const onSearch = (search) => {
       filter.value = search;
@@ -286,13 +263,16 @@ export default {
       loading.value = true;
       const { page } = props.pagination;
 
-
       const searchParam = `${
-        filter.value.keywords.length ? "user.mobile:" + filter.value.keywords : ""
+        filter.value.keywords.length
+          ? "user.mobile:" + filter.value.keywords
+          : ""
       }${
         filter.value.faculty.length ? ";faculty_id:" + filter.value.faculty : ""
       }${
-        filter.value.institution.length ? ";institution_id:" + filter.value.institution : ""
+        filter.value.institution.length
+          ? ";institution_id:" + filter.value.institution
+          : ""
       }`;
 
       const queryParams = {
@@ -344,8 +324,6 @@ export default {
     };
   },
   methods: {
-
-
     getFacultyName(facultyId) {
       const faculty = this.categoryStore.getFacultyById(facultyId);
       return faculty ? faculty.name : "Null";
@@ -354,17 +332,14 @@ export default {
     getInstitutionName(institutionId) {
       const institution = this.categoryStore.getInstitutionById(institutionId);
       return institution ? institution.name : "Null";
-
     },
 
     openAddStudentDialog() {
-
-      this.name = '';
-      this.mobile = '';
-      this.gender = '';
-      this.nid = '';
-      this.password = '';
-
+      this.name = "";
+      this.mobile = "";
+      this.gender = "";
+      this.nid = "";
+      this.password = "";
 
       this.addStudentDialog = true;
     },
@@ -383,14 +358,12 @@ export default {
       });
 
       if (status === 201) {
-
         Notify.create({
           message: "Student Add Successful!",
           icon: "warning",
           color: "primary",
         });
         window.location.reload();
-
       } else {
         Notify.create({
           message: "User Already Exist!",
