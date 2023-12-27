@@ -221,7 +221,7 @@ export default {
         .get(
           `/exams/${route.params.id}/ranking?${
             filter.value.length
-              ? "search=exam_attempt.user.mobile:" + filter.value
+              ? "search=examAttempt.user.mobile:" + filter.value
               : ""
           }&searchJoin=and&include=examAttempt,examAttempt.user&page=${page}`
         )
@@ -265,20 +265,31 @@ export default {
     };
 
     const deleteAttempt = (id) => {
-      api
-        .delete(`/exam-attempts/${id}`)
-        .then((res) => {
-          $q.notify({
-            message: "Attempt deleted successfully",
-            color: "green",
-            icon: "check",
-          });
-          if (route.params.type === "completed")
-            fetchCompletedUsers(pagination.value.page);
-          else fetchusers(pagination.value.page);
+      $q.dialog({
+        title: "Confirm",
+        message: "Would you like to delete this exam attempt?",
+        cancel: true,
+        persistent: true,
+      })
+        .onOk(() => {
+          api
+            .delete(`/exam-attempts/${id}`)
+            .then((res) => {
+              $q.notify({
+                message: "Attempt deleted successfully",
+                color: "green",
+                icon: "check",
+              });
+              if (route.params.type === "completed")
+                fetchCompletedUsers(pagination.value.page);
+              else fetchusers(pagination.value.page);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         })
-        .catch((error) => {
-          console.log(error);
+        .onCancel(() => {
+          console.log(">>>> Cancel");
         });
     };
 
