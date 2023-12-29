@@ -17,7 +17,7 @@
       </q-card-section>
     </q-card>
 
-    <q-separator spaced />
+    <q-separator spaced/>
     <q-expansion-item
       expand-separator
       icon="search"
@@ -26,7 +26,7 @@
     >
       <search-questions @search="onSearch"></search-questions>
     </q-expansion-item>
-    <q-separator spaced />
+    <q-separator spaced/>
 
     <div class="q-pa-none">
       <div class="row q-col-gutter-md">
@@ -121,16 +121,16 @@
 </template>
 
 <script>
-import { defineComponent, defineAsyncComponent, ref, computed } from "vue";
-import { useStore } from "src/stores/store";
-import { api } from "boot/axios";
-import { useQuasar } from "quasar";
+import {defineComponent, defineAsyncComponent, ref, computed} from "vue";
+import {useStore} from "src/stores/store";
+import {api} from "boot/axios";
+import {useQuasar} from "quasar";
 import SearchQuestions from "components/question/SearchQuestions.vue";
 
 export default defineComponent({
   name: "Question",
   setup() {
-    const { $q } = useQuasar();
+    const {$q} = useQuasar();
     const store = useStore();
     const questions = ref([]);
     const pagination = ref({
@@ -172,7 +172,7 @@ export default defineComponent({
             searchData.value.subject && searchData.value.subject.length
               ? ";subject_id:" + searchData.value.subject
               : ""
-          }&page=${page}"&orderBy=id&sortedBy=desc&limit=50`
+          }&page=${page}&orderBy=id&sortedBy=desc&limit=50`
         )
         .then((response) => {
           questions.value = response.data.data;
@@ -275,7 +275,7 @@ export default defineComponent({
   },
   methods: {
     onEdit() {
-      this.$router.push({ name: "question-edit" });
+      this.$router.push({name: "question-edit"});
     },
     onDelete(row) {
       this.$q
