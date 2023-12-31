@@ -172,10 +172,7 @@ const routes = [
         path: "/registered-students",
         component: () => import("pages/RegisteredStudents/index.vue"),
       },
-      {
-        path: "/registered-students/:id",
-        component: () => import("pages/RegisteredStudents/edit.vue"),
-      },
+
       {
         path: "/send-message",
         component: () => import("pages/TrySendMessage.vue"),
@@ -199,6 +196,11 @@ const routes = [
         path: "/student-list",
         name: "studentList",
         component: () => import("pages/StudentList.vue"),
+      },
+      {
+        path: "/student/:id",
+        name: "studentEdit",
+        component: () => import("pages/RegisteredStudents/edit.vue"),
       },
 
       // Not completed yet
