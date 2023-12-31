@@ -241,19 +241,23 @@ export default defineComponent({
     const $q = useQuasar();
     const filter = ref("");
     const questionFilter = ref({
-      keywords: "",
       type: "",
+      keywords: "",
       category: "",
       subject: "",
-      faculty: "",
     });
     const loading = ref(true);
     const questionBankQuestions = ref([]);
     const route = useRoute();
     const searchResults = ref([]);
     const onQuestionSearch = (search) => {
-      questionFilter.value = search;
-      searchQuestions(search, 1);
+      questionFilter.value.type = search.type;
+      questionFilter.value.keywords = search.keywords;
+      questionFilter.value.category = search.category;
+      questionFilter.value.subject = search.subject;
+
+      console.log(questionFilter.value);
+      searchQuestions(questionFilter.value, 1);
     };
 
     const fetchQuestionBankQuestions = (page = 1) => {
@@ -285,7 +289,15 @@ export default defineComponent({
             searchData.type.length ? "type:" + searchData.type : ""
           }${
             searchData.keywords.length ? ";content:" + searchData.keywords : ""
-          }&orderBy=id&sortedBy=desc&page=${page}`
+          }${
+            searchData.category && searchData.category.length
+              ? ";category_id:" + searchData.category
+              : ""
+          }${
+            searchData.subject && searchData.subject.length
+              ? ";subject_id:" + searchData.subject
+              : ""
+          }&page=${page}"&orderBy=id&sortedBy=desc&limit=50`
         )
         .then((res) => {
           const meta = res.data.meta.pagination;
