@@ -7,12 +7,12 @@
           <div class="text-subtitle2">Mail to all or specific user</div>
         </div>
         <div class="row">
-          <q-btn color="primary" label="Send" icon="send" />
+          <q-btn color="primary" label="Send" icon="send" @click="onSubmit"/>
         </div>
       </q-card-section>
     </q-card>
 
-    <q-separator spaced />
+    <q-separator spaced/>
     <div class="q-pa-none">
       <div class="row q-col-gutter-md">
         <div class="col-6">
@@ -22,31 +22,23 @@
             </q-card-section>
             <q-card-section>
               <q-list>
-                <q-item tag="label" v-ripple>
-                  <q-item-section avatar>
-                    <q-radio v-model="receiverOption" val="all" color="teal" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>All Users</q-item-label>
-                  </q-item-section>
-                </q-item>
 
                 <q-item tag="label" v-ripple>
                   <q-item-section avatar>
                     <q-radio
-                      v-model="receiverOption"
-                      val="custom"
-                      color="orange"
+                      v-model="noticeData.noticeable_type"
+                      val="user"
                     />
                   </q-item-section>
                   <q-item-section>
-                    <q-item-label>Custom Users</q-item-label>
+                    <q-item-label>Users</q-item-label>
                   </q-item-section>
                 </q-item>
 
+
                 <q-item tag="label" v-ripple>
                   <q-item-section avatar>
-                    <q-radio v-model="receiverOption" val="examWise" color="teal" />
+                    <q-radio v-model="noticeData.noticeable_type" val="exam"/>
                   </q-item-section>
                   <q-item-section>
                     <q-item-label>Exam Wise</q-item-label>
@@ -55,132 +47,133 @@
 
                 <q-item tag="label" v-ripple>
                   <q-item-section avatar>
-                    <q-radio v-model="receiverOption" val="courseWise" color="teal" />
+                    <q-radio v-model="noticeData.noticeable_type" val="course"/>
                   </q-item-section>
                   <q-item-section>
                     <q-item-label>Course Wise</q-item-label>
                   </q-item-section>
                 </q-item>
               </q-list>
-              <div v-if="receiverOption === 'custom'">
-                <q-select
-                  filled
-                  v-model="modelMultiple"
-                  input-debounce="0"
-                  multiple
-                  :options="options"
-                  use-chips
-                  stack-label
-                  use-input
-                  @filter="filterFn"
-                  label="Select Users"
-                >
-                  <template v-slot:no-option>
-                    <q-item>
-                      <q-item-section class="text-grey">
-                        No results
-                      </q-item-section>
-                    </q-item>
-                  </template>
-                </q-select>
 
-                <q-badge color="secondary" class="q-mb-md">
-                  Selected: {{ modelMultiple || "[]" }}
-                </q-badge>
-              </div>
+              <q-item v-if="noticeData.noticeable_type === 'user'">
+                <q-item-section>
+                  <q-select
+                    v-model="noticeData.noticeable_ids"
+                    :options="userOptions"
+                    label="Select Users"
+                    filled
+                    dense
+                    use-input
+                    multiple
+                    use-chips
+                    emit-value
+                    map-options
+                    clearable
+                    @clear="
+                            (val) => {
+                              noticeData.noticeable_ids = [];
+                            }
+                          "
+                  />
+                </q-item-section>
+              </q-item>
+
+              <q-item v-if="noticeData.noticeable_type === 'exam'">
+                <q-item-section>
+                  <q-select
+                    v-model="noticeData.noticeable_ids"
+                    :options="examOptions"
+                    label="Select Exams"
+                    filled
+                    dense
+                    use-input
+                    multiple
+                    use-chips
+                    emit-value
+                    map-options
+                    clearable
+                    @clear="
+                            (val) => {
+                              noticeData.noticeable_ids = [];
+                            }
+                          "
+                  />
+                </q-item-section>
+              </q-item>
+
+              <q-item v-if="noticeData.noticeable_type === 'course'">
+                <q-item-section>
+                  <q-select
+                    v-model="noticeData.noticeable_ids"
+                    :options="courseOptions"
+                    label="Select Courses"
+                    filled
+                    dense
+                    use-input
+                    multiple
+                    use-chips
+                    emit-value
+                    map-options
+                    clearable
+                    @clear="
+                            (val) => {
+                              noticeData.noticeable_ids = [];
+                            }
+                          "
+                  />
+                </q-item-section>
+              </q-item>
+
             </q-card-section>
           </q-card>
         </div>
         <div class="col-6">
 
-         <q-card class="no-shadow" bordered>
-           <q-card-section class="">
-             <div class="text-h6">Message Content</div>
-             <q-list class="row q-mt-md">
-               <q-item tag="label" v-ripple>
-                 <q-item-section avatar>
-                   <q-radio  val="push" />
-                 </q-item-section>
-                 <q-item-section>
-                   <q-item-label>Push Notification</q-item-label>
-                 </q-item-section>
-               </q-item>
+          <q-card class="no-shadow" bordered>
+            <q-card-section class="">
+              <div class="text-h6">Message Content</div>
+              <q-list class="row q-mt-md">
+                <q-item tag="label" v-ripple>
+                  <q-item-section avatar>
+                    <q-toggle
+                      v-model="noticeData.send_push_notification"
+                      :label="`Push Notification`"
+                    />
+                  </q-item-section>
+                </q-item>
 
-               <q-item tag="label" v-ripple>
-                 <q-item-section avatar>
-                   <q-radio
-                     val="custom"
-                   />
-                 </q-item-section>
-                 <q-item-section>
-                   <q-item-label>Custom Message</q-item-label>
-                 </q-item-section>
-               </q-item>
-             </q-list>
-           </q-card-section>
-           <q-card-section>
-             <q-input
-               filled
+                <q-item tag="label" v-ripple>
+                  <q-item-section avatar>
+                    <q-toggle
+                      v-model="noticeData.send_sms"
+                      :label="`Send SMS`"
+                    />
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-card-section>
+            <q-card-section>
+              <q-input
+                filled
+                v-model="noticeData.title"
+                type="textarea"
+                label="Write your title here"
+                rows="1"
 
-               type="textarea"
-               label="Write your message here"
-               rows="4"
+              />
+            </q-card-section>
+            <q-card-section>
+              <q-input
+                filled
+                v-model="noticeData.message"
+                type="textarea"
+                label="Write your message here"
+                rows="4"
 
-             />
-           </q-card-section>
-         </q-card>
+              />
+            </q-card-section>
+          </q-card>
 
-<!--          <q-card class="no-shadow" bordered>-->
-<!--            <q-card-section class="row items-center justify-between">-->
-<!--              <div class="text-h6">Template Configuration</div>-->
-<!--            </q-card-section>-->
-<!--            <q-card-section>-->
-<!--              <q-select-->
-<!--                filled-->
-<!--                v-model="model"-->
-<!--                use-input-->
-<!--                input-debounce="0"-->
-<!--                label="Select template"-->
-<!--                :options="templatesOptions"-->
-<!--                @filter="filterTemplateFn"-->
-<!--                behavior="menu"-->
-<!--              >-->
-<!--                <template v-slot:no-option>-->
-<!--                  <q-item>-->
-<!--                    <q-item-section class="text-grey">-->
-<!--                      No results-->
-<!--                    </q-item-section>-->
-<!--                  </q-item>-->
-<!--                </template>-->
-<!--              </q-select>-->
-<!--            </q-card-section>-->
-<!--            <q-card-section v-if="model">-->
-<!--              <div class="text-subtitle2 q-mb-md">-->
-<!--                SMS template : {{ model }}-->
-<!--              </div>-->
-<!--              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Esse,-->
-<!--              quia atque recusandae inventore totam ut perferendis, sit ipsam-->
-<!--              nisi aut accusantium tempora, reprehenderit consequuntur animi-->
-<!--              excepturi quo voluptatem. In, voluptatem?-->
-
-<!--              <q-separator class="q-my-md" />-->
-<!--              <div class="row">-->
-<!--                <q-btn-->
-<!--                  color="primary"-->
-<!--                  label="Send"-->
-<!--                  icon="send"-->
-<!--                  @click="onSend()"-->
-<!--                />-->
-<!--                <q-btn-->
-<!--                  label="Clear"-->
-<!--                  color="primary"-->
-<!--                  class="q-ml-sm"-->
-<!--                  @click="model = null"-->
-<!--                />-->
-<!--              </div>-->
-<!--            </q-card-section>-->
-
-<!--          </q-card>-->
         </div>
       </div>
     </div>
@@ -188,76 +181,148 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import {onMounted, ref, watch} from "vue";
+import {getStudents} from "src/services/student_services";
+import {getCourses} from "src/services/course_services";
+import {getExams} from "src/services/exam_services";
+import _ from "lodash";
+import {api} from "boot/axios";
 
-const stringOptions = ["Sultana", "Marjan", "Mitu"];
-const stringTemplatesOptions = ["Simple", "Dynamic", "Email type"];
+function initNoticeData() {
+  return {
+    title: "",
+    message: "",
+    send_sms: false,
+    send_push_notification: false,
+    noticeable_type: "",
+    noticeable_ids: [],
 
+  };
+}
 
 export default {
   setup() {
-    const options = ref(stringOptions);
-    const templatesOptions = ref(stringTemplatesOptions);
+    const noticeData = ref(initNoticeData())
+    const userOptions = ref([]);
+    const examOptions = ref([]);
+    const courseOptions = ref([]);
+
+    const onSubmit = _.debounce(function () {
+
+      api.post("/notices", noticeData.value).then((response) => {
+        this.$q.notify({
+          message: "Notice Sent Successfully",
+          color: "positive",
+          icon: "check",
+        });
+        onReset();
+      });
+
+    }, 5000)
+    const onReset = () => {
+      noticeData.value = initNoticeData();
+    }
+
+    watch(
+      () => noticeData.value.noticeable_type,
+      (newValue, oldValue) => {
+        if(newValue !== oldValue){
+          noticeData.value.noticeable_ids = []
+        }
+      },
+      { deep: true }
+    )
+    const fetchStudents = async () => {
+      const queryParams = {
+        include: "user,institution,faculty",
+        orderBy: "id",
+        sortedBy: "desc",
+        searchJoin: "and",
+        limit: 50,
+        filter: "id;name;mobile"
+
+      };
+
+
+      const {data, status, error} = await getStudents(queryParams);
+
+      if (status === 200) {
+        console.log(data);
+        userOptions.value = [{
+          label: 'all',
+          value: '*',
+        }, ...data.data.map(student => ({
+          label: `${student.user.data.name} (${student.user.data.mobile})`,
+          value: student.user.data.id,
+        }))];
+
+
+      } else {
+        console.error(error.message);
+      }
+    }
+
+    const fetchExams = async () => {
+      const queryParams = {
+        search: 'status:ongoing,upcoming,completed',
+        orderBy: 'id',
+        sortedBy: 'desc',
+        limit: 50,
+        filter: 'id;code;title',
+      };
+
+      const {data, status, error} = await getExams(queryParams);
+
+      if (status === 200) {
+        console.log(data);
+        examOptions.value = data.data.map((exam) => ({
+          label: `${exam.title} (${exam.code})`,
+          value: exam.id,
+        }));
+      } else {
+        console.error(error.message);
+      }
+    }
+
+
+    const fetchCourses = async () => {
+
+      const queryParams = {
+        search: 'status:published',
+        orderBy: 'id',
+        sortedBy: 'desc',
+        limit: 50,
+        filter: 'id;title',
+      };
+
+      const {data, status, error} = await getCourses(queryParams);
+
+      if (status === 200) {
+        console.log(data);
+        courseOptions.value = data.data.map((course) => ({
+          label: course.title,
+          value: course.id,
+        }));
+      } else {
+        console.error(error.message);
+      }
+    }
+
+    onMounted(() => {
+      fetchStudents();
+      fetchExams();
+      fetchCourses();
+    });
+
 
     return {
-      receiverOption: ref("all"),
-      modelMultiple: ref([]),
-      stringOptions,
-      options,
-
-      model: ref(null),
-      templatesOptions,
-      stringTemplatesOptions,
-      filterTemplateFn(val, update) {
-        if (val === "") {
-          update(() => {
-            templatesOptions.value = stringTemplatesOptions;
-          });
-          return;
-        }
-
-        update(() => {
-          const needle = val.toLowerCase();
-          templatesOptions.value = stringTemplatesOptions.filter(
-            (v) => v.toLowerCase().indexOf(needle) > -1
-          );
-        });
-      },
-
-
-      filterFn(val, update) {
-        if (val === "") {
-          update(() => {
-            options.value = stringOptions;
-          });
-          return;
-        }
-
-        update(() => {
-          const needle = val.toLowerCase();
-          options.value = stringOptions.filter(
-            (v) => v.toLowerCase().indexOf(needle) > -1
-          );
-        });
-      },
+      onSubmit,
+      noticeData,
+      userOptions,
+      examOptions,
+      courseOptions
     };
   },
-  methods: {
-    onSend() {
-      this.$q
-        .dialog({
-          title: "Confirm",
-          message: "Would you like to send this message?",
-          cancel: true,
-          persistent: true,
-        })
-        .onOk(() => {
-          console.log(">>>> OK");
-        })
-        .onCancel(() => {
-          console.log(">>>> Cancel");
-        });
-    },
-  },
+
 };
 </script>
