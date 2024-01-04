@@ -23,7 +23,7 @@
       </q-card-section>
     </q-card>
 
-    <q-separator spaced />
+    <q-separator spaced/>
     <q-form
       @submit.prevent="onSubmit"
       id="courseForm"
@@ -74,7 +74,7 @@
                       <div class="col-6">
                         <q-input
                           filled
-                          v-model="courseData.co_ordinator_name"
+                          v-model="courseData.coordinator_name"
                           :label="`Co-ordinator Name`"
                           :rules="[
                             (val) => !!val || 'Co-ordinator Name is required',
@@ -84,7 +84,7 @@
                       <div class="col-6">
                         <q-input
                           filled
-                          v-model="courseData.co_ordinator_phone"
+                          v-model="courseData.coordinator_number"
                           :label="`Co-ordinator Phone number`"
                           :rules="[
                             (val) => !!val || 'Phone number is required',
@@ -96,7 +96,7 @@
                       <div class="col-6">
                         <q-input
                           filled
-                          v-model="courseData.number_of_classes"
+                          v-model="courseData.num_classes"
                           :label="`Number of classes`"
                           :rules="[
                             (val) => !!val || 'Number of classes is required',
@@ -106,7 +106,7 @@
                       <div class="col-6">
                         <q-input
                           filled
-                          v-model="courseData.number_of_exams"
+                          v-model="courseData.num_exams"
                           :label="`Number of exams`"
                           :rules="[
                             (val) => !!val || 'Number of exams is required',
@@ -124,7 +124,7 @@
                           counter
                         >
                           <template v-slot:prepend>
-                            <q-icon name="cloud_upload" @click.stop.prevent />
+                            <q-icon name="cloud_upload" @click.stop.prevent/>
                           </template>
                           <template v-if="courseData.course_icon" v-slot:append>
                             <q-icon
@@ -136,34 +136,34 @@
                             />
                           </template>
 
-                          <template v-slot:hint> png/jpg </template>
+                          <template v-slot:hint> png/jpg</template>
                         </q-file>
                       </div>
                       <div class="col-6">
                         <q-file
                           filled
                           bottom-slots
-                          v-model="courseData.course_short_video"
+                          v-model="courseData.intro_video"
                           label="Short video"
                           counter
                         >
                           <template v-slot:prepend>
-                            <q-icon name="cloud_upload" @click.stop.prevent />
+                            <q-icon name="cloud_upload" @click.stop.prevent/>
                           </template>
                           <template
-                            v-if="courseData.course_short_video"
+                            v-if="courseData.intro_video"
                             v-slot:append
                           >
                             <q-icon
                               name="close"
                               @click.stop.prevent="
-                                courseData.course_short_video = null
+                                courseData.intro_video = null
                               "
                               class="cursor-pointer"
                             />
                           </template>
 
-                          <template v-slot:hint> mp4/mkv </template>
+                          <template v-slot:hint> mp4/mkv</template>
                         </q-file>
                       </div>
                     </div>
@@ -239,6 +239,17 @@
                     </div>
                     <div class="row q-col-gutter-md q-mt-auto">
                       <div class="col-6">
+                        <q-select
+                          filled
+                          v-model="courseData.category_id"
+                          :label="`Category`"
+                          :options="categoryOptions"
+                          emit-value
+                          map-options
+                        />
+                      </div>
+
+                      <div class="col-6">
                         <!-- subject dropdown -->
                         <q-select
                           filled
@@ -249,7 +260,6 @@
                           map-options
                         />
                       </div>
-                      <div class="col-6"></div>
                     </div>
                   </q-card-section>
                 </q-card>
@@ -263,11 +273,11 @@
 </template>
 
 <script>
-import { defineComponent, defineAsyncComponent } from "vue";
-import { ref } from "vue";
-import { useStore } from "src/stores/store";
-import { api } from "boot/axios";
-import { useQuasar } from "quasar";
+import {defineComponent, defineAsyncComponent} from "vue";
+import {ref} from "vue";
+import {useStore} from "src/stores/store";
+import {api} from "boot/axios";
+import {useQuasar} from "quasar";
 import _ from "lodash";
 
 export default defineComponent({
@@ -280,7 +290,7 @@ export default defineComponent({
 
   setup() {
     const store = useStore();
-    const { $q } = useQuasar();
+    const {$q} = useQuasar();
     return {
       $q,
     };
@@ -295,17 +305,19 @@ export default defineComponent({
       courseData: {
         title: "",
         description: "",
-        number_of_classes: "",
-        number_of_exams: "",
-        subject_id: "",
+        num_classes: "",
+        num_exams: "",
+        category_id: null,
+        subject_id: null,
         start_date: "",
         end_date: "",
-        co_ordinator_name: "",
-        co_ordinator_phone: "",
+        coordinator_name: "",
+        coordinator_number: "",
         course_icon: ref(null),
-        course_short_video: ref(null),
+        intro_video: ref(null),
       },
       subjectOptions: [],
+      categoryOptions: [],
     };
   },
   methods: {
@@ -313,16 +325,7 @@ export default defineComponent({
       console.log(this.courseData);
       if (this.$route.params.id) {
         api
-          .patch(`/courses/${this.$route.params.id}`, {
-            subject_id: this.courseData.subject_id,
-            title: this.courseData.title,
-            description: this.courseData.description,
-            num_classes: this.courseData.number_of_classes,
-            num_exams: this.courseData.number_of_exams,
-            coordinator_name: this.courseData.co_ordinator_name,
-            coordinator_number: this.courseData.co_ordinator_phone,
-            intro_video: "https://www.youtube.com/watch?v=9JSYB59QmZw",
-          })
+          .patch(`/courses/${this.$route.params.id}`, this.courseData)
           .then((response) => {
             console.log(response);
             this.$q.notify({
@@ -339,16 +342,7 @@ export default defineComponent({
           });
       } else {
         api
-          .post("/courses", {
-            subject_id: this.courseData.subject_id,
-            title: this.courseData.title,
-            description: this.courseData.description,
-            num_classes: this.courseData.number_of_classes,
-            num_exams: this.courseData.number_of_exams,
-            coordinator_name: this.courseData.co_ordinator_name,
-            coordinator_number: this.courseData.co_ordinator_phone,
-            intro_video: "https://www.youtube.com/watch?v=9JSYB59QmZw",
-          })
+          .post("/courses", this.courseData)
           .then((response) => {
             console.log(response);
             this.$q.notify({
@@ -398,20 +392,23 @@ export default defineComponent({
         });
       });
     },
+    getCategories() {
+      api.get("/categories/category").then((response) => {
+        response.data.data.map((category) => {
+          this.categoryOptions.push({
+            label: category.name,
+            value: category.id,
+          });
+        });
+      });
+    },
   },
   mounted() {
     this.getSubjects();
+    this.getCategories();
     if (this.$route.params.id) {
       api.get("/courses/" + this.$route.params.id).then((response) => {
-        const result = response.data.data;
-        this.courseData.title = result.title;
-        this.courseData.subject_id = result.subject_id;
-        this.courseData.description = result.description;
-        this.courseData.number_of_classes = result.num_classes;
-        this.courseData.number_of_exams = result.num_exams;
-        this.courseData.co_ordinator_name = result.coordinator_name;
-        this.courseData.co_ordinator_phone = result.coordinator_number;
-        this.courseData.course_short_video = result.intro_video;
+        this.courseData = response.data.data;
       });
     }
   },

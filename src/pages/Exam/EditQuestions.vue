@@ -3,7 +3,11 @@
     <q-card class="no-shadow" bordered>
       <!-- add edit header with submit and reset buttons on right -->
       <q-card-section class="row items-center justify-between">
-        <div class="text-h6">Add/Edit Questions in Exam</div>
+        <div class="text-h6">
+          Add/Edit Questions in Exam
+          <div class="text-subtitle2">Exam : {{ examTitle }}</div>
+        </div>
+
         <div class="row">
           <q-btn
             label="Update Question"
@@ -333,6 +337,7 @@ export default defineComponent({
   },
   data() {
     return {
+      examTitle: "",
       selected: [],
       searchText: "",
       expanded: true,
@@ -451,6 +456,16 @@ export default defineComponent({
     };
   },
   methods: {
+    getExamTitle() {
+      api
+        .get(`/exams/${this.$route.params.id}?filter=title`)
+        .then((res) => {
+          this.examTitle += res.data.data.title;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
     edit(id) {
       this.$router.push(`/question/` + id);
     },
@@ -503,7 +518,8 @@ export default defineComponent({
     },
     addQuestion(item) {
       if (
-        this.examQuestions.findIndex((question) => question.id == item.id) === -1
+        this.examQuestions.findIndex((question) => question.id == item.id) ===
+        -1
       ) {
         this.examQuestions.push(item);
         this.$q.notify({
@@ -581,6 +597,7 @@ export default defineComponent({
     },
   },
   async mounted() {
+    this.getExamTitle();
     this.fetchExamQuestions();
     await this.searchQuestions(this.questionFilter, 1);
   },

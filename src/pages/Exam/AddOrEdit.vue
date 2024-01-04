@@ -725,6 +725,10 @@ export default defineComponent({
       this.getSubjects(),
       this.getCourses(),
     ]).then((value) => {
+      if (this.$route.query.courseId) {
+        this.examData.course_id = this.$route.query.courseId
+        
+      }
       if (this.$route.params.id) {
         api
           .get("/exams/" + this.$route.params.id + "?include=examConfiguration")

@@ -4,9 +4,7 @@
       <q-card-section class="row items-center justify-between">
         <div class="text-h6 text-indigo-8">
           Attempted Users List
-          <div class="text-subtitle2">
-            List of all attempted users are shown here
-          </div>
+          <div class="text-subtitle2">Exam : {{ examTitle }}</div>
         </div>
         <div class="row">
           <q-btn
@@ -83,6 +81,26 @@ export default {
       attempts,
       userListRef,
     };
+  },
+  data() {
+    return {
+      examTitle: "",
+    };
+  },
+  methods: {
+    getExamTitle() {
+      api
+        .get(`/exams/${this.$route.params.id}?filter=title`)
+        .then((res) => {
+          this.examTitle += res.data.data.title;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+  },
+  mounted() {
+    this.getExamTitle();
   },
 };
 </script>

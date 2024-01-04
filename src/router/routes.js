@@ -36,6 +36,10 @@ const routes = [
         path: "/questionbanks/published",
         component: () => import("pages/QuestionBank/publishedBank.vue"),
       },
+      {
+        path: "/questionbanks",
+        component: () => import("pages/QuestionBank/AllBank.vue"),
+      },
       // {
       //   path: "/questionbanks",
       //   component: () => import("pages/QuestionBank/index.vue"),
@@ -51,7 +55,7 @@ const routes = [
       // },
       {
         path: "/questionbanks/:id/edit-questions",
-        name: 'questionbank-questions',
+        name: "questionbank-questions",
         component: () => import("pages/QuestionBank/EditQuestion.vue"),
       },
       {
@@ -160,17 +164,18 @@ const routes = [
         path: "/course-exams/:courseId",
         component: () => import("pages/Course/CourseExamList.vue"),
       },
+      // {
+      //   path: "/course-questionbanks/:courseId",
+      //   component: () => import("pages/Course/CourseQuestionBankList.vue"),
+      // },
       {
         path: "/registered-students",
         component: () => import("pages/RegisteredStudents/index.vue"),
       },
-      {
-        path: "/registered-students/:id",
-        component: () => import("pages/RegisteredStudents/edit.vue"),
-      },
+
       {
         path: "/send-message",
-        component: () => import("pages/TrySendMessage.vue"),
+        component: () => import("pages/SendMessage.vue"),
       },
 
       {
@@ -191,6 +196,11 @@ const routes = [
         path: "/student-list",
         name: "studentList",
         component: () => import("pages/StudentList.vue"),
+      },
+      {
+        path: "/student/:id",
+        name: "studentEdit",
+        component: () => import("pages/RegisteredStudents/edit.vue"),
       },
 
       // Not completed yet

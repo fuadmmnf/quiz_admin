@@ -55,6 +55,7 @@
                   dense
                   debounce="300"
                   v-model="filter"
+                  @keyup.enter="onFilter"
                   placeholder="Search"
                 >
                   <template v-slot:append>
@@ -112,15 +113,7 @@
                   >
                     {{ "end_time" }}
                   </q-td>
-                  <q-td
-                    key="ranking"
-                    :props="props"
-                    v-if="route.params.type === 'completed'"
-                  >
-                    {{
-                      props.row.ranking === null ? "----" : props.row.ranking
-                    }}
-                  </q-td>
+
                   <q-td key="actions" :props="props">
                     <q-btn
                       color="blue"
@@ -158,7 +151,7 @@
 </template>
 
 <script>
-import {ref} from "vue";
+import { ref } from "vue";
 import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 import { useRoute } from "vue-router";
@@ -190,7 +183,9 @@ export default {
       loading.value = true;
       api
         .get(
-          `/exam-attempts?search=exam_id:${route.params.id}&include=user&page=${page}`
+          `/exam-attempts?search=exam_id:${route.params.id}${
+            filter.value.length ? ";user.mobile:" + filter.value : ""
+          }&searchJoin=and&include=user&page=${page}`
         )
         .then((res) => {
           if (res.data.data.length > 0) {
@@ -224,7 +219,11 @@ export default {
       loading.value = true;
       api
         .get(
-          `/exams/${route.params.id}/ranking?include=examAttempt,examAttempt.user&page=${page}`
+          `/exams/${route.params.id}/ranking?${
+            filter.value.length
+              ? "search=examAttempt.user.mobile:" + filter.value
+              : ""
+          }&searchJoin=and&include=examAttempt,examAttempt.user&page=${page}`
         )
         .then((res) => {
           if (res.data.data.length > 0) {
@@ -266,20 +265,31 @@ export default {
     };
 
     const deleteAttempt = (id) => {
-      api
-        .delete(`/exam-attempts/${id}`)
-        .then((res) => {
-          $q.notify({
-            message: "Attempt deleted successfully",
-            color: "green",
-            icon: "check",
-          });
-          if (route.params.type === "completed")
-            fetchCompletedUsers(pagination.value.page);
-          else fetchusers(pagination.value.page);
+      $q.dialog({
+        title: "Confirm",
+        message: "Would you like to delete this exam attempt?",
+        cancel: true,
+        persistent: true,
+      })
+        .onOk(() => {
+          api
+            .delete(`/exam-attempts/${id}`)
+            .then((res) => {
+              $q.notify({
+                message: "Attempt deleted successfully",
+                color: "green",
+                icon: "check",
+              });
+              if (route.params.type === "completed")
+                fetchCompletedUsers(pagination.value.page);
+              else fetchusers(pagination.value.page);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         })
-        .catch((error) => {
-          console.log(error);
+        .onCancel(() => {
+          console.log(">>>> Cancel");
         });
     };
 
@@ -312,6 +322,13 @@ export default {
   mounted() {
     if (this.route.params.type === "completed") this.fetchCompletedUsers();
     else this.fetchusers();
+  },
+  methods: {
+    onFilter() {
+      console.log(this.filter);
+      if (this.route.params.type === "completed") this.fetchCompletedUsers();
+      else this.fetchusers();
+    },
   },
   data() {
     return {
@@ -385,13 +402,6 @@ export default {
           align: "left",
           label: "End time",
           field: (row) => row.end_time,
-          sortable: true,
-        },
-        {
-          name: "ranking",
-          align: "center",
-          label: "Ranking",
-          field: (row) => row.ranking,
           sortable: true,
         },
         {
