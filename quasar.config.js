@@ -8,7 +8,7 @@
 // Configuration for your app
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
 
-const { configure } = require("quasar/wrappers");
+const {configure} = require("quasar/wrappers");
 const path = require("path");
 
 module.exports = configure(function (/* ctx */) {
@@ -82,6 +82,7 @@ module.exports = configure(function (/* ctx */) {
     devServer: {
       // https: true
       open: process.env.DEV, // opens browser window automatically
+      port: 9005
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework

@@ -7,7 +7,10 @@
           <div class="text-subtitle2">Mail to all or specific user</div>
         </div>
         <div class="row">
-          <q-btn color="primary" label="Send" icon="send" @click="onSubmit"/>
+          <q-btn
+            :disable="!noticeData.noticeable_type.length || !noticeData.noticeable_ids.length || !noticeData.title.length || !noticeData.message.length"
+            color="primary"
+            label="Send" icon="send" @click="onSubmit"/>
         </div>
       </q-card-section>
     </q-card>
@@ -210,12 +213,20 @@ export default {
     const onSubmit = _.debounce(function () {
 
       api.post("/notices", noticeData.value).then((response) => {
-        this.$q.notify({
-          message: "Notice Sent Successfully",
-          color: "positive",
-          icon: "check",
-        });
-        onReset();
+        if (response.status === 201) {
+          this.$q.notify({
+            message: "Notice Sent Successfully",
+            color: "positive",
+            icon: "check",
+          });
+          onReset();
+        } else {
+          this.$q.notify({
+            message: "Something wrong, please try again",
+            color: "negative",
+            icon: "close",
+          });
+        }
       });
 
     }, 5000)
@@ -226,11 +237,11 @@ export default {
     watch(
       () => noticeData.value.noticeable_type,
       (newValue, oldValue) => {
-        if(newValue !== oldValue){
+        if (newValue !== oldValue) {
           noticeData.value.noticeable_ids = []
         }
       },
-      { deep: true }
+      {deep: true}
     )
     const fetchStudents = async () => {
       const queryParams = {
