@@ -41,42 +41,13 @@
               height: 500,
               width: 1000,
               menubar: true,
-              plugins: [
-                'advlist   link   print  anchor',
-                'searchreplace  code fullscreen',
-                ' media table paste code help ',
-                'table',
-                'equation-editor',
-                'image',
-                'autolink',
-                'lists',
-                'visualblocks',
-                'insertdatetime',
-                'wordcount',
-                'code',
-                'codesample',
-                'charmap',
-                'hr',
-                'nonbreaking',
-                'anchor',
-                'toc',
-                'insertdatetime',
-                'advlist',
-                'lists',
-                'wordcount',
-                'imagetools',
-                'textpattern',
-                'noneditable',
-                'help',
-                'charmap',
-                'emoticons',
-                'directionality',
-                'searchreplace',
-              ],
-              toolbar:
-                'undo redo | formatselect | bold italic backcolor | \
-           alignleft aligncenter alignright alignjustify | \
-           bullist numlist outdent indent equation-editor | removeformat | help table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol',
+              selector: '#mytextarea',
+    //           plugins: 'eqneditor',
+		// toolbar: 'eqneditor '
+                plugins: 'print  preview paste importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image imagetools  link media template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists wordcount imagetools textpattern noneditable help charmap quickbars emoticons',
+               //
+               //
+               toolbar: 'undo redo | bold italic underline strikethrough  | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl',
             }"
           >
           </editor>
