@@ -13,7 +13,7 @@
     "@quasar/app-vite": "^1.4.3",
     "@quasar/extras": "^1.0.0",
     "@quasar/quasar-ui-qcalendar": "^4.0.0-beta.15",
-    "@tinymce/tinymce-vue": "^5.1.0",
+    "@tinymce/tinymce-vue": "^5.1.1",
     "axios": "^0.21.1",
     "dotenv": "^16.3.1",
     "echarts": "^5.4.1",
