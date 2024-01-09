@@ -297,7 +297,7 @@ export default defineComponent({
             searchData.subject && searchData.subject.length
               ? ";subject_id:" + searchData.subject
               : ""
-          }&page=${page}"&orderBy=id&sortedBy=desc&limit=50`
+          }&page=${page}&orderBy=id&sortedBy=desc&limit=50`
         )
         .then((res) => {
           const meta = res.data.meta.pagination;
