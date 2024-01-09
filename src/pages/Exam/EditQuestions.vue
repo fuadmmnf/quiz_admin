@@ -288,18 +288,18 @@ export default defineComponent({
       await api
         .get(
           `/questions?include=category,subject&searchJoin=and&search=${
-            searchData.value.type.length ? "type:" + searchData.value.type : ""
+            questionFilter.value.type.length ? "type:" + questionFilter.value.type : ""
           }${
-            searchData.value.keywords.length
-              ? ";content:" + searchData.value.keywords
+            questionFilter.value.keywords.length
+              ? ";content:" + questionFilter.value.keywords
               : ""
           }${
-            searchData.value.category && searchData.value.category.length
-              ? ";category_id:" + searchData.value.category
+            questionFilter.value.category && questionFilter.value.category.length
+              ? ";category_id:" + questionFilter.value.category
               : ""
           }${
-            searchData.value.subject && searchData.value.subject.length
-              ? ";subject_id:" + searchData.value.subject
+            questionFilter.value.subject && questionFilter.value.subject.length
+              ? ";subject_id:" + questionFilter.value.subject
               : ""
           }&page=${page}&orderBy=id&sortedBy=desc&limit=50`
         )
