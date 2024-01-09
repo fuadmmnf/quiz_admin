@@ -288,10 +288,20 @@ export default defineComponent({
       await api
         .get(
           `/questions?include=category,subject&searchJoin=and&search=${
-            searchData.type.length ? "type:" + searchData.type : ""
+            searchData.value.type.length ? "type:" + searchData.value.type : ""
           }${
-            searchData.keywords.length ? ";content:" + searchData.keywords : ""
-          }&orderBy=id&sortedBy=desc&page=${page}`
+            searchData.value.keywords.length
+              ? ";content:" + searchData.value.keywords
+              : ""
+          }${
+            searchData.value.category && searchData.value.category.length
+              ? ";category_id:" + searchData.value.category
+              : ""
+          }${
+            searchData.value.subject && searchData.value.subject.length
+              ? ";subject_id:" + searchData.value.subject
+              : ""
+          }&page=${page}&orderBy=id&sortedBy=desc&limit=50`
         )
         .then((res) => {
           const meta = res.data.meta.pagination;
