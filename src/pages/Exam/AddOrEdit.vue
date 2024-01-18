@@ -167,7 +167,7 @@
                           filled
                           v-model="examData.faculty_id"
                           :label="`Faculty`"
-                          :options="facultyOptions"
+                          :options="categoryStore.getFacultyOptions"
                           emit-value
                           map-options
                           clearable
@@ -183,7 +183,7 @@
                           filled
                           v-model="examData.category_id"
                           :label="`Category`"
-                          :options="categoryOptions"
+                          :options="categoryStore.getCategoryOptions"
                           emit-value
                           map-options
                           clearable
@@ -199,7 +199,7 @@
                           filled
                           v-model="examData.subject_id"
                           :label="`Subject`"
-                          :options="subjectOptions"
+                          :options="categoryStore.getSubjectOptions"
                           emit-value
                           map-options
                           clearable
@@ -558,6 +558,7 @@ import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 import { useQuasar } from "quasar";
 import _ from "lodash";
+import {useCategoryStore} from "stores/category";
 
 function initExamData() {
   return {
@@ -598,11 +599,13 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
+    const categoryStore = useCategoryStore();
     const exams = store.exams;
     const { $q } = useQuasar();
     return {
       exams,
       $q,
+      categoryStore,
     };
   },
   data() {
@@ -613,9 +616,6 @@ export default defineComponent({
       model: "",
       expanded: false,
       examData: initExamData(),
-      facultyOptions: [],
-      categoryOptions: [],
-      subjectOptions: [],
       visibility_option: [
         { label: "Public", value: "public" },
         { label: "Private", value: "private" },
@@ -674,36 +674,6 @@ export default defineComponent({
     onReset() {
       this.examData = initExamData();
     },
-    getFaculties() {
-      return api.get("/categories/faculty").then((response) => {
-        response.data.data.map((category) => {
-          this.facultyOptions.push({
-            label: category.name,
-            value: category.id,
-          });
-        });
-      });
-    },
-    getCategories() {
-      return api.get("/categories/category").then((response) => {
-        response.data.data.map((category) => {
-          this.categoryOptions.push({
-            label: category.name,
-            value: category.id,
-          });
-        });
-      });
-    },
-    getSubjects() {
-      return api.get("/categories/subject").then((response) => {
-        response.data.data.map((category) => {
-          this.subjectOptions.push({
-            label: category.name,
-            value: category.id,
-          });
-        });
-      });
-    },
 
     getCourses() {
       return api
@@ -720,14 +690,11 @@ export default defineComponent({
   },
   mounted() {
     Promise.all([
-      this.getFaculties(),
-      this.getCategories(),
-      this.getSubjects(),
       this.getCourses(),
     ]).then((value) => {
       if (this.$route.query.courseId) {
         this.examData.course_id = this.$route.query.courseId
-        
+
       }
       if (this.$route.params.id) {
         api

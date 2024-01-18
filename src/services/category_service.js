@@ -1,5 +1,17 @@
 import { api } from "boot/axios";
 
+export async function loadCategories(params = {}) {
+  try {
+    const { data, status } = await api.get("v1/categories/category?limit=0", {
+      params,
+    });
+
+    return { data, status, error: null };
+  } catch (error) {
+    return { data: null, status: null, error };
+  }
+}
+
 export async function loadFaculties(params = {}) {
   try {
     const { data, status } = await api.get("/categories/faculty?limit=0", {

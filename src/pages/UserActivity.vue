@@ -68,7 +68,7 @@
 import { api } from "src/boot/axios";
 import { onMounted, ref, watch, computed } from "vue";
 import { date } from 'quasar';
-import {getUsers} from "src/services/auth_services";
+import {getUsers} from "src/services/auth_service";
 
 
 

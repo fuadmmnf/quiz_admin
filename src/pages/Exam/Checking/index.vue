@@ -21,7 +21,7 @@
 
 import { useStore } from "src/stores/store";
 import ExamList from "src/components/exam/ExamList.vue";
-import {getExams} from "src/services/exam_services";
+import {getExams} from "src/services/exam_service";
 
 export default {
   name: "Checking",

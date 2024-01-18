@@ -116,55 +116,20 @@
                     </div>
                     <div class="row q-col-gutter-md">
                       <div class="col-6">
-                        <q-file
-                          filled
-                          bottom-slots
-                          v-model="courseData.course_icon"
-                          label="Course icon"
-                          counter
-                        >
-                          <template v-slot:prepend>
-                            <q-icon name="cloud_upload" @click.stop.prevent/>
-                          </template>
-                          <template v-if="courseData.course_icon" v-slot:append>
-                            <q-icon
-                              name="close"
-                              @click.stop.prevent="
-                                courseData.course_icon = null
-                              "
-                              class="cursor-pointer"
-                            />
-                          </template>
-
-                          <template v-slot:hint> png/jpg</template>
-                        </q-file>
+                        <div class="col-6">
+                          <q-input
+                            filled
+                            v-model="courseData.photo"
+                            :label="`Course Cover Image Link`"
+                          />
+                        </div>
                       </div>
                       <div class="col-6">
-                        <q-file
+                        <q-input
                           filled
-                          bottom-slots
                           v-model="courseData.intro_video"
-                          label="Short video"
-                          counter
-                        >
-                          <template v-slot:prepend>
-                            <q-icon name="cloud_upload" @click.stop.prevent/>
-                          </template>
-                          <template
-                            v-if="courseData.intro_video"
-                            v-slot:append
-                          >
-                            <q-icon
-                              name="close"
-                              @click.stop.prevent="
-                                courseData.intro_video = null
-                              "
-                              class="cursor-pointer"
-                            />
-                          </template>
-
-                          <template v-slot:hint> mp4/mkv</template>
-                        </q-file>
+                          :label="`Course Intro Video Link`"
+                        />
                       </div>
                     </div>
                     <div class="row q-col-gutter-md q-mt-auto">
@@ -243,7 +208,7 @@
                           filled
                           v-model="courseData.category_id"
                           :label="`Category`"
-                          :options="categoryOptions"
+                          :options="categoryStore.getCategoryOptions"
                           emit-value
                           map-options
                         />
@@ -255,7 +220,7 @@
                           filled
                           v-model="courseData.subject_id"
                           :label="`Subject`"
-                          :options="subjectOptions"
+                          :options="categoryStore.getSubjectOptions"
                           emit-value
                           map-options
                         />
@@ -275,7 +240,8 @@
 <script>
 import {defineComponent, defineAsyncComponent} from "vue";
 import {ref} from "vue";
-import {useStore} from "src/stores/store";
+import {useStore} from "stores/store";
+import { useCategoryStore } from "stores/category";
 import {api} from "boot/axios";
 import {useQuasar} from "quasar";
 import _ from "lodash";
@@ -290,9 +256,11 @@ export default defineComponent({
 
   setup() {
     const store = useStore();
+    const categoryStore = useCategoryStore();
     const {$q} = useQuasar();
     return {
       $q,
+      categoryStore,
     };
   },
   data() {
@@ -313,16 +281,13 @@ export default defineComponent({
         end_date: "",
         coordinator_name: "",
         coordinator_number: "",
-        course_icon: ref(null),
-        intro_video: ref(null),
+        photo: null,
+        intro_video: null,
       },
-      subjectOptions: [],
-      categoryOptions: [],
     };
   },
   methods: {
     onSubmit() {
-      console.log(this.courseData);
       if (this.$route.params.id) {
         api
           .patch(`/courses/${this.$route.params.id}`, this.courseData)
@@ -338,7 +303,6 @@ export default defineComponent({
             console.log(err);
           })
           .finally(() => {
-            this.onReset();
           });
       } else {
         api
@@ -360,20 +324,20 @@ export default defineComponent({
       }
     },
     onReset() {
-      console.log("Reset");
       this.courseData = {
         id: "",
         title: "",
         description: "",
-        number_of_classes: "",
-        number_of_exams: "",
-        subject_id: "",
+        num_classes: "",
+        num_exams: "",
+        category_id: null,
+        subject_id: null,
         start_date: "",
         end_date: "",
-        co_ordinator_name: "",
-        co_ordinator_phone: "",
-        course_icon: ref(null),
-        course_short_video: ref(null),
+        coordinator_name: "",
+        coordinator_number: "",
+        photo: null,
+        intro_video: null,
       };
     },
     openCourseDescriptionTinyMceModal() {
@@ -382,30 +346,8 @@ export default defineComponent({
     onDescriptionChange(value, index, parentIndex) {
       this.courseData.description = value;
     },
-    getSubjects() {
-      api.get("/categories/subject").then((response) => {
-        response.data.data.map((category) => {
-          this.subjectOptions.push({
-            label: category.name,
-            value: category.id,
-          });
-        });
-      });
-    },
-    getCategories() {
-      api.get("/categories/category").then((response) => {
-        response.data.data.map((category) => {
-          this.categoryOptions.push({
-            label: category.name,
-            value: category.id,
-          });
-        });
-      });
-    },
   },
   mounted() {
-    this.getSubjects();
-    this.getCategories();
     if (this.$route.params.id) {
       api.get("/courses/" + this.$route.params.id).then((response) => {
         this.courseData = response.data.data;

@@ -76,7 +76,7 @@
                           filled
                           v-model="lectureData.subject_id"
                           :label="`Subject`"
-                          :options="subjectOptions"
+                          :options="categoryStore.getSubjectOptions"
                           emit-value
                           map-options
                         />
@@ -169,7 +169,8 @@ import { useQuasar } from "quasar";
 import {
   createLectureClass,
   editLectureClass,
-} from "src/services/course_services";
+} from "src/services/course_service";
+import {useCategoryStore} from "stores/category";
 
 export default defineComponent({
   name: "Add Lecture",
@@ -181,11 +182,13 @@ export default defineComponent({
 
   setup() {
     const store = useStore();
+    const categoryStore = useCategoryStore();
     const { $q } = useQuasar();
     const courseId = ref("");
     return {
       courseId,
       $q,
+      categoryStore,
     };
   },
   data() {
@@ -202,14 +205,10 @@ export default defineComponent({
         start_date: "",
         zoom_link: "",
       },
-      subjectOptions: [],
     };
   },
   methods: {
     async onSubmit() {
-      console.log("Submitted");
-      console.log(this.courseId);
-      console.log(this.lectureData);
       if (this.$route.params.id) {
         // const lectureId = this.$route.params.id;
         // const { data, status, error } = await editLectureClass(lectureId, {
@@ -296,19 +295,9 @@ export default defineComponent({
     onDescriptionChange(value, index, parentIndex) {
       this.lectureData.description = value;
     },
-    getSubjects() {
-      api.get("/categories/subject").then((response) => {
-        response.data.data.map((category) => {
-          this.subjectOptions.push({
-            label: category.name,
-            value: category.id,
-          });
-        });
-      });
-    },
+
   },
   mounted() {
-    this.getSubjects();
     this.courseId = this.$route.params.courseId;
     if (this.$route.params.id) {
       //   api

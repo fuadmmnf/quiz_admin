@@ -90,7 +90,7 @@ import { defineComponent, defineAsyncComponent, ref, computed } from "vue";
 import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 import { useQuasar } from "quasar";
-import { getLectureClasses } from "src/services/course_services";
+import { getLectureClasses } from "src/services/course_service";
 
 export default defineComponent({
   name: "LectureClasses",

@@ -364,8 +364,12 @@ import Messages from "./Messages.vue";
 import { defineComponent, onMounted, ref } from "vue";
 import { useQuasar } from "quasar";
 import { useStore } from "src/stores/store";
-import { loadFaculties, loadInstitution} from "src/services/category_services";
-import {useCategoryStore} from "stores/category";
+import { useCategoryStore } from "stores/category";
+import {
+  loadCategories,
+  loadFaculties,
+  loadSubjects,
+} from "src/services/category_service";
 
 export default defineComponent({
   name: "MainLayout",
@@ -382,10 +386,21 @@ export default defineComponent({
     const user = ref(null);
     const category = useCategoryStore();
 
+
     onMounted(async () => {
       // Call the action to fetch the user data
       await store.getAuthenticatedUser();
 
+
+      const {
+        data: categoryData,
+        status: categoryStatus,
+        error: categoryError,
+      } = await loadCategories({});
+      if (categoryStatus === 200) {
+        // console.log("Category", categoryData);
+        category.setCategories(categoryData.data);
+      }
 
       const {
         data: facultyData,
@@ -398,13 +413,13 @@ export default defineComponent({
       }
 
       const {
-        data: institutionData,
-        status: institutionStatus,
-        error: institutionError,
-      } = await loadInstitution({});
-      if (institutionStatus === 200) {
-        // console.log("Institution", institutionData);
-        category.setInstitution(institutionData.data);
+        data: subjectData,
+        status: subjectStatus,
+        error: subjectError,
+      } = await loadSubjects({});
+      if (subjectStatus === 200) {
+        // console.log("Subject", subjectData);
+        category.setSubjects(subjectData.data);
       }
 
       // Now, you can access the user object

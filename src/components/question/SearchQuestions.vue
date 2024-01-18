@@ -60,7 +60,7 @@
                 <q-select
                   filled
                   v-model="searchData.category"
-                  :options="categoryOptions"
+                  :options="categoryStore.getCategoryOptions"
                   :label="`Category`"
                   lazy-rules
                   map-options
@@ -73,7 +73,7 @@
                 <q-select
                   filled
                   v-model="searchData.subject"
-                  :options="subjectOptions"
+                  :options="categoryStore.getSubjectOptions"
                   :label="`Subject`"
                   lazy-rules
                   map-options
@@ -92,6 +92,7 @@
 
 <script>
 import { useStore } from "src/stores/store";
+import {useCategoryStore} from "stores/category";
 
 export default {
   name: "SearchQuestions",
@@ -103,7 +104,8 @@ export default {
   },
   setup() {
     const store = useStore();
-    return { store };
+    const categoryStore = useCategoryStore();
+    return { store, categoryStore };
   },
   data() {
     return {
@@ -117,8 +119,6 @@ export default {
         { label: "Multilayered Type 1", value: "multilayered-type-1" },
         { label: "Multilayered Type 2", value: "multilayered-type-2" },
       ],
-      categoryOptions: [],
-      subjectOptions: [],
       searchData: {
         keywords: "",
         type: "",
@@ -142,18 +142,7 @@ export default {
     },
   },
   mounted() {
-    this.store.categories.map((category) => {
-      this.categoryOptions.push({
-        label: category.name,
-        value: category.id,
-      });
-    });
-    this.store.subjects.map((subject) => {
-      this.subjectOptions.push({
-        label: subject.name,
-        value: subject.id,
-      });
-    });
+
   },
 };
 </script>
