@@ -384,43 +384,19 @@ export default defineComponent({
     const $q = useQuasar();
     const store = useStore();
     const user = ref(null);
-    const category = useCategoryStore();
+    const categoryStore = useCategoryStore();
 
 
     onMounted(async () => {
       // Call the action to fetch the user data
       await store.getAuthenticatedUser();
 
+      categoryStore.loadCategories();
+      categoryStore.loadSubjects();
+      categoryStore.loadFaculties();
 
-      const {
-        data: categoryData,
-        status: categoryStatus,
-        error: categoryError,
-      } = await loadCategories({});
-      if (categoryStatus === 200) {
-        // console.log("Category", categoryData);
-        category.setCategories(categoryData.data);
-      }
 
-      const {
-        data: facultyData,
-        status: facultyStatus,
-        error: facultyError,
-      } = await loadFaculties({});
-      if (facultyStatus === 200) {
-        // console.log("Faculty", facultyData);
-        category.setFaculties(facultyData.data);
-      }
 
-      const {
-        data: subjectData,
-        status: subjectStatus,
-        error: subjectError,
-      } = await loadSubjects({});
-      if (subjectStatus === 200) {
-        // console.log("Subject", subjectData);
-        category.setSubjects(subjectData.data);
-      }
 
       // Now, you can access the user object
       if (store.user) {
