@@ -2,7 +2,7 @@ import { api } from "boot/axios";
 
 export async function loadCategories(params = {}) {
   try {
-    const { data, status } = await api.get("v1/categories/category?limit=0", {
+    const { data, status } = await api.get("/categories/category?limit=0", {
       params,
     });
 
