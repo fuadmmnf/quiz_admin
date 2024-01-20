@@ -42,7 +42,7 @@
                 <q-select
                   filled
                   v-model="searchData.category"
-                  :options="categoryOptions"
+                  :options="categoryStore.getCategoryOptions"
                   :label="`Category`"
                   lazy-rules
                   map-options
@@ -55,7 +55,7 @@
                 <q-select
                   filled
                   v-model="searchData.subject"
-                  :options="subjectOptions"
+                  :options="categoryStore.getSubjectOptions"
                   :label="`Subject`"
                   lazy-rules
                   map-options
@@ -68,7 +68,7 @@
                 <q-select
                   filled
                   v-model="searchData.faculty"
-                  :options="facultyOptions"
+                  :options="categoryStore.getFacultyOptions"
                   :label="`Faculty`"
                   lazy-rules
                   map-options
@@ -86,22 +86,21 @@
 </template>
 
 <script>
-import { useStore } from "src/stores/store";
+import {useStore} from "src/stores/store";
+import {useCategoryStore} from "stores/category";
 
 export default {
   name: "SearchExams",
   props: {},
   setup() {
     const store = useStore();
-    return { store };
+    const categoryStore = useCategoryStore();
+    return {store, categoryStore};
   },
   data() {
     return {
       name: "",
       expanded: true,
-      categoryOptions: [],
-      subjectOptions: [],
-      facultyOptions: [],
       searchData: {
         keywords: "",
         type: "",
@@ -127,24 +126,6 @@ export default {
     },
   },
   mounted() {
-    this.store.categories.map((category) => {
-      this.categoryOptions.push({
-        label: category.name,
-        value: category.id,
-      });
-    });
-    this.store.subjects.map((subject) => {
-      this.subjectOptions.push({
-        label: subject.name,
-        value: subject.id,
-      });
-    });
-    this.store.faculties.map((faculty) => {
-      this.facultyOptions.push({
-        label: faculty.name,
-        value: faculty.id,
-      });
-    });
   },
 };
 </script>

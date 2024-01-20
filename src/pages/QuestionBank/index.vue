@@ -124,7 +124,7 @@ import {
   editQuestionBank,
   getQuestionBanks,
   updateQuestionBankStatus
-} from "src/services/questionBank_services";
+} from "src/services/questionbank_service";
 import {useRouter} from "vue-router";
 
 export default {

@@ -86,7 +86,7 @@
                         />
                       </div>
                     </div>
-                    <div class="row q-col-gutter-md q-my-md">
+                    <div class="row q-col-gutter-md">
                       <div class="col-6">
                         <q-input
                           filled
@@ -110,55 +110,20 @@
                     </div>
                     <div class="row q-col-gutter-md">
                       <div class="col-6">
-                        <q-file
-                          filled
-                          bottom-slots
-                          v-model="courseData.course_icon"
-                          label="Course icon"
-                          counter
-                        >
-                          <template v-slot:prepend>
-                            <q-icon name="cloud_upload" @click.stop.prevent/>
-                          </template>
-                          <template v-if="courseData.course_icon" v-slot:append>
-                            <q-icon
-                              name="close"
-                              @click.stop.prevent="
-                                courseData.course_icon = null
-                              "
-                              class="cursor-pointer"
-                            />
-                          </template>
-
-                          <template v-slot:hint> png/jpg</template>
-                        </q-file>
+                        <div class="col-6">
+                          <q-input
+                            filled
+                            v-model="courseData.photo"
+                            :label="`Course Cover Image Link`"
+                          />
+                        </div>
                       </div>
                       <div class="col-6">
-                        <q-file
+                        <q-input
                           filled
-                          bottom-slots
                           v-model="courseData.intro_video"
-                          label="Short video"
-                          counter
-                        >
-                          <template v-slot:prepend>
-                            <q-icon name="cloud_upload" @click.stop.prevent/>
-                          </template>
-                          <template
-                            v-if="courseData.intro_video"
-                            v-slot:append
-                          >
-                            <q-icon
-                              name="close"
-                              @click.stop.prevent="
-                                courseData.intro_video = null
-                              "
-                              class="cursor-pointer"
-                            />
-                          </template>
-
-                          <template v-slot:hint> mp4/mkv</template>
-                        </q-file>
+                          :label="`Course Intro Video Link`"
+                        />
                       </div>
                     </div>
                     <div class="row q-col-gutter-md q-mt-auto">
@@ -315,7 +280,8 @@ export default defineComponent({
     };
   },
   methods: {
-    onSubmit: _.debounce(function () {
+    onSubmit() {
+      console.log(this.courseData);
       if (this.$route.params.id) {
         api
           .patch(`/courses/${this.$route.params.id}`, this.courseData)
@@ -351,7 +317,7 @@ export default defineComponent({
             this.onReset();
           });
       }
-    }, 2500),
+    },
     onReset() {
       console.log("Reset");
       this.courseData = {

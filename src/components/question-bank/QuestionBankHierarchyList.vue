@@ -227,7 +227,7 @@ import {
   getQuestionBanks,
   updateQuestionBankStatus,
   deleteQuestionBank,
-} from "src/services/questionBank_services";
+} from "src/services/questionbank_service";
 import { useRouter, useRoute } from "vue-router";
 import { useQuasar } from "quasar";
 

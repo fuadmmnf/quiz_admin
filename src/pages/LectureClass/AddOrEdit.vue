@@ -76,7 +76,7 @@
                           filled
                           v-model="lectureData.subject_id"
                           :label="`Subject`"
-                          :options="subjectOptions"
+                          :options="categoryStore.getSubjectOptions"
                           emit-value
                           map-options
                         />
@@ -169,7 +169,7 @@ import {
   createLectureClass,
   editLectureClass,
 } from "src/services/course_services";
-import _ from "lodash";
+import {useCategoryStore} from "stores/category";
 
 export default defineComponent({
   name: "Add Lecture",
@@ -181,11 +181,14 @@ export default defineComponent({
 
   setup() {
     const store = useStore();
+    const categoryStore = useCategoryStore();
+
     const { $q } = useQuasar();
     const courseId = ref("");
     return {
       courseId,
       $q,
+      categoryStore,
     };
   },
   data() {
@@ -242,7 +245,7 @@ export default defineComponent({
           .then((response) => {
             console.log(response);
             this.$q.notify({
-              message: "Course updated Successfully",
+              message: "Class Lecture updated Successfully",
               color: "positive",
               icon: "check",
             });
@@ -291,26 +294,15 @@ export default defineComponent({
     onDescriptionChange(value, index, parentIndex) {
       this.lectureData.description = value;
     },
-    getSubjects() {
-      api.get("/categories/subject").then((response) => {
-        response.data.data.map((category) => {
-          this.subjectOptions.push({
-            label: category.name,
-            value: category.id,
-          });
-        });
-      });
-    },
   },
   mounted() {
-    this.getSubjects();
     this.courseId = this.$route.params.courseId;
     if (this.$route.params.id) {
-        api
-          .get(`class-lectures/${this.$route.params.id}`)
-          .then((response) => {
-            this.lectureData = response.data.data;
-          });
+      api
+        .get(`class-lectures/${this.$route.params.id}`)
+        .then((response) => {
+          this.lectureData = response.data.data;
+        });
     }
   },
 });

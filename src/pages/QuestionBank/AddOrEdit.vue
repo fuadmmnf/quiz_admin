@@ -69,7 +69,7 @@
                           filled
                           v-model="questionBankData.subject_id"
                           :label="`Subject`"
-                          :options="subjectOptions"
+                          :options="categoryStore.getSubjectOptions"
                           emit-value
                           map-options
                         />
@@ -80,7 +80,7 @@
                           filled
                           v-model="questionBankData.category_id"
                           :label="`Category`"
-                          :options="categoryOptions"
+                          :options="categoryStore.getCategoryOptions"
                           emit-value
                           map-options
                         />
@@ -115,15 +115,18 @@ import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 import { useQuasar } from "quasar";
 import _ from "lodash";
+import {useCategoryStore} from "stores/category";
 
 export default defineComponent({
   name: "AddOrEdit Question Bank",
 
   setup() {
     const store = useStore();
+    const categoryStore = useCategoryStore();
     const { $q } = useQuasar();
     return {
       $q,
+      categoryStore,
     };
   },
   data() {
@@ -140,8 +143,6 @@ export default defineComponent({
         course_id: "",
         code: "",
       },
-      subjectOptions: [],
-      categoryOptions: [],
       courseOptions: [],
     };
   },
@@ -209,17 +210,6 @@ export default defineComponent({
       };
     },
 
-    getSubjects() {
-      api.get("/categories/subject").then((response) => {
-        response.data.data.map((category) => {
-          this.subjectOptions.push({
-            label: category.name,
-            value: category.id,
-          });
-        });
-      });
-    },
-
     getCourses() {
       api.get("/courses?orderBy=id&sortedBy=desc&limit=0").then((response) => {
         response.data.data.map((course) => {
@@ -230,20 +220,8 @@ export default defineComponent({
         });
       });
     },
-    getCategories() {
-      api.get("/categories/category").then((response) => {
-        response.data.data.map((category) => {
-          this.categoryOptions.push({
-            label: category.name,
-            value: category.id,
-          });
-        });
-      });
-    },
   },
   mounted() {
-    this.getSubjects();
-    this.getCategories();
     this.getCourses();
     if (this.$route.query.courseId) {
       this.questionBankData.course_id = this.$route.query.courseId;

@@ -185,9 +185,9 @@
 
 <script>
 import {onMounted, ref, watch} from "vue";
-import {getStudents} from "src/services/student_services";
-import {getCourses} from "src/services/course_services";
-import {getExams} from "src/services/exam_services";
+import {getStudents} from "src/services/student_service";
+import {getCourses} from "src/services/course_service";
+import {getExams} from "src/services/exam_service";
 import _ from "lodash";
 import {api} from "boot/axios";
 

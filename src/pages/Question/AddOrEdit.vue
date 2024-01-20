@@ -103,7 +103,7 @@
                               <q-select
                                 filled
                                 v-model="question.selected_category"
-                                :options="categoryOptions"
+                                :options="categoryStore.getCategories"
                                 option-value="id"
                                 option-label="name"
                                 :label="`Category`"
@@ -121,7 +121,7 @@
                               <q-select
                                 filled
                                 v-model="question.category_id"
-                                :options="question.selected_category? categoryOptions.find(c => c.id === question.selected_category).children.data: []"
+                                :options="question.selected_category? categoryStore.getCategories.find(c => c.id === question.selected_category).children.data: []"
                                 option-value="id"
                                 option-label="name"
                                 :label="`Subcategory`"
@@ -141,7 +141,7 @@
                               <q-select
                                 filled
                                 v-model="question.selected_subject"
-                                :options="subjectOptions"
+                                :options="categoryStore.getSubjects"
                                 option-value="id"
                                 option-label="name"
                                 :label="`Subject`"
@@ -159,7 +159,7 @@
                               <q-select
                                 filled
                                 v-model="question.subject_id"
-                                :options="question.selected_subject? subjectOptions.find(s => s.id === question.selected_subject).children.data: []"
+                                :options="question.selected_subject? categoryStore.getSubjects.find(s => s.id === question.selected_subject).children.data: []"
                                 option-value="id"
                                 option-label="name"
                                 :label="`Chapter`"
@@ -453,10 +453,12 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
+    const categoryStore = useCategoryStore();
     const {$q} = useQuasar();
     return {
       $q,
       store,
+      categoryStore,
     };
   },
   data() {
@@ -466,42 +468,42 @@ export default defineComponent({
       questions: [],
       question_id: null,
       optionsData: [
-      {
-        content: "",
-        is_correct: false,
-        explanation: "",
-        is_hint: false,
-        visibility: true,
-      },
-      {
-        content: "",
-        is_correct: false,
-        explanation: "",
-        is_hint: false,
-        visibility: true,
-      },
-      {
-        content: "",
-        is_correct: false,
-        explanation: "",
-        is_hint: false,
-        visibility: true,
-      },
-      {
-        content: "",
-        is_correct: false,
-        explanation: "",
-        is_hint: false,
-        visibility: true,
-      },
-      {
-        content: "",
-        is_correct: false,
-        explanation: "",
-        is_hint: false,
-        visibility: true,
-      },
-    ],
+        {
+          content: "",
+          is_correct: false,
+          explanation: "",
+          is_hint: false,
+          visibility: true,
+        },
+        {
+          content: "",
+          is_correct: false,
+          explanation: "",
+          is_hint: false,
+          visibility: true,
+        },
+        {
+          content: "",
+          is_correct: false,
+          explanation: "",
+          is_hint: false,
+          visibility: true,
+        },
+        {
+          content: "",
+          is_correct: false,
+          explanation: "",
+          is_hint: false,
+          visibility: true,
+        },
+        {
+          content: "",
+          is_correct: false,
+          explanation: "",
+          is_hint: false,
+          visibility: true,
+        },
+      ],
       hintsData: [
         {
           content: "",
@@ -636,10 +638,6 @@ export default defineComponent({
       },
       model: "",
       expanded: false,
-      categoryOptions: [],
-      subjectOptions: [],
-      facultyOptions: [],
-      disciplineOptions: [],
       types: [
         {label: "Single Best Answer", value: "single-best-answer"},
         {label: "Multiple Answer", value: "multiple-answer"},
@@ -744,11 +742,11 @@ export default defineComponent({
       this.questions = [{...this.questionData}];
     },
     onContentReset() {
-      const cats = this.categoryOptions.reduce((acc, c) => {
+      const cats = this.categoryStore.getCategories.reduce((acc, c) => {
         return acc.concat(c.children.data)
       }, [])
 
-      const subs = this.subjectOptions.reduce((acc, s) => {
+      const subs = this.categoryStore.getSubjects.reduce((acc, s) => {
         return acc.concat(s.children.data)
       }, [])
 
@@ -758,9 +756,9 @@ export default defineComponent({
         return {
           ...question, content: this.questionData.content, options: [...this.optionsData], hints: [...this.hintsData],
           category_id: catData ? catData.id : null,
-          selected_category: (question.category_id === "" || question.category_id === null || question.category_id === undefined) ? null : (catData ? catData.parent_id : this.categoryOptions.find(c => c.id === question.category_id).id),
+          selected_category: (question.category_id === "" || question.category_id === null || question.category_id === undefined) ? null : (catData ? catData.parent_id : this.categoryStore.getCategories.find(c => c.id === question.category_id).id),
           subject_id: subData ? subData.id : null,
-          selected_subject: (question.subject_id === "" || question.subject_id === null || question.subject_id === undefined) ? null : (subData ? subData.parent_id : this.subjectOptions.find(s => s.id === question.subject_id).id),
+          selected_subject: (question.subject_id === "" || question.subject_id === null || question.subject_id === undefined) ? null : (subData ? subData.parent_id : this.categoryStore.getSubjects.find(s => s.id === question.subject_id).id),
         }
       })
 
@@ -796,11 +794,11 @@ export default defineComponent({
       const {options, content, category_id, subject_id, type, score, unit_negative_mark} =
         qData;
 
-      const catData = this.categoryOptions.reduce((acc, c) => {
+      const catData = this.categoryStore.getCategories.reduce((acc, c) => {
         return acc.concat(c.children.data)
       }, []).find(sc => sc.id === category_id)
 
-      const subData = this.subjectOptions.reduce((acc, s) => {
+      const subData = this.categoryStore.getSubjects.reduce((acc, s) => {
         return acc.concat(s.children.data)
       }, []).find(sc => sc.id === subject_id)
 
@@ -812,9 +810,9 @@ export default defineComponent({
       Object.assign(question, {
         content,
         category_id: catData ? catData.id : null,
-        selected_category: (category_id === "" || category_id === null || category_id === undefined) ? null : (catData ? catData.parent_id : this.categoryOptions.find(c => c.id === category_id).id),
+        selected_category: (category_id === "" || category_id === null || category_id === undefined) ? null : (catData ? catData.parent_id : this.categoryStore.getCategories.find(c => c.id === category_id).id),
         subject_id: subData ? subData.id : null,
-        selected_subject: (subject_id === "" || subject_id === null || subject_id === undefined) ? null : (subData ? subData.parent_id : this.subjectOptions.find(s => s.id === subject_id).id),
+        selected_subject: (subject_id === "" || subject_id === null || subject_id === undefined) ? null : (subData ? subData.parent_id : this.categoryStore.getSubjects.find(s => s.id === subject_id).id),
         type,
         score,
         unit_negative_mark,
@@ -858,37 +856,23 @@ export default defineComponent({
         });
       }
     },
-    getCategories() {
-      return api.get("/categories/category").then((response) => {
-        this.categoryOptions = response.data.data
-      });
-    },
-    getSubjects() {
-      return api.get("/categories/subject").then((response) => {
-        this.subjectOptions = response.data.data
-      });
-    },
 
 
   },
 
   async mounted() {
     this.questions.push({...this.questionData});
-    Promise.all([
-      this.getCategories(),
-      this.getSubjects()
-    ]).then(value => {
-      if (this.$route.params.id) {
-        this.question_id = this.$route.params.id;
-        api
-          .get(
-            `/questions/${this.$route.params.id}?include=options,children.options`
-          )
-          .then((response) => {
-            this.processQuestion(response.data.data, 0);
-          });
-      }
-    });
+
+    if (this.$route.params.id) {
+      this.question_id = this.$route.params.id;
+      api
+        .get(
+          `/questions/${this.$route.params.id}?include=options,children.options`
+        )
+        .then((response) => {
+          this.processQuestion(response.data.data, 0);
+        });
+    }
 
   },
 });
