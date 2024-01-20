@@ -186,6 +186,10 @@ const routes = [
         path: "/lecture-classes/:courseId/add",
         component: () => import("pages/LectureClass/AddOrEdit.vue"),
       },
+      {
+        path: "/lecture-classes/:id/edit",
+        component: () => import("pages/LectureClass/AddOrEdit.vue"),
+      },
 
       {
         path: "/subscribe-user/:courseId",

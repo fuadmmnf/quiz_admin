@@ -76,9 +76,6 @@
                           filled
                           v-model="courseData.coordinator_name"
                           :label="`Co-ordinator Name`"
-                          :rules="[
-                            (val) => !!val || 'Co-ordinator Name is required',
-                          ]"
                         />
                       </div>
                       <div class="col-6">
@@ -86,13 +83,10 @@
                           filled
                           v-model="courseData.coordinator_number"
                           :label="`Co-ordinator Phone number`"
-                          :rules="[
-                            (val) => !!val || 'Phone number is required',
-                          ]"
                         />
                       </div>
                     </div>
-                    <div class="row q-col-gutter-md">
+                    <div class="row q-col-gutter-md q-my-md">
                       <div class="col-6">
                         <q-input
                           filled
@@ -321,8 +315,7 @@ export default defineComponent({
     };
   },
   methods: {
-    onSubmit() {
-      console.log(this.courseData);
+    onSubmit: _.debounce(function () {
       if (this.$route.params.id) {
         api
           .patch(`/courses/${this.$route.params.id}`, this.courseData)
@@ -358,7 +351,7 @@ export default defineComponent({
             this.onReset();
           });
       }
-    },
+    }, 2500),
     onReset() {
       console.log("Reset");
       this.courseData = {

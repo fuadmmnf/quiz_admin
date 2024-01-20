@@ -62,6 +62,7 @@
                         round
                         dense
                         flat
+                        :to="`/lecture-classes/${props.row.id}/edit`"
                       />
 
                       <q-btn
