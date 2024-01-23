@@ -142,10 +142,9 @@
                         <q-input
                           filled
                           v-model="lectureData.zoom_link"
-                          :label="`Zoom Link`"
+                          :label="`Lecture Link`"
                           type="url"
                           hint="https://example.com"
-                          :rules="[(val) => !!val || 'Url is required']"
                         />
                       </div>
                     </div>
@@ -169,7 +168,7 @@ import { useQuasar } from "quasar";
 import {
   createLectureClass,
   editLectureClass,
-} from "src/services/course_service";
+} from "src/services/course_services";
 import {useCategoryStore} from "stores/category";
 
 export default defineComponent({
@@ -183,6 +182,7 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const categoryStore = useCategoryStore();
+
     const { $q } = useQuasar();
     const courseId = ref("");
     return {
@@ -205,10 +205,11 @@ export default defineComponent({
         start_date: "",
         zoom_link: "",
       },
+      subjectOptions: [],
     };
   },
   methods: {
-    async onSubmit() {
+    nSubmit: _.debounce( async function () {
       if (this.$route.params.id) {
         // const lectureId = this.$route.params.id;
         // const { data, status, error } = await editLectureClass(lectureId, {
@@ -233,20 +234,18 @@ export default defineComponent({
         // }
 
         api
-          .patch(`/courses/${this.$route.params.id}`, {
-            subject_id: this.courseData.subject_id,
-            title: this.courseData.title,
-            description: this.courseData.description,
-            num_classes: this.courseData.number_of_classes,
-            num_exams: this.courseData.number_of_exams,
-            coordinator_name: this.courseData.co_ordinator_name,
-            coordinator_number: this.courseData.co_ordinator_phone,
-            intro_video: "https://www.youtube.com/watch?v=9JSYB59QmZw",
+          .patch(`/class-lectures/${this.$route.params.id}`, {
+            course_id: this.courseId,
+            title: this.lectureData.title,
+            description: this.lectureData.description,
+            link: this.lectureData.zoom_link,
+            start_time: this.lectureData.start_date,
+            subject_id: this.lectureData.subject_id,
           })
           .then((response) => {
             console.log(response);
             this.$q.notify({
-              message: "Course updated Successfully",
+              message: "Class Lecture updated Successfully",
               color: "positive",
               icon: "check",
             });
@@ -278,7 +277,7 @@ export default defineComponent({
           console.error(error);
         }
       }
-    },
+    }, 2500),
     onReset() {
       console.log("Reset");
       this.lectureData = {
@@ -295,16 +294,15 @@ export default defineComponent({
     onDescriptionChange(value, index, parentIndex) {
       this.lectureData.description = value;
     },
-
   },
   mounted() {
     this.courseId = this.$route.params.courseId;
     if (this.$route.params.id) {
-      //   api
-      //     .get("")
-      //     .then((response) => {
-      //       this.lectureData = response.data.data;
-      //     });
+      api
+        .get(`class-lectures/${this.$route.params.id}`)
+        .then((response) => {
+          this.lectureData = response.data.data;
+        });
     }
   },
 });

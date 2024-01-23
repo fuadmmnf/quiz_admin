@@ -76,9 +76,6 @@
                           filled
                           v-model="courseData.coordinator_name"
                           :label="`Co-ordinator Name`"
-                          :rules="[
-                            (val) => !!val || 'Co-ordinator Name is required',
-                          ]"
                         />
                       </div>
                       <div class="col-6">
@@ -86,9 +83,6 @@
                           filled
                           v-model="courseData.coordinator_number"
                           :label="`Co-ordinator Phone number`"
-                          :rules="[
-                            (val) => !!val || 'Phone number is required',
-                          ]"
                         />
                       </div>
                     </div>
@@ -208,7 +202,7 @@
                           filled
                           v-model="courseData.category_id"
                           :label="`Category`"
-                          :options="categoryStore.getCategoryOptions"
+                          :options="categoryOptions"
                           emit-value
                           map-options
                         />
@@ -220,7 +214,7 @@
                           filled
                           v-model="courseData.subject_id"
                           :label="`Subject`"
-                          :options="categoryStore.getSubjectOptions"
+                          :options="subjectOptions"
                           emit-value
                           map-options
                         />
@@ -240,8 +234,7 @@
 <script>
 import {defineComponent, defineAsyncComponent} from "vue";
 import {ref} from "vue";
-import {useStore} from "stores/store";
-import { useCategoryStore } from "stores/category";
+import {useStore} from "src/stores/store";
 import {api} from "boot/axios";
 import {useQuasar} from "quasar";
 import _ from "lodash";
@@ -256,11 +249,9 @@ export default defineComponent({
 
   setup() {
     const store = useStore();
-    const categoryStore = useCategoryStore();
     const {$q} = useQuasar();
     return {
       $q,
-      categoryStore,
     };
   },
   data() {
@@ -281,13 +272,16 @@ export default defineComponent({
         end_date: "",
         coordinator_name: "",
         coordinator_number: "",
-        photo: null,
-        intro_video: null,
+        course_icon: ref(null),
+        intro_video: ref(null),
       },
+      subjectOptions: [],
+      categoryOptions: [],
     };
   },
   methods: {
     onSubmit() {
+      console.log(this.courseData);
       if (this.$route.params.id) {
         api
           .patch(`/courses/${this.$route.params.id}`, this.courseData)
@@ -303,6 +297,7 @@ export default defineComponent({
             console.log(err);
           })
           .finally(() => {
+            this.onReset();
           });
       } else {
         api
@@ -324,20 +319,20 @@ export default defineComponent({
       }
     },
     onReset() {
+      console.log("Reset");
       this.courseData = {
         id: "",
         title: "",
         description: "",
-        num_classes: "",
-        num_exams: "",
-        category_id: null,
-        subject_id: null,
+        number_of_classes: "",
+        number_of_exams: "",
+        subject_id: "",
         start_date: "",
         end_date: "",
-        coordinator_name: "",
-        coordinator_number: "",
-        photo: null,
-        intro_video: null,
+        co_ordinator_name: "",
+        co_ordinator_phone: "",
+        course_icon: ref(null),
+        course_short_video: ref(null),
       };
     },
     openCourseDescriptionTinyMceModal() {
@@ -346,8 +341,30 @@ export default defineComponent({
     onDescriptionChange(value, index, parentIndex) {
       this.courseData.description = value;
     },
+    getSubjects() {
+      api.get("/categories/subject").then((response) => {
+        response.data.data.map((category) => {
+          this.subjectOptions.push({
+            label: category.name,
+            value: category.id,
+          });
+        });
+      });
+    },
+    getCategories() {
+      api.get("/categories/category").then((response) => {
+        response.data.data.map((category) => {
+          this.categoryOptions.push({
+            label: category.name,
+            value: category.id,
+          });
+        });
+      });
+    },
   },
   mounted() {
+    this.getSubjects();
+    this.getCategories();
     if (this.$route.params.id) {
       api.get("/courses/" + this.$route.params.id).then((response) => {
         this.courseData = response.data.data;
