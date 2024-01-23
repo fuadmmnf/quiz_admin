@@ -265,10 +265,25 @@ export default {
         align: "center",
       },
       {
+        name: "Category",
+        label: "Category",
+        // sortable: true,
+        field: "category",
+        align: "center",
+      },
+
+      {
         name: "Subject",
         label: "Subject",
         // sortable: true,
         field: "subject",
+        align: "center",
+      },
+      {
+        name: "Course",
+        label: "Course",
+        // sortable: true,
+        field: "course",
         align: "center",
       },
       {
@@ -394,7 +409,9 @@ export default {
         label: item.title,
         description: item.status,
         code: item.code ? item.code : "null",
+        category: item.category ? item.category.data.name : "null",
         subject: item.subject ? item.subject.data.name : "null",
+        course: item.course ? item.course.data.title : "null",
         children: item.children ? transformData(item.children.data) : [],
         parentId: item.parent_id,
       }));
@@ -447,7 +464,7 @@ export default {
         sortedBy: "desc",
         search: statusApi.value,
         searchJoin: "and",
-        include: "subject,category,children",
+        include: "subject,category,course,children",
         limit: 50,
         page: newPage,
       };
