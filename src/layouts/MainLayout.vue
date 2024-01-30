@@ -10,8 +10,8 @@
           icon="menu"
           aria-label="Menu"
         />
-        <q-toolbar-title> Quizmaster Admin </q-toolbar-title>
-        <q-space />
+        <q-toolbar-title> Quizmaster Admin</q-toolbar-title>
+        <q-space/>
         <div class="q-gutter-sm row items-center no-wrap">
           <q-btn
             round
@@ -46,7 +46,7 @@
             <i class="fa fa-heart fa-2x fa-beat"></i>
           </q-btn>
           <q-btn round dense flat color="white" icon="notifications">
-            <q-badge color="red" text-color="white" floating> 5 </q-badge>
+            <q-badge color="red" text-color="white" floating> 5</q-badge>
             <q-menu>
               <q-list style="min-width: 100px">
                 <messages></messages>
@@ -85,7 +85,7 @@
       <q-list>
         <q-item to="/" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
-            <q-icon name="dashboard" />
+            <q-icon name="dashboard"/>
           </q-item-section>
           <q-item-section>
             <q-item-label>Dashboard</q-item-label>
@@ -93,7 +93,7 @@
         </q-item>
         <q-item to="/Dashboard2" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
-            <q-icon name="dashboard" />
+            <q-icon name="dashboard"/>
           </q-item-section>
           <q-item-section>
             <q-item-label>CRM Dashboard</q-item-label>
@@ -130,7 +130,7 @@
         </q-expansion-item>
         <q-item to="/category" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
-            <q-icon name="category" />
+            <q-icon name="category"/>
           </q-item-section>
           <q-item-section>
             <q-item-label>Category</q-item-label>
@@ -138,7 +138,7 @@
         </q-item>
         <q-item to="/faculty" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
-            <q-icon name="person" />
+            <q-icon name="person"/>
           </q-item-section>
           <q-item-section>
             <q-item-label>Faculty</q-item-label>
@@ -146,7 +146,7 @@
         </q-item>
         <q-item to="/subject" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
-            <q-icon name="subject" />
+            <q-icon name="subject"/>
           </q-item-section>
           <q-item-section>
             <q-item-label>Subject</q-item-label>
@@ -154,7 +154,7 @@
         </q-item>
         <q-item to="/question" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
-            <q-icon name="question_answer" />
+            <q-icon name="question_answer"/>
           </q-item-section>
           <q-item-section>
             <q-item-label>Question</q-item-label>
@@ -164,7 +164,7 @@
 
         <q-expansion-item icon="menu_open" label="Exams">
           <q-item
-            to="/exam/draft"
+            :to="{name: 'exam-list', params: {type: 'draft'}}"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -173,7 +173,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            to="/exam/upcoming"
+            :to="{name: 'exam-list', params: {type: 'upcoming'}}"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -182,7 +182,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            to="/exam/ongoing"
+            :to="{name: 'exam-list', params: {type: 'ongoing'}}"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -191,7 +191,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            to="/exam/checking"
+            :to="{name: 'exam-list', params: {type: 'checking'}}"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -200,7 +200,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            to="/exam/completed"
+            :to="{name: 'exam-list', params: {type: 'completed'}}"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -209,31 +209,31 @@
             </q-item-section>
           </q-item>
         </q-expansion-item>
-        <q-item to="/TreeTable" active-class="q-item-no-link-highlighting">
-          <q-item-section avatar>
-            <q-icon name="list" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>TreeTable</q-item-label>
-          </q-item-section>
-        </q-item>
+        <!--        <q-item to="/TreeTable" active-class="q-item-no-link-highlighting">-->
+        <!--          <q-item-section avatar>-->
+        <!--            <q-icon name="list" />-->
+        <!--          </q-item-section>-->
+        <!--          <q-item-section>-->
+        <!--            <q-item-label>TreeTable</q-item-label>-->
+        <!--          </q-item-section>-->
+        <!--        </q-item>-->
         <q-item to="/institutions" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
-            <q-icon name="list" />
+            <q-icon name="list"/>
           </q-item-section>
           <q-item-section>
             <q-item-label>Institutions</q-item-label>
           </q-item-section>
         </q-item>
 
-<!--        <q-item to="/course" active-class="q-item-no-link-highlighting">-->
-<!--          <q-item-section avatar>-->
-<!--            <q-icon name="list" />-->
-<!--          </q-item-section>-->
-<!--          <q-item-section>-->
-<!--            <q-item-label>Course</q-item-label>-->
-<!--          </q-item-section>-->
-<!--        </q-item> -->
+        <!--        <q-item to="/course" active-class="q-item-no-link-highlighting">-->
+        <!--          <q-item-section avatar>-->
+        <!--            <q-icon name="list" />-->
+        <!--          </q-item-section>-->
+        <!--          <q-item-section>-->
+        <!--            <q-item-label>Course</q-item-label>-->
+        <!--          </q-item-section>-->
+        <!--        </q-item> -->
 
         <q-expansion-item icon="menu_open" label="Courses">
           <q-item
@@ -271,7 +271,7 @@
           active-class="q-item-no-link-highlighting"
         >
           <q-item-section avatar>
-            <q-icon name="list" />
+            <q-icon name="list"/>
           </q-item-section>
           <q-item-section>
             <q-item-label>Registered students</q-item-label>
@@ -281,7 +281,7 @@
 
         <q-item to="/send-message" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
-            <q-icon name="list" />
+            <q-icon name="list"/>
           </q-item-section>
           <q-item-section>
             <q-item-label>Send Message</q-item-label>
@@ -294,7 +294,7 @@
           v-if="user && user.name === 'Super Admin'"
         >
           <q-item-section avatar>
-            <q-icon name="list" />
+            <q-icon name="list"/>
           </q-item-section>
           <q-item-section>
             <q-item-label>Activity</q-item-label>
@@ -303,7 +303,7 @@
 
         <q-item to="/student-list" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
-            <q-icon name="list" />
+            <q-icon name="list"/>
           </q-item-section>
           <q-item-section>
             <q-item-label>Student List</q-item-label>
@@ -312,7 +312,7 @@
 
         <q-item to="/blog" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
-            <q-icon name="list" />
+            <q-icon name="list"/>
           </q-item-section>
           <q-item-section>
             <q-item-label>Blog</q-item-label>
@@ -352,7 +352,7 @@
     </q-drawer>
 
     <q-page-container class="bg-grey-2">
-      <router-view />
+      <router-view/>
     </q-page-container>
   </q-layout>
 </template>
@@ -361,10 +361,10 @@
 import EssentialLink from "components/EssentialLink.vue";
 import Messages from "./Messages.vue";
 
-import { defineComponent, onMounted, ref } from "vue";
-import { useQuasar } from "quasar";
-import { useStore } from "src/stores/store";
-import { useCategoryStore } from "stores/category";
+import {defineComponent, onMounted, ref} from "vue";
+import {useQuasar} from "quasar";
+import {useStore} from "src/stores/store";
+import {useCategoryStore} from "stores/category";
 import {
   loadCategories,
   loadFaculties,
@@ -394,8 +394,6 @@ export default defineComponent({
       categoryStore.loadCategories();
       categoryStore.loadSubjects();
       categoryStore.loadFaculties();
-
-
 
 
       // Now, you can access the user object

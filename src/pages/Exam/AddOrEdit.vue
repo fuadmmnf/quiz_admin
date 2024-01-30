@@ -7,7 +7,7 @@
       </q-card-section>
     </q-card>
 
-    <q-separator spaced />
+    <q-separator spaced/>
     <!-- search card with filtering option filter icon -->
     <q-expansion-item
       expand-separator
@@ -105,7 +105,7 @@
       </q-card>
     </q-expansion-item>
 
-    <q-separator spaced />
+    <q-separator spaced/>
     <q-form
       @submit.prevent="onSubmit"
       id="examForm"
@@ -134,7 +134,8 @@
                           :options="courseOptions"
                           emit-value
                           map-options
-                          clearable
+                          :clearable="!(route.params.course_id?.length > 0)"
+                          :readonly="route.params.course_id?.length > 0"
                           @clear="
                             (val) => {
                               examData.course_id = null;
@@ -536,7 +537,7 @@
         </div>
       </div>
       <div class="row">
-        <q-btn label="Submit" type="submit" color="primary" form="examForm" />
+        <q-btn label="Submit" type="submit" color="primary" form="examForm"/>
         <q-btn
           label="Reset"
           type="reset"
@@ -552,13 +553,14 @@
 
 <script>
 import OptionCard from "src/components/question/OptionCard.vue";
-import { defineComponent, defineAsyncComponent } from "vue";
-import { ref } from "@vue/reactivity";
-import { useStore } from "src/stores/store";
-import { api } from "boot/axios";
-import { useQuasar } from "quasar";
+import {defineComponent, defineAsyncComponent} from "vue";
+import {ref} from "@vue/reactivity";
+import {useStore} from "src/stores/store";
+import {api} from "boot/axios";
+import {useQuasar} from "quasar";
 import _ from "lodash";
 import {useCategoryStore} from "stores/category";
+import {useRoute} from "vue-router";
 
 function initExamData() {
   return {
@@ -601,49 +603,46 @@ export default defineComponent({
     const store = useStore();
     const categoryStore = useCategoryStore();
     const exams = store.exams;
-    const { $q } = useQuasar();
+    const {$q} = useQuasar();
+    const route = useRoute();
     return {
       exams,
       $q,
+      route,
       categoryStore,
     };
   },
   data() {
     return {
-      pageName: "Add/Edit Question",
-      dense: true,
-      name: "",
-      model: "",
-      expanded: false,
       examData: initExamData(),
       visibility_option: [
-        { label: "Public", value: "public" },
-        { label: "Private", value: "private" },
+        {label: "Public", value: "public"},
+        {label: "Private", value: "private"},
       ],
       courseOptions: [],
       answer_script_visibility_option: [
-        { label: "After Attempt", value: "after-attempt" },
-        { label: "After Exam", value: "after-exam" },
+        {label: "After Attempt", value: "after-attempt"},
+        {label: "After Exam", value: "after-exam"},
       ],
       marks_visibility_option: [
-        { label: "After Attempt", value: "after-attempt" },
-        { label: "After Exam", value: "after-exam" },
+        {label: "After Attempt", value: "after-attempt"},
+        {label: "After Exam", value: "after-exam"},
       ],
       merits_visibility_option: [
-        { label: "After Attempt", value: "after-attempt" },
-        { label: "After Exam", value: "after-exam" },
+        {label: "After Attempt", value: "after-attempt"},
+        {label: "After Exam", value: "after-exam"},
       ],
       question_display_type_option: [
-        { label: "Vertical", value: "vertical" },
-        { label: "Horizontal", value: "horizontal" },
+        {label: "Vertical", value: "vertical"},
+        {label: "Horizontal", value: "horizontal"},
       ],
       merit_list_excluded_attributes_option: [
-        { label: "Individual Name", value: "Individual Name" },
-        { label: "Position", value: "Position" },
-        { label: "Correct Answer", value: "Correct Answer" },
-        { label: "Neg Marking", value: "Neg Marking" },
-        { label: "Final Score", value: "Final Score" },
-        { label: "Time Needed", value: "Time Needed" },
+        {label: "Individual Name", value: "Individual Name"},
+        {label: "Position", value: "Position"},
+        {label: "Correct Answer", value: "Correct Answer"},
+        {label: "Neg Marking", value: "Neg Marking"},
+        {label: "Final Score", value: "Final Score"},
+        {label: "Time Needed", value: "Time Needed"},
       ],
     };
   },
@@ -673,6 +672,9 @@ export default defineComponent({
     }, 2000),
     onReset() {
       this.examData = initExamData();
+      if (this.route.params.course_id?.length > 0) {
+        this.examData.course_id = this.route.params.course_id;
+      }
     },
 
     getCourses() {
@@ -689,6 +691,9 @@ export default defineComponent({
     },
   },
   mounted() {
+    if (this.route.params.course_id?.length > 0) {
+      this.examData.course_id = this.route.params.course_id;
+    }
     Promise.all([
       this.getCourses(),
     ]).then((value) => {
@@ -706,6 +711,8 @@ export default defineComponent({
           });
       }
     });
+
+
   },
 });
 </script>

@@ -71,28 +71,13 @@ const routes = [
         component: () => import("pages/Question/AddOrEdit.vue"),
       },
       {
-        path: "exam/draft",
-        component: () => import("pages/Exam/Draft/index.vue"),
+        path: "exams/:type",
+        name: "exam-list",
+        component: () => import("pages/Exam/index.vue"),
       },
       {
         path: "user-activity",
         component: () => import("pages/UserActivity.vue"),
-      },
-      {
-        path: "exam/upcoming",
-        component: () => import("pages/Exam/Upcoming/index.vue"),
-      },
-      {
-        path: "exam/completed",
-        component: () => import("pages/Exam/Completed/index.vue"),
-      },
-      {
-        path: "exam/ongoing",
-        component: () => import("pages/Exam/Ongoing/index.vue"),
-      },
-      {
-        path: "/exam/checking",
-        component: () => import("pages/Exam/Checking/index.vue"),
       },
       {
         path: "/exam/checking/:id/questions",
@@ -104,6 +89,7 @@ const routes = [
       },
       {
         path: "/exam/add",
+        name: "exam-create",
         component: () => import("pages/Exam/AddOrEdit.vue"),
       },
       {

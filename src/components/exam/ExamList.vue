@@ -241,6 +241,7 @@ import { defineAsyncComponent, defineComponent, ref } from "vue";
 import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 import { useQuasar } from "quasar";
+import {useRoute} from "vue-router";
 
 export default {
   name: "ExamList",
@@ -257,6 +258,7 @@ export default {
   },
   setup(props) {
     const store = useStore();
+    const route = useRoute();
     const { $q } = useQuasar();
     const exams = ref([]);
     const pagination = ref({
@@ -296,6 +298,10 @@ export default {
           }${
             filter.value.category && filter.value.category.length
               ? ";category_id:" + filter.value.category
+              : ""
+          }${
+            route.params.course_id && route.params.course_id.length
+              ? ";course_id:" + route.params.course_id
               : ""
           }&orderBy=id&sortedBy=desc&page=${page}`
         )
