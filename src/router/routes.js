@@ -29,23 +29,29 @@ const routes = [
         component: () => import("pages/Blog/AddorEditBlog.vue"),
       },
       {
-        path: "/questionbanks/draft",
-        component: () => import("pages/QuestionBank/draftBank.vue"),
+        path: "/questionbanks/:type",
+        name: "questionbank-list",
+        component: () => import("pages/QuestionBank/index.vue"),
       },
-      {
-        path: "/questionbanks/published",
-        component: () => import("pages/QuestionBank/publishedBank.vue"),
-      },
-      {
-        path: "/questionbanks",
-        component: () => import("pages/QuestionBank/AllBank.vue"),
-      },
+      // {
+      //   path: "/questionbanks/draft",
+      //   component: () => import("pages/QuestionBank/draftBank.vue"),
+      // },
+      // {
+      //   path: "/questionbanks/published",
+      //   component: () => import("pages/QuestionBank/publishedBank.vue"),
+      // },
+      // {
+      //   path: "/questionbanks",
+      //   component: () => import("pages/QuestionBank/AllBank.vue"),
+      // },
       // {
       //   path: "/questionbanks",
       //   component: () => import("pages/QuestionBank/index.vue"),
       // },
       {
-        path: "/questionbanks/add",
+        path: "/questionbank/add",
+        name: "questionbank-create",
         component: () => import("pages/QuestionBank/AddOrEdit.vue"),
       },
 
@@ -54,7 +60,7 @@ const routes = [
       //   component: () => import("pages/QuestionBank/AddOrEdit.vue"),
       // },
       {
-        path: "/questionbanks/:id/edit-questions",
+        path: "/questionbank/:id/edit-questions",
         name: "questionbank-questions",
         component: () => import("pages/QuestionBank/EditQuestion.vue"),
       },

@@ -320,7 +320,8 @@
         </q-item>
 
         <q-expansion-item icon="menu_open" label="Question Banks">
-          <q-item to="/questionbanks/draft" active-class="q-item-no-link-highlighting">
+          <q-item :to="{name: 'questionbank-list', params: {type: 'draft'}}"
+                  active-class="q-item-no-link-highlighting">
             <q-item-section avatar>
             </q-item-section>
             <q-item-section>
@@ -328,7 +329,8 @@
             </q-item-section>
           </q-item>
 
-          <q-item to="/questionbanks/published" active-class="q-item-no-link-highlighting">
+          <q-item :to="{name: 'questionbank-list', params: {type: 'published'}}"
+                  active-class="q-item-no-link-highlighting">
             <q-item-section avatar>
             </q-item-section>
             <q-item-section>

@@ -92,6 +92,8 @@
                           v-model="questionBankData.course_id"
                           :label="`Course`"
                           :options="courseOptions"
+                          :clearable="!(route.params.course_id?.length > 0)"
+                          :readonly="route.params.course_id?.length > 0"
                           emit-value
                           map-options
                         />
@@ -116,16 +118,19 @@ import { api } from "boot/axios";
 import { useQuasar } from "quasar";
 import _ from "lodash";
 import {useCategoryStore} from "stores/category";
+import {useRoute} from "vue-router";
 
 export default defineComponent({
   name: "AddOrEdit Question Bank",
 
   setup() {
     const store = useStore();
+    const route = useRoute();
     const categoryStore = useCategoryStore();
     const { $q } = useQuasar();
     return {
       $q,
+      route,
       categoryStore,
     };
   },
@@ -199,7 +204,6 @@ export default defineComponent({
       }
     },
     onReset() {
-      console.log("Reset");
       this.questionBankData = {
         id: "",
         title: "",
@@ -208,6 +212,9 @@ export default defineComponent({
         course_id: "",
         code: "",
       };
+      if (this.route.params.course_id?.length > 0) {
+        this.questionBankData.course_id = this.route.params.course_id;
+      }
     },
 
     getCourses() {
@@ -222,6 +229,9 @@ export default defineComponent({
     },
   },
   mounted() {
+    if (this.route.params.course_id?.length > 0) {
+      this.questionBankData.course_id = this.route.params.course_id;
+    }
     this.getCourses();
     if (this.$route.query.courseId) {
       this.questionBankData.course_id = this.$route.query.courseId;

@@ -17,36 +17,7 @@
             : 'my-lg q-pa-md q-ma-sm bg-grey-8'
         "
       >
-        <q-toolbar>
-          <q-ribbon
-            position="left"
-            color="rgba(0,0,0,.58)"
-            background-color="#c0c0c0"
-            leaf-color="#a0a0a0"
-            leaf-position="bottom"
-            decoration="rounded-out"
-          >
-            <q-toolbar-title class="example-title" style="padding: 5px 20px"
-              ><span class="ellipsis">Question Banks</span></q-toolbar-title
-            >
-          </q-ribbon>
-        </q-toolbar>
-        <q-card-section class="q-pb-sm">
-          <div class="row">
-            <q-btn
-              color="primary"
-              label="Add Question Bank"
-              icon="add"
-              @click="
-                this.$router.push({
-                  path: '/questionbanks/add',
-                  query: { courseId: this.$route.query.courseId },
-                })
-              "
-            />
-          </div>
-          <code-tabs :tagParts="tagParts"></code-tabs>
-        </q-card-section>
+
         <q-card-section>
           <q-hierarchy :columns="columns" :data="data" p>
             <template v-slot:body="props">
@@ -120,7 +91,7 @@
                 </q-btn>
                 <q-btn
                   v-if="
-                    props.item.parentId === '' && statusApi === 'status:draft'
+                    props.item.parentId === '' && type === 'status:draft'
                   "
                   @click="handlePublishButtonClick(props.item)"
                   flat
@@ -135,7 +106,7 @@
                 <q-btn
                   v-if="
                     props.item.parentId === '' &&
-                    statusApi === 'status:published'
+                    type === 'status:published'
                   "
                   @click="handleMovetoDraftButtonClick(props.item)"
                   flat
@@ -158,7 +129,7 @@
       </div>
     </div>
     <q-dialog v-model="showAddEditDialog">
-      <div v-if="statusApi === 'status:draft'" class="col-3">
+      <div v-if="type === 'status:draft'" class="col-3">
         <q-card class="q-mt-sm" style="width: 600px; max-width: 70vw">
           <q-bar>
             Add/Edit Question bank
@@ -233,7 +204,7 @@ import { useQuasar } from "quasar";
 
 export default {
   props: {
-    statusApi: {
+    type: {
       type: String,
       required: true,
     },
@@ -309,7 +280,7 @@ export default {
     const router = useRouter();
     const route = useRoute();
 
-    const { statusApi } = toRefs(props);
+    const { type } = toRefs(props);
 
     const handleAddButtonClick = (selectedItem) => {
       showAddEditDialog.value = true;
@@ -462,14 +433,14 @@ export default {
       const params = {
         orderBy: "id",
         sortedBy: "desc",
-        search: statusApi.value,
+        search: "status:" + type.value,
         searchJoin: "and",
         include: "subject,category,course,children",
         limit: 50,
         page: newPage,
       };
 
-      if (statusApi.value === "status:all" && route.query.courseId) {
+      if (type.value === "all" && route.query.courseId) {
         params.search = `course_id:${route.query.courseId}`;
       }
 

@@ -5,7 +5,7 @@
         <div class="text-h6 text-indigo-8">
           Exams
           <div class="text-subtitle2">
-            List of all draft exams are shown here
+            List of all {{route.params.type}} exams are shown here
           </div>
         </div>
         <div class="row">
@@ -22,9 +22,7 @@
 </template>
 
 <script>
-import {defineComponent, ref} from "vue";
-import {useStore} from "src/stores/store";
-import {api} from "boot/axios";
+
 import ExamList from "src/components/exam/ExamList.vue";
 import SearchExams from "src/components/exam/SearchExams.vue";
 import {useRoute} from "vue-router";
