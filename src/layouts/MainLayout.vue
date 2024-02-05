@@ -91,14 +91,14 @@
             <q-item-label>Dashboard</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item to="/Dashboard2" active-class="q-item-no-link-highlighting">
-          <q-item-section avatar>
-            <q-icon name="dashboard"/>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>CRM Dashboard</q-item-label>
-          </q-item-section>
-        </q-item>
+<!--        <q-item to="/Dashboard2" active-class="q-item-no-link-highlighting">-->
+<!--          <q-item-section avatar>-->
+<!--            <q-icon name="dashboard"/>-->
+<!--          </q-item-section>-->
+<!--          <q-item-section>-->
+<!--            <q-item-label>CRM Dashboard</q-item-label>-->
+<!--          </q-item-section>-->
+<!--        </q-item>-->
         <q-expansion-item icon="people" label="Roles">
           <q-item
             to="/Roles/SubAdmin"
@@ -127,31 +127,50 @@
               <q-item-label>Mentors</q-item-label>
             </q-item-section>
           </q-item>
+          <q-item to="/student-list" active-class="q-item-no-link-highlighting">
+            <q-item-section avatar>
+              <q-icon name="list"/>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Students</q-item-label>
+            </q-item-section>
+          </q-item>
         </q-expansion-item>
-        <q-item to="/category" active-class="q-item-no-link-highlighting">
-          <q-item-section avatar>
-            <q-icon name="category"/>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Category</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item to="/faculty" active-class="q-item-no-link-highlighting">
-          <q-item-section avatar>
-            <q-icon name="person"/>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Faculty</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item to="/subject" active-class="q-item-no-link-highlighting">
-          <q-item-section avatar>
-            <q-icon name="subject"/>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Subject</q-item-label>
-          </q-item-section>
-        </q-item>
+        <q-expansion-item icon="people" label="Resources">
+          <q-item to="/category" class="q-ml-xl" active-class="q-item-no-link-highlighting">
+            <q-item-section avatar>
+              <q-icon name="category"/>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Category</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item to="/faculty" class="q-ml-xl" active-class="q-item-no-link-highlighting">
+            <q-item-section avatar>
+              <q-icon name="person"/>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Faculty</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item to="/subject" class="q-ml-xl" active-class="q-item-no-link-highlighting">
+            <q-item-section avatar>
+              <q-icon name="subject"/>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Subject</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item to="/institutions" class="q-ml-xl" active-class="q-item-no-link-highlighting">
+            <q-item-section avatar>
+              <q-icon name="list"/>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Institutions</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-expansion-item>
+
         <q-item to="/question" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
             <q-icon name="question_answer"/>
@@ -217,14 +236,7 @@
         <!--            <q-item-label>TreeTable</q-item-label>-->
         <!--          </q-item-section>-->
         <!--        </q-item>-->
-        <q-item to="/institutions" active-class="q-item-no-link-highlighting">
-          <q-item-section avatar>
-            <q-icon name="list"/>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Institutions</q-item-label>
-          </q-item-section>
-        </q-item>
+
 
         <!--        <q-item to="/course" active-class="q-item-no-link-highlighting">-->
         <!--          <q-item-section avatar>-->
@@ -234,6 +246,25 @@
         <!--            <q-item-label>Course</q-item-label>-->
         <!--          </q-item-section>-->
         <!--        </q-item> -->
+        <q-expansion-item icon="menu_open" label="Question Banks">
+          <q-item :to="{name: 'questionbank-list', params: {type: 'draft'}}"
+                  active-class="q-item-no-link-highlighting">
+            <q-item-section avatar>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Draft</q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item :to="{name: 'questionbank-list', params: {type: 'published'}}"
+                  active-class="q-item-no-link-highlighting">
+            <q-item-section avatar>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Published</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-expansion-item>
 
         <q-expansion-item icon="menu_open" label="Courses">
           <q-item
@@ -266,16 +297,29 @@
           </q-item>
         </q-expansion-item>
 
-        <q-item
-          to="/registered-students"
-          active-class="q-item-no-link-highlighting"
-        >
+<!--        <q-item-->
+<!--          to="/registered-students"-->
+<!--          active-class="q-item-no-link-highlighting"-->
+<!--        >-->
+<!--          <q-item-section avatar>-->
+<!--            <q-icon name="list"/>-->
+<!--          </q-item-section>-->
+<!--          <q-item-section>-->
+<!--            <q-item-label>Registered students</q-item-label>-->
+
+<!--          </q-item-section>-->
+<!--        </q-item>-->
+
+
+
+
+
+        <q-item to="/blog" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
             <q-icon name="list"/>
           </q-item-section>
           <q-item-section>
-            <q-item-label>Registered students</q-item-label>
-
+            <q-item-label>Blog</q-item-label>
           </q-item-section>
         </q-item>
 
@@ -284,7 +328,7 @@
             <q-icon name="list"/>
           </q-item-section>
           <q-item-section>
-            <q-item-label>Send Message</q-item-label>
+            <q-item-label>Notification</q-item-label>
           </q-item-section>
         </q-item>
 
@@ -297,48 +341,9 @@
             <q-icon name="list"/>
           </q-item-section>
           <q-item-section>
-            <q-item-label>Activity</q-item-label>
+            <q-item-label>Activity Log</q-item-label>
           </q-item-section>
         </q-item>
-
-        <q-item to="/student-list" active-class="q-item-no-link-highlighting">
-          <q-item-section avatar>
-            <q-icon name="list"/>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Student List</q-item-label>
-          </q-item-section>
-        </q-item>
-
-        <q-item to="/blog" active-class="q-item-no-link-highlighting">
-          <q-item-section avatar>
-            <q-icon name="list"/>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Blog</q-item-label>
-          </q-item-section>
-        </q-item>
-
-        <q-expansion-item icon="menu_open" label="Question Banks">
-          <q-item :to="{name: 'questionbank-list', params: {type: 'draft'}}"
-                  active-class="q-item-no-link-highlighting">
-            <q-item-section avatar>
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>Draft</q-item-label>
-            </q-item-section>
-          </q-item>
-
-          <q-item :to="{name: 'questionbank-list', params: {type: 'published'}}"
-                  active-class="q-item-no-link-highlighting">
-            <q-item-section avatar>
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>Published</q-item-label>
-            </q-item-section>
-          </q-item>
-        </q-expansion-item>
-
         <!-- <q-item
           to="/lecture-classes"
           active-class="q-item-no-link-highlighting"

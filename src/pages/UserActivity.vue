@@ -195,8 +195,8 @@ export default {
         }
 
         const apiEndpoint = dateRangeFilter
-          ? `/activity_logs?orderBy=id&sortedBy=desc&searchJoin=and&${causerId}${dateRangeFilter}&page=${page}&limit=50`
-          : `/activity_logs?orderBy=id&sortedBy=desc&page=${page}&limit=50`;
+          ? `/activity_logs?orderBy=created_at&sortedBy=desc&searchJoin=and&${causerId}${dateRangeFilter}&page=${page}&limit=20`
+          : `/activity_logs?orderBy=created_at&sortedBy=desc&page=${page}&limit=20`;
 
 
 

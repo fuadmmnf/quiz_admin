@@ -86,7 +86,7 @@
                         />
                       </div>
                     </div>
-                    <div class="row q-col-gutter-md">
+                    <div class="row q-col-gutter-md q-my-sm">
                       <div class="col-6">
                         <q-input
                           filled
