@@ -133,19 +133,13 @@ const routes = [
         component: () => import("pages/Institutions.vue"),
       },
       {
-        path: "/course/draft",
-        component: () => import("pages/Course/Draft/index.vue"),
-      },
-      {
-        path: "/course/published",
-        component: () => import("pages/Course/Published/index.vue"),
-      },
-      {
-        path: "/course/completed",
-        component: () => import("pages/Course/Completed/index.vue"),
+        path: "/courses/:type",
+        name: 'course-list',
+        component: () => import("pages/Course/index.vue"),
       },
       {
         path: "/course/add",
+        name: 'course-create',
         component: () => import("pages/Course/AddOrEdit.vue"),
       },
       {

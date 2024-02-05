@@ -91,14 +91,14 @@
             <q-item-label>Dashboard</q-item-label>
           </q-item-section>
         </q-item>
-<!--        <q-item to="/Dashboard2" active-class="q-item-no-link-highlighting">-->
-<!--          <q-item-section avatar>-->
-<!--            <q-icon name="dashboard"/>-->
-<!--          </q-item-section>-->
-<!--          <q-item-section>-->
-<!--            <q-item-label>CRM Dashboard</q-item-label>-->
-<!--          </q-item-section>-->
-<!--        </q-item>-->
+        <!--        <q-item to="/Dashboard2" active-class="q-item-no-link-highlighting">-->
+        <!--          <q-item-section avatar>-->
+        <!--            <q-icon name="dashboard"/>-->
+        <!--          </q-item-section>-->
+        <!--          <q-item-section>-->
+        <!--            <q-item-label>CRM Dashboard</q-item-label>-->
+        <!--          </q-item-section>-->
+        <!--        </q-item>-->
         <q-expansion-item icon="people" label="Roles">
           <q-item
             to="/Roles/SubAdmin"
@@ -268,7 +268,7 @@
 
         <q-expansion-item icon="menu_open" label="Courses">
           <q-item
-            to="/course/draft"
+            :to="{name: 'course-list', params: {type: 'draft'}}"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -278,7 +278,7 @@
           </q-item>
 
           <q-item
-            to="/course/published"
+            :to="{name: 'course-list', params: {type: 'published'}}"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -287,7 +287,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            to="/course/completed"
+            :to="{name: 'course-list', params: {type: 'completed'}}"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -297,21 +297,18 @@
           </q-item>
         </q-expansion-item>
 
-<!--        <q-item-->
-<!--          to="/registered-students"-->
-<!--          active-class="q-item-no-link-highlighting"-->
-<!--        >-->
-<!--          <q-item-section avatar>-->
-<!--            <q-icon name="list"/>-->
-<!--          </q-item-section>-->
-<!--          <q-item-section>-->
-<!--            <q-item-label>Registered students</q-item-label>-->
+        <!--        <q-item-->
+        <!--          to="/registered-students"-->
+        <!--          active-class="q-item-no-link-highlighting"-->
+        <!--        >-->
+        <!--          <q-item-section avatar>-->
+        <!--            <q-icon name="list"/>-->
+        <!--          </q-item-section>-->
+        <!--          <q-item-section>-->
+        <!--            <q-item-label>Registered students</q-item-label>-->
 
-<!--          </q-item-section>-->
-<!--        </q-item>-->
-
-
-
+        <!--          </q-item-section>-->
+        <!--        </q-item>-->
 
 
         <q-item to="/blog" active-class="q-item-no-link-highlighting">
@@ -359,7 +356,7 @@
     </q-drawer>
 
     <q-page-container class="bg-grey-2">
-      <router-view/>
+      <router-view :key="route.fullPath"/>
     </q-page-container>
   </q-layout>
 </template>
@@ -377,6 +374,7 @@ import {
   loadFaculties,
   loadSubjects,
 } from "src/services/category_service";
+import {useRoute} from "vue-router";
 
 export default defineComponent({
   name: "MainLayout",
@@ -389,6 +387,7 @@ export default defineComponent({
   setup() {
     const leftDrawerOpen = ref(false);
     const $q = useQuasar();
+    const route = useRoute();
     const store = useStore();
     const user = ref(null);
     const categoryStore = useCategoryStore();
@@ -412,6 +411,7 @@ export default defineComponent({
 
     return {
       $q,
+      route,
       leftDrawerOpen,
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
