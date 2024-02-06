@@ -5,15 +5,15 @@
         <div class="text-h6 text-indigo-8">
           Lecture classes
           <div class="text-subtitle2">
-            List of all Lecture classes are shown here
+            List of {{route.query.course_id?.length? "course": ""}} resources are shown here
           </div>
         </div>
         <div class="row">
           <q-btn
             color="primary"
-            label="Add Lecture classes"
+            label="Add Material"
             icon="add"
-            :to="`/lecture-classes/${courseId}/add`"
+            :to="{name: 'classmaterial-create', query: {course_id:  route.query.course_id?.length? route.query.course_id: ''}}"
           />
         </div>
       </q-card-section>
@@ -26,7 +26,7 @@
             <q-card-section>
               <q-table
                 :columns="columns"
-                :rows="LectureClasses"
+                :rows="classMaterials"
                 :loading="loading"
                 rows-per-page-options="[10]"
                 row-key="real_id"
@@ -92,23 +92,24 @@ import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 import { useQuasar } from "quasar";
 import { getLectureClasses } from "src/services/course_service";
+import {useRoute} from "vue-router";
 
 export default defineComponent({
-  name: "LectureClasses",
+  name: "ClassMaterials",
   setup() {
     const { $q } = useQuasar();
     const store = useStore();
-    const LectureClasses = ref([]);
+    const route = useRoute();
+    const classMaterials = ref([]);
     const pagination = ref({
       page: 1,
       rowsPerPage: 10,
       rowsNumber: 0,
     });
     const searchData = ref({ type: "", keywords: "" });
-    const courseId = ref("");
 
     const loading = ref(true);
-    const fetchLectureClasses = async (page = 1) => {
+    const fetchClassMaterials = async (page = 1) => {
       loading.value = true;
 
       // const {data, status, error} = await getLectureClasses({
@@ -135,11 +136,10 @@ export default defineComponent({
 
       api
         .get(
-          `/class-lectures?search=course_id:${courseId.value}&orderBy=id&sortedBy=desc&page=${page}`
+          `/class-materials?search=course_id:${courseId.value}&orderBy=id&sortedBy=desc&page=${page}`
         )
         .then((response) => {
-          console.log(response.data.data);
-          LectureClasses.value = response.data.data;
+          classMaterials.value = response.data.data;
           const meta = response.data.meta.pagination;
           pagination.value = {
             page: meta.current_page,
@@ -155,23 +155,23 @@ export default defineComponent({
         });
     };
     const onRequest = (props) => {
-      fetchLectureClasses(props.pagination.page);
+      fetchClassMaterials(props.pagination.page);
     };
     return {
       store,
+      route,
       pagination,
       loading,
-      fetchLectureClasses,
-      LectureClasses,
+      fetchClassMaterials,
+      classMaterials,
       $q,
       searchData,
-      courseId,
       onRequest,
     };
   },
   data() {
     return {
-      name: "Lecture Class",
+      name: "Class Materials",
       //table header
       //name , mobile , institution, action
       columns: [
@@ -180,28 +180,24 @@ export default defineComponent({
           label: "Title",
           field: "title",
           align: "left",
-          sortable: true,
         },
         {
           name: "subject",
           label: "Subject",
           field: "subject",
           align: "left",
-          sortable: true,
         },
         {
           name: "description",
           label: "Description",
           field: "description",
           align: "left",
-          sortable: true,
         },
         {
           name: "start_time",
           label: "Start Date",
           field: "start_time",
           align: "left",
-          sortable: true,
         },
 
         {
@@ -220,20 +216,20 @@ export default defineComponent({
       this.$q
         .dialog({
           title: "Confirm",
-          message: "Would you like to delete the class?",
+          message: "Would you like to delete the class material?",
           cancel: true,
           persistent: true,
         })
         .onOk(() => {
           api
-            .delete(`/class-lectures/${id}`)
+            .delete(`/class-materials/${id}`)
             .then((res) => {
               this.$q.notify({
                 message: "Lecture class deleted successfully",
                 color: "positive",
                 icon: "check",
               });
-              this.fetchLectureClasses();
+              this.fetchClassMaterials();
             })
             .catch((err) => {
               console.log(err);
@@ -246,7 +242,6 @@ export default defineComponent({
   },
 
   mounted() {
-    this.courseId = this.$route.params.courseId;
     this.fetchLectureClasses();
   },
 });
