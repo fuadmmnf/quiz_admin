@@ -125,7 +125,7 @@
       </q-card>
 
       <div class="q-pa-lg flex flex-center">
-        <q-pagination v-model="current" :max="totalPages" direction-links />
+        <q-pagination v-model="current" :max="totalPages" direction-links/>
       </div>
     </div>
     <q-dialog v-model="showAddEditDialog">
@@ -133,7 +133,7 @@
         <q-card class="q-mt-sm" style="width: 600px; max-width: 70vw">
           <q-bar>
             Add/Edit Question bank
-            <q-space />
+            <q-space/>
 
             <q-btn
               dense
@@ -172,7 +172,7 @@
                 :disable="!isSelect"
               />
               <div>
-                <q-btn label="Submit" type="submit" color="primary" />
+                <q-btn label="Submit" type="submit" color="primary"/>
                 <q-btn
                   label="Reset"
                   type="reset"
@@ -190,7 +190,7 @@
 </template>
 
 <script>
-import { onMounted, ref, toRefs, watch } from "vue";
+import {onMounted, ref, toRefs, watch} from "vue";
 
 import {
   addQuestionBank,
@@ -199,8 +199,8 @@ import {
   updateQuestionBankStatus,
   deleteQuestionBank,
 } from "src/services/questionbank_service";
-import { useRouter, useRoute } from "vue-router";
-import { useQuasar } from "quasar";
+import {useRouter, useRoute} from "vue-router";
+import {useQuasar} from "quasar";
 
 export default {
   props: {
@@ -280,7 +280,7 @@ export default {
     const router = useRouter();
     const route = useRoute();
 
-    const { type } = toRefs(props);
+    const {type} = toRefs(props);
 
     const handleAddButtonClick = (selectedItem) => {
       showAddEditDialog.value = true;
@@ -319,7 +319,7 @@ export default {
         persistent: true,
       })
         .onOk(async () => {
-          const { status, error } = await deleteQuestionBank(questionBankId);
+          const {status, error} = await deleteQuestionBank(questionBankId);
 
           if (status === 204) {
             $q.notify({
@@ -339,7 +339,7 @@ export default {
     const handlePublishButtonClick = async (selectedItem) => {
       const questionBankId = selectedItem.id;
 
-      const { status, error } = await updateQuestionBankStatus(questionBankId, {
+      const {status, error} = await updateQuestionBankStatus(questionBankId, {
         status: "published",
       });
 
@@ -354,7 +354,7 @@ export default {
     const handleMovetoDraftButtonClick = async (selectedItem) => {
       const questionBankId = selectedItem.id;
 
-      const { status, error } = await updateQuestionBankStatus(questionBankId, {
+      const {status, error} = await updateQuestionBankStatus(questionBankId, {
         status: "draft",
       });
 
@@ -370,7 +370,7 @@ export default {
       // Programmatically navigate to the edit-questions page
       router.push({
         name: "questionbank-questions",
-        params: { id: questionBankId },
+        params: {id: questionBankId},
       });
     };
 
@@ -395,7 +395,7 @@ export default {
 
     const onSubmit = async () => {
       if (isEditMode.value) {
-        const { data, status, error } = await editQuestionBank({
+        const {data, status, error} = await editQuestionBank({
           id: editingItemId.value,
           title: name.value,
 
@@ -408,7 +408,7 @@ export default {
           console.error(error);
         }
       } else {
-        const { data, status, error } = await addQuestionBank({
+        const {data, status, error} = await addQuestionBank({
           title: name.value,
           code: "",
           parent_id: parentId.value,
@@ -433,15 +433,15 @@ export default {
       const params = {
         orderBy: "id",
         sortedBy: "desc",
-        search: "status:" + type.value,
+        search: `status:${type.value}${route.query.course_id?.length ? ("course_id:" + route.query.course_id) : ""}` + type.value,
         searchJoin: "and",
-        include: "subject,category,course,children",
+        include: "subject,category,children",
         limit: 50,
         page: newPage,
       };
-
-      if (type.value === "all" && route.query.courseId) {
-        params.search = `course_id:${route.query.courseId}`;
+      //
+      if (type.value === "all") {
+        params.search = route.query.course_id?.length ? ("course_id:" + route.query.course_id) : "";
       }
 
       const {
@@ -454,7 +454,7 @@ export default {
         console.log(responseData);
         data.value = transformData(responseData.data);
 
-        const { total_pages } = responseData.meta.pagination;
+        const {total_pages} = responseData.meta.pagination;
 
         current.value = newPage;
         totalPages.value = total_pages;
