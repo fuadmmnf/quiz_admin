@@ -9,11 +9,11 @@
           class="bg-grey-1"
         >
           <div class="q-pa-md">
-            <SearchCourses @search="onSearch" />
+            <SearchCourses @search="onSearch"/>
           </div>
         </q-expansion-item>
 
-        <q-separator spaced="" />
+        <q-separator spaced=""/>
         <q-card>
           <q-card-section>
             <q-table
@@ -44,42 +44,48 @@
                   </q-td>
 
                   <q-td key="resources" :props="props">
-                    <q-btn-dropdown class="q-mr-sm" color="primary" label="exams" dense size="sm"  dropdown-icon="">
+                    <q-btn-dropdown class="q-mr-sm" color="primary" label="exams" dense size="sm" dropdown-icon="">
                       <q-list>
-                        <q-item clickable v-close-popup :to="{name: 'exam-list', params:{type: 'draft'}, query: {course_id: props.row.id}}">
+                        <q-item clickable v-close-popup
+                                :to="{name: 'exam-list', params:{type: 'draft'}, query: {course_id: props.row.id}}">
                           <q-item-section>
                             <q-item-label>draft</q-item-label>
                           </q-item-section>
                         </q-item>
 
-                        <q-item clickable v-close-popup :to="{name: 'exam-list', params:{type: 'upcoming'}, query: {course_id: props.row.id}}">
+                        <q-item clickable v-close-popup
+                                :to="{name: 'exam-list', params:{type: 'upcoming'}, query: {course_id: props.row.id}}">
                           <q-item-section>
                             <q-item-label>upcoming</q-item-label>
                           </q-item-section>
                         </q-item>
 
-                        <q-item clickable v-close-popup :to="{name: 'exam-list', params:{type: 'ongoing'}, query: {course_id: props.row.id}}">
+                        <q-item clickable v-close-popup
+                                :to="{name: 'exam-list', params:{type: 'ongoing'}, query: {course_id: props.row.id}}">
                           <q-item-section>
                             <q-item-label>ongoing</q-item-label>
                           </q-item-section>
                         </q-item>
 
-                        <q-item clickable v-close-popup :to="{name: 'exam-list', params:{type: 'completed'}, query: {course_id: props.row.id}}">
+                        <q-item clickable v-close-popup
+                                :to="{name: 'exam-list', params:{type: 'completed'}, query: {course_id: props.row.id}}">
                           <q-item-section>
                             <q-item-label>completed</q-item-label>
                           </q-item-section>
                         </q-item>
                       </q-list>
                     </q-btn-dropdown>
-                    <q-btn-dropdown class="q-mr-sm" color="primary" label="q-banks" dense size="sm"  dropdown-icon="">
+                    <q-btn-dropdown class="q-mr-sm" color="primary" label="q-banks" dense size="sm" dropdown-icon="">
                       <q-list>
-                        <q-item clickable v-close-popup :to="{name: 'questionbank-list', params:{type: 'draft'}, query: {course_id: props.row.id}}">
+                        <q-item clickable v-close-popup
+                                :to="{name: 'questionbank-list', params:{type: 'draft'}, query: {course_id: props.row.id}}">
                           <q-item-section>
                             <q-item-label>draft</q-item-label>
                           </q-item-section>
                         </q-item>
 
-                        <q-item clickable v-close-popup :to="{name: 'questionbank-list', params:{type: 'published'}, query: {course_id: props.row.id}}">
+                        <q-item clickable v-close-popup
+                                :to="{name: 'questionbank-list', params:{type: 'published'}, query: {course_id: props.row.id}}">
                           <q-item-section>
                             <q-item-label>published</q-item-label>
                           </q-item-section>
@@ -182,47 +188,46 @@
                     </q-btn>
 
 
+                    <!--                    <q-btn-->
+                    <!--                      color="primary"-->
+                    <!--                      :to="`/course-exams/${props.row.id}`"-->
+                    <!--                      round-->
+                    <!--                      dense-->
+                    <!--                      flat-->
+                    <!--                      size="sm"-->
+                    <!--                      icon="fa-solid fa-book-open"-->
+                    <!--                    >-->
+                    <!--                      <q-tooltip-->
+                    <!--                        anchor="top middle"-->
+                    <!--                        self="bottom middle"-->
+                    <!--                        :offset="[10, 10]"-->
+                    <!--                      >-->
+                    <!--                        <strong class="">Course Exams</strong>-->
+                    <!--                      </q-tooltip>-->
+                    <!--                    </q-btn>-->
 
                     <!--                    <q-btn-->
-<!--                      color="primary"-->
-<!--                      :to="`/course-exams/${props.row.id}`"-->
-<!--                      round-->
-<!--                      dense-->
-<!--                      flat-->
-<!--                      size="sm"-->
-<!--                      icon="fa-solid fa-book-open"-->
-<!--                    >-->
-<!--                      <q-tooltip-->
-<!--                        anchor="top middle"-->
-<!--                        self="bottom middle"-->
-<!--                        :offset="[10, 10]"-->
-<!--                      >-->
-<!--                        <strong class="">Course Exams</strong>-->
-<!--                      </q-tooltip>-->
-<!--                    </q-btn>-->
-
-<!--                    <q-btn-->
-<!--                      color="primary"-->
-<!--                      size="md"-->
-<!--                      icon="fa-solid fa-question"-->
-<!--                      round-->
-<!--                      dense-->
-<!--                      flat-->
-<!--                      @click="-->
-<!--                        this.$router.push({-->
-<!--                          path: '/questionbanks',-->
-<!--                          query: { courseId: props.row.id },-->
-<!--                        })-->
-<!--                      "-->
-<!--                    >-->
-<!--                      <q-tooltip-->
-<!--                        anchor="top middle"-->
-<!--                        self="bottom middle"-->
-<!--                        :offset="[10, 10]"-->
-<!--                      >-->
-<!--                        <strong class="">Course Questionbanks</strong>-->
-<!--                      </q-tooltip>-->
-<!--                    </q-btn>-->
+                    <!--                      color="primary"-->
+                    <!--                      size="md"-->
+                    <!--                      icon="fa-solid fa-question"-->
+                    <!--                      round-->
+                    <!--                      dense-->
+                    <!--                      flat-->
+                    <!--                      @click="-->
+                    <!--                        this.$router.push({-->
+                    <!--                          path: '/questionbanks',-->
+                    <!--                          query: { courseId: props.row.id },-->
+                    <!--                        })-->
+                    <!--                      "-->
+                    <!--                    >-->
+                    <!--                      <q-tooltip-->
+                    <!--                        anchor="top middle"-->
+                    <!--                        self="bottom middle"-->
+                    <!--                        :offset="[10, 10]"-->
+                    <!--                      >-->
+                    <!--                        <strong class="">Course Questionbanks</strong>-->
+                    <!--                      </q-tooltip>-->
+                    <!--                    </q-btn>-->
                     <q-btn
                       color="primary"
                       size="sm"
@@ -254,10 +259,10 @@
 </template>
 
 <script>
-import { defineComponent, defineAsyncComponent, ref, computed } from "vue";
-import { useStore } from "src/stores/store";
-import { api } from "boot/axios";
-import { useQuasar } from "quasar";
+import {defineComponent, defineAsyncComponent, ref, computed} from "vue";
+import {useStore} from "src/stores/store";
+import {api} from "boot/axios";
+import {useQuasar} from "quasar";
 
 export default defineComponent({
   name: "CourseList",
@@ -273,7 +278,7 @@ export default defineComponent({
     ),
   },
   setup(props) {
-    const { $q } = useQuasar();
+    const {$q} = useQuasar();
     const store = useStore();
     const courses = ref([]);
     const pagination = ref({
@@ -282,7 +287,7 @@ export default defineComponent({
       rowsNumber: 0,
     });
     const loading = ref(true);
-    const searchData = ref({ keywords: "" });
+    const searchData = ref({keywords: ""});
 
     const fetchCourses = (page = 1) => {
       console.log(searchData.value);
