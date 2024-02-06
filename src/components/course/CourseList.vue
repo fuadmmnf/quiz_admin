@@ -145,7 +145,7 @@
                       </q-tooltip>
                     </q-btn>
                     <q-btn
-                      v-if="courseType != 'draft'"
+                      v-if="courseType !== 'draft'"
                       color="primary"
                       size="md"
                       icon="drafts"
