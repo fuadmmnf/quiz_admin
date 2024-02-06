@@ -3,7 +3,7 @@
     <q-card class="no-shadow" bordered>
       <q-card-section class="row items-center justify-between">
         <div class="text-h6 text-indigo-8">
-          Exams
+          Courses
           <div class="text-subtitle2">
             List of all {{route.params.type}} courses are shown here
           </div>
