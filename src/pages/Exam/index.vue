@@ -5,12 +5,12 @@
         <div class="text-h6 text-indigo-8">
           Exams
           <div class="text-subtitle2">
-            List of all {{route.params.type}} exams are shown here
+            List of {{route.params.type}} {{route.query.course_id?.length? "course": ""}} exams are shown here
           </div>
         </div>
         <div class="row">
           <q-btn color="primary" label="Add Exam" icon="add"
-                 :to="{name: 'exam-create', params: route.params.course_id?.length? {course_id: route.params.course_id}: {}}"/>
+                 :to="{name: 'exam-create', query: route.query.course_id?.length? {course_id: route.query.course_id}: {}}"/>
         </div>
       </q-card-section>
     </q-card>

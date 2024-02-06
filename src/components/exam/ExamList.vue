@@ -281,7 +281,7 @@ export default {
       loading.value = true;
       api
         .get(
-          `/exams?include=examConfiguration,subject,category,faculty,course&searchJoin=and&search=status:${
+          `/exams?include=examConfiguration,subject,category,faculty&searchJoin=and&search=status:${
             props.examType
           }${
             filter.value.keywords.length
@@ -300,8 +300,8 @@ export default {
               ? ";category_id:" + filter.value.category
               : ""
           }${
-            route.params.course_id && route.params.course_id.length
-              ? ";course_id:" + route.params.course_id
+            route.query.course_id?.length
+              ? ";course_id:" + route.query.course_id
               : ""
           }&orderBy=id&sortedBy=desc&page=${page}`
         )
@@ -401,13 +401,13 @@ export default {
           field: (row) => row.duration_in_minutes,
           // sortable: true,
         },
-        {
-          name: "course",
-          align: "left",
-          label: "Course",
-          field: (row) => row.course,
-          // sortable: true,
-        },
+        // {
+        //   name: "course",
+        //   align: "left",
+        //   label: "Course",
+        //   field: (row) => row.course,
+        //   // sortable: true,
+        // },
 
         {
           name: "actions",

@@ -134,8 +134,8 @@
                           :options="courseOptions"
                           emit-value
                           map-options
-                          :clearable="!(route.params.course_id?.length > 0)"
-                          :readonly="route.params.course_id?.length > 0"
+                          v-if="route.query.course_id?.length > 0"
+                          readonly
                           @clear="
                             (val) => {
                               examData.course_id = null;
@@ -672,8 +672,8 @@ export default defineComponent({
     }, 2000),
     onReset() {
       this.examData = initExamData();
-      if (this.route.params.course_id?.length > 0) {
-        this.examData.course_id = this.route.params.course_id;
+      if (this.route.query.course_id?.length > 0) {
+        this.examData.course_id = this.route.query.course_id;
       }
     },
 
@@ -691,19 +691,19 @@ export default defineComponent({
     },
   },
   mounted() {
-    if (this.route.params.course_id?.length > 0) {
-      this.examData.course_id = this.route.params.course_id;
+    if (this.route.query.course_id?.length > 0) {
+      this.examData.course_id = this.route.query.course_id;
     }
     Promise.all([
       this.getCourses(),
     ]).then((value) => {
-      if (this.$route.query.courseId) {
-        this.examData.course_id = this.$route.query.courseId
+      if (this.route.query.courseId) {
+        this.examData.course_id = this.route.query.courseId
 
       }
-      if (this.$route.params.id) {
+      if (this.route.params.id) {
         api
-          .get("/exams/" + this.$route.params.id + "?include=examConfiguration")
+          .get("/exams/" + this.route.params.id + "?include=examConfiguration")
           .then((response) => {
             this.examData = response.data.data;
             this.examData.examConfiguration =

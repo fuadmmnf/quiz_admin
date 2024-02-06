@@ -66,7 +66,12 @@
                             <q-item-label>ongoing</q-item-label>
                           </q-item-section>
                         </q-item>
-
+                        <q-item clickable v-close-popup
+                                :to="{name: 'exam-list', params:{type: 'checking'}, query: {course_id: props.row.id}}">
+                          <q-item-section>
+                            <q-item-label>checking</q-item-label>
+                          </q-item-section>
+                        </q-item>
                         <q-item clickable v-close-popup
                                 :to="{name: 'exam-list', params:{type: 'completed'}, query: {course_id: props.row.id}}">
                           <q-item-section>
