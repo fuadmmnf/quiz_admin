@@ -5,7 +5,7 @@
         <div class="text-h6 text-indigo-8">
           Question Banks
           <div class="text-subtitle2">
-            List of all {{route.params.type}} question banks are shown here
+            List of all {{route.params.status}} question banks are shown here
           </div>
         </div>
         <div class="row">
@@ -17,7 +17,7 @@
 
     <q-separator spaced/>
 
-    <QuestionBankHierarchyList :type="route.params.type"></QuestionBankHierarchyList>
+    <QuestionBankHierarchyList :status="route.params.status"></QuestionBankHierarchyList>
   </q-page>
 </template>
 <script>

@@ -82,7 +82,7 @@
                   <q-td key="actions" :props="props">
                     <!-- move to draft -->
                     <q-btn
-                      v-if="examType !== 'draft'"
+                      v-if="status !== 'draft'"
                       color="primary"
                       size="md"
                       icon="drafts"
@@ -101,7 +101,7 @@
                     </q-btn>
                     <!-- publish exam -->
                     <q-btn
-                      v-if="examType === 'draft'"
+                      v-if="status === 'draft'"
                       color="green"
                       size="md"
                       icon="publish"
@@ -126,7 +126,7 @@
                       round
                       dense
                       flat
-                      :to="`/exam/${examType}/${props.row.id}/attempted-users`"
+                      :to="`/exam/${status}/${props.row.id}/attempted-users`"
                     >
                       <q-tooltip
                         anchor="top middle"
@@ -144,7 +144,7 @@
                       dense
                       flat
                       :to="`/Exam/${props.row.id}`"
-                      v-if="examType==='draft'"
+                      v-if="status==='draft'"
                     >
                       <q-tooltip
                         anchor="top middle"
@@ -179,7 +179,7 @@
                       dense
                       flat
                       :to="`/exam/checking/${props.row.id}/questions`"
-                      v-if="examType === 'checking'"
+                      v-if="status === 'checking'"
                     >
                       <q-tooltip
                         anchor="top middle"
@@ -197,7 +197,7 @@
                       round
                       dense
                       flat
-                      v-if="examType === 'checking'"
+                      v-if="status === 'checking'"
                       @click="markAsCompleted(props.row.id)"
                     >
                       <q-tooltip
@@ -246,7 +246,7 @@ import {useRoute} from "vue-router";
 export default {
   name: "ExamList",
   props: {
-    examType: {
+    status: {
       type: String,
       required: true,
     },
@@ -282,7 +282,7 @@ export default {
       api
         .get(
           `/exams?include=examConfiguration,subject,category,faculty&searchJoin=and&search=status:${
-            props.examType
+            props.status
           }${
             filter.value.keywords.length
               ? ";title:" + filter.value.keywords

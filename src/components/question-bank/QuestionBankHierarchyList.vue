@@ -91,7 +91,7 @@
                 </q-btn>
                 <q-btn
                   v-if="
-                    props.item.parentId === '' && type === 'status:draft'
+                    props.item.parentId === '' && status === 'status:draft'
                   "
                   @click="handlePublishButtonClick(props.item)"
                   flat
@@ -106,7 +106,7 @@
                 <q-btn
                   v-if="
                     props.item.parentId === '' &&
-                    type === 'status:published'
+                    status === 'status:published'
                   "
                   @click="handleMovetoDraftButtonClick(props.item)"
                   flat
@@ -129,7 +129,7 @@
       </div>
     </div>
     <q-dialog v-model="showAddEditDialog">
-      <div v-if="type === 'status:draft'" class="col-3">
+      <div v-if="status === 'status:draft'" class="col-3">
         <q-card class="q-mt-sm" style="width: 600px; max-width: 70vw">
           <q-bar>
             Add/Edit Question bank
@@ -204,7 +204,7 @@ import {useQuasar} from "quasar";
 
 export default {
   props: {
-    type: {
+    status: {
       type: String,
       required: true,
     },
@@ -280,7 +280,7 @@ export default {
     const router = useRouter();
     const route = useRoute();
 
-    const {type} = toRefs(props);
+    const {status} = toRefs(props);
 
     const handleAddButtonClick = (selectedItem) => {
       showAddEditDialog.value = true;
@@ -433,14 +433,14 @@ export default {
       const params = {
         orderBy: "id",
         sortedBy: "desc",
-        search: `status:${type.value}${route.query.course_id?.length ? ("course_id:" + route.query.course_id) : ""}` + type.value,
+        search: `status:${status.value}${route.query.course_id?.length ? ("course_id:" + route.query.course_id) : ""}` + status.value,
         searchJoin: "and",
         include: "subject,category,children",
         limit: 50,
         page: newPage,
       };
       //
-      if (type.value === "all") {
+      if (status.value === "all") {
         params.search = route.query.course_id?.length ? ("course_id:" + route.query.course_id) : "";
       }
 

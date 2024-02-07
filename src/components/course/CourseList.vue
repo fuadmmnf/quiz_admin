@@ -47,33 +47,33 @@
                     <q-btn-dropdown class="q-mr-sm" color="primary" label="exams" dense size="sm" dropdown-icon="">
                       <q-list>
                         <q-item clickable v-close-popup
-                                :to="{name: 'exam-list', params:{type: 'draft'}, query: {course_id: props.row.id}}">
+                                :to="{name: 'exam-list', params:{status: 'draft'}, query: {course_id: props.row.id}}">
                           <q-item-section>
                             <q-item-label>draft</q-item-label>
                           </q-item-section>
                         </q-item>
 
                         <q-item clickable v-close-popup
-                                :to="{name: 'exam-list', params:{type: 'upcoming'}, query: {course_id: props.row.id}}">
+                                :to="{name: 'exam-list', params:{status: 'upcoming'}, query: {course_id: props.row.id}}">
                           <q-item-section>
                             <q-item-label>upcoming</q-item-label>
                           </q-item-section>
                         </q-item>
 
                         <q-item clickable v-close-popup
-                                :to="{name: 'exam-list', params:{type: 'ongoing'}, query: {course_id: props.row.id}}">
+                                :to="{name: 'exam-list', params:{status: 'ongoing'}, query: {course_id: props.row.id}}">
                           <q-item-section>
                             <q-item-label>ongoing</q-item-label>
                           </q-item-section>
                         </q-item>
                         <q-item clickable v-close-popup
-                                :to="{name: 'exam-list', params:{type: 'checking'}, query: {course_id: props.row.id}}">
+                                :to="{name: 'exam-list', params:{status: 'checking'}, query: {course_id: props.row.id}}">
                           <q-item-section>
                             <q-item-label>checking</q-item-label>
                           </q-item-section>
                         </q-item>
                         <q-item clickable v-close-popup
-                                :to="{name: 'exam-list', params:{type: 'completed'}, query: {course_id: props.row.id}}">
+                                :to="{name: 'exam-list', params:{status: 'completed'}, query: {course_id: props.row.id}}">
                           <q-item-section>
                             <q-item-label>completed</q-item-label>
                           </q-item-section>
@@ -83,37 +83,55 @@
                     <q-btn-dropdown class="q-mr-sm" color="primary" label="q-banks" dense size="sm" dropdown-icon="">
                       <q-list>
                         <q-item clickable v-close-popup
-                                :to="{name: 'questionbank-list', params:{type: 'draft'}, query: {course_id: props.row.id}}">
+                                :to="{name: 'questionbank-list', params:{status: 'draft'}, query: {course_id: props.row.id}}">
                           <q-item-section>
                             <q-item-label>draft</q-item-label>
                           </q-item-section>
                         </q-item>
 
                         <q-item clickable v-close-popup
-                                :to="{name: 'questionbank-list', params:{type: 'published'}, query: {course_id: props.row.id}}">
+                                :to="{name: 'questionbank-list', params:{status: 'published'}, query: {course_id: props.row.id}}">
                           <q-item-section>
                             <q-item-label>published</q-item-label>
                           </q-item-section>
                         </q-item>
                       </q-list>
                     </q-btn-dropdown>
-                    <q-btn
-                      color="primary"
-                      :to="`/lecture-classes/${props.row.id}`"
-                      round
-                      dense
-                      flat
-                      size="sm"
-                      icon="fa-solid fa-clipboard-list"
-                    >
-                      <q-tooltip
-                        anchor="top middle"
-                        self="bottom middle"
-                        :offset="[10, 10]"
-                      >
-                        <strong class="">Lecture Classes</strong>
-                      </q-tooltip>
-                    </q-btn>
+
+                    <q-btn-dropdown class="q-mr-sm" color="primary" label="materials" dense size="sm" dropdown-icon="">
+                      <q-list>
+                        <q-item clickable v-close-popup
+                                :to="{name: 'classmaterial-list', params:{status: 'draft'}, query: {course_id: props.row.id}}">
+                          <q-item-section>
+                            <q-item-label>draft</q-item-label>
+                          </q-item-section>
+                        </q-item>
+
+                        <q-item clickable v-close-popup
+                                :to="{name: 'classmaterial-list', params:{status: 'published'}, query: {course_id: props.row.id}}">
+                          <q-item-section>
+                            <q-item-label>published</q-item-label>
+                          </q-item-section>
+                        </q-item>
+                      </q-list>
+                    </q-btn-dropdown>
+<!--                    <q-btn-->
+<!--                      color="primary"-->
+<!--                      :to="`/lecture-classes/${props.row.id}`"-->
+<!--                      round-->
+<!--                      dense-->
+<!--                      flat-->
+<!--                      size="sm"-->
+<!--                      icon="fa-solid fa-clipboard-list"-->
+<!--                    >-->
+<!--                      <q-tooltip-->
+<!--                        anchor="top middle"-->
+<!--                        self="bottom middle"-->
+<!--                        :offset="[10, 10]"-->
+<!--                      >-->
+<!--                        <strong class="">Lecture Classes</strong>-->
+<!--                      </q-tooltip>-->
+<!--                    </q-btn>-->
 
                     <q-btn
                       class="q-mx-md"
@@ -138,7 +156,7 @@
                   <q-td key="action" :props="props">
 
                     <q-btn
-                      v-if="courseType === 'draft'"
+                      v-if="status === 'draft'"
                       color="green"
                       size="md"
                       icon="publish"
@@ -156,7 +174,7 @@
                       </q-tooltip>
                     </q-btn>
                     <q-btn
-                      v-if="courseType !== 'draft'"
+                      v-if="status !== 'draft'"
                       color="primary"
                       size="md"
                       icon="drafts"
@@ -174,7 +192,7 @@
                       </q-tooltip>
                     </q-btn>
                     <q-btn
-                      v-if="courseType === 'published'"
+                      v-if="status === 'published'"
                       color="primary"
                       size="md"
                       icon="move_to_inbox"
@@ -272,7 +290,7 @@ import {useQuasar} from "quasar";
 export default defineComponent({
   name: "CourseList",
   props: {
-    courseType: {
+    status: {
       type: String,
       required: true,
     },
@@ -299,14 +317,14 @@ export default defineComponent({
       loading.value = true;
       api
         .get(
-          `/courses?search=status:${props.courseType}${
+          `/courses?search=status:${props.status}${
             searchData.value.keywords.length
               ? ";title:" + searchData.value.keywords
               : ""
           }&searchJoin=and&orderBy=id&sortedBy=desc&page=${page}`
         )
         .then((response) => {
-          console.log(`${props.courseType} courses`, response.data);
+          console.log(`${props.status} courses`, response.data);
           courses.value = response.data.data;
           const meta = response.data.meta.pagination;
           pagination.value = {

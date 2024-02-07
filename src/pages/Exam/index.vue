@@ -5,7 +5,7 @@
         <div class="text-h6 text-indigo-8">
           Exams
           <div class="text-subtitle2">
-            List of {{route.params.type}} {{route.query.course_id?.length? "course": ""}} exams are shown here
+            List of {{route.params.status}} {{route.query.course_id?.length? "course": ""}} exams are shown here
           </div>
         </div>
         <div class="row">
@@ -17,7 +17,7 @@
 
     <q-separator spaced/>
 
-    <exam-list :examType="route.params.type"></exam-list>
+    <exam-list :status="route.params.status"></exam-list>
   </q-page>
 </template>
 

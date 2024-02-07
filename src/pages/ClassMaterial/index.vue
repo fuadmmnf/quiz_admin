@@ -44,14 +44,24 @@
                     <q-td key="title" :props="props">
                       {{ props.row.title }}
                     </q-td>
+
+                    <q-td key="type" :props="props">
+                      {{ props.row.type }}
+                    </q-td>
+                    <q-td key="category" :props="props">
+                      {{ props.row.category?.name?? "" }}
+                    </q-td>
                     <q-td key="subject" :props="props">
-                      {{ props.row.subject }}
+                      {{ props.row.subject?.name?? "" }}
+                    </q-td>
+                    <q-td key="faculty" :props="props">
+                      {{ props.row.faculty?.name?? "" }}
                     </q-td>
                     <q-td key="description" :props="props">
                       {{ props.row.description }}
                     </q-td>
-                    <q-td key="start_time" :props="props">
-                      {{ props.row.start_time }}
+                    <q-td key="time" :props="props">
+                      {{ props.row.time }}
                     </q-td>
 
                     <q-td key="action" :props="props">
@@ -62,7 +72,7 @@
                         round
                         dense
                         flat
-                        :to="`/lecture-classes/${props.row.id}/edit`"
+                        :to="{name: 'classmaterial-edit', params: {id: props.row.id}}"
                       />
 
                       <q-btn
@@ -136,7 +146,7 @@ export default defineComponent({
 
       api
         .get(
-          `/class-materials?search=course_id:${courseId.value}&orderBy=id&sortedBy=desc&page=${page}`
+          `/class-materials?search=status:${route.params.status}${route.query.course_id?.length? `;course_id:${route.query.course_id}`: ''}&orderBy=id&sortedBy=desc&searchJoin=and&page=${page}`
         )
         .then((response) => {
           classMaterials.value = response.data.data;
@@ -182,21 +192,33 @@ export default defineComponent({
           align: "left",
         },
         {
+          name: "type",
+          label: "TYpe",
+          field: "type",
+          align: "left",
+        },
+        {
+          name: "category",
+          label: "Category",
+          field: "category",
+          align: "left",
+        },
+        {
           name: "subject",
           label: "Subject",
           field: "subject",
           align: "left",
         },
         {
-          name: "description",
-          label: "Description",
-          field: "description",
+          name: "faculty",
+          label: "Faculty",
+          field: "faculty",
           align: "left",
         },
         {
-          name: "start_time",
-          label: "Start Date",
-          field: "start_time",
+          name: "time",
+          label: "Time",
+          field: "time",
           align: "left",
         },
 
@@ -225,7 +247,7 @@ export default defineComponent({
             .delete(`/class-materials/${id}`)
             .then((res) => {
               this.$q.notify({
-                message: "Lecture class deleted successfully",
+                message: "Class material deleted successfully",
                 color: "positive",
                 icon: "check",
               });
@@ -236,13 +258,13 @@ export default defineComponent({
             });
         })
         .onCancel(() => {
-          console.log(">>>> Cancel");
+          // console.log(">>>> Cancel");
         });
     },
   },
 
   mounted() {
-    this.fetchLectureClasses();
+    this.fetchClassMaterials();
   },
 });
 </script>

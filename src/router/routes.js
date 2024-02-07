@@ -29,7 +29,7 @@ const routes = [
         component: () => import("pages/Blog/AddorEditBlog.vue"),
       },
       {
-        path: "/questionbanks/:type",
+        path: "/questionbanks/:status",
         name: "questionbank-list",
         component: () => import("pages/QuestionBank/index.vue"),
       },
@@ -77,7 +77,7 @@ const routes = [
         component: () => import("pages/Question/AddOrEdit.vue"),
       },
       {
-        path: "exams/:type",
+        path: "exams/:status",
         name: "exam-list",
         component: () => import("pages/Exam/index.vue"),
       },
@@ -103,7 +103,7 @@ const routes = [
         component: () => import("pages/Exam/AddOrEdit.vue"),
       },
       {
-        path: "/exam/:type/:id/attempted-users",
+        path: "/exam/:status/:id/attempted-users",
         component: () => import("pages/Exam/AttemptUserList.vue"),
       },
       {
@@ -133,7 +133,7 @@ const routes = [
         component: () => import("pages/Institutions.vue"),
       },
       {
-        path: "/courses/:type",
+        path: "/courses/:status",
         name: 'course-list',
         component: () => import("pages/Course/index.vue"),
       },
@@ -163,18 +163,20 @@ const routes = [
         path: "/send-message",
         component: () => import("pages/SendMessage.vue"),
       },
-
       {
-        path: "/lecture-classes/:courseId",
-        component: () => import("pages/LectureClass/index.vue"),
+        path: "/class-materials/:status",
+        name: 'classmaterial-list',
+        component: () => import("pages/ClassMaterial/index.vue"),
       },
       {
-        path: "/lecture-classes/:courseId/add",
-        component: () => import("pages/LectureClass/AddOrEdit.vue"),
+        path: "/class-material/add",
+        name: 'classmaterial-create',
+        component: () => import("pages/ClassMaterial/AddOrEdit.vue"),
       },
       {
-        path: "/lecture-classes/:id/edit",
-        component: () => import("pages/LectureClass/AddOrEdit.vue"),
+        path: "/class-material/:id/edit",
+        name: 'classmaterial-edit',
+        component: () => import("pages/ClassMaterial/AddOrEdit.vue"),
       },
 
       {

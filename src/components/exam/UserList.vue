@@ -160,10 +160,7 @@ import { useQuasar } from "quasar";
 export default {
   name: "ExamList",
   props: {
-    examType: {
-      type: String,
-      required: true,
-    },
+
   },
   setup(props) {
     const store = useStore();

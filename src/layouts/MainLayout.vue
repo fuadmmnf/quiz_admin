@@ -29,7 +29,7 @@
             flat
             color="white"
             icon="fab fa-github"
-            type="a"
+            status="a"
             href="https://github.com/pratik227/quasar-admin"
             target="_blank"
           >
@@ -39,7 +39,7 @@
             dense
             flat
             style="color: red !important"
-            type="a"
+            status="a"
             href="https://github.com/sponsors/pratik227"
             target="_blank"
           >
@@ -184,7 +184,7 @@
 
         <q-expansion-item icon="menu_open" label="Exams">
           <q-item
-            :to="{name: 'exam-list', params: {type: 'draft'}}"
+            :to="{name: 'exam-list', params: {status: 'draft'}}"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -193,7 +193,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            :to="{name: 'exam-list', params: {type: 'upcoming'}}"
+            :to="{name: 'exam-list', params: {status: 'upcoming'}}"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -202,7 +202,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            :to="{name: 'exam-list', params: {type: 'ongoing'}}"
+            :to="{name: 'exam-list', params: {status: 'ongoing'}}"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -211,7 +211,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            :to="{name: 'exam-list', params: {type: 'checking'}}"
+            :to="{name: 'exam-list', params: {status: 'checking'}}"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -220,7 +220,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            :to="{name: 'exam-list', params: {type: 'completed'}}"
+            :to="{name: 'exam-list', params: {status: 'completed'}}"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -248,7 +248,7 @@
         <!--          </q-item-section>-->
         <!--        </q-item> -->
         <q-expansion-item icon="menu_open" label="Question Banks">
-          <q-item :to="{name: 'questionbank-list', params: {type: 'draft'}}"
+          <q-item :to="{name: 'questionbank-list', params: {status: 'draft'}}"
                   active-class="q-item-no-link-highlighting">
             <q-item-section avatar>
             </q-item-section>
@@ -257,7 +257,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item :to="{name: 'questionbank-list', params: {type: 'published'}}"
+          <q-item :to="{name: 'questionbank-list', params: {status: 'published'}}"
                   active-class="q-item-no-link-highlighting">
             <q-item-section avatar>
             </q-item-section>
@@ -269,7 +269,7 @@
 
         <q-expansion-item icon="menu_open" label="Courses">
           <q-item
-            :to="{name: 'course-list', params: {type: 'draft'}}"
+            :to="{name: 'course-list', params: {status: 'draft'}}"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -279,7 +279,7 @@
           </q-item>
 
           <q-item
-            :to="{name: 'course-list', params: {type: 'published'}}"
+            :to="{name: 'course-list', params: {status: 'published'}}"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -288,7 +288,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            :to="{name: 'course-list', params: {type: 'completed'}}"
+            :to="{name: 'course-list', params: {status: 'completed'}}"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
