@@ -5,7 +5,7 @@
         <div class="text-h6 text-indigo-8">
           Lecture classes
           <div class="text-subtitle2">
-            List of {{route.query.course_id?.length? "course": ""}} resources are shown here
+            List of {{ route.query.course_id?.length ? "course" : "" }} resources are shown here
           </div>
         </div>
         <div class="row">
@@ -49,16 +49,16 @@
                       {{ props.row.type }}
                     </q-td>
                     <q-td key="category" :props="props">
-                      {{ props.row.category?.data.name?? "" }}
+                      {{ props.row.category?.data.name ?? "" }}
                     </q-td>
                     <q-td key="subject" :props="props">
-                      {{ props.row.subject?.data.name?? "" }}
+                      {{ props.row.subject?.data.name ?? "" }}
                     </q-td>
                     <q-td key="faculty" :props="props">
-                      {{ props.row.faculty?.data.name?? "" }}
+                      {{ props.row.faculty?.data.name ?? "" }}
                     </q-td>
                     <q-td key="course" :props="props">
-                      {{ props.row.course?.data.title?? ""  }}
+                      {{ props.row.course?.data.title ?? "" }}
                     </q-td>
                     <q-td key="time" :props="props">
                       {{ props.row.time }}
@@ -74,7 +74,31 @@
                         flat
                         :to="{name: 'classmaterial-edit', params: {id: props.row.id}}"
                       />
-
+                      <q-btn
+                        v-if="props.row.status === 'draft'
+                  "
+                        @click="handleStatusChangeClick(props.row, 'published')"
+                        flat
+                        round
+                        icon="file_upload"
+                        size="10px"
+                        color="primary"
+                        class="q-ml-sm"
+                      >
+                        <q-tooltip>Publish</q-tooltip>
+                      </q-btn>
+                      <q-btn
+                        v-else
+                        @click="handleStatusChangeClick(props.row, 'draft')"
+                        flat
+                        round
+                        icon="move_to_inbox"
+                        size="10px"
+                        color="primary"
+                        class="q-ml-sm"
+                      >
+                        <q-tooltip>Move to Draft</q-tooltip>
+                      </q-btn>
                       <q-btn
                         color="negative"
                         size="sm"
@@ -97,17 +121,18 @@
 </template>
 
 <script>
-import { defineComponent, defineAsyncComponent, ref, computed } from "vue";
-import { useStore } from "src/stores/store";
-import { api } from "boot/axios";
-import { useQuasar } from "quasar";
-import { getLectureClasses } from "src/services/course_service";
+import {defineComponent, defineAsyncComponent, ref, computed} from "vue";
+import {useStore} from "src/stores/store";
+import {api} from "boot/axios";
+import {useQuasar} from "quasar";
+import {getLectureClasses} from "src/services/course_service";
 import {useRoute} from "vue-router";
+import {updateClassMaterialStatus} from "src/services/classmaterial_service";
 
 export default defineComponent({
   name: "ClassMaterials",
   setup() {
-    const { $q } = useQuasar();
+    const {$q} = useQuasar();
     const store = useStore();
     const route = useRoute();
     const classMaterials = ref([]);
@@ -116,7 +141,7 @@ export default defineComponent({
       rowsPerPage: 10,
       rowsNumber: 0,
     });
-    const searchData = ref({ type: "", keywords: "" });
+    const searchData = ref({type: "", keywords: ""});
 
     const loading = ref(true);
     const fetchClassMaterials = async (page = 1) => {
@@ -146,7 +171,7 @@ export default defineComponent({
 
       api
         .get(
-          `/class-materials?search=status:${route.params.status}${route.query.course_id?.length? `;course_id:${route.query.course_id}`: ''}&include=course,category,faculty,subject&orderBy=id&sortedBy=desc&searchJoin=and&page=${page}`
+          `/class-materials?search=status:${route.params.status}${route.query.course_id?.length ? `;course_id:${route.query.course_id}` : ''}&include=course,category,faculty,subject&orderBy=id&sortedBy=desc&searchJoin=and&page=${page}`
         )
         .then((response) => {
           classMaterials.value = response.data.data;
@@ -240,6 +265,19 @@ export default defineComponent({
   },
 
   methods: {
+    async handleStatusChangeClick(selectedItem, stat) {
+
+      const {status, error} = await updateClassMaterialStatus(selectedItem.id, {
+        status: stat,
+      });
+
+      if (status === 200) {
+        console.log("Class Material status updated successfully.");
+        await this.fetchClassMaterials();
+      } else {
+        console.error("Error updating class material:", error);
+      }
+    },
     onDelete(id) {
       this.$q
         .dialog({
