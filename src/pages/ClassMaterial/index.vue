@@ -57,8 +57,8 @@
                     <q-td key="faculty" :props="props">
                       {{ props.row.faculty?.data.name?? "" }}
                     </q-td>
-                    <q-td key="description" :props="props">
-                      {{ props.row.description }}
+                    <q-td key="course" :props="props">
+                      {{ props.row.course?.data.title?? ""  }}
                     </q-td>
                     <q-td key="time" :props="props">
                       {{ props.row.time }}
@@ -213,6 +213,12 @@ export default defineComponent({
           name: "faculty",
           label: "Faculty",
           field: "faculty",
+          align: "left",
+        },
+        {
+          name: "course",
+          label: "Course",
+          field: "course",
           align: "left",
         },
         {
