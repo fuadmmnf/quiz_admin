@@ -679,7 +679,7 @@ export default defineComponent({
 
     getCourses() {
       return api
-        .get("/courses?orderBy=id&sortedBy=desc&limit=0")
+        .get("/courses?orderBy=id&sortedBy=desc&limit=100")
         .then((response) => {
           response.data.data.map((course) => {
             this.courseOptions.push({

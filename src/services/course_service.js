@@ -24,9 +24,9 @@ export async function getLectureClasses(params = {}) {
   }
 }
 
-export async function createLectureClass(params = {}) {
+export async function createClassMaterial(params = {}) {
   try {
-    const {data, status, error} = await api.post(`/class-lectures`, params);
+    const {data, status, error} = await api.post(`/class-materials`, params);
 
     return { data, status, error: null };
   } catch (error) {
@@ -34,9 +34,9 @@ export async function createLectureClass(params = {}) {
   }
 }
 
-export async function editLectureClass(lectureId, params = {}) {
+export async function editClassMaterial(material_id, params = {}) {
   try {
-    const { data, status, error } = await api.patch(`/class-lectures/${lectureId}`, params);
+    const { data, status, error } = await api.patch(`/class-materials/${material_id}`, params);
 
     return { data, status, error: null };
   } catch (error) {
