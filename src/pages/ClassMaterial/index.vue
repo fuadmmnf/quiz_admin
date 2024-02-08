@@ -49,13 +49,13 @@
                       {{ props.row.type }}
                     </q-td>
                     <q-td key="category" :props="props">
-                      {{ props.row.category?.name?? "" }}
+                      {{ props.row.category?.data.name?? "" }}
                     </q-td>
                     <q-td key="subject" :props="props">
-                      {{ props.row.subject?.name?? "" }}
+                      {{ props.row.subject?.data.name?? "" }}
                     </q-td>
                     <q-td key="faculty" :props="props">
-                      {{ props.row.faculty?.name?? "" }}
+                      {{ props.row.faculty?.data.name?? "" }}
                     </q-td>
                     <q-td key="description" :props="props">
                       {{ props.row.description }}
@@ -146,7 +146,7 @@ export default defineComponent({
 
       api
         .get(
-          `/class-materials?search=status:${route.params.status}${route.query.course_id?.length? `;course_id:${route.query.course_id}`: ''}&orderBy=id&sortedBy=desc&searchJoin=and&page=${page}`
+          `/class-materials?search=status:${route.params.status}${route.query.course_id?.length? `;course_id:${route.query.course_id}`: ''}&include=course,category,faculty,subject&orderBy=id&sortedBy=desc&searchJoin=and&page=${page}`
         )
         .then((response) => {
           classMaterials.value = response.data.data;

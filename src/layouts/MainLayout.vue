@@ -310,16 +310,47 @@
 
         <!--          </q-item-section>-->
         <!--        </q-item>-->
+        <q-expansion-item icon="menu_open" label="Class Materials">
+          <q-item :to="{name: 'classmaterial-list', params: {status: 'draft'}}"
+                  active-class="q-item-no-link-highlighting">
+            <q-item-section avatar>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Draft</q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item :to="{name: 'classmaterial-list', params: {status: 'published'}}"
+                  active-class="q-item-no-link-highlighting">
+            <q-item-section avatar>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Published</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-expansion-item>
 
 
-        <q-item to="/blog" active-class="q-item-no-link-highlighting">
+        <q-expansion-item icon="menu_open" label="Blogs">
+        <q-item :to="{name: 'blog-list', params: {status: 'draft'}}"
+                active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
-            <q-icon name="list"/>
           </q-item-section>
           <q-item-section>
-            <q-item-label>Blog</q-item-label>
+            <q-item-label>Draft</q-item-label>
           </q-item-section>
         </q-item>
+
+        <q-item :to="{name: 'blog-list', params: {status: 'published'}}"
+                active-class="q-item-no-link-highlighting">
+          <q-item-section avatar>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Published</q-item-label>
+          </q-item-section>
+        </q-item>
+      </q-expansion-item>
+
 
         <q-item to="/send-message" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
