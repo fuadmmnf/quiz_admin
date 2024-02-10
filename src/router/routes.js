@@ -21,12 +21,13 @@ const routes = [
       //faculty path with id and edit
       { path: "/subject", component: () => import("pages/Subject.vue") },
       {
-        path: "/blog",
-        component: () => import("pages/Blog/Blog.vue"),
+        path: "/blogs/:status",
+        name: 'blog-list',
+        component: () => import("pages/Blog/Index.vue"),
       },
       {
         path: "/blog/add",
-        component: () => import("pages/Blog/AddorEditBlog.vue"),
+        component: () => import("pages/Blog/AddorEdit.vue"),
       },
       {
         path: "/questionbanks/:status",

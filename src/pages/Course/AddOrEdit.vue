@@ -238,7 +238,22 @@ import {useStore} from "src/stores/store";
 import {api} from "boot/axios";
 import {useQuasar} from "quasar";
 import _ from "lodash";
-
+function initCourseData() {
+  return {
+    title: "",
+    description: "",
+    num_classes: "",
+    num_exams: "",
+    category_id: null,
+    subject_id: null,
+    start_date: "",
+    end_date: "",
+    coordinator_name: "",
+    coordinator_number: "",
+    photo: null,
+    intro_video: ref(null),
+  };
+}
 export default defineComponent({
   name: "AddOrEdit Course",
   components: {
@@ -261,20 +276,7 @@ export default defineComponent({
       name: "",
       model: "",
       expanded: false,
-      courseData: {
-        title: "",
-        description: "",
-        num_classes: "",
-        num_exams: "",
-        category_id: null,
-        subject_id: null,
-        start_date: "",
-        end_date: "",
-        coordinator_name: "",
-        coordinator_number: "",
-        course_icon: ref(null),
-        intro_video: ref(null),
-      },
+      courseData: initCourseData(),
       subjectOptions: [],
       categoryOptions: [],
     };
@@ -320,20 +322,7 @@ export default defineComponent({
     },
     onReset() {
       console.log("Reset");
-      this.courseData = {
-        id: "",
-        title: "",
-        description: "",
-        number_of_classes: "",
-        number_of_exams: "",
-        subject_id: "",
-        start_date: "",
-        end_date: "",
-        co_ordinator_name: "",
-        co_ordinator_phone: "",
-        course_icon: ref(null),
-        course_short_video: ref(null),
-      };
+      this.courseData = initCourseData();
     },
     openCourseDescriptionTinyMceModal() {
       this.$refs.courseDescriptionTinyMceModal.show = true;

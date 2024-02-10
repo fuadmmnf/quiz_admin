@@ -10,7 +10,7 @@
           dense
           round
           outline
-          @click="$router.push('/blog')"
+          @click="$router.back()"
         />
         <div class="text-h6">Add/Edit Blog</div>
         <div class="row">
@@ -32,7 +32,7 @@
       </q-card-section>
     </q-card>
 
-    <q-separator spaced />
+    <q-separator spaced/>
     <q-form
       @submit.prevent="onSubmit"
       id="blogForm"
@@ -125,7 +125,7 @@
                           counter
                         >
                           <template v-slot:prepend>
-                            <q-icon name="cloud_upload" @click.stop.prevent />
+                            <q-icon name="cloud_upload" @click.stop.prevent/>
                           </template>
                           <template v-if="blogData.blog_image" v-slot:append>
                             <q-icon
@@ -137,7 +137,7 @@
                             />
                           </template>
 
-                          <template v-slot:hint> png/jpg </template>
+                          <template v-slot:hint> png/jpg</template>
                         </q-file>
                       </div>
                       <div class="col-6">
@@ -149,7 +149,7 @@
                           counter
                         >
                           <template v-slot:prepend>
-                            <q-icon name="cloud_upload" @click.stop.prevent />
+                            <q-icon name="cloud_upload" @click.stop.prevent/>
                           </template>
                           <template
                             v-if="blogData.blog_video"
@@ -164,7 +164,7 @@
                             />
                           </template>
 
-                          <template v-slot:hint> mp4/mkv </template>
+                          <template v-slot:hint> mp4/mkv</template>
                         </q-file>
                       </div>
                     </div>
@@ -229,15 +229,24 @@
 </template>
 
 <script>
-import { defineComponent, defineAsyncComponent } from "vue";
-import { ref } from "vue";
-import { useStore } from "src/stores/store";
-import { api } from "boot/axios";
-import { useQuasar } from "quasar";
+import {defineComponent, defineAsyncComponent} from "vue";
+import {useStore} from "src/stores/store";
+import {api} from "boot/axios";
+import {useQuasar} from "quasar";
 import _ from "lodash";
 
+function initBlogData() {
+  return {
+    title: "",
+    category_id: null,
+    content: "",
+    published_at: "",
+    author_info: "",
+  };
+}
+
 export default defineComponent({
-  name: "AddOrEdit Course",
+  name: "AddOrEdit Blog",
   components: {
     TinyMceModal: defineAsyncComponent(() =>
       import("components/TinyMceModal.vue")
@@ -246,44 +255,22 @@ export default defineComponent({
 
   setup() {
     const store = useStore();
-    const { $q } = useQuasar();
+    const {$q} = useQuasar();
     return {
       $q,
     };
   },
   data() {
     return {
-      pageName: "Add/Edit Blog",
-      dense: true,
-      name: "",
-      model: "",
-      expanded: false,
-      blogData: {
-        title: "",
-        description: "",
-        status_id: "",
-        date: "",
-        author_name: "",
-        author_contact_details: "",
-        blog_image: ref(null),
-        blog_video: ref(null),
-      },
-      statusOptions: [],
+      blogData: initBlogData(),
     };
   },
   methods: {
-    onSubmit() {
+    onSubmit:  _.debounce(async function () {
       console.log(this.blogData);
       if (this.$route.params.id) {
         api
-          .patch(`/courses/${this.$route.params.id}`, {
-            status_id: this.blogData.status_id,
-            title: this.blogData.title,
-            description: this.blogData.description,
-            author_name: this.blogData.author_name,
-            author_contact_details: this.blogData.author_contact_details,
-            intro_video: "https://www.youtube.com/watch?v=9JSYB59QmZw",
-          })
+          .patch(`/blogs/${this.$route.params.id}`, this.blogData)
           .then((response) => {
             console.log(response);
             this.$q.notify({
@@ -300,14 +287,7 @@ export default defineComponent({
           });
       } else {
         api
-          .post("/courses", {
-            status_id: this.blogData.status_id,
-            title: this.blogData.title,
-            description: this.blogData.description,
-            author_name: this.blogData.author_name,
-            author_contact_details: this.blogData.author_contact_details,
-            intro_video: "https://www.youtube.com/watch?v=9JSYB59QmZw",
-          })
+          .post("/blogs", this.blogData)
           .then((response) => {
             console.log(response);
             this.$q.notify({
@@ -323,20 +303,9 @@ export default defineComponent({
             this.onReset();
           });
       }
-    },
+    }),
     onReset() {
-      console.log("Reset");
-      this.blogData = {
-        id: "",
-        title: "",
-        description: "",
-        status_id: "",
-        date: "",
-        author_name: "",
-        author_contact_details: "",
-        blog_image: ref(null),
-        blog_video: ref(null),
-      };
+      this.blogData = initBlogData();
     },
     openBlogDescriptionTinyMceModal() {
       this.$refs.blogDescriptionTinyMceModal.show = true;
@@ -344,28 +313,11 @@ export default defineComponent({
     onDescriptionChange(value, index, parentIndex) {
       this.blogData.description = value;
     },
-    getSubjects() {
-      api.get("/categories/subject").then((response) => {
-        response.data.data.map((category) => {
-          this.statusOptions.push({
-            label: category.name,
-            value: category.id,
-          });
-        });
-      });
-    },
   },
   mounted() {
-    this.getSubjects();
     if (this.$route.params.id) {
-      api.get("/courses/" + this.$route.params.id).then((response) => {
-        const result = response.data.data;
-        this.blogData.title = result.title;
-        this.blogData.status_id = result.status_id;
-        this.blogData.description = result.description;
-        this.blogData.author_name = result.author_name;
-        this.blogData.author_contact_details = result.author_contact_details;
-        this.blogData.blog_video = result.intro_video;
+      api.get("/blogs/" + this.$route.params.id).then((response) => {
+        this.blogData = response.data.data;
       });
     }
   },
