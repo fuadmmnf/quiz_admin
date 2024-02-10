@@ -3,9 +3,9 @@
     <q-card class="no-shadow" bordered>
       <q-card-section class="row items-center justify-between">
         <div class="text-h6 text-indigo-8">
-          Lecture classes
+          Blogs
           <div class="text-subtitle2">
-            List of {{ route.query.course_id?.length ? "course" : "" }} resources are shown here
+            List of {{ route.params.status }} blogs are shown here
           </div>
         </div>
         <div class="row">
@@ -13,7 +13,7 @@
             color="primary"
             label="Add Material"
             icon="add"
-            :to="{name: 'classmaterial-create', query: {course_id:  route.query.course_id?.length? route.query.course_id: ''}}"
+            :to="{name: 'blog-create', query: {course_id:  route.query.course_id?.length? route.query.course_id: ''}}"
           />
         </div>
       </q-card-section>
@@ -26,7 +26,7 @@
             <q-card-section>
               <q-table
                 :columns="columns"
-                :rows="classMaterials"
+                :rows="blogs"
                 :loading="loading"
                 rows-per-page-options="[10]"
                 row-key="real_id"
@@ -45,23 +45,17 @@
                       {{ props.row.title }}
                     </q-td>
 
-                    <q-td key="type" :props="props">
-                      {{ props.row.type }}
-                    </q-td>
                     <q-td key="category" :props="props">
-                      {{ props.row.category?.data.name ?? "" }}
+                      {{ props.row.category?.data.name }}
                     </q-td>
-                    <q-td key="subject" :props="props">
-                      {{ props.row.subject?.data.name ?? "" }}
+                    <q-td key="author_info" :props="props">
+                      <div v-html="props.row.author_info" />
                     </q-td>
-                    <q-td key="faculty" :props="props">
-                      {{ props.row.faculty?.data.name ?? "" }}
+                    <q-td key="published_at" :props="props">
+                      {{ props.row.published_at }}
                     </q-td>
-                    <q-td key="course" :props="props">
-                      {{ props.row.course?.data.title ?? "" }}
-                    </q-td>
-                    <q-td key="time" :props="props">
-                      {{ props.row.time }}
+                    <q-td key="read_count" :props="props">
+                      {{ props.row.read_count }}
                     </q-td>
 
                     <q-td key="action" :props="props">
@@ -72,7 +66,7 @@
                         round
                         dense
                         flat
-                        :to="{name: 'classmaterial-edit', params: {id: props.row.id}}"
+                        :to="{name: 'blog-edit', params: {id: props.row.id}}"
                       />
                       <q-btn
                         v-if="props.row.status === 'draft'
@@ -127,15 +121,15 @@ import {api} from "boot/axios";
 import {useQuasar} from "quasar";
 import {getLectureClasses} from "src/services/course_service";
 import {useRoute} from "vue-router";
-import {updateClassMaterialStatus} from "src/services/classmaterial_service";
+import {updateBlog} from "src/services/blog_service";
 
 export default defineComponent({
-  name: "ClassMaterials",
+  name: "Blogs",
   setup() {
     const {$q} = useQuasar();
     const store = useStore();
     const route = useRoute();
-    const classMaterials = ref([]);
+    const blogs = ref([]);
     const pagination = ref({
       page: 1,
       rowsPerPage: 10,
@@ -144,37 +138,15 @@ export default defineComponent({
     const searchData = ref({type: "", keywords: ""});
 
     const loading = ref(true);
-    const fetchClassMaterials = async (page = 1) => {
+    const fetchBlogs = async (page = 1) => {
       loading.value = true;
-
-      // const {data, status, error} = await getLectureClasses({
-      //   search: `course_id:${courseId.value}`,
-      //   orderBy: "id",
-      //   sortedBy: "desc",
-      //   page,
-      // });
-      //
-      // if(status === 200){
-      //   console.log(data);
-      //   LectureClasses.value = data.data;
-      //   const meta = data.meta.pagination;
-      //   pagination.value = {
-      //     page: meta.current_page,
-      //     rowsPerPage: meta.per_page,
-      //     rowsNumber: meta.total,
-      //   };
-      //
-      //   loading.value = false;
-      // }else{
-      //   console.error(error);
-      // }
 
       api
         .get(
-          `/class-materials?search=status:${route.params.status}${route.query.course_id?.length ? `;course_id:${route.query.course_id}` : ''}&include=course,category,faculty,subject&orderBy=id&sortedBy=desc&searchJoin=and&page=${page}`
+          `/blogs?search=status:${route.params.status}&include=category&orderBy=id&sortedBy=desc&searchJoin=and&page=${page}`
         )
         .then((response) => {
-          classMaterials.value = response.data.data;
+          blogs.value = response.data.data;
           const meta = response.data.meta.pagination;
           pagination.value = {
             page: meta.current_page,
@@ -190,15 +162,15 @@ export default defineComponent({
         });
     };
     const onRequest = (props) => {
-      fetchClassMaterials(props.pagination.page);
+      fetchBlogs(props.pagination.page);
     };
     return {
       store,
       route,
       pagination,
       loading,
-      fetchClassMaterials,
-      classMaterials,
+      fetchBlogs,
+      blogs,
       $q,
       searchData,
       onRequest,
@@ -217,42 +189,29 @@ export default defineComponent({
           align: "left",
         },
         {
-          name: "type",
-          label: "TYpe",
-          field: "type",
-          align: "left",
-        },
-        {
           name: "category",
           label: "Category",
           field: "category",
           align: "left",
         },
         {
-          name: "subject",
-          label: "Subject",
-          field: "subject",
-          align: "left",
-        },
-        {
-          name: "faculty",
-          label: "Faculty",
-          field: "faculty",
-          align: "left",
-        },
-        {
-          name: "course",
-          label: "Course",
+          name: "author_info",
+          label: "Author Info",
           field: "course",
           align: "left",
         },
         {
-          name: "time",
-          label: "Time",
-          field: "time",
+          name: "published_at",
+          label: "Published At",
+          field: "published_at",
           align: "left",
         },
-
+        {
+          name: "read_count",
+          label: "Read Count",
+          field: "read_count",
+          align: "left",
+        },
         {
           name: "action",
           label: "Action",
@@ -267,35 +226,35 @@ export default defineComponent({
   methods: {
     async handleStatusChangeClick(selectedItem, stat) {
 
-      const {status, error} = await updateClassMaterialStatus(selectedItem.id, {
+      const {status, error} = await updateBlog(selectedItem.id, {
         status: stat,
       });
 
       if (status === 200) {
-        console.log("Class Material status updated successfully.");
-        await this.fetchClassMaterials();
+        console.log("Blog status updated successfully.");
+        await this.fetchBlogs();
       } else {
-        console.error("Error updating class material:", error);
+        console.error("Error updating blog:", error);
       }
     },
     onDelete(id) {
       this.$q
         .dialog({
           title: "Confirm",
-          message: "Would you like to delete the class material?",
+          message: "Would you like to delete the blog?",
           cancel: true,
           persistent: true,
         })
         .onOk(() => {
           api
-            .delete(`/class-materials/${id}`)
+            .delete(`/blogs/${id}`)
             .then((res) => {
               this.$q.notify({
-                message: "Class material deleted successfully",
+                message: "Blog deleted successfully",
                 color: "positive",
                 icon: "check",
               });
-              this.fetchClassMaterials();
+              this.fetchBlogs();
             })
             .catch((err) => {
               console.log(err);
@@ -308,7 +267,7 @@ export default defineComponent({
   },
 
   mounted() {
-    this.fetchClassMaterials();
+    this.fetchBlogs();
   },
 });
 </script>

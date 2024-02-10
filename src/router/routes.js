@@ -21,12 +21,13 @@ const routes = [
       //faculty path with id and edit
       { path: "/subject", component: () => import("pages/Subject.vue") },
       {
-        path: "/blog",
-        component: () => import("pages/Blog/Blog.vue"),
+        path: "/blogs/:status",
+        name: 'blog-list',
+        component: () => import("pages/Blog/Index.vue"),
       },
       {
         path: "/blog/add",
-        component: () => import("pages/Blog/AddorEditBlog.vue"),
+        component: () => import("pages/Blog/AddorEdit.vue"),
       },
       {
         path: "/questionbanks/:status",
@@ -110,24 +111,7 @@ const routes = [
         path: "/exam/:id/edit-questions",
         component: () => import("pages/Exam/EditQuestions.vue"),
       },
-      { path: "/Dashboard2", component: () => import("pages/Dashboard2.vue") },
       { path: "/Profile", component: () => import("pages/UserProfile.vue") },
-      { path: "/TreeTable", component: () => import("pages/TreeTable.vue") },
-      { path: "/StreetView", component: () => import("pages/StreetView.vue") },
-      { path: "/Cards", component: () => import("pages/Cards.vue") },
-      { path: "/Tables", component: () => import("pages/Tables.vue") },
-      { path: "/Contact", component: () => import("pages/Contact.vue") },
-      { path: "/Checkout", component: () => import("pages/Checkout.vue") },
-      {
-        path: "/Ecommerce",
-        component: () => import("pages/ProductCatalogues.vue"),
-      },
-      { path: "/Pagination", component: () => import("pages/Pagination.vue") },
-      { path: "/Charts", component: () => import("pages/Charts.vue") },
-      { path: "/Calendar", component: () => import("pages/Calendar.vue") },
-      { path: "/Directory", component: () => import("pages/Directory.vue") },
-      { path: "/Footer", component: () => import("pages/Footer.vue") },
-      { path: "/CardHeader", component: () => import("pages/CardHeader.vue") },
       {
         path: "/institutions",
         component: () => import("pages/Institutions.vue"),
@@ -218,21 +202,9 @@ const routes = [
     component: () => import("pages/Maintenance.vue"),
   },
   {
-    path: "/Pricing",
-    component: () => import("pages/Pricing.vue"),
-  },
-  {
     path: "/Login",
     name: "Login",
     component: () => import("src/pages/Login.vue"),
-  },
-  {
-    path: "/Lock",
-    component: () => import("pages/LockScreen.vue"),
-  },
-  {
-    path: "/Lock-2",
-    component: () => import("pages/LockScreen-2.vue"),
   },
 ];
 

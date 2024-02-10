@@ -91,7 +91,7 @@
                 </q-btn>
                 <q-btn
                   v-if="
-                    props.item.parentId === '' && status === 'status:draft'
+                    props.item.parentId === '' && status === 'draft'
                   "
                   @click="handlePublishButtonClick(props.item)"
                   flat
@@ -106,7 +106,7 @@
                 <q-btn
                   v-if="
                     props.item.parentId === '' &&
-                    status === 'status:published'
+                    status === 'published'
                   "
                   @click="handleMovetoDraftButtonClick(props.item)"
                   flat
@@ -129,7 +129,7 @@
       </div>
     </div>
     <q-dialog v-model="showAddEditDialog">
-      <div v-if="status === 'status:draft'" class="col-3">
+      <div v-if="status === 'draft'" class="col-3">
         <q-card class="q-mt-sm" style="width: 600px; max-width: 70vw">
           <q-bar>
             Add/Edit Question bank
@@ -280,7 +280,6 @@ export default {
     const router = useRouter();
     const route = useRoute();
 
-    const {status} = toRefs(props);
 
     const handleAddButtonClick = (selectedItem) => {
       showAddEditDialog.value = true;
@@ -433,14 +432,14 @@ export default {
       const params = {
         orderBy: "id",
         sortedBy: "desc",
-        search: `status:${status.value}${route.query.course_id?.length ? ("course_id:" + route.query.course_id) : ""}` + status.value,
+        search: `status:${props.status}${route.query.course_id?.length ? ("course_id:" + route.query.course_id) : ""}`,
         searchJoin: "and",
         include: "subject,category,children",
         limit: 50,
         page: newPage,
       };
       //
-      if (status.value === "all") {
+      if (props.status === "all") {
         params.search = route.query.course_id?.length ? ("course_id:" + route.query.course_id) : "";
       }
 
