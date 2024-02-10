@@ -74,7 +74,6 @@
 </template>
 
 <script>
-import TableActions from "components/tables/TableActions.vue";
 import { api } from "src/boot/axios";
 import { defineComponent, defineAsyncComponent, ref } from "vue";
 import { useQuasar } from "quasar";
@@ -108,9 +107,6 @@ export default defineComponent({
     ),
     CustomHierarchy: defineAsyncComponent(() =>
       import("components/tree-table/CustomHierarchy.vue")
-    ),
-    TableActions: defineAsyncComponent(() =>
-      import("components/tables/TableActions.vue")
     ),
   },
   methods: {

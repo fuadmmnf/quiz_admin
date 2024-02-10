@@ -105,9 +105,7 @@ export default defineComponent({
     CustomHierarchy: defineAsyncComponent(() =>
       import("components/tree-table/CustomHierarchy.vue")
     ),
-    TableActions: defineAsyncComponent(() =>
-      import("components/tables/TableActions.vue")
-    ),
+
   },
   methods: {
 

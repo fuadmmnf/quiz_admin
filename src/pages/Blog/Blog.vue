@@ -248,9 +248,6 @@ export default defineComponent({
     };
   },
   components: {
-    TableActions: defineAsyncComponent(() =>
-      import("components/tables/TableActions.vue")
-    ),
     SearchQuestions,
   },
   methods: {
