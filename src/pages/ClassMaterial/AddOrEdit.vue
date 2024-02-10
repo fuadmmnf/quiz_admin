@@ -170,9 +170,10 @@ import {
   editLectureClass,
 } from "src/services/course_services";
 import {useCategoryStore} from "stores/category";
+import {useRoute} from "vue-router";
 
 export default defineComponent({
-  name: "Add Lecture",
+  name: "Add ClassMaterial",
   components: {
     TinyMceModal: defineAsyncComponent(() =>
       import("components/TinyMceModal.vue")
@@ -181,6 +182,7 @@ export default defineComponent({
 
   setup() {
     const store = useStore();
+    const route = useRoute();
     const categoryStore = useCategoryStore();
 
     const { $q } = useQuasar();
@@ -188,6 +190,7 @@ export default defineComponent({
     return {
       courseId,
       $q,
+      route,
       categoryStore,
     };
   },
