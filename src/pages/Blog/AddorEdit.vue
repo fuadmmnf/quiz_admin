@@ -53,9 +53,9 @@
                       <!-- subject dropdown -->
                       <q-select
                         filled
-                        v-model="blogData.status_id"
+                        v-model="blogData.category_id"
                         :label="`Category`"
-                        :options="statusOptions"
+                        :options="catStore.getCategoryOptions"
                         emit-value
                         map-options
                       />
@@ -66,7 +66,7 @@
                     <div class="row q-col-gutter-md">
 
 
-                      <div class="col-6">
+                      <div class="col-8">
                         <q-input
                           filled
                           v-model="blogData.title"
@@ -74,107 +74,12 @@
                           :rules="[(val) => !!val || 'Title is required']"
                         />
                       </div>
-                      <div class="col-6">
-                        <q-input
-                          filled
-                          v-model="blogData.description"
-                          :label="`Blog Contents`"
-                          @click="openBlogDescriptionTinyMceModal"
-                          readonly
-                        >
-                          <template v-slot: append>
-                            <tiny-mce-modal
-                              ref="blogDescriptionTinyMceModal"
-                              v-model="blogData.description"
-                              @save="onDescriptionChange"
-                            />
-                          </template>
-                        </q-input>
-                      </div>
-                    </div>
-                    <div class="row q-col-gutter-md">
-                      <div class="col-6">
-                        <q-input
-                          filled
-                          v-model="blogData.author_name"
-                          :label="`Author Name`"
-                          :rules="[
-                            (val) => !!val || 'Author Name is required',
-                          ]"
-                        />
-                      </div>
-                      <div class="col-6">
-                        <q-input
-                          filled
-                          v-model="blogData.author_contact_details"
-                          :label="`Author's Contact Details`"
-                          :rules="[
-                            (val) => !!val || 'Contact detail is required',
-                          ]"
-                        />
-                      </div>
-                    </div>
-
-                    <div class="row q-col-gutter-md">
-                      <div class="col-6">
-                        <q-file
-                          filled
-                          bottom-slots
-                          v-model="blogData.blog_image"
-                          label="Blog Image"
-                          counter
-                        >
-                          <template v-slot:prepend>
-                            <q-icon name="cloud_upload" @click.stop.prevent/>
-                          </template>
-                          <template v-if="blogData.blog_image" v-slot:append>
-                            <q-icon
-                              name="close"
-                              @click.stop.prevent="
-                                blogData.blog_image = null
-                              "
-                              class="cursor-pointer"
-                            />
-                          </template>
-
-                          <template v-slot:hint> png/jpg</template>
-                        </q-file>
-                      </div>
-                      <div class="col-6">
-                        <q-file
-                          filled
-                          bottom-slots
-                          v-model="blogData.blog_video"
-                          label="Short video"
-                          counter
-                        >
-                          <template v-slot:prepend>
-                            <q-icon name="cloud_upload" @click.stop.prevent/>
-                          </template>
-                          <template
-                            v-if="blogData.blog_video"
-                            v-slot:append
-                          >
-                            <q-icon
-                              name="close"
-                              @click.stop.prevent="
-                                blogData.blog_video = null
-                              "
-                              class="cursor-pointer"
-                            />
-                          </template>
-
-                          <template v-slot:hint> mp4/mkv</template>
-                        </q-file>
-                      </div>
-                    </div>
-                    <div class="row q-col-gutter-md q-mt-auto">
-                      <div class="col-6">
+                      <div class="col-4">
                         <!-- duration in minutes -->
                         <q-input
                           filled
-                          v-model="blogData.date"
-                          :label="`Date`"
+                          v-model="blogData.published_at"
+                          :label="`Publish Display Date`"
                           :rules="[(val) => !!val || 'Date is required']"
                         >
                           <template v-slot:append>
@@ -185,7 +90,7 @@
                                 transition-hide="scale"
                               >
                                 <q-date
-                                  v-model="blogData.date"
+                                  v-model="blogData.published_at"
                                   mask="YYYY-MM-DD"
                                 >
                                   <div class="row items-center justify-end">
@@ -204,18 +109,97 @@
                         </q-input>
                       </div>
 
-                      <div class="col-6">
-                        <!-- subject dropdown -->
-                        <q-select
-                          filled
-                          v-model="blogData.status_id"
-                          :label="`Status`"
-                          :options="statusOptions"
-                          emit-value
-                          map-options
-                        />
-                      </div>
                     </div>
+                    <div class="row q-col-gutter-md">
+                      <div class="col-6">
+                        <q-input
+                          filled
+                          v-model="blogData.description"
+                          :label="`Blog Contents`"
+                          @click="openBlogDescriptionTinyMceModal"
+                          readonly
+                        >
+                          <template v-slot: append>
+                            <tiny-mce-modal
+                              ref="blogDescriptionTinyMceModal"
+                              v-model="blogData.description"
+                              @save="onDescriptionChange"
+                            />
+                          </template>
+                        </q-input>
+                      </div>
+
+                      <q-input
+                        filled
+                        v-model="blogData.author_info"
+                        :label="`Author Details`"
+                        @click="openBlogAuthorInfoTinyMceModal"
+                        readonly
+                      >
+                        <template v-slot: append>
+                          <tiny-mce-modal
+                            ref="blogAuthorInfoTinyMceModal"
+                            v-model="blogData.author_info"
+                            @save="onAuthorInfoChange"
+                          />
+                        </template>
+                      </q-input>
+
+                    </div>
+
+                    <!--                    <div class="row q-col-gutter-md">-->
+                    <!--                      <div class="col-6">-->
+                    <!--                        <q-file-->
+                    <!--                          filled-->
+                    <!--                          bottom-slots-->
+                    <!--                          v-model="blogData.photo"-->
+                    <!--                          label="Blog Photo"-->
+                    <!--                          counter-->
+                    <!--                        >-->
+                    <!--                          <template v-slot:prepend>-->
+                    <!--                            <q-icon name="cloud_upload" @click.stop.prevent/>-->
+                    <!--                          </template>-->
+                    <!--                          <template v-if="blogData.blog_image" v-slot:append>-->
+                    <!--                            <q-icon-->
+                    <!--                              name="close"-->
+                    <!--                              @click.stop.prevent="-->
+                    <!--                                blogData.blog_image = null-->
+                    <!--                              "-->
+                    <!--                              class="cursor-pointer"-->
+                    <!--                            />-->
+                    <!--                          </template>-->
+
+                    <!--                          <template v-slot:hint> png/jpg</template>-->
+                    <!--                        </q-file>-->
+                    <!--                      </div>-->
+                    <!--                      <div class="col-6">-->
+                    <!--                        <q-file-->
+                    <!--                          filled-->
+                    <!--                          bottom-slots-->
+                    <!--                          v-model="blogData.blog_video"-->
+                    <!--                          label="Short video"-->
+                    <!--                          counter-->
+                    <!--                        >-->
+                    <!--                          <template v-slot:prepend>-->
+                    <!--                            <q-icon name="cloud_upload" @click.stop.prevent/>-->
+                    <!--                          </template>-->
+                    <!--                          <template-->
+                    <!--                            v-if="blogData.blog_video"-->
+                    <!--                            v-slot:append-->
+                    <!--                          >-->
+                    <!--                            <q-icon-->
+                    <!--                              name="close"-->
+                    <!--                              @click.stop.prevent="-->
+                    <!--                                blogData.blog_video = null-->
+                    <!--                              "-->
+                    <!--                              class="cursor-pointer"-->
+                    <!--                            />-->
+                    <!--                          </template>-->
+
+                    <!--                          <template v-slot:hint> mp4/mkv</template>-->
+                    <!--                        </q-file>-->
+                    <!--                      </div>-->
+                    <!--                    </div>-->
 
                   </q-card-section>
                 </q-card>
@@ -234,6 +218,7 @@ import {useStore} from "src/stores/store";
 import {api} from "boot/axios";
 import {useQuasar} from "quasar";
 import _ from "lodash";
+import {useCategoryStore} from "stores/category";
 
 function initBlogData() {
   return {
@@ -254,10 +239,11 @@ export default defineComponent({
   },
 
   setup() {
-    const store = useStore();
+    const catStore = useCategoryStore();
     const {$q} = useQuasar();
     return {
       $q,
+      catStore,
     };
   },
   data() {
@@ -266,7 +252,7 @@ export default defineComponent({
     };
   },
   methods: {
-    onSubmit:  _.debounce(async function () {
+    onSubmit: _.debounce(async function () {
       console.log(this.blogData);
       if (this.$route.params.id) {
         api
@@ -312,6 +298,12 @@ export default defineComponent({
     },
     onDescriptionChange(value, index, parentIndex) {
       this.blogData.description = value;
+    },
+    openBlogAuthorInfoTinyMceModal() {
+      this.$refs.blogAuthorInfoTinyMceModal.show = true;
+    },
+    onAuthorInfoChange(value, index, parentIndex) {
+      this.blogData.author_info = value;
     },
   },
   mounted() {
