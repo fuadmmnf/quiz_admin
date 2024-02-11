@@ -130,10 +130,6 @@ const routes = [
         path: "/course/:id",
         component: () => import("pages/Course/AddOrEdit.vue"),
       },
-      {
-        path: "/course-exams/:courseId",
-        component: () => import("pages/Course/CourseExamList.vue"),
-      },
       // {
       //   path: "/course-questionbanks/:courseId",
       //   component: () => import("pages/Course/CourseQuestionBankList.vue"),
