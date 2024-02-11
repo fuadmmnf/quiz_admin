@@ -3,7 +3,7 @@
     <q-card class="no-shadow" bordered>
       <q-card-section class="row items-center justify-between">
         <div class="text-h6 text-indigo-8">
-          Lecture classes
+          {{route.query.course_id?.length? "Course ": ""}} {{route.query.course_name?.length? `(${route.query.course_name.replace("%20", " ")})`: ""}} Class Materials
           <div class="text-subtitle2">
             List of {{ route.query.course_id?.length ? "course" : "" }} resources are shown here
           </div>
@@ -13,7 +13,7 @@
             color="primary"
             label="Add Material"
             icon="add"
-            :to="{name: 'classmaterial-create', query: {course_id:  route.query.course_id?.length? route.query.course_id: ''}}"
+            :to="{name: 'classmaterial-create', query: route.query}"
           />
         </div>
       </q-card-section>

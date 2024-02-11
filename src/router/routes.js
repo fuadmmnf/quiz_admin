@@ -165,6 +165,7 @@ const routes = [
 
       {
         path: "/subscribe-user/:courseId",
+        name: 'course-users',
         component: () => import("pages/Course/EnrolledUser.vue"),
       },
 

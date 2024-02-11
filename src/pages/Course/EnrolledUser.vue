@@ -3,7 +3,9 @@
     <q-dialog v-model="showDialog" :position="'top'">
       <q-card flat bordered class="my-card" style="width: 60%">
         <q-card-section>
-          <div class="text-h6">Select Student</div>
+          <div class="text-h6">Enrolled Student</div>
+          <div class="text-subtitle1">{{route.query.course_id?.length? "Course ": ""}} {{route.query.course_name?.length? `(${route.query.course_name.replace("%20", " ")})`: ""}}</div>
+
         </q-card-section>
 
         <q-separator inset />
@@ -142,6 +144,7 @@ import { defineComponent, defineAsyncComponent, ref, computed } from "vue";
 import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 import { useQuasar } from "quasar";
+import {useRoute} from "vue-router";
 
 export default defineComponent({
   name: "SubscribeUser",
@@ -149,6 +152,7 @@ export default defineComponent({
   setup() {
     const { $q } = useQuasar();
     const store = useStore();
+    const route = useRoute();
     const showDialog = ref(false);
     const initialOptions = ref([]);
     const options = ref([]);
@@ -210,6 +214,7 @@ export default defineComponent({
     };
     return {
       store,
+      route,
       pagination,
       loading,
       fetchUsers,

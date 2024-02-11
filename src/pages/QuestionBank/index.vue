@@ -3,14 +3,14 @@
     <q-card class="no-shadow" bordered>
       <q-card-section class="row items-center justify-between">
         <div class="text-h6 text-indigo-8">
-          Question Banks
+          {{route.query.course_id?.length? "Course ": ""}} {{route.query.course_name?.length? `(${route.query.course_name.replace("%20", " ")}) -`: ""}}Question Banks
           <div class="text-subtitle2">
             List of all {{route.params.status}} question banks are shown here
           </div>
         </div>
         <div class="row">
           <q-btn color="primary" label="Add Questionbank" icon="add"
-                 :to="{name: 'questionbank-create', query: route.query.course_id?.length? {course_id: route.query.course_id}: {}}"/>
+                 :to="{name: 'questionbank-create', query: route.query}"/>
         </div>
       </q-card-section>
     </q-card>

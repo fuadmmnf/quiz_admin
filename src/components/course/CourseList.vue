@@ -47,33 +47,33 @@
                     <q-btn-dropdown class="q-mr-sm" color="primary" label="exams" dense size="sm" dropdown-icon="">
                       <q-list>
                         <q-item clickable v-close-popup
-                                :to="{name: 'exam-list', params:{status: 'draft'}, query: {course_id: props.row.id}}">
+                                :to="{name: 'exam-list', params:{status: 'draft'}, query: {course_id: props.row.id, course_name: props.row.title.replace(/\s/g, '%20')}}">
                           <q-item-section>
                             <q-item-label>draft</q-item-label>
                           </q-item-section>
                         </q-item>
 
                         <q-item clickable v-close-popup
-                                :to="{name: 'exam-list', params:{status: 'upcoming'}, query: {course_id: props.row.id}}">
+                                :to="{name: 'exam-list', params:{status: 'upcoming'}, query: {course_id: props.row.id, course_name: props.row.title.replace(/\s/g, '%20')}}">
                           <q-item-section>
                             <q-item-label>upcoming</q-item-label>
                           </q-item-section>
                         </q-item>
 
                         <q-item clickable v-close-popup
-                                :to="{name: 'exam-list', params:{status: 'ongoing'}, query: {course_id: props.row.id}}">
+                                :to="{name: 'exam-list', params:{status: 'ongoing'}, query: {course_id: props.row.id, course_name: props.row.title.replace(/\s/g, '%20')}}">
                           <q-item-section>
                             <q-item-label>ongoing</q-item-label>
                           </q-item-section>
                         </q-item>
                         <q-item clickable v-close-popup
-                                :to="{name: 'exam-list', params:{status: 'checking'}, query: {course_id: props.row.id}}">
+                                :to="{name: 'exam-list', params:{status: 'checking'}, query: {course_id: props.row.id, course_name: props.row.title.replace(/\s/g, '%20')}}">
                           <q-item-section>
                             <q-item-label>checking</q-item-label>
                           </q-item-section>
                         </q-item>
                         <q-item clickable v-close-popup
-                                :to="{name: 'exam-list', params:{status: 'completed'}, query: {course_id: props.row.id}}">
+                                :to="{name: 'exam-list', params:{status: 'completed'}, query: {course_id: props.row.id, course_name: props.row.title.replace(/\s/g, '%20')}}">
                           <q-item-section>
                             <q-item-label>completed</q-item-label>
                           </q-item-section>
@@ -83,14 +83,14 @@
                     <q-btn-dropdown class="q-mr-sm" color="primary" label="q-banks" dense size="sm" dropdown-icon="">
                       <q-list>
                         <q-item clickable v-close-popup
-                                :to="{name: 'questionbank-list', params:{status: 'draft'}, query: {course_id: props.row.id}}">
+                                :to="{name: 'questionbank-list', params:{status: 'draft'}, query: {course_id: props.row.id, course_name: props.row.title.replace(/\s/g, '%20')}}">
                           <q-item-section>
                             <q-item-label>draft</q-item-label>
                           </q-item-section>
                         </q-item>
 
                         <q-item clickable v-close-popup
-                                :to="{name: 'questionbank-list', params:{status: 'published'}, query: {course_id: props.row.id}}">
+                                :to="{name: 'questionbank-list', params:{status: 'published'}, query: {course_id: props.row.id, course_name: props.row.title.replace(/\s/g, '%20')}}">
                           <q-item-section>
                             <q-item-label>published</q-item-label>
                           </q-item-section>
@@ -101,14 +101,14 @@
                     <q-btn-dropdown class="q-mr-sm" color="primary" label="materials" dense size="sm" dropdown-icon="">
                       <q-list>
                         <q-item clickable v-close-popup
-                                :to="{name: 'classmaterial-list', params:{status: 'draft'}, query: {course_id: props.row.id}}">
+                                :to="{name: 'classmaterial-list', params:{status: 'draft'}, query: {course_id: props.row.id, course_name: props.row.title.replace(/\s/g, '%20')}}">
                           <q-item-section>
                             <q-item-label>draft</q-item-label>
                           </q-item-section>
                         </q-item>
 
                         <q-item clickable v-close-popup
-                                :to="{name: 'classmaterial-list', params:{status: 'published'}, query: {course_id: props.row.id}}">
+                                :to="{name: 'classmaterial-list', params:{status: 'published'}, query: {course_id: props.row.id, course_name: props.row.title.replace(/\s/g, '%20')}}">
                           <q-item-section>
                             <q-item-label>published</q-item-label>
                           </q-item-section>
@@ -141,14 +141,14 @@
                       round
                       dense
                       flat
-                      :to="`/subscribe-user/${props.row.id}`"
+                      :to="{name: 'course-users', params: {courseId: props.row.id}, query: {course_id: props.row.id, course_name: props.row.title.replace(/\s/g, '%20')}}"
                     >
                       <q-tooltip
                         anchor="top middle"
                         self="bottom middle"
                         :offset="[10, 10]"
                       >
-                        <strong class="">Subscribe users</strong>
+                        <strong class="">Enrolled users</strong>
                       </q-tooltip>
                     </q-btn>
 

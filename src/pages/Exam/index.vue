@@ -3,14 +3,14 @@
     <q-card class="no-shadow" bordered>
       <q-card-section class="row items-center justify-between">
         <div class="text-h6 text-indigo-8">
-          Exams
+          {{route.query.course_id?.length? "Course ": ""}} {{route.query.course_name?.length? `(${route.query.course_name.replace("%20", " ")}) -`: ""}} Exams
           <div class="text-subtitle2">
-            List of {{route.params.status}} {{route.query.course_id?.length? "course": ""}} exams are shown here
+            List of {{route.params.status}} exams are shown here
           </div>
         </div>
         <div class="row">
           <q-btn color="primary" label="Add Exam" icon="add"
-                 :to="{name: 'exam-create', query: route.query.course_id?.length? {course_id: route.query.course_id}: {}}"/>
+                 :to="{name: 'exam-create', query: route.query}"/>
         </div>
       </q-card-section>
     </q-card>

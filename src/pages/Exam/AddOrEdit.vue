@@ -3,7 +3,9 @@
     <q-card class="no-shadow" bordered>
       <!-- add edit header with submit and reset buttons on right -->
       <q-card-section class="row items-center justify-between">
-        <div class="text-h6">Add/Edit Exam</div>
+        <div class="col-12 text-h6">Add/Edit Exam</div>
+        <div class="text-subtitle1">{{route.query.course_id?.length? "Course ": ""}} {{route.query.course_name?.length? `(${route.query.course_name.replace("%20", " ")})`: ""}}</div>
+
       </q-card-section>
     </q-card>
 
