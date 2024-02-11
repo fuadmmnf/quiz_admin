@@ -10,7 +10,7 @@
         </div>
         <div class="row">
           <q-btn color="primary" label="Add Questionbank" icon="add"
-                 :to="{name: 'questionbank-create', params: route.query.course_id?.length? {course_id: route.query.course_id}: {}}"/>
+                 :to="{name: 'questionbank-create', query: route.query.course_id?.length? {course_id: route.query.course_id}: {}}"/>
         </div>
       </q-card-section>
     </q-card>

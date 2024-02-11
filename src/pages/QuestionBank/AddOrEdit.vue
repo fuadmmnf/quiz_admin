@@ -23,7 +23,7 @@
       </q-card-section>
     </q-card>
 
-    <q-separator spaced />
+    <q-separator spaced/>
     <q-form
       @submit.prevent="onSubmit"
       id="questionBankForm"
@@ -92,8 +92,8 @@
                           v-model="questionBankData.course_id"
                           :label="`Course`"
                           :options="courseOptions"
-                          :clearable="!(route.params.course_id?.length > 0)"
-                          :readonly="route.params.course_id?.length > 0"
+                          :clearable="!(route.query.course_id?.length > 0)"
+                          :readonly="route.query.course_id?.length > 0"
                           emit-value
                           map-options
                         />
@@ -111,14 +111,24 @@
 </template>
 
 <script>
-import { defineComponent, defineAsyncComponent } from "vue";
-import { ref } from "vue";
-import { useStore } from "src/stores/store";
-import { api } from "boot/axios";
-import { useQuasar } from "quasar";
+import {defineComponent, defineAsyncComponent} from "vue";
+import {ref} from "vue";
+import {useStore} from "src/stores/store";
+import {api} from "boot/axios";
+import {useQuasar} from "quasar";
 import _ from "lodash";
 import {useCategoryStore} from "stores/category";
 import {useRoute} from "vue-router";
+
+function initQbData() {
+  return {
+    title: "",
+    subject_id: "",
+    category_id: "",
+    course_id: "",
+    code: "",
+  };
+}
 
 export default defineComponent({
   name: "AddOrEdit Question Bank",
@@ -127,7 +137,7 @@ export default defineComponent({
     const store = useStore();
     const route = useRoute();
     const categoryStore = useCategoryStore();
-    const { $q } = useQuasar();
+    const {$q} = useQuasar();
     return {
       $q,
       route,
@@ -136,33 +146,15 @@ export default defineComponent({
   },
   data() {
     return {
-      pageName: "Add/Edit Question Bank",
-      dense: true,
-      name: "",
-      model: "",
-      expanded: false,
-      questionBankData: {
-        title: "",
-        subject_id: "",
-        category_id: "",
-        course_id: "",
-        code: "",
-      },
+      questionBankData: initQbData(),
       courseOptions: [],
     };
   },
   methods: {
     onSubmit() {
-      console.log(this.questionBankData);
       if (this.$route.params.id) {
         api
-          .patch(`/questionbanks/${this.$route.params.id}`, {
-            subject_id: this.questionBankData.subject_id,
-            category_id: this.questionBankData.category_id,
-            course_id: this.questionBankData.course_id,
-            title: this.questionBankData.title,
-            code: this.questionBankData.code,
-          })
+          .patch(`/questionbanks/${this.$route.params.id}`, this.questionBankData)
           .then((response) => {
             console.log(response);
             this.$q.notify({
@@ -179,14 +171,7 @@ export default defineComponent({
           });
       } else {
         api
-          .post("/questionbanks", {
-            subject_id: this.questionBankData.subject_id,
-            category_id: this.questionBankData.category_id,
-            course_id: this.questionBankData.course_id,
-            title: this.questionBankData.title,
-            code: this.questionBankData.code,
-            parent_id: null,
-          })
+          .post("/questionbanks", this.questionBankData)
           .then((response) => {
             console.log(response);
             this.$q.notify({
@@ -204,16 +189,9 @@ export default defineComponent({
       }
     },
     onReset() {
-      this.questionBankData = {
-        id: "",
-        title: "",
-        subject_id: "",
-        category_id: "",
-        course_id: "",
-        code: "",
-      };
-      if (this.route.params.course_id?.length > 0) {
-        this.questionBankData.course_id = this.route.params.course_id;
+      this.questionBankData = initQbData();
+      if (this.route.query.course_id?.length > 0) {
+        this.questionBankData.course_id = this.route.query.course_id;
       }
     },
 
@@ -229,21 +207,14 @@ export default defineComponent({
     },
   },
   mounted() {
-    if (this.route.params.course_id?.length > 0) {
-      this.questionBankData.course_id = this.route.params.course_id;
+    if (this.route.query.course_id?.length > 0) {
+      this.questionBankData.course_id = this.route.query.course_id;
     }
     this.getCourses();
-    if (this.$route.query.courseId) {
-      this.questionBankData.course_id = this.$route.query.courseId;
-    }
+
     if (this.$route.params.id) {
       api.get("/questionbanks/" + this.$route.params.id).then((response) => {
-        const result = response.data.data;
-        this.questionBankData.title = result.title;
-        this.questionBankData.code = result.code;
-        this.questionBankData.subject_id = result.subject_id;
-        this.questionBankData.category_id = result.category_id;
-        this.questionBankData.course_id = result.course_id;
+        this.questionBankData = response.data.data;
       });
     }
   },

@@ -432,7 +432,7 @@ export default {
       const params = {
         orderBy: "id",
         sortedBy: "desc",
-        search: `status:${props.status}${route.query.course_id?.length ? ("course_id:" + route.query.course_id) : ""}`,
+        search: `status:${props.status}${route.query.course_id?.length ? (";course_id:" + route.query.course_id) : ""}`,
         searchJoin: "and",
         include: "subject,category,children",
         limit: 50,
