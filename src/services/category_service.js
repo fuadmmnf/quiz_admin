@@ -54,6 +54,21 @@ export async function loadSubjects(params = {}) {
   }
 }
 
+export async function loadInstitutions(params = {}) {
+  try {
+    const { data, status } = await api.get(
+      "/categories/institutions?limit=0",
+      {
+        params,
+      }
+    );
+
+    return { data, status, error: null };
+  } catch (error) {
+    return { data: null, status: null, error };
+  }
+}
+
 export async function editCategory(categoryId, categoryData) {
   try {
     const { data, status } = await api.patch(`/categories/${categoryId}`, categoryData);

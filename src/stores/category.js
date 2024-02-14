@@ -1,11 +1,12 @@
 import {defineStore} from "pinia";
-import {loadCategories, loadFaculties, loadSubjects} from "src/services/category_service";
+import {loadCategories, loadFaculties, loadInstitutions, loadSubjects} from "src/services/category_service";
 
 const defaultStore = () => {
   return {
     categories: [],
     faculties: [],
     subjects: [],
+    institutions:[]
   };
 };
 
@@ -29,6 +30,11 @@ export const useCategoryStore = defineStore("category", {
 
     getSubjectOptions: (state) =>
       state.subjects.map((subject) => ({
+        label: subject.name,
+        value: subject.id,
+      })),
+    getInstitutionOptions: (state) =>
+      state.institutions.map((subject) => ({
         label: subject.name,
         value: subject.id,
       })),
@@ -78,6 +84,19 @@ export const useCategoryStore = defineStore("category", {
         this.setSubjects(subjectData.data);
       }
     },
+    setInstitutions(newInstitutions) {
+      this.institutions = newInstitutions;
+    },
+    async loadInstitutions() {
+      const {
+        data: institutionData,
+        status: institutionStatus,
+        error: institutionError,
+      } = await loadInstitutions({});
+      if (institutionStatus === 200) {
+        this.setInstitutions(institutionData.data);
+      }
+    },
 
     getCategoryById(id) {
       return this.categories.find((c) => c.id === id);
@@ -88,6 +107,9 @@ export const useCategoryStore = defineStore("category", {
     },
 
     getSubjectById(id) {
+      return this.subjects.find((c) => c.id === id);
+    },
+    getInstitutionById(id) {
       return this.subjects.find((c) => c.id === id);
     },
   },

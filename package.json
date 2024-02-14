@@ -25,6 +25,7 @@
     "vue-echarts": "^6.5.4",
     "vue-i18n": "^9.0.0",
     "vue3-html2pdf": "^1.1.2",
+    "vue-router": "^4.0.0",
     "vuedraggable": "^2.24.3"
   },
   "devDependencies": {

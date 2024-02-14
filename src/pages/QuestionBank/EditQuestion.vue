@@ -101,43 +101,94 @@
       <search-exams @search="searchQuestionBank"></search-exams>
       <q-card>
         <q-card-section>
-          <!-- table -->
-          <q-table
-            v-if="searchQuestionBankResults.length > 0"
-            :rows="searchQuestionBankResults"
-            :columns="questionBankColumns"
-            rows-per-page-options="[10]"
-            row-key="id"
-            wrap-cells
-            class="q-mt-md"
-            v-model:pagination="pagination"
-            hide-pagination
-          >
+          <q-hierarchy  v-if="searchQuestionBankResults.length > 0"
+                         :data="searchQuestionBankResults"
+                         :columns="questionBankColumns" >
             <template v-slot:body="props">
-              <q-tr :props="props">
-                <q-td key="title" :props="props">
-                  {{ props.row.title }}
-                </q-td>
-                <q-td key="code" :props="props">
-                  {{ props.row.code }}
-                </q-td>
-                <q-td key="duration_in_minutes" :props="props">
-                  {{ props.row.duration_in_minutes }}
-                </q-td>
-                <q-td key="actions" :props="props" class="">
+              <td class="text-center">{{ props.item.sn }}</td>
+              <td data-th="Name">
+                <div
+                  v-bind:style="props.setPadding(props.item)"
+                  :class="
+                    props.iconName(props.item) !== 'done' ? 'q-pl-lg' : ''
+                  "
+                >
                   <q-btn
-                    dense
+                    @click="props.toggle(props.item)"
+                    v-if="props.iconName(props.item) !== 'done'"
+                    :icon="props.iconName(props.item)"
                     flat
-                    size="sm"
-                    color="primary"
-                    label="Add"
-                    icon="add"
-                    @click="addQuestionBankQuestions(props.row)"
-                  />
-                </q-td>
-              </q-tr>
+                    dense
+                  >
+                  </q-btn>
+                  <q-icon class="q-mx-sm" size="xs" v-else name="list"></q-icon>
+                  <span class="q-ml-sm">{{ props.item.label }}</span>
+                </div>
+              </td>
+              <td class="text-center">{{ props.item.description }}</td>
+              <td class="text-center">{{ props.item.code }}</td>
+              <td class="text-center">{{ props.item.category?props.item.category:"null" }}</td>
+              <td class="text-center">{{ props.item.subject?props.item.subject:"null" }}</td>
+              <td class="text-center">{{ props.item.course?props.item.course:"null" }}</td>
+              <td class="text-left">
+                <q-btn
+                  v-if="
+                    props.item.children === undefined ||
+                    props.item.children.length === 0
+                  "
+                  flat
+                  round
+                  icon="add"
+                  size="10px"
+                  color="primary"
+                  @click="addQuestionBankQuestions(props.item.id)"
+                  class="q-ml-sm"
+                >
+                  <q-tooltip>Add</q-tooltip>
+                </q-btn>
+              </td>
             </template>
-          </q-table>
+          </q-hierarchy>
+
+
+          <!-- table -->
+<!--          <q-table-->
+<!--            v-if="searchQuestionBankResults.length > 0"-->
+<!--            :rows="searchQuestionBankResults"-->
+<!--            :columns="questionBankColumns"-->
+<!--            rows-per-page-options="[10]"-->
+<!--            row-key="id"-->
+<!--            wrap-cells-->
+<!--            class="q-mt-md"-->
+<!--            v-model:pagination="pagination"-->
+<!--            hide-pagination-->
+<!--          >-->
+<!--            <template v-slot:body="props">-->
+<!--              <q-tr :props="props">-->
+<!--                <q-td key="title" :props="props">-->
+<!--                  {{ props.row.title }}-->
+<!--                </q-td>-->
+<!--                <q-td key="code" :props="props">-->
+<!--                  {{ props.row.code }}-->
+<!--                </q-td>-->
+<!--                <q-td key="duration_in_minutes" :props="props">-->
+<!--                  {{ props.row.duration_in_minutes }}-->
+<!--                </q-td>-->
+<!--                <q-td key="actions" :props="props" class="">-->
+<!--                  <q-btn-->
+<!--                    dense-->
+<!--                    flat-->
+<!--                    size="sm"-->
+<!--                    color="primary"-->
+<!--                    label="Add"-->
+<!--                    icon="add"-->
+<!--                    @click="addQuestionBankQuestions(props.row)"-->
+<!--                  />-->
+<!--                </q-td>-->
+<!--              </q-tr>-->
+<!--            </template>-->
+<!--          </q-table>-->
+
           <q-separator />
         </q-card-section>
       </q-card>
@@ -426,36 +477,63 @@ export default defineComponent({
       ],
       questionBankColumns: [
         {
-          name: "title",
-          required: true,
+          name: "sn",
+          label: "SN",
+          align: "left",
+          field: "sn",
+          sortable: true,
+        },
+        {
+
+          name: "label",
           label: "Title",
           align: "left",
-          field: "title",
-          sortable: true,
+          field: "label",
+          // (optional) tell QHierarchy you want this column sortable
+          // sortable: true
         },
         {
-          name: "code",
-          required: true,
+          name: "Description",
+          label: "Status",
+          // sortable: true,
+          field: "description",
+          align: "center",
+        },
+        {
+          name: "Code",
           label: "Code",
-          align: "left",
+          // sortable: true,
           field: "code",
-          sortable: true,
+          align: "center",
         },
         {
-          name: "duration_in_minutes",
-          required: true,
-          label: "Duration (In Minutes)",
-          align: "left",
-          field: "duration_in_minutes",
-          sortable: true,
+          name: "Category",
+          label: "Category",
+          // sortable: true,
+          field: "category",
+          align: "center",
+        },
+
+        {
+          name: "Subject",
+          label: "Subject",
+          // sortable: true,
+          field: "subject",
+          align: "center",
         },
         {
-          name: "actions",
-          required: true,
-          label: "Actions",
+          name: "Course",
+          label: "Course",
+          // sortable: true,
+          field: "course",
+          align: "center",
+        },
+        {
+          name: "action",
+          label: "Action",
+          // sortable: true,
+          field: "action",
           align: "left",
-          field: "actions",
-          sortable: true,
         },
       ],
     };
@@ -487,7 +565,20 @@ export default defineComponent({
           console.log("cancel");
         });
     },
-
+     transformData (data,meta)  {
+      return data.map((item, index) => ({
+        sn :meta.total - (meta.current_page - 1) * meta.per_page - index,
+        id: item.id,
+        label: item.title,
+        description: item.status,
+        code: item.code ? item.code : "null",
+        category: item.category ? item.category.data.name : "null",
+        subject: item.subject ? item.subject.data.name : "null",
+        course: item.course ? item.course.data.title : "null",
+        children: item.children ? this.transformData(item.children.data,meta) : [],
+        parentId: item.parent_id,
+      }));
+    },
     searchQuestionBank(searchData) {
       if (
         searchData.keywords == "" &&
@@ -501,11 +592,12 @@ export default defineComponent({
       }
       api
         .get(
-          `/questionbanks?searchJoin=and&search=title:${searchData.keywords}&orderBy=id&sortedBy=desc&limit=0`
+          `/questionbanks?searchJoin=and&search=title:${searchData.keywords}&orderBy=id&sortedBy=desc&include=subject,category,children&limit=0`
         )
         .then((res) => {
-          this.searchQuestionBankResults = res.data.data;
-          console.log(res.data.data);
+          console.log(res.data.data)
+          this.searchQuestionBankResults = this.transformData(res.data.data,res.data.meta.pagination);
+          // console.log(this.searchQuestionBankResults);
         })
         .catch((err) => {
           console.log(err);
@@ -518,6 +610,7 @@ export default defineComponent({
         ) == -1
       ) {
         this.questionBankQuestions.push(item);
+
         this.$q.notify({
           color: "positive",
           message: "Question Added Successfully",
@@ -554,14 +647,15 @@ export default defineComponent({
           console.log(err);
         });
     },
-    addQuestionBankQuestions(item) {
+    addQuestionBankQuestions(id) {
+      console.log("Hello")
       var question_ids = [];
       this.questionBankQuestions.map((item) => {
         question_ids.push(item.id);
       });
       api
         .get(
-          `/questionbank-questions?include=question&search=questionbank_id:${item.id}&searchJoin=and&limit=0`
+          `/questionbank-questions?include=question&search=questionbank_id:${id}&searchJoin=and&limit=0`
         )
         .then(
           (res) => {
@@ -577,8 +671,14 @@ export default defineComponent({
               });
               this.$q.notify({
                 color: "positive",
-                message: "Questions Added Successfully",
+                message: "Questions Bank Added Successfully",
                 icon: "check",
+              });
+            }else {
+              this.$q.notify({
+                color: "warning",
+                message: "This Question Bank hasn't any questions",
+                icon: "hourglass_disabled",
               });
             }
           },

@@ -402,7 +402,10 @@ export default {
         });
 
         if (status === 200) {
+          showAddEditDialog.value = false;
+          onReset()
           getQuestionBankList(current.value);
+
         } else {
           console.error(error);
         }
@@ -414,6 +417,8 @@ export default {
         });
 
         if (status === 201) {
+          showAddEditDialog.value = false;
+          onReset()
           current.value = 1;
           getQuestionBankList(current.value);
         } else {
