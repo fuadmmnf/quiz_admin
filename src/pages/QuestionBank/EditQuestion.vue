@@ -105,7 +105,6 @@
                          :data="searchQuestionBankResults"
                          :columns="questionBankColumns" >
             <template v-slot:body="props">
-              <td class="text-center">{{ props.item.sn }}</td>
               <td data-th="Name">
                 <div
                   v-bind:style="props.setPadding(props.item)"
@@ -477,13 +476,6 @@ export default defineComponent({
       ],
       questionBankColumns: [
         {
-          name: "sn",
-          label: "SN",
-          align: "left",
-          field: "sn",
-          sortable: true,
-        },
-        {
 
           name: "label",
           label: "Title",
@@ -592,7 +584,12 @@ export default defineComponent({
       }
       api
         .get(
-          `/questionbanks?searchJoin=and&search=title:${searchData.keywords}&orderBy=id&sortedBy=desc&include=subject,category,children&limit=0`
+          `/questionbanks?searchJoin=and&search=${searchData.keywords.length?'title:'+searchData.keywords:''}
+          ${searchData.category.length?';category_id:'+searchData.category:''}
+          ${searchData.type.length?';type:'+searchData.type:''}
+          ${searchData.faculty.length?';faculty_id:'+searchData.faculty:''}
+          ${searchData.subject.length?';subject_id:'+searchData.subject:''}
+          &orderBy=id&sortedBy=desc&include=subject,category,children&limit=50`
         )
         .then((res) => {
           console.log(res.data.data)

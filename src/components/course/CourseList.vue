@@ -16,6 +16,7 @@
         <q-separator spaced=""/>
         <q-card>
           <q-card-section>
+
             <q-table
               :columns="columns"
               :rows="courses"
