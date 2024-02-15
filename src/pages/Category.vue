@@ -23,48 +23,85 @@
           </q-card>
         </div>
         <div class="col-5">
-          <q-card>
-            <q-card-section>
-              <div class="text-h6 text-indigo-8">
-                {{ isEditing ? "Edit" : "Add" }} Category
-              </div>
+          <div class="row ">
+            <div class="col-12">
+              <q-card>
+                <q-card-section>
+                  <div class="text-h6 text-indigo-8">
+                    {{ isEditing ? "Edit" : "Add" }} Category
+                  </div>
 
-              <q-form
-                @submit="onSubmit"
-                @reset="onReset"
-                class="q-gutter-md q-mt-lg"
-              >
-                <q-input
-                  outlined
-                  v-model="name"
-                  :label="`Category name *`"
-                  :hint="`Category name must be unique`"
-                  :rules="[(val) => !!val || 'Field is required']"
-                />
+                  <q-form
+                    @submit="onSubmit"
+                    @reset="onReset"
+                    class="q-gutter-md q-mt-lg"
+                  >
+                    <q-input
+                      outlined
+                      v-model="name"
+                      :label="`Category name *`"
+                      :hint="`Category name must be unique`"
+                      :rules="[(val) => !!val || 'Field is required']"
+                    />
 
-                <q-select
-                  outlined
-                  option-label="name"
-                  option-value="id"
-                  v-model="selectedParentCategory"
-                  :options="allCategories"
-                  :label="`Parent Category`"
-                  map-options
-                  emit-value
-                />
-                <div>
-                  <q-btn label="Submit" type="submit" color="primary" />
-                  <q-btn
-                    label="Reset"
-                    type="reset"
-                    color="primary"
-                    flat
-                    class="q-ml-sm"
-                  />
-                </div>
-              </q-form>
-            </q-card-section>
-          </q-card>
+                    <q-select
+                      outlined
+                      option-label="name"
+                      option-value="id"
+                      v-model="selectedParentCategory"
+                      :options="allCategories"
+                      :label="`Parent Category`"
+                      map-options
+                      emit-value
+                    />
+                    <div>
+                      <q-btn label="Submit" type="submit" color="primary" />
+                      <q-btn
+                        label="Reset"
+                        type="reset"
+                        color="primary"
+                        flat
+                        class="q-ml-sm"
+                      />
+                    </div>
+                  </q-form>
+                </q-card-section>
+              </q-card>
+            </div>
+            <div class="col-12 q-mt-lg">
+              <q-card>
+                <q-card-section>
+                  <q-form
+                    @submit="onSubmit"
+                    @reset="onReset"
+                    class="q-gutter-md q-mt-lg"
+                  >
+                    <q-select
+                      outlined
+                      option-label="name"
+                      option-value="id"
+                      v-model="selectedParentCategory"
+                      :options="allCategories"
+                      :label="`Parent Category`"
+                      map-options
+                      emit-value
+                    />
+                    <div>
+                      <q-btn label="Submit" type="submit" color="primary" />
+                      <q-btn
+                        label="Reset"
+                        type="reset"
+                        color="primary"
+                        flat
+                        class="q-ml-sm"
+                      />
+                    </div>
+                  </q-form>
+                </q-card-section>
+              </q-card>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

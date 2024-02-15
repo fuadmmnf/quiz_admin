@@ -27,6 +27,7 @@ const routes = [
       },
       {
         path: "/blog/add",
+        name: 'blog-create',
         component: () => import("pages/Blog/AddorEdit.vue"),
       },
       {
@@ -121,6 +122,11 @@ const routes = [
         path: "/courses/:status",
         name: 'course-list',
         component: () => import("pages/Course/index.vue"),
+      },
+      {
+        path: "/courses/student/certificate",
+        name: 'student-certificate',
+        component: () => import("pages/Cetificate.vue"),
       },
       {
         path: "/course/add",

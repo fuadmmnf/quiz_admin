@@ -92,7 +92,7 @@ export default {
         const $q=useQuasar()
         const formData = ref({
             limit:null,
-            course_id:null
+            course_id:""
         });
         const historyFormRef = ref(null);
         const courses = ref([]);
@@ -150,7 +150,7 @@ export default {
                 floatLayout: true,
                 enableDownload: false,
                 previewModal: true,
-                manualPagination: false,
+                manualPagination: true,
                 filename: 'StudentExamHistoryListReport.pdf',
                 pdfQuality: 2,
                 pdfFormat: 'a4',
@@ -218,7 +218,9 @@ export default {
             }
           ]
             const response = await api
-                .get(`exam-markings?include=examAttempt,examAttempt.exam&limit=20`)
+                .get(`exam-markings?search=user_id${this.user_id}
+                ${this.formData.course_id.length?";course_id:"+this.formData.course_id:""}
+                include=examAttempt,examAttempt.exam&limit=${this.formData.limit?this.formData.limit:0}`)
 
             // this.data.rows = response.data.data;
             if(response.data.data.length>0){

@@ -72,6 +72,7 @@
               <q-separator></q-separator>
               <q-table
                 ref="tableRef"
+                class="custom-table"
                 v-model:pagination="pagination"
                 :columns="columns"
                 :filter="filter"
