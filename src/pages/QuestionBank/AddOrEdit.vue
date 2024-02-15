@@ -61,7 +61,6 @@
                           filled
                           v-model="questionBankData.code"
                           :label="`Code`"
-                          :rules="[(val) => !!val || 'Code is required']"
                         />
                       </div>
                     </div>

@@ -60,6 +60,7 @@ const routes = [
       //   path: "/question-bank-list/:id",
       //   component: () => import("pages/QuestionBank/AddOrEdit.vue"),
       // },
+
       {
         path: "/questionbank/:id/edit-questions",
         name: "questionbank-questions",
