@@ -71,32 +71,36 @@
             <div class="col-12 q-mt-lg">
               <q-card>
                 <q-card-section>
-                  <q-form
-                    @submit="onSubmit"
-                    @reset="onReset"
-                    class="q-gutter-md q-mt-lg"
-                  >
+                  <div class="text-h6 text-grey-8">
+                    All Tags
+                    <q-btn
+                      class="float-right text-capitalize text-indigo-8 shadow-3"
+                      icon="bookmark"
+                      @click="updateTags"
+                      label="Update Tags"
+                    />
+                  </div>
+                </q-card-section>
+                <q-card-section>
                     <q-select
-                      outlined
+                      v-model="tagIds"
+                      :options="allCategories"
+                      label="Select Tag"
                       option-label="name"
                       option-value="id"
-                      v-model="selectedParentCategory"
-                      :options="allCategories"
-                      :label="`Parent Category`"
-                      map-options
+                      outlined
+                      use-input
+                      multiple
+                      use-chips
                       emit-value
+                      map-options
+                      clearable
+                      @clear="
+                            (val) => {
+                              tagIds = [];
+                            }
+                          "
                     />
-                    <div>
-                      <q-btn label="Submit" type="submit" color="primary" />
-                      <q-btn
-                        label="Reset"
-                        type="reset"
-                        color="primary"
-                        flat
-                        class="q-ml-sm"
-                      />
-                    </div>
-                  </q-form>
                 </q-card-section>
               </q-card>
             </div>
@@ -128,6 +132,7 @@ export default defineComponent({
     return {
       name: ref(""),
       pageName: "Category",
+      tagIds:ref([]),
       allCategories: [],
       selectedParentCategory: ref(null),
 
@@ -148,6 +153,7 @@ export default defineComponent({
       api
         .get("/categories/category?limit=0")
         .then((response) => {
+          console.log(response.data.data)
           this.allCategories = response.data.data.map((c) => {
             c.children = c.children.data !== undefined ? c.children.data : [];
             return c;
@@ -156,6 +162,17 @@ export default defineComponent({
         .catch((error) => {
           console.log(error);
         });
+    },
+    async updateTags(){
+      try {
+        console.log(this.tagIds)
+        // const response=await api.post(`/categories`,{
+        //   category_ids:this.tagIds,
+        //   tag:'top'
+        // });
+      }catch (error){
+
+      }
     },
     onSubmit(evt) {
       evt.preventDefault();
