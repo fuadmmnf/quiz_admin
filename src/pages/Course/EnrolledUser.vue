@@ -109,15 +109,21 @@
                         </q-tooltip>
                       </q-btn>
                       <q-btn
-                        color="negative"
+                        color="primary"
                         size="md"
-                        icon="add"
+                        icon="card_membership"
                         round
                         @click="generateCertificate"
                         dense
                         flat
                       >
-
+                        <q-tooltip
+                          anchor="top middle"
+                          self="bottom middle"
+                          :offset="[10, 10]"
+                        >
+                          <strong class="">Certificate</strong>
+                        </q-tooltip>
                       </q-btn>
                       <!-- <q-btn
                         color="green"
@@ -238,7 +244,7 @@ export default defineComponent({
         .then((response) => {
           initialOptions.value = response.data.data.map((user) => {
             return {
-              label: user.name,
+              label: `${user.name} (${user.mobile})`,
               value: user.id,
             };
           });

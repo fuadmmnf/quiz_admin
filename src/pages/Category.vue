@@ -72,7 +72,7 @@
               <q-card>
                 <q-card-section>
                   <div class="text-h6 text-grey-8">
-                    All Tags
+                    Top Tags
                     <q-btn
                       class="float-right text-capitalize text-indigo-8 shadow-3"
                       icon="bookmark"
@@ -166,10 +166,24 @@ export default defineComponent({
     async updateTags(){
       try {
         console.log(this.tagIds)
-        // const response=await api.post(`/categories`,{
-        //   category_ids:this.tagIds,
-        //   tag:'top'
-        // });
+        const response=await api.put(`/categories/tag`,{
+          category_ids:this.tagIds,
+          tag:'top'
+        });
+        this.$q.notify({
+          message: "Top Categories Updated",
+          color: "positive",
+          icon: "check",
+        });
+      }catch (error){
+
+      }
+    },
+    async getTopTags(){
+      try {
+        console.log(this.tagIds)
+        const response=await api.get(`/categories/tag`);
+
       }catch (error){
 
       }

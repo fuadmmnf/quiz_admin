@@ -7,7 +7,7 @@
         <div class="pm-certificate-border col-xs-12">
           <div class="row pm-certificate-header">
             <div class="pm-certificate-title cursive col-xs-12 text-center">
-              <h2>Buffalo Public Schools Certificate of Completion</h2>
+              <h2>Exclusive Education Aid</h2>
             </div>
           </div>
           <div class="row pm-certificate-body">
@@ -16,7 +16,8 @@
                 <div class="row">
                   <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
                   <div class="pm-certificate-name underline margin-0 col-xs-8 text-center">
-                    <span class="pm-name-text bold">TrueNorth Administrator</span>
+                    <span class="pm-credits-text block bold sans q-mb-lg text-h6">This is to clarify that</span>
+                    <span class="pm-earned-text text-bold padding-0 block cursive text-h5">Rahat Uddin Azad</span>
                   </div>
                   <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
                 </div>
@@ -26,51 +27,34 @@
                 <div class="row">
                   <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
                   <div class="pm-earned col-xs-8 text-center">
-                    <span class="pm-earned-text padding-0 block cursive">has earned</span>
-                    <span class="pm-credits-text block bold sans">PD175: 1.0 Credit Hours</span>
+                    <span class="pm-credits-text block bold sans">Has successfully completed ICT-101 course from Exclusive Education Aid </span>
                   </div>
                   <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
-                  <div class="col-xs-12"></div>
+                  <div class="col-xs-12 flex justify-center items-center q-px-lg" style="flex-direction: column;font-size: 18px">
+                    <p class="pm-earned-text padding-0 block cursive">Duration:6 month</p>
+                    <p class="pm-earned-text padding-0 block cursive">Awarded:12.5.2024</p>
+                  </div>
                 </div>
               </div>
 
-              <div class="col-xs-12">
-                <div class="row">
-                  <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
-                  <div class="pm-course-title col-xs-8 text-center">
-                    <span class="pm-earned-text block cursive">while completing the training course entitled</span>
-                  </div>
-                  <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
-                </div>
-              </div>
 
-              <div class="col-xs-12">
-                <div class="row">
-                  <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
-                  <div class="pm-course-title underline col-xs-8 text-center">
-                    <span class="pm-credits-text block bold sans">BPS PGS Initial PLO for Principals at Cluster Meetings</span>
-                  </div>
-                  <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
-                </div>
-              </div>
             </div>
             <div class="col-xs-12">
               <div class="row">
                 <div class="pm-certificate-footer row">
                   <div class="col-4 pm-certified col-4 text-center">
-                    <span class="pm-credits-text block sans">Buffalo City School District</span>
                     <span class="pm-empty-space block underline"></span>
-                    <span class="bold block">Crystal Benton Instructional Specialist II, Staff Development</span>
+                    <span class="bold block">Name </span>
+                    <span class="bold block">Designation</span>
                   </div>
                   <div class="col-4">
                     <!-- LEAVE EMPTY -->
                   </div>
 
                   <div class="col-4 pm-certified col-4 text-center">
-                    <span class="pm-credits-text block sans">Date Completed</span>
                     <span class="pm-empty-space block underline"></span>
-                    <span class="bold block">DOB: </span>
-                    <span class="bold block">Social Security # (last 4 digits)</span>
+                    <span class="bold block">Name </span>
+                    <span class="bold block">Designation</span>
                   </div>
                 </div>
               </div>
