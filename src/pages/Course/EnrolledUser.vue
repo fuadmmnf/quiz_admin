@@ -4,7 +4,7 @@
       <q-card flat bordered class="my-card" style="width: 60%">
         <q-card-section>
           <div class="text-h6">Enrolled Student</div>
-          <div class="text-subtitle1">{{route.query.course_id?.length? "Course ": ""}} {{route.query.course_name?.length? `(${route.query.course_name.replace("%20", " ")})`: ""}}</div>
+          <div class="text-subtitle1">{{'Course : '+course_name}}</div>
 
         </q-card-section>
 
@@ -111,9 +111,9 @@
                       <q-btn
                         color="primary"
                         size="md"
-                        icon="card_membership"
+                        icon="fact_check"
                         round
-                        @click="generateCertificate"
+                        @click="generateCertificate(props.row.id)"
                         dense
                         flat
                       >
@@ -171,7 +171,7 @@
             >
               <template  v-slot:pdf-content>
                 <div v-if="certificateReport">
-                  <StudentCertificate @domRendered="domRendered()"  :data="data"  >
+                  <StudentCertificate @domRendered="domRendered()"  :data="certificateData"  >
                   </StudentCertificate>
                 </div>
               </template>
@@ -205,6 +205,7 @@ export default defineComponent({
     const showDialog = ref(false);
     const initialOptions = ref([]);
     const options = ref([]);
+    const course_name=ref(decodeURIComponent(route.query.course_name))
 
     const users = ref([]);
     const pagination = ref({
@@ -277,6 +278,7 @@ export default defineComponent({
       selectedStudents: ref([]),
       options,
       initialOptions,
+      course_name,
       filterFn(val, update) {
         if (val === "") {
           update(() => {
@@ -293,6 +295,7 @@ export default defineComponent({
         });
       },
     };
+
   },
   data() {
     return {
@@ -315,13 +318,7 @@ export default defineComponent({
         paginateElementsByHeight:6000
       },
       contentRendered: false,
-      data:{
-        rows:[],
-        columns:[],
-        title:[],
-      },
-
-
+      certificateData:{},
       columns: [
         {
           name: "name",
@@ -439,17 +436,14 @@ export default defineComponent({
         });
     },
 
-    async generateCertificate () {
-      // this.$q.loading.show({
-      //     message: `PDF generation is in progress. Hang on...`
-      // })
+    async generateCertificate (courseUserId) {
+      const userData=this.users.find((item)=>{ return item.id===courseUserId})
+      this.certificateData={
+        user_name:userData.user.data.name,
+        course_name:this.course_name,
+      }
+      console.log(userData)
       this.certificateReport=true
-
-
-      // if (!(await this.validateControlValue())) return;
-      // setTimeout(()=>{
-      //     this.$refs.html2Pdf.generatePdf()
-      //   },5000)
     },
 
     validateControlValue() {

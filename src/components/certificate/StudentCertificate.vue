@@ -17,7 +17,7 @@
                   <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
                   <div class="pm-certificate-name underline margin-0 col-xs-8 text-center">
                     <span class="pm-credits-text block bold sans q-mb-lg text-h6">This is to clarify that</span>
-                    <span class="pm-earned-text text-bold padding-0 block cursive text-h5">Rahat Uddin Azad</span>
+                    <span class="pm-earned-text text-bold padding-0 block cursive text-h5">{{data.user_name}}</span>
                   </div>
                   <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
                 </div>
@@ -27,7 +27,7 @@
                 <div class="row">
                   <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
                   <div class="pm-earned col-xs-8 text-center">
-                    <span class="pm-credits-text block bold sans">Has successfully completed ICT-101 course from Exclusive Education Aid </span>
+                    <span class="pm-credits-text block bold sans">Has successfully completed {{ data.course_name }} course from Exclusive Education Aid </span>
                   </div>
                   <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
                   <div class="col-xs-12 flex justify-center items-center q-px-lg" style="flex-direction: column;font-size: 18px">

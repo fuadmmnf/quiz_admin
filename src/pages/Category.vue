@@ -181,8 +181,12 @@ export default defineComponent({
     },
     async getTopTags(){
       try {
-        console.log(this.tagIds)
-        const response=await api.get(`/categories/tag`);
+        const response=await api.get(`/categories?search=tag:top&limit=0`);
+       if( response.data.data.length>0){
+         response.data.data.map(item=>{
+           this.tagIds.push(item.id)
+         })
+       }
 
       }catch (error){
 
@@ -267,6 +271,7 @@ export default defineComponent({
   },
   mounted() {
     this.getCategories();
+    this.getTopTags()
   },
 });
 </script>
