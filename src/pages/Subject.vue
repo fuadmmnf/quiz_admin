@@ -76,7 +76,7 @@
 import { defineComponent, defineAsyncComponent, ref } from "vue";
 import { useQuasar } from "quasar";
 import { useStore } from "src/stores/store";
-import {addCategory, editCategory, loadSubjects} from "src/services/category_services";
+import {addCategory, editCategory, loadSubjects} from "src/services/category_service";
 
 export default defineComponent({
   name: "Category",
@@ -105,9 +105,7 @@ export default defineComponent({
     CustomHierarchy: defineAsyncComponent(() =>
       import("components/tree-table/CustomHierarchy.vue")
     ),
-    TableActions: defineAsyncComponent(() =>
-      import("components/tables/TableActions.vue")
-    ),
+
   },
   methods: {
 

@@ -9,11 +9,10 @@
           class="bg-grey-1"
         >
           <div class="q-pa-md">
-            <SearchCourses @search="onSearch" />
+            <SearchCourses @search="onSearch"/>
           </div>
         </q-expansion-item>
-
-        <q-separator spaced="" />
+        <q-separator spaced=""/>
         <q-card>
           <q-card-section>
             <q-table
@@ -43,9 +42,120 @@
                     {{ props.row.num_exams }}
                   </q-td>
 
-                  <q-td key="action" :props="props">
+                  <q-td key="resources" :props="props">
+                    <q-btn-dropdown class="q-mr-sm" color="primary" label="exams" dense size="sm" dropdown-icon="">
+                      <q-list>
+                        <q-item clickable v-close-popup
+                                :to="{name: 'exam-list', params:{status: 'draft'}, query: {course_id: props.row.id, course_name: props.row.title.replace(/\s/g, '%20')}}">
+                          <q-item-section>
+                            <q-item-label>draft</q-item-label>
+                          </q-item-section>
+                        </q-item>
+
+                        <q-item clickable v-close-popup
+                                :to="{name: 'exam-list', params:{status: 'upcoming'}, query: {course_id: props.row.id, course_name: props.row.title.replace(/\s/g, '%20')}}">
+                          <q-item-section>
+                            <q-item-label>upcoming</q-item-label>
+                          </q-item-section>
+                        </q-item>
+
+                        <q-item clickable v-close-popup
+                                :to="{name: 'exam-list', params:{status: 'ongoing'}, query: {course_id: props.row.id, course_name: props.row.title.replace(/\s/g, '%20')}}">
+                          <q-item-section>
+                            <q-item-label>ongoing</q-item-label>
+                          </q-item-section>
+                        </q-item>
+                        <q-item clickable v-close-popup
+                                :to="{name: 'exam-list', params:{status: 'checking'}, query: {course_id: props.row.id, course_name: props.row.title.replace(/\s/g, '%20')}}">
+                          <q-item-section>
+                            <q-item-label>checking</q-item-label>
+                          </q-item-section>
+                        </q-item>
+                        <q-item clickable v-close-popup
+                                :to="{name: 'exam-list', params:{status: 'completed'}, query: {course_id: props.row.id, course_name: props.row.title.replace(/\s/g, '%20')}}">
+                          <q-item-section>
+                            <q-item-label>completed</q-item-label>
+                          </q-item-section>
+                        </q-item>
+                      </q-list>
+                    </q-btn-dropdown>
+                    <q-btn-dropdown class="q-mr-sm" color="primary" label="q-banks" dense size="sm" dropdown-icon="">
+                      <q-list>
+                        <q-item clickable v-close-popup
+                                :to="{name: 'questionbank-list', params:{status: 'draft'}, query: {course_id: props.row.id, course_name: props.row.title.replace(/\s/g, '%20')}}">
+                          <q-item-section>
+                            <q-item-label>draft</q-item-label>
+                          </q-item-section>
+                        </q-item>
+
+                        <q-item clickable v-close-popup
+                                :to="{name: 'questionbank-list', params:{status: 'published'}, query: {course_id: props.row.id, course_name: props.row.title.replace(/\s/g, '%20')}}">
+                          <q-item-section>
+                            <q-item-label>published</q-item-label>
+                          </q-item-section>
+                        </q-item>
+                      </q-list>
+                    </q-btn-dropdown>
+
+                    <q-btn-dropdown class="q-mr-sm" color="primary" label="materials" dense size="sm" dropdown-icon="">
+                      <q-list>
+                        <q-item clickable v-close-popup
+                                :to="{name: 'classmaterial-list', params:{status: 'draft'}, query: {course_id: props.row.id, course_name: props.row.title.replace(/\s/g, '%20')}}">
+                          <q-item-section>
+                            <q-item-label>draft</q-item-label>
+                          </q-item-section>
+                        </q-item>
+
+                        <q-item clickable v-close-popup
+                                :to="{name: 'classmaterial-list', params:{status: 'published'}, query: {course_id: props.row.id, course_name: props.row.title.replace(/\s/g, '%20')}}">
+                          <q-item-section>
+                            <q-item-label>published</q-item-label>
+                          </q-item-section>
+                        </q-item>
+                      </q-list>
+                    </q-btn-dropdown>
+<!--                    <q-btn-->
+<!--                      color="primary"-->
+<!--                      :to="`/lecture-classes/${props.row.id}`"-->
+<!--                      round-->
+<!--                      dense-->
+<!--                      flat-->
+<!--                      size="sm"-->
+<!--                      icon="fa-solid fa-clipboard-list"-->
+<!--                    >-->
+<!--                      <q-tooltip-->
+<!--                        anchor="top middle"-->
+<!--                        self="bottom middle"-->
+<!--                        :offset="[10, 10]"-->
+<!--                      >-->
+<!--                        <strong class="">Lecture Classes</strong>-->
+<!--                      </q-tooltip>-->
+<!--                    </q-btn>-->
+
                     <q-btn
-                      v-if="courseType === 'draft'"
+                      class="q-mx-md"
+                      color="primary"
+                      size="md"
+                      icon="people"
+                      round
+                      dense
+                      flat
+                      :to="{name: 'course-users', params: {courseId: props.row.id}, query: {course_id: props.row.id, course_name: props.row.title.replace(/\s/g, '%20')}}"
+                    >
+                      <q-tooltip
+                        anchor="top middle"
+                        self="bottom middle"
+                        :offset="[10, 10]"
+                      >
+                        <strong class="">Enrolled users</strong>
+                      </q-tooltip>
+                    </q-btn>
+
+                  </q-td>
+                  <q-td key="action" :props="props">
+
+                    <q-btn
+                      v-if="status === 'draft'"
                       color="green"
                       size="md"
                       icon="publish"
@@ -63,7 +173,7 @@
                       </q-tooltip>
                     </q-btn>
                     <q-btn
-                      v-if="courseType != 'draft'"
+                      v-if="status !== 'draft'"
                       color="primary"
                       size="md"
                       icon="drafts"
@@ -81,7 +191,7 @@
                       </q-tooltip>
                     </q-btn>
                     <q-btn
-                      v-if="courseType === 'published'"
+                      v-if="status === 'published'"
                       color="primary"
                       size="md"
                       icon="move_to_inbox"
@@ -98,79 +208,48 @@
                         <strong class="">Move to Completed</strong>
                       </q-tooltip>
                     </q-btn>
-                    <q-btn
-                      color="primary"
-                      :to="`/lecture-classes/${props.row.id}`"
-                      round
-                      dense
-                      flat
-                      size="sm"
-                      icon="fa-solid fa-clipboard-list"
-                    >
-                      <q-tooltip
-                        anchor="top middle"
-                        self="bottom middle"
-                        :offset="[10, 10]"
-                      >
-                        <strong class="">Lecture Classes</strong>
-                      </q-tooltip>
-                    </q-btn>
-                    <q-btn
-                      color="primary"
-                      :to="`/course-exams/${props.row.id}`"
-                      round
-                      dense
-                      flat
-                      size="sm"
-                      icon="fa-solid fa-book-open"
-                    >
-                      <q-tooltip
-                        anchor="top middle"
-                        self="bottom middle"
-                        :offset="[10, 10]"
-                      >
-                        <strong class="">Course Exams</strong>
-                      </q-tooltip>
-                    </q-btn>
-                    <q-btn
-                      color="primary"
-                      size="md"
-                      icon="people"
-                      round
-                      dense
-                      flat
-                      :to="`/subscribe-user/${props.row.id}`"
-                    >
-                      <q-tooltip
-                        anchor="top middle"
-                        self="bottom middle"
-                        :offset="[10, 10]"
-                      >
-                        <strong class="">Subscribe users</strong>
-                      </q-tooltip>
-                    </q-btn>
-                    <q-btn
-                      color="primary"
-                      size="md"
-                      icon="fa-solid fa-question"
-                      round
-                      dense
-                      flat
-                      @click="
-                        this.$router.push({
-                          path: '/questionbanks',
-                          query: { courseId: props.row.id },
-                        })
-                      "
-                    >
-                      <q-tooltip
-                        anchor="top middle"
-                        self="bottom middle"
-                        :offset="[10, 10]"
-                      >
-                        <strong class="">Course Questionbanks</strong>
-                      </q-tooltip>
-                    </q-btn>
+
+
+                    <!--                    <q-btn-->
+                    <!--                      color="primary"-->
+                    <!--                      :to="`/course-exams/${props.row.id}`"-->
+                    <!--                      round-->
+                    <!--                      dense-->
+                    <!--                      flat-->
+                    <!--                      size="sm"-->
+                    <!--                      icon="fa-solid fa-book-open"-->
+                    <!--                    >-->
+                    <!--                      <q-tooltip-->
+                    <!--                        anchor="top middle"-->
+                    <!--                        self="bottom middle"-->
+                    <!--                        :offset="[10, 10]"-->
+                    <!--                      >-->
+                    <!--                        <strong class="">Course Exams</strong>-->
+                    <!--                      </q-tooltip>-->
+                    <!--                    </q-btn>-->
+
+                    <!--                    <q-btn-->
+                    <!--                      color="primary"-->
+                    <!--                      size="md"-->
+                    <!--                      icon="fa-solid fa-question"-->
+                    <!--                      round-->
+                    <!--                      dense-->
+                    <!--                      flat-->
+                    <!--                      @click="-->
+                    <!--                        this.$router.push({-->
+                    <!--                          path: '/questionbanks',-->
+                    <!--                          query: { courseId: props.row.id },-->
+                    <!--                        })-->
+                    <!--                      "-->
+                    <!--                    >-->
+                    <!--                      <q-tooltip-->
+                    <!--                        anchor="top middle"-->
+                    <!--                        self="bottom middle"-->
+                    <!--                        :offset="[10, 10]"-->
+                    <!--                      >-->
+                    <!--                        <strong class="">Course Questionbanks</strong>-->
+                    <!--                      </q-tooltip>-->
+                    <!--                    </q-btn>-->
                     <q-btn
                       color="primary"
                       size="sm"
@@ -202,15 +281,15 @@
 </template>
 
 <script>
-import { defineComponent, defineAsyncComponent, ref, computed } from "vue";
-import { useStore } from "src/stores/store";
-import { api } from "boot/axios";
-import { useQuasar } from "quasar";
+import {defineComponent, defineAsyncComponent, ref, computed} from "vue";
+import {useStore} from "src/stores/store";
+import {api} from "boot/axios";
+import {useQuasar} from "quasar";
 
 export default defineComponent({
   name: "CourseList",
   props: {
-    courseType: {
+    status: {
       type: String,
       required: true,
     },
@@ -221,7 +300,7 @@ export default defineComponent({
     ),
   },
   setup(props) {
-    const { $q } = useQuasar();
+    const {$q} = useQuasar();
     const store = useStore();
     const courses = ref([]);
     const pagination = ref({
@@ -230,21 +309,21 @@ export default defineComponent({
       rowsNumber: 0,
     });
     const loading = ref(true);
-    const searchData = ref({ keywords: "" });
+    const searchData = ref({keywords: ""});
 
     const fetchCourses = (page = 1) => {
       console.log(searchData.value);
       loading.value = true;
       api
         .get(
-          `/courses?search=status:${props.courseType}${
+          `/courses?search=status:${props.status}${
             searchData.value.keywords.length
               ? ";title:" + searchData.value.keywords
               : ""
           }&searchJoin=and&orderBy=id&sortedBy=desc&page=${page}`
         )
         .then((response) => {
-          console.log(`${props.courseType} courses`, response.data);
+          console.log(`${props.status} courses`, response.data);
           courses.value = response.data.data;
           const meta = response.data.meta.pagination;
           pagination.value = {
@@ -285,28 +364,30 @@ export default defineComponent({
           label: "Title",
           field: "title",
           align: "left",
-          sortable: true,
         },
         {
           name: "num_classes",
           label: "Number of Classes",
           field: "num_classes",
           align: "left",
-          sortable: true,
         },
         {
           name: "num_exams",
           label: "Number of Exams",
           field: "num_exams",
           align: "left",
-          sortable: true,
+        },
+        {
+          name: "resources",
+          label: "Resources",
+          field: "resources",
+          align: "left",
         },
         {
           name: "action",
           label: "Action",
           field: "action",
           align: "left",
-          sortable: true,
         },
       ],
       //table data

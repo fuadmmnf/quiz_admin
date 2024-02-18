@@ -3,11 +3,13 @@
     <q-card class="no-shadow" bordered>
       <!-- add edit header with submit and reset buttons on right -->
       <q-card-section class="row items-center justify-between">
-        <div class="text-h6">Add/Edit Exam</div>
+        <div class="col-12 text-h6">Add/Edit Exam</div>
+        <div class="text-subtitle1">{{route.query.course_name?"Course : "+decodeURIComponent(route.query.course_name):''}}</div>
+
       </q-card-section>
     </q-card>
 
-    <q-separator spaced />
+    <q-separator spaced/>
     <!-- search card with filtering option filter icon -->
     <q-expansion-item
       expand-separator
@@ -105,7 +107,7 @@
       </q-card>
     </q-expansion-item>
 
-    <q-separator spaced />
+    <q-separator spaced/>
     <q-form
       @submit.prevent="onSubmit"
       id="examForm"
@@ -134,7 +136,8 @@
                           :options="courseOptions"
                           emit-value
                           map-options
-                          clearable
+                          v-if="route.query.course_id?.length > 0"
+                          readonly
                           @clear="
                             (val) => {
                               examData.course_id = null;
@@ -167,7 +170,7 @@
                           filled
                           v-model="examData.faculty_id"
                           :label="`Faculty`"
-                          :options="facultyOptions"
+                          :options="categoryStore.getFacultyOptions"
                           emit-value
                           map-options
                           clearable
@@ -183,7 +186,7 @@
                           filled
                           v-model="examData.category_id"
                           :label="`Category`"
-                          :options="categoryOptions"
+                          :options="categoryStore.getCategoryOptions"
                           emit-value
                           map-options
                           clearable
@@ -199,7 +202,7 @@
                           filled
                           v-model="examData.subject_id"
                           :label="`Subject`"
-                          :options="subjectOptions"
+                          :options="categoryStore.getSubjectOptions"
                           emit-value
                           map-options
                           clearable
@@ -536,7 +539,7 @@
         </div>
       </div>
       <div class="row">
-        <q-btn label="Submit" type="submit" color="primary" form="examForm" />
+        <q-btn label="Submit" type="submit" color="primary" form="examForm"/>
         <q-btn
           label="Reset"
           type="reset"
@@ -552,12 +555,14 @@
 
 <script>
 import OptionCard from "src/components/question/OptionCard.vue";
-import { defineComponent, defineAsyncComponent } from "vue";
-import { ref } from "@vue/reactivity";
-import { useStore } from "src/stores/store";
-import { api } from "boot/axios";
-import { useQuasar } from "quasar";
+import {defineComponent, defineAsyncComponent} from "vue";
+import {ref} from "@vue/reactivity";
+import {useStore} from "src/stores/store";
+import {api} from "boot/axios";
+import {useQuasar} from "quasar";
 import _ from "lodash";
+import {useCategoryStore} from "stores/category";
+import {useRoute} from "vue-router";
 
 function initExamData() {
   return {
@@ -598,52 +603,48 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
+    const categoryStore = useCategoryStore();
     const exams = store.exams;
-    const { $q } = useQuasar();
+    const {$q} = useQuasar();
+    const route = useRoute();
     return {
       exams,
       $q,
+      route,
+      categoryStore,
     };
   },
   data() {
     return {
-      pageName: "Add/Edit Question",
-      dense: true,
-      name: "",
-      model: "",
-      expanded: false,
       examData: initExamData(),
-      facultyOptions: [],
-      categoryOptions: [],
-      subjectOptions: [],
       visibility_option: [
-        { label: "Public", value: "public" },
-        { label: "Private", value: "private" },
+        {label: "Public", value: "public"},
+        {label: "Private", value: "private"},
       ],
       courseOptions: [],
       answer_script_visibility_option: [
-        { label: "After Attempt", value: "after-attempt" },
-        { label: "After Exam", value: "after-exam" },
+        {label: "After Attempt", value: "after-attempt"},
+        {label: "After Exam", value: "after-exam"},
       ],
       marks_visibility_option: [
-        { label: "After Attempt", value: "after-attempt" },
-        { label: "After Exam", value: "after-exam" },
+        {label: "After Attempt", value: "after-attempt"},
+        {label: "After Exam", value: "after-exam"},
       ],
       merits_visibility_option: [
-        { label: "After Attempt", value: "after-attempt" },
-        { label: "After Exam", value: "after-exam" },
+        {label: "After Attempt", value: "after-attempt"},
+        {label: "After Exam", value: "after-exam"},
       ],
       question_display_type_option: [
-        { label: "Vertical", value: "vertical" },
-        { label: "Horizontal", value: "horizontal" },
+        {label: "Vertical", value: "vertical"},
+        {label: "Horizontal", value: "horizontal"},
       ],
       merit_list_excluded_attributes_option: [
-        { label: "Individual Name", value: "Individual Name" },
-        { label: "Position", value: "Position" },
-        { label: "Correct Answer", value: "Correct Answer" },
-        { label: "Neg Marking", value: "Neg Marking" },
-        { label: "Final Score", value: "Final Score" },
-        { label: "Time Needed", value: "Time Needed" },
+        {label: "Individual Name", value: "Individual Name"},
+        {label: "Position", value: "Position"},
+        {label: "Correct Answer", value: "Correct Answer"},
+        {label: "Neg Marking", value: "Neg Marking"},
+        {label: "Final Score", value: "Final Score"},
+        {label: "Time Needed", value: "Time Needed"},
       ],
     };
   },
@@ -673,41 +674,14 @@ export default defineComponent({
     }, 2000),
     onReset() {
       this.examData = initExamData();
-    },
-    getFaculties() {
-      return api.get("/categories/faculty").then((response) => {
-        response.data.data.map((category) => {
-          this.facultyOptions.push({
-            label: category.name,
-            value: category.id,
-          });
-        });
-      });
-    },
-    getCategories() {
-      return api.get("/categories/category").then((response) => {
-        response.data.data.map((category) => {
-          this.categoryOptions.push({
-            label: category.name,
-            value: category.id,
-          });
-        });
-      });
-    },
-    getSubjects() {
-      return api.get("/categories/subject").then((response) => {
-        response.data.data.map((category) => {
-          this.subjectOptions.push({
-            label: category.name,
-            value: category.id,
-          });
-        });
-      });
+      if (this.route.query.course_id?.length > 0) {
+        this.examData.course_id = this.route.query.course_id;
+      }
     },
 
     getCourses() {
       return api
-        .get("/courses?orderBy=id&sortedBy=desc&limit=0")
+        .get("/courses?orderBy=id&sortedBy=desc&limit=100")
         .then((response) => {
           response.data.data.map((course) => {
             this.courseOptions.push({
@@ -719,19 +693,19 @@ export default defineComponent({
     },
   },
   mounted() {
+    if (this.route.query.course_id?.length > 0) {
+      this.examData.course_id = this.route.query.course_id;
+    }
     Promise.all([
-      this.getFaculties(),
-      this.getCategories(),
-      this.getSubjects(),
       this.getCourses(),
     ]).then((value) => {
-      if (this.$route.query.courseId) {
-        this.examData.course_id = this.$route.query.courseId
-        
+      if (this.route.query.courseId) {
+        this.examData.course_id = this.route.query.courseId
+
       }
-      if (this.$route.params.id) {
+      if (this.route.params.id) {
         api
-          .get("/exams/" + this.$route.params.id + "?include=examConfiguration")
+          .get("/exams/" + this.route.params.id + "?include=examConfiguration")
           .then((response) => {
             this.examData = response.data.data;
             this.examData.examConfiguration =
@@ -739,6 +713,8 @@ export default defineComponent({
           });
       }
     });
+
+
   },
 });
 </script>

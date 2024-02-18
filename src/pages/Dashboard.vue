@@ -2,20 +2,20 @@
   <q-page class="q-pa-sm">
     <card-social icon_position="left" />
 
-    <card-charts />
+<!--    <card-charts />-->
 
-    <div class="row q-col-gutter-sm q-py-sm">
-      <tab-social />
-      <card-with-image />
-    </div>
+<!--    <div class="row q-col-gutter-sm q-py-sm">-->
+<!--      <tab-social />-->
+<!--      <card-with-image />-->
+<!--    </div>-->
 
-    <div class="row q-col-gutter-sm q-pb-sm">
-      <todo-list />
+<!--    <div class="row q-col-gutter-sm q-pb-sm">-->
+<!--      <todo-list />-->
 
-      <card-time-line />
-    </div>
+<!--      <card-time-line />-->
+<!--    </div>-->
 
-    <table-visits />
+<!--    <table-visits />-->
   </q-page>
 </template>
 
@@ -28,24 +28,6 @@ export default defineComponent({
   components: {
     CardSocial: defineAsyncComponent(() =>
       import("components/cards/CardSocial.vue")
-    ),
-    CardCharts: defineAsyncComponent(() =>
-      import("components/cards/CardCharts.vue")
-    ),
-    TabSocial: defineAsyncComponent(() =>
-      import("components/tabs/TabSocial.vue")
-    ),
-    CardWithImage: defineAsyncComponent(() =>
-      import("components/cards/CardWithImage.vue")
-    ),
-    CardTimeLine: defineAsyncComponent(() =>
-      import("components/cards/CardTimeLine.vue")
-    ),
-    TodoList: defineAsyncComponent(() =>
-      import("components/list/TodoList.vue")
-    ),
-    TableVisits: defineAsyncComponent(() =>
-      import("components/tables/TableVisits.vue")
     ),
   },
   setup() {

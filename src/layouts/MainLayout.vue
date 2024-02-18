@@ -10,8 +10,8 @@
           icon="menu"
           aria-label="Menu"
         />
-        <q-toolbar-title> Quizmaster Admin </q-toolbar-title>
-        <q-space />
+        <q-toolbar-title> Quizmaster Admin</q-toolbar-title>
+        <q-space/>
         <div class="q-gutter-sm row items-center no-wrap">
           <q-btn
             round
@@ -29,7 +29,7 @@
             flat
             color="white"
             icon="fab fa-github"
-            type="a"
+            status="a"
             href="https://github.com/pratik227/quasar-admin"
             target="_blank"
           >
@@ -39,14 +39,14 @@
             dense
             flat
             style="color: red !important"
-            type="a"
+            status="a"
             href="https://github.com/sponsors/pratik227"
             target="_blank"
           >
             <i class="fa fa-heart fa-2x fa-beat"></i>
           </q-btn>
           <q-btn round dense flat color="white" icon="notifications">
-            <q-badge color="red" text-color="white" floating> 5 </q-badge>
+            <q-badge color="red" text-color="white" floating> 5</q-badge>
             <q-menu>
               <q-list style="min-width: 100px">
                 <messages></messages>
@@ -85,20 +85,20 @@
       <q-list>
         <q-item to="/" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
-            <q-icon name="dashboard" />
+            <q-icon name="dashboard"/>
           </q-item-section>
           <q-item-section>
             <q-item-label>Dashboard</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item to="/Dashboard2" active-class="q-item-no-link-highlighting">
-          <q-item-section avatar>
-            <q-icon name="dashboard" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>CRM Dashboard</q-item-label>
-          </q-item-section>
-        </q-item>
+        <!--        <q-item to="/Dashboard2" active-class="q-item-no-link-highlighting">-->
+        <!--          <q-item-section avatar>-->
+        <!--            <q-icon name="dashboard"/>-->
+        <!--          </q-item-section>-->
+        <!--          <q-item-section>-->
+        <!--            <q-item-label>CRM Dashboard</q-item-label>-->
+        <!--          </q-item-section>-->
+        <!--        </q-item>-->
         <q-expansion-item icon="people" label="Roles">
           <q-item
             to="/Roles/SubAdmin"
@@ -127,34 +127,54 @@
               <q-item-label>Mentors</q-item-label>
             </q-item-section>
           </q-item>
+          <q-item to="/student-list" class="q-ml-xl"
+                  active-class="q-item-no-link-highlighting">
+            <!--            <q-item-section avatar>-->
+            <!--              <q-icon name="list"/>-->
+            <!--            </q-item-section>-->
+            <q-item-section>
+              <q-item-label>Students</q-item-label>
+            </q-item-section>
+          </q-item>
         </q-expansion-item>
-        <q-item to="/category" active-class="q-item-no-link-highlighting">
-          <q-item-section avatar>
-            <q-icon name="category" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Category</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item to="/faculty" active-class="q-item-no-link-highlighting">
-          <q-item-section avatar>
-            <q-icon name="person" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Faculty</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item to="/subject" active-class="q-item-no-link-highlighting">
-          <q-item-section avatar>
-            <q-icon name="subject" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Subject</q-item-label>
-          </q-item-section>
-        </q-item>
+        <q-expansion-item icon="people" label="Resources">
+          <q-item to="/category" class="q-ml-xl" active-class="q-item-no-link-highlighting">
+            <q-item-section avatar>
+              <q-icon name="category"/>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Category</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item to="/faculty" class="q-ml-xl" active-class="q-item-no-link-highlighting">
+            <q-item-section avatar>
+              <q-icon name="person"/>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Faculty</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item to="/subject" class="q-ml-xl" active-class="q-item-no-link-highlighting">
+            <q-item-section avatar>
+              <q-icon name="subject"/>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Subject</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item to="/institutions" class="q-ml-xl" active-class="q-item-no-link-highlighting">
+            <q-item-section avatar>
+              <q-icon name="list"/>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Institutions</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-expansion-item>
+
         <q-item to="/question" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
-            <q-icon name="question_answer" />
+            <q-icon name="question_answer"/>
           </q-item-section>
           <q-item-section>
             <q-item-label>Question</q-item-label>
@@ -164,7 +184,7 @@
 
         <q-expansion-item icon="menu_open" label="Exams">
           <q-item
-            to="/exam/draft"
+            :to="{name: 'exam-list', params: {status: 'draft'}}"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -173,7 +193,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            to="/exam/upcoming"
+            :to="{name: 'exam-list', params: {status: 'upcoming'}}"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -182,7 +202,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            to="/exam/ongoing"
+            :to="{name: 'exam-list', params: {status: 'ongoing'}}"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -191,7 +211,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            to="/exam/checking"
+            :to="{name: 'exam-list', params: {status: 'checking'}}"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -200,7 +220,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            to="/exam/completed"
+            :to="{name: 'exam-list', params: {status: 'completed'}}"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -209,35 +229,47 @@
             </q-item-section>
           </q-item>
         </q-expansion-item>
-        <q-item to="/TreeTable" active-class="q-item-no-link-highlighting">
-          <q-item-section avatar>
-            <q-icon name="list" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>TreeTable</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item to="/institutions" active-class="q-item-no-link-highlighting">
-          <q-item-section avatar>
-            <q-icon name="list" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Institutions</q-item-label>
-          </q-item-section>
-        </q-item>
+        <!--        <q-item to="/TreeTable" active-class="q-item-no-link-highlighting">-->
+        <!--          <q-item-section avatar>-->
+        <!--            <q-icon name="list" />-->
+        <!--          </q-item-section>-->
+        <!--          <q-item-section>-->
+        <!--            <q-item-label>TreeTable</q-item-label>-->
+        <!--          </q-item-section>-->
+        <!--        </q-item>-->
 
-<!--        <q-item to="/course" active-class="q-item-no-link-highlighting">-->
-<!--          <q-item-section avatar>-->
-<!--            <q-icon name="list" />-->
-<!--          </q-item-section>-->
-<!--          <q-item-section>-->
-<!--            <q-item-label>Course</q-item-label>-->
-<!--          </q-item-section>-->
-<!--        </q-item> -->
+
+        <!--        <q-item to="/course" active-class="q-item-no-link-highlighting">-->
+        <!--          <q-item-section avatar>-->
+        <!--            <q-icon name="list" />-->
+        <!--          </q-item-section>-->
+        <!--          <q-item-section>-->
+        <!--            <q-item-label>Course</q-item-label>-->
+        <!--          </q-item-section>-->
+        <!--        </q-item> -->
+        <q-expansion-item icon="menu_open" label="Question Banks">
+          <q-item :to="{name: 'questionbank-list', params: {status: 'draft'}}"
+                  active-class="q-item-no-link-highlighting">
+            <q-item-section avatar>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Draft</q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item :to="{name: 'questionbank-list', params: {status: 'published'}}"
+                  active-class="q-item-no-link-highlighting">
+            <q-item-section avatar>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Published</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-expansion-item>
 
         <q-expansion-item icon="menu_open" label="Courses">
           <q-item
-            to="/course/draft"
+            :to="{name: 'course-list', params: {status: 'draft'}}"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -247,7 +279,7 @@
           </q-item>
 
           <q-item
-            to="/course/published"
+            :to="{name: 'course-list', params: {status: 'published'}}"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -256,7 +288,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            to="/course/completed"
+            :to="{name: 'course-list', params: {status: 'completed'}}"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
           >
@@ -266,25 +298,66 @@
           </q-item>
         </q-expansion-item>
 
-        <q-item
-          to="/registered-students"
-          active-class="q-item-no-link-highlighting"
-        >
+        <!--        <q-item-->
+        <!--          to="/registered-students"-->
+        <!--          active-class="q-item-no-link-highlighting"-->
+        <!--        >-->
+        <!--          <q-item-section avatar>-->
+        <!--            <q-icon name="list"/>-->
+        <!--          </q-item-section>-->
+        <!--          <q-item-section>-->
+        <!--            <q-item-label>Registered students</q-item-label>-->
+
+        <!--          </q-item-section>-->
+        <!--        </q-item>-->
+        <q-expansion-item icon="menu_open" label="Class Materials">
+          <q-item :to="{name: 'classmaterial-list', params: {status: 'draft'}}"
+                  active-class="q-item-no-link-highlighting">
+            <q-item-section avatar>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Draft</q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item :to="{name: 'classmaterial-list', params: {status: 'published'}}"
+                  active-class="q-item-no-link-highlighting">
+            <q-item-section avatar>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Published</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-expansion-item>
+
+
+        <q-expansion-item icon="menu_open" label="Blogs">
+        <q-item :to="{name: 'blog-list', params: {status: 'draft'}}"
+                active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
-            <q-icon name="list" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Registered students</q-item-label>
-
+            <q-item-label>Draft</q-item-label>
           </q-item-section>
         </q-item>
 
-        <q-item to="/send-message" active-class="q-item-no-link-highlighting">
+        <q-item :to="{name: 'blog-list', params: {status: 'published'}}"
+                active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
-            <q-icon name="list" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Send Message</q-item-label>
+            <q-item-label>Published</q-item-label>
+          </q-item-section>
+        </q-item>
+      </q-expansion-item>
+
+
+        <q-item to="/send-message" active-class="q-item-no-link-highlighting">
+          <q-item-section avatar>
+            <q-icon name="list"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Notification</q-item-label>
           </q-item-section>
         </q-item>
 
@@ -294,49 +367,12 @@
           v-if="user && user.name === 'Super Admin'"
         >
           <q-item-section avatar>
-            <q-icon name="list" />
+            <q-icon name="list"/>
           </q-item-section>
           <q-item-section>
-            <q-item-label>Activity</q-item-label>
+            <q-item-label>Activity Log</q-item-label>
           </q-item-section>
         </q-item>
-
-        <q-item to="/student-list" active-class="q-item-no-link-highlighting">
-          <q-item-section avatar>
-            <q-icon name="list" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Student List</q-item-label>
-          </q-item-section>
-        </q-item>
-
-        <q-item to="/blog" active-class="q-item-no-link-highlighting">
-          <q-item-section avatar>
-            <q-icon name="list" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Blog</q-item-label>
-          </q-item-section>
-        </q-item>
-
-        <q-expansion-item icon="menu_open" label="Question Banks">
-          <q-item to="/questionbanks/draft" active-class="q-item-no-link-highlighting">
-            <q-item-section avatar>
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>Draft</q-item-label>
-            </q-item-section>
-          </q-item>
-
-          <q-item to="/questionbanks/published" active-class="q-item-no-link-highlighting">
-            <q-item-section avatar>
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>Published</q-item-label>
-            </q-item-section>
-          </q-item>
-        </q-expansion-item>
-
         <!-- <q-item
           to="/lecture-classes"
           active-class="q-item-no-link-highlighting"
@@ -352,7 +388,7 @@
     </q-drawer>
 
     <q-page-container class="bg-grey-2">
-      <router-view />
+      <router-view :key="route.fullPath"/>
     </q-page-container>
   </q-layout>
 </template>
@@ -361,11 +397,16 @@
 import EssentialLink from "components/EssentialLink.vue";
 import Messages from "./Messages.vue";
 
-import { defineComponent, onMounted, ref } from "vue";
-import { useQuasar } from "quasar";
-import { useStore } from "src/stores/store";
-import { loadFaculties, loadInstitution} from "src/services/category_services";
+import {defineComponent, onMounted, ref} from "vue";
+import {useQuasar} from "quasar";
+import {useStore} from "src/stores/store";
 import {useCategoryStore} from "stores/category";
+import {
+  loadCategories,
+  loadFaculties,
+  loadSubjects,
+} from "src/services/category_service";
+import {useRoute} from "vue-router";
 
 export default defineComponent({
   name: "MainLayout",
@@ -378,34 +419,20 @@ export default defineComponent({
   setup() {
     const leftDrawerOpen = ref(false);
     const $q = useQuasar();
+    const route = useRoute();
     const store = useStore();
     const user = ref(null);
-    const category = useCategoryStore();
+    const categoryStore = useCategoryStore();
+
 
     onMounted(async () => {
       // Call the action to fetch the user data
       await store.getAuthenticatedUser();
 
+      categoryStore.loadCategories();
+      categoryStore.loadSubjects();
+      categoryStore.loadFaculties();
 
-      const {
-        data: facultyData,
-        status: facultyStatus,
-        error: facultyError,
-      } = await loadFaculties({});
-      if (facultyStatus === 200) {
-        // console.log("Faculty", facultyData);
-        category.setFaculties(facultyData.data);
-      }
-
-      const {
-        data: institutionData,
-        status: institutionStatus,
-        error: institutionError,
-      } = await loadInstitution({});
-      if (institutionStatus === 200) {
-        // console.log("Institution", institutionData);
-        category.setInstitution(institutionData.data);
-      }
 
       // Now, you can access the user object
       if (store.user) {
@@ -416,6 +443,7 @@ export default defineComponent({
 
     return {
       $q,
+      route,
       leftDrawerOpen,
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;

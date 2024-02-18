@@ -68,7 +68,7 @@
 import { api } from "src/boot/axios";
 import { onMounted, ref, watch, computed } from "vue";
 import { date } from 'quasar';
-import {getUsers} from "src/services/auth_services";
+import {getUsers} from "src/services/auth_service";
 
 
 
@@ -168,16 +168,16 @@ export default {
 
 
       try {
-        console.log("Start", startDate.value);
+        // console.log("Start", startDate.value);
         if (date.isValid(endDate.value)) {
           const nextDay = date.addToDate(endDate.value, { days: 1 });
           if (date.isValid(nextDay)) {
             const increasedDate = date.formatDate(nextDay, 'YYYY-MM-DD');
-            console.log("End Date increased by one day:", increasedDate);
+            // console.log("End Date increased by one day:", increasedDate);
 
             newEndDate.value = increasedDate;
           } else {
-            console.error("Invalid End Date after adding one day");
+            // console.error("Invalid End Date after adding one day");
           }
         }
 
@@ -195,14 +195,14 @@ export default {
         }
 
         const apiEndpoint = dateRangeFilter
-          ? `/activity_logs?orderBy=id&sortedBy=desc&searchJoin=and&${causerId}${dateRangeFilter}&page=${page}&limit=50`
-          : `/activity_logs?orderBy=id&sortedBy=desc&page=${page}&limit=50`;
+          ? `/activity_logs?orderBy=created_at&sortedBy=desc&searchJoin=and&${causerId}${dateRangeFilter}&page=${page}&limit=20`
+          : `/activity_logs?orderBy=created_at&sortedBy=desc&page=${page}&limit=20`;
 
 
 
         const response = await api.get(apiEndpoint);
         if (response) {
-          console.log("Response:", response);
+          // console.log("Response:", response);
           rows.value = response.data.data;
           const meta = response.data.meta.pagination;
           pagination.value = {
@@ -231,8 +231,8 @@ export default {
 
     watch(model, (selectedValue) => {
       // Log the selected label and value
-      console.log("Selected Label:", subjectOptions.value.find(option => option.value === selectedValue).label);
-      console.log("Selected Value (ID):", selectedValue);
+      // console.log("Selected Label:", subjectOptions.value.find(option => option.value === selectedValue).label);
+      // console.log("Selected Value (ID):", selectedValue);
     });
 
 

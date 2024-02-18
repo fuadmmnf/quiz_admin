@@ -56,6 +56,15 @@
                     <q-item-label>Course Wise</q-item-label>
                   </q-item-section>
                 </q-item>
+
+                <q-item tag="label" v-ripple>
+                  <q-item-section avatar>
+                    <q-radio v-model="noticeData.noticeable_type" val="institution"/>
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Institution Wise</q-item-label>
+                  </q-item-section>
+                </q-item>
               </q-list>
 
               <q-item v-if="noticeData.noticeable_type === 'user'">
@@ -110,6 +119,28 @@
                     v-model="noticeData.noticeable_ids"
                     :options="courseOptions"
                     label="Select Courses"
+                    filled
+                    dense
+                    use-input
+                    multiple
+                    use-chips
+                    emit-value
+                    map-options
+                    clearable
+                    @clear="
+                            (val) => {
+                              noticeData.noticeable_ids = [];
+                            }
+                          "
+                  />
+                </q-item-section>
+              </q-item>
+              <q-item v-if="noticeData.noticeable_type === 'institution'">
+                <q-item-section>
+                  <q-select
+                    v-model="noticeData.noticeable_ids"
+                    :options="instituteOptions"
+                    label="Select Institution"
                     filled
                     dense
                     use-input
@@ -185,9 +216,9 @@
 
 <script>
 import {onMounted, ref, watch} from "vue";
-import {getStudents} from "src/services/student_services";
-import {getCourses} from "src/services/course_services";
-import {getExams} from "src/services/exam_services";
+import {getStudents} from "src/services/student_service";
+import {getCourses, getInstution} from "src/services/course_service";
+import {getExams} from "src/services/exam_service";
 import _ from "lodash";
 import {api} from "boot/axios";
 
@@ -209,6 +240,7 @@ export default {
     const userOptions = ref([]);
     const examOptions = ref([]);
     const courseOptions = ref([]);
+    const instituteOptions = ref([]);
 
     const onSubmit = _.debounce(function () {
 
@@ -318,11 +350,34 @@ export default {
         console.error(error.message);
       }
     }
+    const fetchInstitution = async () => {
+
+      const queryParams = {
+        orderBy: 'id',
+        sortedBy: 'desc',
+        limit: 0,
+      };
+
+      const {data, status, error} = await getInstution(queryParams);
+
+      if (status === 200) {
+        console.log(data);
+        instituteOptions.value = data.data.map((institute) => ({
+          label: institute.name,
+          value: institute.id,
+        }));
+      } else {
+        console.error(error.message);
+      }
+    }
+
 
     onMounted(() => {
       fetchStudents();
       fetchExams();
       fetchCourses();
+      fetchInstitution();
+
     });
 
 
@@ -331,7 +386,8 @@ export default {
       noticeData,
       userOptions,
       examOptions,
-      courseOptions
+      courseOptions,
+      instituteOptions
     };
   },
 

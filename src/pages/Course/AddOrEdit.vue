@@ -76,9 +76,6 @@
                           filled
                           v-model="courseData.coordinator_name"
                           :label="`Co-ordinator Name`"
-                          :rules="[
-                            (val) => !!val || 'Co-ordinator Name is required',
-                          ]"
                         />
                       </div>
                       <div class="col-6">
@@ -86,13 +83,10 @@
                           filled
                           v-model="courseData.coordinator_number"
                           :label="`Co-ordinator Phone number`"
-                          :rules="[
-                            (val) => !!val || 'Phone number is required',
-                          ]"
                         />
                       </div>
                     </div>
-                    <div class="row q-col-gutter-md">
+                    <div class="row q-col-gutter-md q-my-sm">
                       <div class="col-6">
                         <q-input
                           filled
@@ -116,55 +110,20 @@
                     </div>
                     <div class="row q-col-gutter-md">
                       <div class="col-6">
-                        <q-file
-                          filled
-                          bottom-slots
-                          v-model="courseData.course_icon"
-                          label="Course icon"
-                          counter
-                        >
-                          <template v-slot:prepend>
-                            <q-icon name="cloud_upload" @click.stop.prevent/>
-                          </template>
-                          <template v-if="courseData.course_icon" v-slot:append>
-                            <q-icon
-                              name="close"
-                              @click.stop.prevent="
-                                courseData.course_icon = null
-                              "
-                              class="cursor-pointer"
-                            />
-                          </template>
-
-                          <template v-slot:hint> png/jpg</template>
-                        </q-file>
+                        <div class="col-6">
+                          <q-input
+                            filled
+                            v-model="courseData.photo"
+                            :label="`Course Cover Image Link`"
+                          />
+                        </div>
                       </div>
                       <div class="col-6">
-                        <q-file
+                        <q-input
                           filled
-                          bottom-slots
                           v-model="courseData.intro_video"
-                          label="Short video"
-                          counter
-                        >
-                          <template v-slot:prepend>
-                            <q-icon name="cloud_upload" @click.stop.prevent/>
-                          </template>
-                          <template
-                            v-if="courseData.intro_video"
-                            v-slot:append
-                          >
-                            <q-icon
-                              name="close"
-                              @click.stop.prevent="
-                                courseData.intro_video = null
-                              "
-                              class="cursor-pointer"
-                            />
-                          </template>
-
-                          <template v-slot:hint> mp4/mkv</template>
-                        </q-file>
+                          :label="`Course Intro Video Link`"
+                        />
                       </div>
                     </div>
                     <div class="row q-col-gutter-md q-mt-auto">
@@ -279,7 +238,22 @@ import {useStore} from "src/stores/store";
 import {api} from "boot/axios";
 import {useQuasar} from "quasar";
 import _ from "lodash";
-
+function initCourseData() {
+  return {
+    title: "",
+    description: "",
+    num_classes: "",
+    num_exams: "",
+    category_id: null,
+    subject_id: null,
+    start_date: "",
+    end_date: "",
+    coordinator_name: "",
+    coordinator_number: "",
+    photo: null,
+    intro_video: ref(null),
+  };
+}
 export default defineComponent({
   name: "AddOrEdit Course",
   components: {
@@ -302,20 +276,7 @@ export default defineComponent({
       name: "",
       model: "",
       expanded: false,
-      courseData: {
-        title: "",
-        description: "",
-        num_classes: "",
-        num_exams: "",
-        category_id: null,
-        subject_id: null,
-        start_date: "",
-        end_date: "",
-        coordinator_name: "",
-        coordinator_number: "",
-        course_icon: ref(null),
-        intro_video: ref(null),
-      },
+      courseData: initCourseData(),
       subjectOptions: [],
       categoryOptions: [],
     };
@@ -361,20 +322,7 @@ export default defineComponent({
     },
     onReset() {
       console.log("Reset");
-      this.courseData = {
-        id: "",
-        title: "",
-        description: "",
-        number_of_classes: "",
-        number_of_exams: "",
-        subject_id: "",
-        start_date: "",
-        end_date: "",
-        co_ordinator_name: "",
-        co_ordinator_phone: "",
-        course_icon: ref(null),
-        course_short_video: ref(null),
-      };
+      this.courseData = initCourseData();
     },
     openCourseDescriptionTinyMceModal() {
       this.$refs.courseDescriptionTinyMceModal.show = true;

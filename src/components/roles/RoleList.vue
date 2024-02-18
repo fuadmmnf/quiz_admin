@@ -55,7 +55,7 @@
 import { defineComponent, ref } from "vue";
 import { api } from "src/boot/axios";
 import { useQuasar } from "quasar";
-import {deleteUser, getUsers} from "src/services/auth_services";
+import {deleteUser, getUsers} from "src/services/auth_service";
 
 export default {
   name: "RoleList",

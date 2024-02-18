@@ -17,36 +17,7 @@
             : 'my-lg q-pa-md q-ma-sm bg-grey-8'
         "
       >
-        <q-toolbar>
-          <q-ribbon
-            position="left"
-            color="rgba(0,0,0,.58)"
-            background-color="#c0c0c0"
-            leaf-color="#a0a0a0"
-            leaf-position="bottom"
-            decoration="rounded-out"
-          >
-            <q-toolbar-title class="example-title" style="padding: 5px 20px"
-              ><span class="ellipsis">Question Banks</span></q-toolbar-title
-            >
-          </q-ribbon>
-        </q-toolbar>
-        <q-card-section class="q-pb-sm">
-          <div class="row">
-            <q-btn
-              color="primary"
-              label="Add Question Bank"
-              icon="add"
-              @click="
-                this.$router.push({
-                  path: '/questionbanks/add',
-                  query: { courseId: this.$route.query.courseId },
-                })
-              "
-            />
-          </div>
-          <code-tabs :tagParts="tagParts"></code-tabs>
-        </q-card-section>
+
         <q-card-section>
           <q-hierarchy :columns="columns" :data="data" p>
             <template v-slot:body="props">
@@ -120,7 +91,7 @@
                 </q-btn>
                 <q-btn
                   v-if="
-                    props.item.parentId === '' && statusApi === 'status:draft'
+                    props.item.parentId === '' && status === 'draft'
                   "
                   @click="handlePublishButtonClick(props.item)"
                   flat
@@ -135,7 +106,7 @@
                 <q-btn
                   v-if="
                     props.item.parentId === '' &&
-                    statusApi === 'status:published'
+                    status === 'published'
                   "
                   @click="handleMovetoDraftButtonClick(props.item)"
                   flat
@@ -154,15 +125,15 @@
       </q-card>
 
       <div class="q-pa-lg flex flex-center">
-        <q-pagination v-model="current" :max="totalPages" direction-links />
+        <q-pagination v-model="current" :max="totalPages" direction-links/>
       </div>
     </div>
     <q-dialog v-model="showAddEditDialog">
-      <div v-if="statusApi === 'status:draft'" class="col-3">
+      <div v-if="status === 'draft'" class="col-3">
         <q-card class="q-mt-sm" style="width: 600px; max-width: 70vw">
           <q-bar>
             Add/Edit Question bank
-            <q-space />
+            <q-space/>
 
             <q-btn
               dense
@@ -201,7 +172,7 @@
                 :disable="!isSelect"
               />
               <div>
-                <q-btn label="Submit" type="submit" color="primary" />
+                <q-btn label="Submit" type="submit" color="primary"/>
                 <q-btn
                   label="Reset"
                   type="reset"
@@ -219,7 +190,7 @@
 </template>
 
 <script>
-import { onMounted, ref, toRefs, watch } from "vue";
+import {onMounted, ref, toRefs, watch} from "vue";
 
 import {
   addQuestionBank,
@@ -227,13 +198,13 @@ import {
   getQuestionBanks,
   updateQuestionBankStatus,
   deleteQuestionBank,
-} from "src/services/questionBank_services";
-import { useRouter, useRoute } from "vue-router";
-import { useQuasar } from "quasar";
+} from "src/services/questionbank_service";
+import {useRouter, useRoute} from "vue-router";
+import {useQuasar} from "quasar";
 
 export default {
   props: {
-    statusApi: {
+    status: {
       type: String,
       required: true,
     },
@@ -265,10 +236,25 @@ export default {
         align: "center",
       },
       {
+        name: "Category",
+        label: "Category",
+        // sortable: true,
+        field: "category",
+        align: "center",
+      },
+
+      {
         name: "Subject",
         label: "Subject",
         // sortable: true,
         field: "subject",
+        align: "center",
+      },
+      {
+        name: "Course",
+        label: "Course",
+        // sortable: true,
+        field: "course",
         align: "center",
       },
       {
@@ -294,7 +280,6 @@ export default {
     const router = useRouter();
     const route = useRoute();
 
-    const { statusApi } = toRefs(props);
 
     const handleAddButtonClick = (selectedItem) => {
       showAddEditDialog.value = true;
@@ -333,7 +318,7 @@ export default {
         persistent: true,
       })
         .onOk(async () => {
-          const { status, error } = await deleteQuestionBank(questionBankId);
+          const {status, error} = await deleteQuestionBank(questionBankId);
 
           if (status === 204) {
             $q.notify({
@@ -353,7 +338,7 @@ export default {
     const handlePublishButtonClick = async (selectedItem) => {
       const questionBankId = selectedItem.id;
 
-      const { status, error } = await updateQuestionBankStatus(questionBankId, {
+      const {status, error} = await updateQuestionBankStatus(questionBankId, {
         status: "published",
       });
 
@@ -368,7 +353,7 @@ export default {
     const handleMovetoDraftButtonClick = async (selectedItem) => {
       const questionBankId = selectedItem.id;
 
-      const { status, error } = await updateQuestionBankStatus(questionBankId, {
+      const {status, error} = await updateQuestionBankStatus(questionBankId, {
         status: "draft",
       });
 
@@ -384,7 +369,7 @@ export default {
       // Programmatically navigate to the edit-questions page
       router.push({
         name: "questionbank-questions",
-        params: { id: questionBankId },
+        params: {id: questionBankId},
       });
     };
 
@@ -394,7 +379,9 @@ export default {
         label: item.title,
         description: item.status,
         code: item.code ? item.code : "null",
+        category: item.category ? item.category.data.name : "null",
         subject: item.subject ? item.subject.data.name : "null",
+        course: item.course ? item.course.data.title : "null",
         children: item.children ? transformData(item.children.data) : [],
         parentId: item.parent_id,
       }));
@@ -407,7 +394,7 @@ export default {
 
     const onSubmit = async () => {
       if (isEditMode.value) {
-        const { data, status, error } = await editQuestionBank({
+        const {data, status, error} = await editQuestionBank({
           id: editingItemId.value,
           title: name.value,
 
@@ -415,18 +402,23 @@ export default {
         });
 
         if (status === 200) {
+          showAddEditDialog.value = false;
+          onReset()
           getQuestionBankList(current.value);
+
         } else {
           console.error(error);
         }
       } else {
-        const { data, status, error } = await addQuestionBank({
+        const {data, status, error} = await addQuestionBank({
           title: name.value,
           code: "",
           parent_id: parentId.value,
         });
 
         if (status === 201) {
+          showAddEditDialog.value = false;
+          onReset()
           current.value = 1;
           getQuestionBankList(current.value);
         } else {
@@ -445,15 +437,15 @@ export default {
       const params = {
         orderBy: "id",
         sortedBy: "desc",
-        search: statusApi.value,
+        search: `status:${props.status}${route.query.course_id?.length ? (";course_id:" + route.query.course_id) : ""}`,
         searchJoin: "and",
         include: "subject,category,children",
         limit: 50,
         page: newPage,
       };
-
-      if (statusApi.value === "status:all" && route.query.courseId) {
-        params.search = `course_id:${route.query.courseId}`;
+      //
+      if (props.status === "all") {
+        params.search = route.query.course_id?.length ? ("course_id:" + route.query.course_id) : "";
       }
 
       const {
@@ -466,7 +458,7 @@ export default {
         console.log(responseData);
         data.value = transformData(responseData.data);
 
-        const { total_pages } = responseData.meta.pagination;
+        const {total_pages} = responseData.meta.pagination;
 
         current.value = newPage;
         totalPages.value = total_pages;

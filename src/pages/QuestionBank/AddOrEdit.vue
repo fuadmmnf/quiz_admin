@@ -3,7 +3,11 @@
     <q-card class="no-shadow" bordered>
       <!-- add edit header with submit and reset buttons on right -->
       <q-card-section class="row items-center justify-between">
-        <div class="text-h6">Add/Edit Question bank</div>
+        <div class="row">
+          <div class="col-12 text-h6">Add/Edit Question bank</div> <br/>
+          <div class="text-subtitle1">{{route.query.course_name?"Course : "+decodeURIComponent(route.query.course_name):''}}</div>
+        </div>
+
         <div class="row">
           <q-btn
             label="Submit"
@@ -23,7 +27,7 @@
       </q-card-section>
     </q-card>
 
-    <q-separator spaced />
+    <q-separator spaced/>
     <q-form
       @submit.prevent="onSubmit"
       id="questionBankForm"
@@ -57,7 +61,6 @@
                           filled
                           v-model="questionBankData.code"
                           :label="`Code`"
-                          :rules="[(val) => !!val || 'Code is required']"
                         />
                       </div>
                     </div>
@@ -69,7 +72,7 @@
                           filled
                           v-model="questionBankData.subject_id"
                           :label="`Subject`"
-                          :options="subjectOptions"
+                          :options="categoryStore.getSubjectOptions"
                           emit-value
                           map-options
                         />
@@ -80,7 +83,7 @@
                           filled
                           v-model="questionBankData.category_id"
                           :label="`Category`"
-                          :options="categoryOptions"
+                          :options="categoryStore.getCategoryOptions"
                           emit-value
                           map-options
                         />
@@ -92,6 +95,8 @@
                           v-model="questionBankData.course_id"
                           :label="`Course`"
                           :options="courseOptions"
+                          :clearable="!(route.query.course_id?.length > 0)"
+                          :readonly="route.query.course_id?.length > 0"
                           emit-value
                           map-options
                         />
@@ -109,54 +114,50 @@
 </template>
 
 <script>
-import { defineComponent, defineAsyncComponent } from "vue";
-import { ref } from "vue";
-import { useStore } from "src/stores/store";
-import { api } from "boot/axios";
-import { useQuasar } from "quasar";
+import {defineComponent, defineAsyncComponent} from "vue";
+import {ref} from "vue";
+import {useStore} from "src/stores/store";
+import {api} from "boot/axios";
+import {useQuasar} from "quasar";
 import _ from "lodash";
+import {useCategoryStore} from "stores/category";
+import {useRoute} from "vue-router";
+
+function initQbData() {
+  return {
+    title: "",
+    subject_id: "",
+    category_id: "",
+    course_id: "",
+    code: "",
+  };
+}
 
 export default defineComponent({
   name: "AddOrEdit Question Bank",
 
   setup() {
     const store = useStore();
-    const { $q } = useQuasar();
+    const route = useRoute();
+    const categoryStore = useCategoryStore();
+    const {$q} = useQuasar();
     return {
       $q,
+      route,
+      categoryStore,
     };
   },
   data() {
     return {
-      pageName: "Add/Edit Question Bank",
-      dense: true,
-      name: "",
-      model: "",
-      expanded: false,
-      questionBankData: {
-        title: "",
-        subject_id: "",
-        category_id: "",
-        course_id: "",
-        code: "",
-      },
-      subjectOptions: [],
-      categoryOptions: [],
+      questionBankData: initQbData(),
       courseOptions: [],
     };
   },
   methods: {
     onSubmit() {
-      console.log(this.questionBankData);
       if (this.$route.params.id) {
         api
-          .patch(`/questionbanks/${this.$route.params.id}`, {
-            subject_id: this.questionBankData.subject_id,
-            category_id: this.questionBankData.category_id,
-            course_id: this.questionBankData.course_id,
-            title: this.questionBankData.title,
-            code: this.questionBankData.code,
-          })
+          .patch(`/questionbanks/${this.$route.params.id}`, this.questionBankData)
           .then((response) => {
             console.log(response);
             this.$q.notify({
@@ -173,14 +174,7 @@ export default defineComponent({
           });
       } else {
         api
-          .post("/questionbanks", {
-            subject_id: this.questionBankData.subject_id,
-            category_id: this.questionBankData.category_id,
-            course_id: this.questionBankData.course_id,
-            title: this.questionBankData.title,
-            code: this.questionBankData.code,
-            parent_id: null,
-          })
+          .post("/questionbanks", this.questionBankData)
           .then((response) => {
             console.log(response);
             this.$q.notify({
@@ -198,26 +192,10 @@ export default defineComponent({
       }
     },
     onReset() {
-      console.log("Reset");
-      this.questionBankData = {
-        id: "",
-        title: "",
-        subject_id: "",
-        category_id: "",
-        course_id: "",
-        code: "",
-      };
-    },
-
-    getSubjects() {
-      api.get("/categories/subject").then((response) => {
-        response.data.data.map((category) => {
-          this.subjectOptions.push({
-            label: category.name,
-            value: category.id,
-          });
-        });
-      });
+      this.questionBankData = initQbData();
+      if (this.route.query.course_id?.length > 0) {
+        this.questionBankData.course_id = this.route.query.course_id;
+      }
     },
 
     getCourses() {
@@ -230,32 +208,16 @@ export default defineComponent({
         });
       });
     },
-    getCategories() {
-      api.get("/categories/category").then((response) => {
-        response.data.data.map((category) => {
-          this.categoryOptions.push({
-            label: category.name,
-            value: category.id,
-          });
-        });
-      });
-    },
   },
   mounted() {
-    this.getSubjects();
-    this.getCategories();
-    this.getCourses();
-    if (this.$route.query.courseId) {
-      this.questionBankData.course_id = this.$route.query.courseId;
+    if (this.route.query.course_id?.length > 0) {
+      this.questionBankData.course_id = this.route.query.course_id;
     }
+    this.getCourses();
+
     if (this.$route.params.id) {
       api.get("/questionbanks/" + this.$route.params.id).then((response) => {
-        const result = response.data.data;
-        this.questionBankData.title = result.title;
-        this.questionBankData.code = result.code;
-        this.questionBankData.subject_id = result.subject_id;
-        this.questionBankData.category_id = result.category_id;
-        this.questionBankData.course_id = result.course_id;
+        this.questionBankData = response.data.data;
       });
     }
   },

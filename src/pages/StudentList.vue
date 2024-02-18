@@ -59,8 +59,20 @@
 
             <q-separator spaced="" />
             <q-card>
+              <q-card-section>
+                <div class="text-h6 text-grey-8">
+                  Student List
+                  <q-btn
+                    class="float-right text-capitalize text-indigo-8 shadow-3"
+                    icon="picture_as_pdf"
+                    label="Generate Report"
+                  />
+                </div>
+              </q-card-section>
+              <q-separator></q-separator>
               <q-table
                 ref="tableRef"
+                class="custom-table"
                 v-model:pagination="pagination"
                 :columns="columns"
                 :filter="filter"
@@ -71,7 +83,6 @@
                 flat
                 :grid="$q.screen.lt.md"
                 row-key="id"
-                title="Student List"
                 @request="fetchData"
               >
                 <template #body-cell-faculty_id="props">
@@ -121,7 +132,7 @@
                                 }"
                                 color="primary"
                                 label="Edit"
-                            /></q-item-label>
+                              /></q-item-label>
                           </q-item-section>
                         </q-item>
                       </q-list>
@@ -143,7 +154,7 @@ import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import SearchStudents from "components/SearchStudents.vue";
 import { useCategoryStore } from "stores/category";
-import { getStudents, registerStudent } from "src/services/student_services";
+import { getStudents, registerStudent } from "src/services/student_service";
 import { Notify } from "quasar";
 
 const filter = ref("");
@@ -340,7 +351,6 @@ export default {
       this.gender = "";
       this.nid = "";
       this.password = "";
-
       this.addStudentDialog = true;
     },
 

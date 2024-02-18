@@ -21,31 +21,39 @@ const routes = [
       //faculty path with id and edit
       { path: "/subject", component: () => import("pages/Subject.vue") },
       {
-        path: "/blog",
-        component: () => import("pages/Blog/Blog.vue"),
+        path: "/blogs/:status",
+        name: 'blog-list',
+        component: () => import("pages/Blog/Index.vue"),
       },
       {
         path: "/blog/add",
-        component: () => import("pages/Blog/AddorEditBlog.vue"),
+        name: 'blog-create',
+        component: () => import("pages/Blog/AddorEdit.vue"),
       },
       {
-        path: "/questionbanks/draft",
-        component: () => import("pages/QuestionBank/draftBank.vue"),
+        path: "/questionbanks/:status",
+        name: "questionbank-list",
+        component: () => import("pages/QuestionBank/index.vue"),
       },
-      {
-        path: "/questionbanks/published",
-        component: () => import("pages/QuestionBank/publishedBank.vue"),
-      },
-      {
-        path: "/questionbanks",
-        component: () => import("pages/QuestionBank/AllBank.vue"),
-      },
+      // {
+      //   path: "/questionbanks/draft",
+      //   component: () => import("pages/QuestionBank/draftBank.vue"),
+      // },
+      // {
+      //   path: "/questionbanks/published",
+      //   component: () => import("pages/QuestionBank/publishedBank.vue"),
+      // },
+      // {
+      //   path: "/questionbanks",
+      //   component: () => import("pages/QuestionBank/AllBank.vue"),
+      // },
       // {
       //   path: "/questionbanks",
       //   component: () => import("pages/QuestionBank/index.vue"),
       // },
       {
-        path: "/questionbanks/add",
+        path: "/questionbank/add",
+        name: "questionbank-create",
         component: () => import("pages/QuestionBank/AddOrEdit.vue"),
       },
 
@@ -53,8 +61,9 @@ const routes = [
       //   path: "/question-bank-list/:id",
       //   component: () => import("pages/QuestionBank/AddOrEdit.vue"),
       // },
+
       {
-        path: "/questionbanks/:id/edit-questions",
+        path: "/questionbank/:id/edit-questions",
         name: "questionbank-questions",
         component: () => import("pages/QuestionBank/EditQuestion.vue"),
       },
@@ -71,28 +80,13 @@ const routes = [
         component: () => import("pages/Question/AddOrEdit.vue"),
       },
       {
-        path: "exam/draft",
-        component: () => import("pages/Exam/Draft/index.vue"),
+        path: "exams/:status",
+        name: "exam-list",
+        component: () => import("pages/Exam/index.vue"),
       },
       {
         path: "user-activity",
         component: () => import("pages/UserActivity.vue"),
-      },
-      {
-        path: "exam/upcoming",
-        component: () => import("pages/Exam/Upcoming/index.vue"),
-      },
-      {
-        path: "exam/completed",
-        component: () => import("pages/Exam/Completed/index.vue"),
-      },
-      {
-        path: "exam/ongoing",
-        component: () => import("pages/Exam/Ongoing/index.vue"),
-      },
-      {
-        path: "/exam/checking",
-        component: () => import("pages/Exam/Checking/index.vue"),
       },
       {
         path: "/exam/checking/:id/questions",
@@ -104,6 +98,7 @@ const routes = [
       },
       {
         path: "/exam/add",
+        name: "exam-create",
         component: () => import("pages/Exam/AddOrEdit.vue"),
       },
       {
@@ -111,58 +106,36 @@ const routes = [
         component: () => import("pages/Exam/AddOrEdit.vue"),
       },
       {
-        path: "/exam/:type/:id/attempted-users",
+        path: "/exam/:status/:id/attempted-users",
         component: () => import("pages/Exam/AttemptUserList.vue"),
       },
       {
         path: "/exam/:id/edit-questions",
         component: () => import("pages/Exam/EditQuestions.vue"),
       },
-      { path: "/Dashboard2", component: () => import("pages/Dashboard2.vue") },
       { path: "/Profile", component: () => import("pages/UserProfile.vue") },
-      { path: "/TreeTable", component: () => import("pages/TreeTable.vue") },
-      { path: "/StreetView", component: () => import("pages/StreetView.vue") },
-      { path: "/Cards", component: () => import("pages/Cards.vue") },
-      { path: "/Tables", component: () => import("pages/Tables.vue") },
-      { path: "/Contact", component: () => import("pages/Contact.vue") },
-      { path: "/Checkout", component: () => import("pages/Checkout.vue") },
-      {
-        path: "/Ecommerce",
-        component: () => import("pages/ProductCatalogues.vue"),
-      },
-      { path: "/Pagination", component: () => import("pages/Pagination.vue") },
-      { path: "/Charts", component: () => import("pages/Charts.vue") },
-      { path: "/Calendar", component: () => import("pages/Calendar.vue") },
-      { path: "/Directory", component: () => import("pages/Directory.vue") },
-      { path: "/Footer", component: () => import("pages/Footer.vue") },
-      { path: "/CardHeader", component: () => import("pages/CardHeader.vue") },
       {
         path: "/institutions",
         component: () => import("pages/Institutions.vue"),
       },
       {
-        path: "/course/draft",
-        component: () => import("pages/Course/Draft/index.vue"),
+        path: "/courses/:status",
+        name: 'course-list',
+        component: () => import("pages/Course/index.vue"),
       },
       {
-        path: "/course/published",
-        component: () => import("pages/Course/Published/index.vue"),
-      },
-      {
-        path: "/course/completed",
-        component: () => import("pages/Course/Completed/index.vue"),
+        path: "/courses/student/certificate",
+        name: 'student-certificate',
+        component: () => import("pages/Cetificate.vue"),
       },
       {
         path: "/course/add",
+        name: 'course-create',
         component: () => import("pages/Course/AddOrEdit.vue"),
       },
       {
         path: "/course/:id",
         component: () => import("pages/Course/AddOrEdit.vue"),
-      },
-      {
-        path: "/course-exams/:courseId",
-        component: () => import("pages/Course/CourseExamList.vue"),
       },
       // {
       //   path: "/course-questionbanks/:courseId",
@@ -177,18 +150,25 @@ const routes = [
         path: "/send-message",
         component: () => import("pages/SendMessage.vue"),
       },
-
       {
-        path: "/lecture-classes/:courseId",
-        component: () => import("pages/LectureClass/index.vue"),
+        path: "/class-materials/:status",
+        name: 'classmaterial-list',
+        component: () => import("pages/ClassMaterial/index.vue"),
       },
       {
-        path: "/lecture-classes/:courseId/add",
-        component: () => import("pages/LectureClass/AddOrEdit.vue"),
+        path: "/class-material/add",
+        name: 'classmaterial-create',
+        component: () => import("pages/ClassMaterial/AddOrEdit.vue"),
+      },
+      {
+        path: "/class-material/:id/edit",
+        name: 'classmaterial-edit',
+        component: () => import("pages/ClassMaterial/AddOrEdit.vue"),
       },
 
       {
         path: "/subscribe-user/:courseId",
+        name: 'course-users',
         component: () => import("pages/Course/EnrolledUser.vue"),
       },
 
@@ -226,21 +206,9 @@ const routes = [
     component: () => import("pages/Maintenance.vue"),
   },
   {
-    path: "/Pricing",
-    component: () => import("pages/Pricing.vue"),
-  },
-  {
     path: "/Login",
     name: "Login",
     component: () => import("src/pages/Login.vue"),
-  },
-  {
-    path: "/Lock",
-    component: () => import("pages/LockScreen.vue"),
-  },
-  {
-    path: "/Lock-2",
-    component: () => import("pages/LockScreen-2.vue"),
   },
 ];
 

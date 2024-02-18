@@ -3,21 +3,13 @@
     <q-card class="no-shadow" bordered>
       <!-- add edit header with submit and reset buttons on right -->
       <q-card-section class="row items-center justify-between">
-        <div class="text-h6">Edit Student Profile</div>
+        <div class="text-h6">Generate Student Report</div>
         <div class="row">
           <q-btn
-            label="Submit"
-            type="submit"
-            color="primary"
-            form="studentForm"
-          />
-          <q-btn
-            label="Reset"
-            type="reset"
-            color="primary"
-            flat
-            class="q-ml-sm"
-            form="studentForm"
+            class="float-right text-capitalize text-indigo-8 shadow-3"
+            icon="picture_as_pdf"
+            @click="reportDialog=true"
+            label="Generate Report"
           />
         </div>
       </q-card-section>
@@ -38,10 +30,16 @@
               <div class="col-12">
                 <q-card class="no-shadow" bordered>
                   <!-- heading -->
-                  <q-card-section class="row items-center justify-between">
-                    <div class="text-h6">Student Details</div>
+                  <q-card-section>
+                    <div class="text-h6 ">
+                      <span class="text-h6">Update Student Details</span>
+                      <q-btn
+                        class="float-right text-capitalize shadow-3"
+                        color="primary"
+                        label="Update"
+                      />
+                    </div>
                   </q-card-section>
-
                   <q-card-section>
                     <div class="row q-col-gutter-md">
                       <div class="col-6">
@@ -49,6 +47,7 @@
                           filled
                           v-model="studentData.name"
                           :label="`Name`"
+                          lazy-rules
                           :rules="[(val) => !!val || 'Name is required']"
                         />
                       </div>
@@ -58,6 +57,7 @@
                           filled
                           v-model="studentData.phone_number"
                           :label="`Phone Number`"
+                          lazy-rules
                           readonly
                         />
                       </div>
@@ -68,6 +68,7 @@
                           filled
                           v-model="studentData.nid"
                           :label="`NID`"
+                          lazy-rules
                           :rules="[(val) => !!val || 'NID is required']"
                         />
                       </div>
@@ -77,6 +78,7 @@
                           filled
                           v-model="studentData.date_of_birth"
                           :label="`Date of Birth`"
+                          lazy-rules
                           :rules="[
                             (val) => !!val || 'Date of Birth is required',
                           ]"
@@ -149,6 +151,9 @@
         </div>
       </div>
     </q-form>
+    <StudentExamHistorySelectDialog v-if="reportDialog" :user_id="studentData.id" @closeDialog="reportDialog=false">
+
+    </StudentExamHistorySelectDialog>
   </q-page>
 </template>
 
@@ -160,10 +165,12 @@ import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 import { useQuasar } from "quasar";
 import { useCategoryStore } from "stores/category";
+import StudentExamHistorySelectDialog from "components/StudentExamHistorySelectDialog.vue";
 
 export default defineComponent({
   name: "Edit Student Profile",
   components: {
+    StudentExamHistorySelectDialog,
     OptionCard: OptionCard,
   },
   setup() {
@@ -180,10 +187,12 @@ export default defineComponent({
     return {
       pageName: "Edit Student Profile",
       dense: true,
+      reportDialog:false,
       name: "",
       model: "",
       expanded: false,
       studentData: {
+        id:"",
         name: "",
         nid: "",
         faculty_id: "",
@@ -235,6 +244,7 @@ export default defineComponent({
             "?include=user,institution,faculty"
         )
         .then((response) => {
+          this.studentData.id = response.data.data.user.data.id;
           this.studentData.name = response.data.data.user.data.name;
           this.studentData.phone_number = response.data.data.user.data.mobile;
           this.studentData.nid = response.data.data.nid;

@@ -585,8 +585,8 @@ export default defineComponent({
               res.data.data.forEach((item) => {
                 if (
                   this.examQuestions.findIndex(
-                    (question) => question.id == item.question.data.id
-                  ) == -1
+                    (question) => question.id === item.question.data.id
+                  ) === -1
                 ) {
                   this.examQuestions.push(item.question.data);
                 }

@@ -82,7 +82,7 @@
                   <q-td key="actions" :props="props">
                     <!-- move to draft -->
                     <q-btn
-                      v-if="examType !== 'draft'"
+                      v-if="status !== 'draft'"
                       color="primary"
                       size="md"
                       icon="drafts"
@@ -101,7 +101,7 @@
                     </q-btn>
                     <!-- publish exam -->
                     <q-btn
-                      v-if="examType === 'draft'"
+                      v-if="status === 'draft'"
                       color="green"
                       size="md"
                       icon="publish"
@@ -126,7 +126,7 @@
                       round
                       dense
                       flat
-                      :to="`/exam/${examType}/${props.row.id}/attempted-users`"
+                      :to="`/exam/${status}/${props.row.id}/attempted-users`"
                     >
                       <q-tooltip
                         anchor="top middle"
@@ -144,7 +144,7 @@
                       dense
                       flat
                       :to="`/Exam/${props.row.id}`"
-                      v-if="examType==='draft'"
+                      v-if="status==='draft'"
                     >
                       <q-tooltip
                         anchor="top middle"
@@ -179,7 +179,7 @@
                       dense
                       flat
                       :to="`/exam/checking/${props.row.id}/questions`"
-                      v-if="examType === 'checking'"
+                      v-if="status === 'checking'"
                     >
                       <q-tooltip
                         anchor="top middle"
@@ -197,7 +197,7 @@
                       round
                       dense
                       flat
-                      v-if="examType === 'checking'"
+                      v-if="status === 'checking'"
                       @click="markAsCompleted(props.row.id)"
                     >
                       <q-tooltip
@@ -241,11 +241,12 @@ import { defineAsyncComponent, defineComponent, ref } from "vue";
 import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 import { useQuasar } from "quasar";
+import {useRoute} from "vue-router";
 
 export default {
   name: "ExamList",
   props: {
-    examType: {
+    status: {
       type: String,
       required: true,
     },
@@ -257,6 +258,7 @@ export default {
   },
   setup(props) {
     const store = useStore();
+    const route = useRoute();
     const { $q } = useQuasar();
     const exams = ref([]);
     const pagination = ref({
@@ -279,8 +281,8 @@ export default {
       loading.value = true;
       api
         .get(
-          `/exams?include=examConfiguration,subject,category,faculty,course&searchJoin=and&search=status:${
-            props.examType
+          `/exams?include=examConfiguration,subject,category,faculty&searchJoin=and&search=status:${
+            props.status
           }${
             filter.value.keywords.length
               ? ";title:" + filter.value.keywords
@@ -296,6 +298,10 @@ export default {
           }${
             filter.value.category && filter.value.category.length
               ? ";category_id:" + filter.value.category
+              : ""
+          }${
+            route.query.course_id?.length
+              ? ";course_id:" + route.query.course_id
               : ""
           }&orderBy=id&sortedBy=desc&page=${page}`
         )
@@ -395,13 +401,13 @@ export default {
           field: (row) => row.duration_in_minutes,
           // sortable: true,
         },
-        {
-          name: "course",
-          align: "left",
-          label: "Course",
-          field: (row) => row.course,
-          // sortable: true,
-        },
+        // {
+        //   name: "course",
+        //   align: "left",
+        //   label: "Course",
+        //   field: (row) => row.course,
+        //   // sortable: true,
+        // },
 
         {
           name: "actions",
