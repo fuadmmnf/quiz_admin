@@ -3,7 +3,7 @@
     <q-card class="no-shadow" bordered>
       <q-card-section class="row items-center justify-between">
         <div class="text-h6 text-indigo-8">
-          {{route.query.course_id?.length? "Course ": ""}} {{route.query.course_name?.length? `(${route.query.course_name.replace("%20", " ")}) -`: ""}}Question Banks
+          {{route.query.course_name?"Course : "+decodeURIComponent(route.query.course_name):''}} Question Banks
           <div class="text-subtitle2">
             List of all {{route.params.status}} question banks are shown here
           </div>

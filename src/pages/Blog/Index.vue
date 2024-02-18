@@ -11,9 +11,9 @@
         <div class="row">
           <q-btn
             color="primary"
-            label="Add Material"
+            label="Add Blog"
             icon="add"
-            :to="{name: 'blog-create', query: {course_id:  route.query.course_id?.length? route.query.course_id: ''}}"
+            :to="{name: 'blog-create', query: {course_id:  this.$route.query.course_id?.length? this.$route.query.course_id: ''}}"
           />
         </div>
       </q-card-section>
@@ -28,7 +28,7 @@
                 :columns="columns"
                 :rows="blogs"
                 :loading="loading"
-                rows-per-page-options="[10]"
+                :rows-per-page-options="[10]"
                 row-key="real_id"
                 wrap-cells
                 no-data-label="No data available"

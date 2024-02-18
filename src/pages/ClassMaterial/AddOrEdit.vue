@@ -5,7 +5,8 @@
       <q-card-section class="row items-center justify-between">
         <div>
           <div class="col-12 text-h6">Add Class Material</div>
-          <div class="text-subtitle1">{{route.query.course_id?.length? "Course ": ""}} {{route.query.course_name?.length? `(${route.query.course_name.replace("%20", " ")})`: ""}}</div>
+          <div class="text-subtitle1">
+            {{"Course : "+decodeURIComponent(route.query.course_name)}}</div>
         </div>
 
         <div class="row">

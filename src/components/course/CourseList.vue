@@ -12,7 +12,6 @@
             <SearchCourses @search="onSearch"/>
           </div>
         </q-expansion-item>
-
         <q-separator spaced=""/>
         <q-card>
           <q-card-section>

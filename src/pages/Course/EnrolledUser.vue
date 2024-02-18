@@ -4,7 +4,7 @@
       <q-card flat bordered class="my-card" style="width: 60%">
         <q-card-section>
           <div class="text-h6">Enrolled Student</div>
-          <div class="text-subtitle1">{{route.query.course_id?.length? "Course ": ""}} {{route.query.course_name?.length? `(${route.query.course_name.replace("%20", " ")})`: ""}}</div>
+          <div class="text-subtitle1">{{'Course : '+course_name}}</div>
 
         </q-card-section>
 
@@ -68,7 +68,7 @@
                 :rows="users"
                 row-key="real_id"
                 :loading="loading"
-                rows-per-page-options="[10]"
+                :rows-per-page-options="[10]"
                 wrap-cells
                 no-data-label="No data available"
                 class="shadow-0"
@@ -108,6 +108,23 @@
                           <strong class="">Delete</strong>
                         </q-tooltip>
                       </q-btn>
+                      <q-btn
+                        color="primary"
+                        size="md"
+                        icon="fact_check"
+                        round
+                        @click="generateCertificate(props.row.id)"
+                        dense
+                        flat
+                      >
+                        <q-tooltip
+                          anchor="top middle"
+                          self="bottom middle"
+                          :offset="[10, 10]"
+                        >
+                          <strong class="">Certificate</strong>
+                        </q-tooltip>
+                      </q-btn>
                       <!-- <q-btn
                         color="green"
                         size="sm"
@@ -132,6 +149,33 @@
                 </template>
               </q-table>
             </q-card-section>
+            <vue3-html2pdf
+              :show-layout="controlValue.showLayout"
+              :float-layout="controlValue.floatLayout"
+              :enable-download="controlValue.enableDownload"
+              :preview-modal="controlValue.previewModal"
+              :filename="controlValue.filename"
+              :pdf-quality="controlValue.pdfQuality"
+              :pdf-format="controlValue.pdfFormat"
+              :pdf-orientation="controlValue.pdfOrientation"
+              :pdf-content-width="controlValue.pdfContentWidth"
+              :manual-pagination="controlValue.manualPagination"
+              :paginate-elements-by-height="controlValue.paginateElementsByHeight"
+              :html-to-pdf-options="htmlToPdfOptions"
+              @progress="onProgress($event)"
+              @startPagination="startPagination()"
+              @hasPaginated="hasPaginated()"
+              @beforeDownload="beforeDownload($event)"
+              @hasDownloaded="hasDownloaded($event)"
+              ref="html2Pdf"
+            >
+              <template  v-slot:pdf-content>
+                <div v-if="certificateReport">
+                  <StudentCertificate @domRendered="domRendered()"  :data="certificateData"  >
+                  </StudentCertificate>
+                </div>
+              </template>
+            </vue3-html2pdf>
           </q-card>
         </div>
       </div>
@@ -145,9 +189,14 @@ import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
 import { useQuasar } from "quasar";
 import {useRoute} from "vue-router";
+import StudentExamHistoryReport from "components/report/StudentExamHistoryReport.vue";
+import jsPDF from "jspdf";
+import Vue3Html2pdf from "vue3-html2pdf";
+import StudentCertificate from "components/certificate/StudentCertificate.vue";
 
 export default defineComponent({
   name: "SubscribeUser",
+  components: {StudentCertificate, StudentExamHistoryReport,jsPDF,Vue3Html2pdf},
 
   setup() {
     const { $q } = useQuasar();
@@ -156,6 +205,7 @@ export default defineComponent({
     const showDialog = ref(false);
     const initialOptions = ref([]);
     const options = ref([]);
+    const course_name=ref(decodeURIComponent(route.query.course_name))
 
     const users = ref([]);
     const pagination = ref({
@@ -195,7 +245,7 @@ export default defineComponent({
         .then((response) => {
           initialOptions.value = response.data.data.map((user) => {
             return {
-              label: user.name,
+              label: `${user.name} (${user.mobile})`,
               value: user.id,
             };
           });
@@ -228,6 +278,7 @@ export default defineComponent({
       selectedStudents: ref([]),
       options,
       initialOptions,
+      course_name,
       filterFn(val, update) {
         if (val === "") {
           update(() => {
@@ -244,12 +295,30 @@ export default defineComponent({
         });
       },
     };
+
   },
   data() {
     return {
       name: "User",
       //table header
       //name , mobile , institution, action
+      certificateReport:false,
+      progress:0,
+      controlValue: {
+        showLayout: false,
+        floatLayout: true,
+        enableDownload: false,
+        previewModal: true,
+        manualPagination: true,
+        filename: 'StudentExamHistoryListReport.pdf',
+        pdfQuality: 2,
+        pdfFormat: 'a4',
+        pdfOrientation: 'portrait',
+        pdfContentWidth: '100%',
+        paginateElementsByHeight:6000
+      },
+      contentRendered: false,
+      certificateData:{},
       columns: [
         {
           name: "name",
@@ -283,6 +352,21 @@ export default defineComponent({
       ],
       //table data
     };
+  },
+  computed:{
+    htmlToPdfOptions() {
+      return {
+        margin:[200,0],
+        filename: "Certificate.pdf",
+        enableLinks: true,
+        pagebreak: { mode: ['avoid-all'] },
+        html2canvas: {
+          useCORS: true
+        },
+        jsPDF:{ unit: 'px',
+          hotfixes :["px_scaling"]}
+      };
+    },
   },
 
   methods: {
@@ -350,6 +434,107 @@ export default defineComponent({
         .onCancel(() => {
           console.log(">>>> Cancel");
         });
+    },
+
+    async generateCertificate (courseUserId) {
+      const userData=this.users.find((item)=>{ return item.id===courseUserId})
+      this.certificateData={
+        user_name:userData.user.data.name,
+        course_name:this.course_name,
+      }
+      console.log(userData)
+      this.certificateReport=true
+    },
+
+    validateControlValue() {
+      if (this.controlValue.pdfQuality > 2) {
+        alert("pdf-quality value should only be 0 - 2");
+        this.controlValue.pdfQuality = 2;
+        return false;
+      }
+
+      if (!this.controlValue.paginateElementsByHeight) {
+        alert("paginate-elements-by-height value cannot be empty");
+        this.controlValue.paginateElementsByHeight = 1400;
+
+        return false;
+      }
+
+      const paperSizes = [
+        "a0",
+        "a1",
+        "a2",
+        "a3",
+        "a4",
+        "letter",
+        "legal",
+        "a5",
+        "a6",
+        "a7",
+        "a8",
+        "a9",
+        "a10",
+      ];
+
+      if (!paperSizes.includes(this.controlValue.pdfFormat)) {
+        alert(`pdf-format value should only be ${paperSizes}`);
+        this.controlValue.pdfFormat = "a4";
+        return false;
+      }
+
+      if (!this.controlValue.pdfOrientation) {
+        alert("pdf-orientation value cannot be empty");
+        this.controlValue.pdfOrientation = "portrait";
+        return false;
+      }
+
+      if (!this.controlValue.pdfContentWidth) {
+        alert("pdf-content-width value cannot be empty");
+        this.controlValue.pdfContentWidth = "100%";
+        return false;
+      }
+      return true;
+    },
+
+    onProgress(progress) {
+      this.progress = progress;
+      console.log(`PDF generation Progress: ${progress}%`)
+    },
+
+    startPagination() {
+      console.log(`PDF has started pagination`);
+    },
+
+    hasPaginated () {
+      console.log(`PDF has been paginated`)
+    },
+
+    async beforeDownload ({ html2pdf, options, pdfContent }) {
+      console.log(`On Before PDF Generation`)
+      // await html2pdf().set(options).from(pdfContent).toPdf().get('pdf').then((pdf) => {
+      //   const totalPages = pdf.internal.getNumberOfPages()
+      //   for (let i = 1; i <= totalPages; i++) {
+      //     pdf.setPage(i)
+      //     pdf.setFontSize(10)
+      //     pdf.setTextColor(150)
+      //     pdf.text('Page ' + i + ' of ' + totalPages, (pdf.internal.pageSize.getWidth() * 0.88), (pdf.internal.pageSize.getHeight() - 0.3))
+      //   }
+      // }).save()
+    },
+
+    hasDownloaded (blobPdf) {
+      console.log(`PDF has downloaded`)
+      this.certificateReport=false
+      // this.$q.loading.hide()
+      // this.pdfDownloaded = true
+      // console.log(blobPdf)
+    },
+
+    domRendered() {
+      console.log("Dom Has Rendered");
+      this.contentRendered = true;
+      if (!(this.validateControlValue())) return;
+      this.$refs.html2Pdf.generatePdf()
     },
   },
 

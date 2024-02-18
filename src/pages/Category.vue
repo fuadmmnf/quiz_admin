@@ -23,48 +23,89 @@
           </q-card>
         </div>
         <div class="col-5">
-          <q-card>
-            <q-card-section>
-              <div class="text-h6 text-indigo-8">
-                {{ isEditing ? "Edit" : "Add" }} Category
-              </div>
+          <div class="row ">
+            <div class="col-12">
+              <q-card>
+                <q-card-section>
+                  <div class="text-h6 text-indigo-8">
+                    {{ isEditing ? "Edit" : "Add" }} Category
+                  </div>
 
-              <q-form
-                @submit="onSubmit"
-                @reset="onReset"
-                class="q-gutter-md q-mt-lg"
-              >
-                <q-input
-                  outlined
-                  v-model="name"
-                  :label="`Category name *`"
-                  :hint="`Category name must be unique`"
-                  :rules="[(val) => !!val || 'Field is required']"
-                />
+                  <q-form
+                    @submit="onSubmit"
+                    @reset="onReset"
+                    class="q-gutter-md q-mt-lg"
+                  >
+                    <q-input
+                      outlined
+                      v-model="name"
+                      :label="`Category name *`"
+                      :hint="`Category name must be unique`"
+                      :rules="[(val) => !!val || 'Field is required']"
+                    />
 
-                <q-select
-                  outlined
-                  option-label="name"
-                  option-value="id"
-                  v-model="selectedParentCategory"
-                  :options="allCategories"
-                  :label="`Parent Category`"
-                  map-options
-                  emit-value
-                />
-                <div>
-                  <q-btn label="Submit" type="submit" color="primary" />
-                  <q-btn
-                    label="Reset"
-                    type="reset"
-                    color="primary"
-                    flat
-                    class="q-ml-sm"
-                  />
-                </div>
-              </q-form>
-            </q-card-section>
-          </q-card>
+                    <q-select
+                      outlined
+                      option-label="name"
+                      option-value="id"
+                      v-model="selectedParentCategory"
+                      :options="allCategories"
+                      :label="`Parent Category`"
+                      map-options
+                      emit-value
+                    />
+                    <div>
+                      <q-btn label="Submit" type="submit" color="primary" />
+                      <q-btn
+                        label="Reset"
+                        type="reset"
+                        color="primary"
+                        flat
+                        class="q-ml-sm"
+                      />
+                    </div>
+                  </q-form>
+                </q-card-section>
+              </q-card>
+            </div>
+            <div class="col-12 q-mt-lg">
+              <q-card>
+                <q-card-section>
+                  <div class="text-h6 text-grey-8">
+                    Top Tags
+                    <q-btn
+                      class="float-right text-capitalize text-indigo-8 shadow-3"
+                      icon="bookmark"
+                      @click="updateTags"
+                      label="Update Tags"
+                    />
+                  </div>
+                </q-card-section>
+                <q-card-section>
+                    <q-select
+                      v-model="tagIds"
+                      :options="allCategories"
+                      label="Select Tag"
+                      option-label="name"
+                      option-value="id"
+                      outlined
+                      use-input
+                      multiple
+                      use-chips
+                      emit-value
+                      map-options
+                      clearable
+                      @clear="
+                            (val) => {
+                              tagIds = [];
+                            }
+                          "
+                    />
+                </q-card-section>
+              </q-card>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -91,6 +132,7 @@ export default defineComponent({
     return {
       name: ref(""),
       pageName: "Category",
+      tagIds:ref([]),
       allCategories: [],
       selectedParentCategory: ref(null),
 
@@ -111,6 +153,7 @@ export default defineComponent({
       api
         .get("/categories/category?limit=0")
         .then((response) => {
+          console.log(response.data.data)
           this.allCategories = response.data.data.map((c) => {
             c.children = c.children.data !== undefined ? c.children.data : [];
             return c;
@@ -119,6 +162,35 @@ export default defineComponent({
         .catch((error) => {
           console.log(error);
         });
+    },
+    async updateTags(){
+      try {
+        console.log(this.tagIds)
+        const response=await api.put(`/categories/tag`,{
+          category_ids:this.tagIds,
+          tag:'top'
+        });
+        this.$q.notify({
+          message: "Top Categories Updated",
+          color: "positive",
+          icon: "check",
+        });
+      }catch (error){
+
+      }
+    },
+    async getTopTags(){
+      try {
+        const response=await api.get(`/categories?search=tag:top&limit=0`);
+       if( response.data.data.length>0){
+         response.data.data.map(item=>{
+           this.tagIds.push(item.id)
+         })
+       }
+
+      }catch (error){
+
+      }
     },
     onSubmit(evt) {
       evt.preventDefault();
@@ -199,6 +271,7 @@ export default defineComponent({
   },
   mounted() {
     this.getCategories();
+    this.getTopTags()
   },
 });
 </script>

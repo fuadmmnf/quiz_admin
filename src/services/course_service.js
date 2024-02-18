@@ -12,6 +12,20 @@ export async function getCourses(params = {}) {
   }
 }
 
+
+export async function getInstution(params = {}) {
+  try {
+    const { data, status } = await api.get("/categories/institution", {
+      params,
+    });
+
+    return { data, status, error: null };
+  } catch (error) {
+    return { data: null, status: null, error };
+  }
+}
+
+
 export async function getLectureClasses(params = {}) {
   try {
     const {data, status, error} = await api.get(`/class-lectures`, {

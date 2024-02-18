@@ -7,57 +7,72 @@
       </q-card-section>
     </q-card>
     <q-separator spaced />
-
     <div class="q-pa-none">
       <div class="row q-col-gutter-md">
         <div class="col-7">
           <q-card>
             <q-card-section>
-              <q-table
-                :columns="columns"
-                :rows="institutions"
-                :loading="loading"
-                wrap-cells
-                no-data-label="No data available"
-                class="shadow-0"
-                @request="onRequest"
+              <q-tabs
+                v-model="tab"
+                dense
+                class="text-grey"
+                active-color="primary"
+                indicator-color="primary"
+                align="justify"
+                narrow-indicator
               >
-                <!-- table data -->
-                <template v-slot:body="props">
-                  <q-tr :props="props">
-                    <q-td key="name" :props="props">
-                      {{ props.row.name }}
-                    </q-td>
-                    <q-td key="address" :props="props">
-                      {{
-                        props.row.additional_info !== null
-                          ? props.row.additional_info.address
-                          : null
-                      }}
-                    </q-td>
-                    <q-td key="actions" :props="props">
-                      <q-btn
-                        @click="editInstitution(props.row)"
-                        icon="edit"
-                        size="sm"
-                        flat
-                        dense
-                        round
-                        color="primary"
-                      ></q-btn>
-                      <q-btn
-                        color="red"
-                        size="md"
-                        icon="delete"
-                        round
-                        dense
-                        flat
-                        @click="deleteInstitute(props.row.id)"
-                      />
-                    </q-td>
-                  </q-tr>
-                </template>
-              </q-table>
+                <q-tab name="institution" label="Institution" @click="fetchInstitutions()"/>
+                <q-tab name="custom" label="Custom" @click="fetchInstitutions()" />
+              </q-tabs>
+            </q-card-section>
+            <q-card-section>
+              <q-tab-panel name="institution">
+                <q-table
+                  :columns="columns"
+                  :rows="institutions"
+                  :loading="loading"
+                  wrap-cells
+                  no-data-label="No data available"
+                  class="shadow-0"
+                  @request="onRequest"
+                >
+                  <!-- table data -->
+                  <template v-slot:body="props">
+                    <q-tr :props="props">
+                      <q-td key="name" :props="props">
+                        {{ props.row.name }}
+                      </q-td>
+                      <q-td key="address" :props="props">
+                        {{
+                          props.row.additional_info !== null
+                            ? props.row.additional_info.address
+                            : null
+                        }}
+                      </q-td>
+                      <q-td key="actions" :props="props">
+                        <q-btn
+                          @click="editInstitution(props.row)"
+                          icon="edit"
+                          size="sm"
+                          flat
+                          dense
+                          round
+                          color="primary"
+                        ></q-btn>
+                        <q-btn
+                          color="red"
+                          size="md"
+                          icon="delete"
+                          round
+                          dense
+                          flat
+                          @click="deleteInstitute(props.row.id)"
+                        />
+                      </q-td>
+                    </q-tr>
+                  </template>
+                </q-table>
+              </q-tab-panel>
             </q-card-section>
           </q-card>
         </div>
@@ -111,6 +126,7 @@ export default {
 
   setup() {
     const { $q } = useQuasar();
+    const tab=ref('institution');
     const pagination = ref({
       page: 1,
       rowsPerPage: 10,
@@ -119,6 +135,7 @@ export default {
     const filter = ref("");
     const loading = ref(false);
     const institutions = ref([]);
+    const customInstitutions = ref([]);
     const columns = ref([
       {
         name: "name",
@@ -144,14 +161,27 @@ export default {
     ]);
     const fetchInstitutions = (page = 1) => {
       loading.value = true;
-      api
-        .get("/categories/institution")
-        .then((response) => {
-          institutions.value = response.data.data;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      if(tab.value === 'custom'){
+        api
+          .get("/students/institutions/custom")
+          .then((response) => {
+            console.log(response)
+            customInstitutions.value = response.data.data;
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+
+      }else{
+        api
+          .get("/categories/institution")
+          .then((response) => {
+            institutions.value = response.data.data;
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
 
       loading.value = false;
     };
@@ -169,6 +199,7 @@ export default {
       fetchInstitutions,
       onRequest,
       $q,
+      tab
     };
   },
   data() {
