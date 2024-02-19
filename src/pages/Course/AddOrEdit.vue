@@ -110,13 +110,27 @@
                     </div>
                     <div class="row q-col-gutter-md">
                       <div class="col-6">
-                        <div class="col-6">
-                          <q-input
-                            filled
-                            v-model="courseData.photo"
-                            :label="`Course Cover Image Link`"
-                          />
-                        </div>
+                        <q-file
+                          filled
+                          bottom-slots
+                          v-model="photo"
+                          label="Course Photo"
+                          counter
+                          lazy-rules
+                          @change="handleFileChange"
+                        >
+                          <template v-slot:prepend>
+                            <q-icon name="cloud_upload" @click.stop.prevent />
+                          </template>
+                          <template v-slot:append>
+                            <q-icon
+                              name="close"
+                              @click.stop.prevent="photo= null"
+                              class="cursor-pointer"
+                            />
+                          </template>
+                          <template v-slot:hint> Field hint </template>
+                        </q-file>
                       </div>
                       <div class="col-6">
                         <q-input
@@ -265,6 +279,7 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const {$q} = useQuasar();
+
     return {
       $q,
     };
@@ -275,6 +290,7 @@ export default defineComponent({
       dense: true,
       name: "",
       model: "",
+      photo:ref(null),
       expanded: false,
       courseData: initCourseData(),
       subjectOptions: [],
@@ -282,12 +298,24 @@ export default defineComponent({
     };
   },
   methods: {
-    onSubmit() {
+    handleFileChange(event)  {
+      this.photo = event.target.files[0];
+    },
+    async onSubmit  () {
       console.log(this.courseData);
       if (this.$route.params.id) {
         api
           .patch(`/courses/${this.$route.params.id}`, this.courseData)
-          .then((response) => {
+          .then(async (response) => {
+            if (this.photo) {
+              const photoDataToSend = new FormData();
+              photoDataToSend.append("photo", this.photo);
+              const response2 = await api.patch(`/courses/${id}/photo`, photoDataToSend, {
+                headers: {
+                  "content-type": "multipart/form-data",
+                },
+              });
+            }
             console.log(response);
             this.$q.notify({
               message: "Course updated Successfully",
@@ -304,7 +332,17 @@ export default defineComponent({
       } else {
         api
           .post("/courses", this.courseData)
-          .then((response) => {
+          .then(async (response) => {
+            const id = response.data.data.id
+            if(this.photo){
+              const photoDataToSend = new FormData();
+              photoDataToSend.append("photo", this.photo);
+              const response2 = await api.patch(`/courses/${id}/photo`, photoDataToSend, {
+                headers: {
+                  "content-type": "multipart/form-data",
+                },
+              });
+            }
             console.log(response);
             this.$q.notify({
               message: "Course Added Successfully",
