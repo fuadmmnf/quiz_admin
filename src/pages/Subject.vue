@@ -77,15 +77,18 @@ import { defineComponent, defineAsyncComponent, ref } from "vue";
 import { useQuasar } from "quasar";
 import { useStore } from "src/stores/store";
 import {addCategory, editCategory, loadSubjects} from "src/services/category_service";
+import {useCategoryStore} from "stores/category";
 
 export default defineComponent({
   name: "Category",
   setup() {
     const store = useStore();
     const { $q } = useQuasar();
+    const categoryStore=useCategoryStore()
     return {
       store,
       $q,
+      categoryStore
     };
   },
   data() {
@@ -146,6 +149,7 @@ export default defineComponent({
           this.selectedParentSubject = null;
           this.isEditing = null;
           await this.getSubjects();
+          await this.categoryStore.loadSubjects();
         } else {
           console.error("Failed to update category. Status:", status, "Error:", error);
         }
@@ -167,6 +171,7 @@ export default defineComponent({
           this.name = "";
           this.selectedParentSubject = null;
           await this.getSubjects();
+          await this.categoryStore.loadSubjects();
         } else {
           console.error("Failed to add category. Status:", status, "Error:", error);
         }
