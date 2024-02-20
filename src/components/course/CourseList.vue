@@ -20,7 +20,7 @@
               :columns="columns"
               :rows="courses"
               row-key="real_id"
-              rows-per-page-options="[10]"
+              :rows-per-page-options="[10]"
               :loading="loading"
               wrap-cells
               no-data-label="No data available"

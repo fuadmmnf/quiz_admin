@@ -225,6 +225,23 @@
                         <strong class="">Delete Exam</strong>
                       </q-tooltip>
                     </q-btn>
+                    <q-btn
+                      color="teal"
+                      size="md"
+                      icon="content_copy"
+                      round
+                      dense
+                      flat
+                      @click="copyLink('exams/',props.row.id)"
+                    >
+                      <q-tooltip
+                        anchor="top middle"
+                        self="bottom middle"
+                        :offset="[10, 10]"
+                      >
+                        <strong class="">Copy Exam Link</strong>
+                      </q-tooltip>
+                    </q-btn>
                   </q-td>
                 </q-tr>
               </template>
@@ -240,7 +257,7 @@
 import { defineAsyncComponent, defineComponent, ref } from "vue";
 import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
-import { useQuasar } from "quasar";
+import {Notify, useQuasar} from "quasar";
 import {useRoute} from "vue-router";
 
 export default {
@@ -261,6 +278,7 @@ export default {
     const route = useRoute();
     const { $q } = useQuasar();
     const exams = ref([]);
+    const path = (process.env.DEV ? process.env.WEB_DEV_URL : process.env.WEB_BUILD_URL);
     const pagination = ref({
       page: 1,
       rowsPerPage: 10,
@@ -277,6 +295,14 @@ export default {
       filter.value = search;
       fetchExams();
     };
+    const copyLink=async (route,id)=>{
+      await navigator.clipboard.writeText(path+route+id);
+      Notify.create({
+        color: "positive",
+        icon: "check",
+        message: "Link copied to clipboard",
+      });
+    }
     const fetchExams = (page = 1) => {
       loading.value = true;
       api
@@ -335,6 +361,7 @@ export default {
       exams,
       filter,
       onSearch,
+      copyLink,
     };
   },
   mounted() {
