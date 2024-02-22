@@ -38,6 +38,7 @@
       id="blogForm"
       @reset="onReset"
       class="q-gutter-md q-mt-lg"
+      ref="blogFormRef"
     >
       <div class="q-pa-none">
         <div class="row q-col-gutter-md">
@@ -69,18 +70,30 @@
                       <div class="col-8">
                         <q-input
                           filled
-                          v-model="blogData.title"
+                          v-model.trim="blogData.title"
                           :label="`Title`"
                           :rules="[(val) => !!val || 'Title is required']"
+                          lazy-rules
+                          :error="!!errors && !!errors.title"
+                          :error-message="
+                        errors && errors.title
+                          ? errors.title[0]
+                          : ''"
                         />
                       </div>
                       <div class="col-4">
                         <!-- duration in minutes -->
                         <q-input
                           filled
-                          v-model="blogData.published_at"
+                          v-model.trim="blogData.published_at"
                           :label="`Publish Display Date`"
                           :rules="[(val) => !!val || 'Date is required']"
+                          lazy-rules
+                          :error="!!errors && !!errors.published_at"
+                          :error-message="
+                        errors && errors.published_at
+                          ? errors.published_at[0]
+                          : ''"
                         >
                           <template v-slot:append>
                             <q-icon name="event" class="cursor-pointer q-ma-md">
@@ -114,7 +127,7 @@
                       <div class="col-6">
                         <q-input
                           filled
-                          v-model="blogData.description"
+                          v-model.trim="blogData.description"
                           :label="`Blog Contents`"
                           @click="openBlogDescriptionTinyMceModal"
                           readonly
@@ -213,7 +226,7 @@
 </template>
 
 <script>
-import {defineComponent, defineAsyncComponent} from "vue";
+import {defineComponent, defineAsyncComponent, ref} from "vue";
 import {useStore} from "src/stores/store";
 import {api} from "boot/axios";
 import {useQuasar} from "quasar";
@@ -241,9 +254,13 @@ export default defineComponent({
   setup() {
     const catStore = useCategoryStore();
     const {$q} = useQuasar();
+    const blogFormRef = ref(null);
+    const errors = ref(null);
     return {
       $q,
       catStore,
+      blogFormRef,
+      errors,
     };
   },
   data() {
@@ -255,39 +272,40 @@ export default defineComponent({
     onSubmit: _.debounce(async function () {
       console.log(this.blogData);
       if (this.$route.params.id) {
-        api
-          .patch(`/blogs/${this.$route.params.id}`, this.blogData)
-          .then((response) => {
-            console.log(response);
-            this.$q.notify({
-              message: "Blog updated Successfully",
-              color: "positive",
-              icon: "check",
-            });
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-          .finally(() => {
-            this.onReset();
+        try{
+          const res = await api.patch(`/blogs/${this.$route.params.id}`, this.blogData)
+
+          this.$q.notify({
+            message: "Blog updated Successfully",
+            color: "positive",
+            icon: "check",
           });
+
+          this.onReset();
+        }catch (err){
+          if (err.response && err.response.status === 422) {
+            this.errors = err.response.data.errors;
+            console.log(err.response)
+          }
+        }
       } else {
-        api
-          .post("/blogs", this.blogData)
-          .then((response) => {
-            console.log(response);
-            this.$q.notify({
-              message: "Blog Added Successfully",
-              color: "positive",
-              icon: "check",
-            });
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-          .finally(() => {
-            this.onReset();
+        try{
+          const res = await api.post("/blogs", this.blogData)
+
+          this.$q.notify({
+            message: "Blog Added Successfully",
+            color: "positive",
+            icon: "check",
           });
+
+          this.onReset();
+        }catch(err){
+          if (err.response && err.response.status === 422) {
+            this.errors = err.response.data.errors;
+            console.log(err.response)
+          }
+        }
+
       }
     }),
     onReset() {

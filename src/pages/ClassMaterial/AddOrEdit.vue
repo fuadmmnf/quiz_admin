@@ -34,6 +34,7 @@
       id="classMaterialForm"
       @reset="onReset"
       class="q-gutter-md q-mt-lg"
+      ref="classMaterialFormRef"
     >
       <div class="q-pa-none">
         <!-- card with two columns-->
@@ -66,9 +67,15 @@
               <div class="col-6">
                 <q-input
                   filled
-                  v-model="classMaterialData.title"
+                  v-model.trim="classMaterialData.title"
                   :label="`Title`"
                   :rules="[(val) => !!val || 'Title is required']"
+                  lazy-rules
+                  :error="!!errors && !!errors.title"
+                  :error-message="
+                        errors && errors.title
+                          ? errors.title[0]
+                          : ''"
                 />
               </div>
               <div class="col-6">
@@ -93,7 +100,7 @@
               <q-input
                 class="col-12"
                 filled
-                v-model="classMaterialData.description"
+                v-model.trim="classMaterialData.description"
                 :label="`Lecture Description`"
                 @click="openmaterialDescriptionTinyMceModal"
                 readonly
@@ -145,7 +152,7 @@
                 <!-- duration in minutes -->
                 <q-input
                   filled
-                  v-model="classMaterialData.time"
+                  v-model.trim="classMaterialData.time"
                   :label="`Time`"
                 >
                   <template v-slot:append>
@@ -199,7 +206,7 @@
               <div class="col-8">
                 <q-input
                   filled
-                  v-model="classMaterialData.link"
+                  v-model.trim="classMaterialData.link"
                   :label="`Link`"
                   hint="https://example.com"
                 />
@@ -254,11 +261,15 @@ export default defineComponent({
     const route = useRoute();
     const {$q} = useQuasar();
     const courseId = ref("");
+    const classMaterialFormRef = ref(null);
+    const errors = ref(null);
     return {
       courseId,
       $q,
       route,
       categoryStore,
+      classMaterialFormRef,
+      errors,
     };
   },
   data() {
@@ -270,34 +281,42 @@ export default defineComponent({
   methods: {
     onSubmit: _.debounce(async function () {
       if (this.$route.params.id) {
-        api
-          .patch(`/class-materials/${this.$route.params.id}`, this.classMaterialData)
-          .then((response) => {
-            console.log(response);
+       try{
+         const res = await api.patch(`/class-materials/${this.$route.params.id}`, this.classMaterialData)
+
+         this.$q.notify({
+           message: "Class Lecture updated Successfully",
+           color: "positive",
+           icon: "check",
+         });
+
+         this.onReset();
+       }catch(err){
+         if (err.response && err.response.status === 422) {
+           this.errors = err.response.data.errors;
+           console.log(err.response)
+         }
+       }
+
+      } else {
+        try{
+          const {data, status, error} = await createClassMaterial(this.classMaterialData);
+
+          if (status === 201) {
             this.$q.notify({
-              message: "Class Lecture updated Successfully",
+              message: "Class Material Added Successfully",
               color: "positive",
               icon: "check",
             });
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-          .finally(() => {
             this.onReset();
-          });
-      } else {
-        const {data, status, error} = await createClassMaterial(this.classMaterialData);
-
-        if (status === 201) {
-          this.$q.notify({
-            message: "Class Material Added Successfully",
-            color: "positive",
-            icon: "check",
-          });
-          this.onReset();
-        } else {
-          console.error(error);
+          } else {
+            console.error(error);
+          }
+        }catch(err){
+          if (err.response && err.response.status === 422) {
+            this.errors = err.response.data.errors;
+            console.log(err.response)
+          }
         }
       }
     }, 2500),

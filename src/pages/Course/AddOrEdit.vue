@@ -29,6 +29,7 @@
       id="courseForm"
       @reset="onReset"
       class="q-gutter-md q-mt-lg"
+      ref="courseFormRef"
     >
       <div class="q-pa-none">
         <div class="row q-col-gutter-md">
@@ -47,15 +48,21 @@
                       <div class="col-6">
                         <q-input
                           filled
-                          v-model="courseData.title"
+                          v-model.trim="courseData.title"
                           :label="`Title`"
                           :rules="[(val) => !!val || 'Title is required']"
+                          lazy-rules
+                          :error="!!errors && !!errors.title"
+                          :error-message="
+                        errors && errors.title
+                          ? errors.title[0]
+                          : ''"
                         />
                       </div>
                       <div class="col-6">
                         <q-input
                           filled
-                          v-model="courseData.description"
+                          v-model.trim="courseData.description"
                           :label="`Course Description`"
                           @click="openCourseDescriptionTinyMceModal"
                           readonly
@@ -74,14 +81,14 @@
                       <div class="col-6">
                         <q-input
                           filled
-                          v-model="courseData.coordinator_name"
+                          v-model.trim="courseData.coordinator_name"
                           :label="`Co-ordinator Name`"
                         />
                       </div>
                       <div class="col-6">
                         <q-input
                           filled
-                          v-model="courseData.coordinator_number"
+                          v-model.trim="courseData.coordinator_number"
                           :label="`Co-ordinator Phone number`"
                         />
                       </div>
@@ -90,21 +97,33 @@
                       <div class="col-6">
                         <q-input
                           filled
-                          v-model="courseData.num_classes"
+                          v-model.trim="courseData.num_classes"
                           :label="`Number of classes`"
                           :rules="[
                             (val) => !!val || 'Number of classes is required',
                           ]"
+                          lazy-rules
+                          :error="!!errors && !!errors.num_classes"
+                          :error-message="
+                        errors && errors.num_classes
+                          ? errors.num_classes[0]
+                          : ''"
                         />
                       </div>
                       <div class="col-6">
                         <q-input
                           filled
-                          v-model="courseData.num_exams"
+                          v-model.trim="courseData.num_exams"
                           :label="`Number of exams`"
                           :rules="[
                             (val) => !!val || 'Number of exams is required',
                           ]"
+                          lazy-rules
+                          :error="!!errors && !!errors.num_exams"
+                          :error-message="
+                        errors && errors.num_exams
+                          ? errors.num_exams[0]
+                          : ''"
                         />
                       </div>
                     </div>
@@ -131,9 +150,15 @@
                         <!-- duration in minutes -->
                         <q-input
                           filled
-                          v-model="courseData.start_date"
+                          v-model.trim="courseData.start_date"
                           :label="`Start Date`"
                           :rules="[(val) => !!val || 'Start Date is required']"
+                          lazy-rules
+                          :error="!!errors && !!errors.start_date"
+                          :error-message="
+                        errors && errors.start_date
+                          ? errors.start_date[0]
+                          : ''"
                         >
                           <template v-slot:append>
                             <q-icon name="event" class="cursor-pointer q-ma-md">
@@ -165,9 +190,15 @@
                         <!-- duration in minutes -->
                         <q-input
                           filled
-                          v-model="courseData.end_date"
+                          v-model.trim="courseData.end_date"
                           :label="`End Date`"
                           :rules="[(val) => !!val || 'End Date is required']"
+                          lazy-rules
+                          :error="!!errors && !!errors.end_date"
+                          :error-message="
+                        errors && errors.end_date
+                          ? errors.end_date[0]
+                          : ''"
                         >
                           <template v-slot:append>
                             <q-icon name="event" class="cursor-pointer q-ma-md">
@@ -265,8 +296,12 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const {$q} = useQuasar();
+    const courseFormRef = ref(null);
+    const errors = ref(null);
     return {
       $q,
+      courseFormRef,
+      errors,
     };
   },
   data() {
@@ -282,42 +317,43 @@ export default defineComponent({
     };
   },
   methods: {
-    onSubmit() {
+    async onSubmit() {
       console.log(this.courseData);
       if (this.$route.params.id) {
-        api
-          .patch(`/courses/${this.$route.params.id}`, this.courseData)
-          .then((response) => {
-            console.log(response);
-            this.$q.notify({
-              message: "Course updated Successfully",
-              color: "positive",
-              icon: "check",
-            });
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-          .finally(() => {
-            this.onReset();
-          });
+      try{
+        const res = await api.patch(`/courses/${this.$route.params.id}`, this.courseData)
+
+        this.$q.notify({
+          message: "Course updated Successfully",
+          color: "positive",
+          icon: "check",
+        });
+
+        this.onReset();
+      }catch(err){
+        if (err.response && err.response.status === 422) {
+          this.errors = err.response.data.errors;
+          console.log(err.response)
+        }
+      }
       } else {
-        api
-          .post("/courses", this.courseData)
-          .then((response) => {
-            console.log(response);
-            this.$q.notify({
-              message: "Course Added Successfully",
-              color: "positive",
-              icon: "check",
-            });
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-          .finally(() => {
-            this.onReset();
-          });
+       try{
+         const res = await api.post("/courses", this.courseData)
+
+         this.$q.notify({
+           message: "Course Added Successfully",
+           color: "positive",
+           icon: "check",
+         })
+
+         this.onReset();
+       }catch(err){
+         if (err.response && err.response.status === 422) {
+           this.errors = err.response.data.errors;
+           console.log(err.response)
+         }
+       }
+
       }
     },
     onReset() {
