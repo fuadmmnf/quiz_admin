@@ -3,6 +3,10 @@ const routes = [
     path: "/",
     component: () => import("layouts/MainLayout.vue"),
     children: [
+      {
+        path: "/demo-qr-code",
+        component: () => import("pages/DemoQrCode.vue"),
+      },
       { path: "", component: () => import("pages/Dashboard.vue") },
       {
         path: "/Roles/SubAdmin",
