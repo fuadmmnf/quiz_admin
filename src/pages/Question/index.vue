@@ -305,8 +305,15 @@ export default defineComponent({
   },
   mounted() {
     this.fetchQuestions();
+    // console.log(this.getFixedImageStyle());
   },
 });
 </script>
 
-<style></style>
+<style scoped>
+td p{
+  width: 100px !important;
+  height: 100px !important;
+  background-color: blue;
+}
+</style>

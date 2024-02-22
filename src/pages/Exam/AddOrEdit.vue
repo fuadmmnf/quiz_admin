@@ -4,7 +4,9 @@
       <!-- add edit header with submit and reset buttons on right -->
       <q-card-section class="row items-center justify-between">
         <div class="col-12 text-h6">Add/Edit Exam</div>
-        <div class="text-subtitle1">{{route.query.course_id?.length? "Course ": ""}} {{route.query.course_name?.length? `(${route.query.course_name.replace("%20", " ")})`: ""}}</div>
+        <div class="text-subtitle1">{{ route.query.course_id?.length ? "Course " : "" }}
+          {{ route.query.course_name?.length ? `(${route.query.course_name.replace("%20", " ")})` : "" }}
+        </div>
 
       </q-card-section>
     </q-card>
@@ -113,6 +115,7 @@
       id="examForm"
       @reset.prevent="onReset"
       class="q-gutter-md q-mt-lg"
+      ref="examFormRef"
     >
       <div class="q-pa-none">
         <div class="row q-col-gutter-md">
@@ -149,16 +152,22 @@
                       <div class="col-6">
                         <q-input
                           filled
-                          v-model="examData.title"
+                          v-model.trim="examData.title"
                           :label="`Title`"
                           :rules="[(val) => !!val || 'Title is required']"
+                          lazy-rules
+                          :error="!!errors && !!errors.title"
+                          :error-message="
+                        errors && errors.title
+                          ? errors.title[0]
+                          : ''"
                         />
                       </div>
                       <div class="col-6">
                         <!-- duration in minutes -->
                         <q-input
                           filled
-                          v-model="examData.code"
+                          v-model.trim="examData.code"
                           :label="`Code`"
                         />
                       </div>
@@ -218,9 +227,15 @@
                       <div class="col-12">
                         <q-input
                           filled
-                          v-model="examData.visibility_start_time"
+                          v-model.trim="examData.visibility_start_time"
                           :label="`Start Time`"
                           :rules="[(val) => !!val || 'Start time is required']"
+                          lazy-rules
+                          :error="!!errors && !!errors.visibility_start_time"
+                          :error-message="
+                        errors && errors.visibility_start_time
+                          ? errors.visibility_start_time[0]
+                          : ''"
                         >
                           <template v-slot:append>
                             <q-icon name="event" class="cursor-pointer q-ma-md">
@@ -274,9 +289,15 @@
                       <div class="col-12">
                         <q-input
                           filled
-                          v-model="examData.visibility_end_time"
+                          v-model.trim="examData.visibility_end_time"
                           :label="`End Time`"
                           :rules="[(val) => !!val || 'End time is required']"
+                          lazy-rules
+                          :error="!!errors && !!errors.visibility_end_time"
+                          :error-message="
+                        errors && errors.visibility_end_time
+                          ? errors.visibility_end_time[0]
+                          : ''"
                         >
                           <template v-slot:append>
                             <q-icon name="event" class="cursor-pointer q-ma-md">
@@ -332,7 +353,7 @@
                       <div class="col-12">
                         <q-input
                           filled
-                          v-model="examData.start_message"
+                          v-model.trim="examData.start_message"
                           :label="`Start Message`"
                         />
                       </div>
@@ -341,7 +362,7 @@
                       <div class="col-12">
                         <q-input
                           filled
-                          v-model="examData.end_message"
+                          v-model.trim="examData.end_message"
                           :label="`End Message`"
                         />
                       </div>
@@ -351,9 +372,15 @@
                       <div class="col-12">
                         <q-input
                           filled
-                          v-model="examData.duration_in_minutes"
+                          v-model.trim="examData.duration_in_minutes"
                           :label="`Duration in minutes`"
                           :rules="[(val) => !!val || 'Duration is required']"
+                          lazy-rules
+                          :error="!!errors && !!errors.duration_in_minutes"
+                          :error-message="
+                        errors && errors.duration_in_minutes
+                          ? errors.duration_in_minutes[0]
+                          : ''"
                         />
                       </div>
                     </div>
@@ -382,6 +409,7 @@
                           :rules="[
                             (val) => !!val || 'Display type is required',
                           ]"
+                          lazy-rules
                         />
                       </div>
                       <div class="col-6">
@@ -607,11 +635,16 @@ export default defineComponent({
     const exams = store.exams;
     const {$q} = useQuasar();
     const route = useRoute();
+    const examFormRef = ref(null);
+    const errors = ref(null);
+
     return {
       exams,
       $q,
       route,
       categoryStore,
+      examFormRef,
+      errors,
     };
   },
   data() {
@@ -649,29 +682,45 @@ export default defineComponent({
     };
   },
   methods: {
-    onSubmit: _.debounce(function () {
+    onSubmit: _.debounce(async function () {
+
       if (this.$route.params.id) {
-        api
-          .put(`/exams/${this.$route.params.id}`, this.examData)
-          .then((response) => {
-            this.$q.notify({
-              message: "Exam Updated Successfully",
-              color: "positive",
-              icon: "check",
-            });
-            // this.$router.push("/Exams");
-          });
+       try{
+         const response = await api.put(`/exams/${this.$route.params.id}`, this.examData)
+
+         this.$q.notify({
+           message: "Exam Updated Successfully",
+           color: "positive",
+           icon: "check",
+         })
+         // this.$router.push("/Exams");
+       }catch(err){
+         if (err.response && err.response.status === 422) {
+           this.errors = err.response.data.errors;
+           console.log(err.response)
+         }
+       }
+
       } else {
-        api.post("/exams", this.examData).then((response) => {
+        try {
+          const res = await api.post("/exams", this.examData)
+
           this.$q.notify({
             message: "Exam Added Successfully",
             color: "positive",
             icon: "check",
-          });
-          this.onReset();
-        });
+          })
+          this.onReset()
+
+        } catch (err) {
+          if (err.response && err.response.status === 422) {
+            this.errors = err.response.data.errors;
+            console.log(err.response)
+          }
+        }
       }
     }, 2000),
+
     onReset() {
       this.examData = initExamData();
       if (this.route.query.course_id?.length > 0) {
