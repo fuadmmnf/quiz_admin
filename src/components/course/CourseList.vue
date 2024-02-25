@@ -270,10 +270,28 @@
                       flat
                       @click="onDelete(props.row.id)"
                     />
+                    <q-btn
+                      color="teal"
+                      size="md"
+                      icon="share"
+                      round
+                      dense
+                      flat
+                      @click="openShareDialog('course',props.row.id,'courses/')"
+                    >
+                      <q-tooltip
+                        anchor="top middle"
+                        self="bottom middle"
+                        :offset="[10, 10]"
+                      >
+                        <strong class="">Share</strong>
+                      </q-tooltip>
+                    </q-btn>
                   </q-td>
                 </q-tr>
               </template>
             </q-table>
+            <ShareLinkDialog v-if="dialog" :data="shareDialogData" @close="dialog=false"></ShareLinkDialog>
           </q-card-section>
         </q-card>
       </div>
@@ -286,6 +304,7 @@ import {defineComponent, defineAsyncComponent, ref, computed} from "vue";
 import {useStore} from "src/stores/store";
 import {api} from "boot/axios";
 import {useQuasar} from "quasar";
+import ShareLinkDialog from "components/ShareLinkDialog.vue";
 
 export default defineComponent({
   name: "CourseList",
@@ -296,6 +315,7 @@ export default defineComponent({
     },
   },
   components: {
+    ShareLinkDialog,
     SearchCourses: defineAsyncComponent(() =>
       import("src/components/course/SearchCourses.vue")
     ),
@@ -303,6 +323,12 @@ export default defineComponent({
   setup(props) {
     const {$q} = useQuasar();
     const store = useStore();
+    const dialog=ref(false)
+    const shareDialogData=ref({
+      type:'',
+      id:'',
+      path:''
+    })
     const courses = ref([]);
     const pagination = ref({
       page: 1,
@@ -311,6 +337,14 @@ export default defineComponent({
     });
     const loading = ref(true);
     const searchData = ref({keywords: ""});
+
+    const openShareDialog=(type,id,path)=>{
+      dialog.value=true
+      shareDialogData.value.type=type
+      shareDialogData.value.path=path
+      shareDialogData.value.id=id
+
+    }
 
     const fetchCourses = (page = 1) => {
       console.log(searchData.value);
@@ -352,6 +386,9 @@ export default defineComponent({
       courses,
       $q,
       searchData,
+      shareDialogData,
+      dialog,
+      openShareDialog
     };
   },
   data() {
