@@ -3,9 +3,9 @@
     <q-card class="no-shadow" bordered>
       <q-card-section class="row items-center justify-between">
         <div class="text-h6 text-indigo-8">
-          {{"Course : "+decodeURIComponent(route.query.course_name)}} Class Materials
+          {{route.query.course_name?"Course : "+decodeURIComponent(route.query.course_name):''}} Class Materials
           <div class="text-subtitle2">
-            List of {{"Course : "+decodeURIComponent(route.query.course_name)}} resources are shown here
+            List of  {{route.query.course_name?"Course : "+decodeURIComponent(route.query.course_name):''}} resources are shown here
           </div>
         </div>
         <div class="row">
@@ -108,11 +108,30 @@
                         flat
                         @click="onDelete(props.row.id)"
                       />
+                    <q-btn
+                                color="teal"
+                                size="md"
+                                icon="share"
+                                round
+                                dense
+                                flat
+                                @click="openShareDialog('class-material',props.row.id,'class-materials/')"
+                        >
+                            <q-tooltip
+                                    anchor="top middle"
+                                    self="bottom middle"
+                                    :offset="[10, 10]"
+                            >
+                                <strong class="">Share</strong>
+                            </q-tooltip>
+                        </q-btn>
+
                     </q-td>
                   </q-tr>
                 </template>
               </q-table>
             </q-card-section>
+              <ShareLinkDialog v-if="dialog" :data="shareDialogData" @close="dialog=false"></ShareLinkDialog>
           </q-card>
         </div>
       </div>
@@ -128,13 +147,28 @@ import {useQuasar} from "quasar";
 import {getLectureClasses} from "src/services/course_service";
 import {useRoute} from "vue-router";
 import {updateClassMaterialStatus} from "src/services/classmaterial_service";
+import ShareLinkDialog from "components/ShareLinkDialog.vue";
 
 export default defineComponent({
   name: "ClassMaterials",
+    components: {ShareLinkDialog},
   setup() {
     const {$q} = useQuasar();
     const store = useStore();
     const route = useRoute();
+    const dialog=ref(false)
+    const shareDialogData=ref({
+          type:'',
+          id:'',
+          path:''
+      })
+    const openShareDialog=(type,id,path)=>{
+          dialog.value=true
+          shareDialogData.value.type=type
+          shareDialogData.value.path=path
+          shareDialogData.value.id=id
+
+      }
     const classMaterials = ref([]);
     const pagination = ref({
       page: 1,
@@ -202,6 +236,9 @@ export default defineComponent({
       $q,
       searchData,
       onRequest,
+      openShareDialog,
+      dialog,
+      shareDialogData
     };
   },
   data() {

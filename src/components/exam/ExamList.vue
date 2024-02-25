@@ -21,7 +21,7 @@
               :columns="columns"
               :rows="exams"
               row-key="real_id"
-              rows-per-page-options="[10]"
+              :rows-per-page-options="[10]"
               :loading="loading"
               wrap-cells
               no-data-label="No data available"
@@ -225,12 +225,30 @@
                         <strong class="">Delete Exam</strong>
                       </q-tooltip>
                     </q-btn>
+                    <q-btn
+                      color="teal"
+                      size="md"
+                      icon="share"
+                      round
+                      dense
+                      flat
+                      @click="openShareDialog('exam',props.row.id,'exams/')"
+                    >
+                      <q-tooltip
+                        anchor="top middle"
+                        self="bottom middle"
+                        :offset="[10, 10]"
+                      >
+                        <strong class="">Share</strong>
+                      </q-tooltip>
+                    </q-btn>
                   </q-td>
                 </q-tr>
               </template>
             </q-table>
           </q-card-section>
         </q-card>
+        <ShareLinkDialog v-if="dialog" :data="shareDialogData" @close="dialog=false"></ShareLinkDialog>
       </div>
     </div>
   </div>
@@ -240,8 +258,9 @@
 import { defineAsyncComponent, defineComponent, ref } from "vue";
 import { useStore } from "src/stores/store";
 import { api } from "boot/axios";
-import { useQuasar } from "quasar";
+import {Notify, useQuasar} from "quasar";
 import {useRoute} from "vue-router";
+import ShareLinkDialog from "components/ShareLinkDialog.vue";
 
 export default {
   name: "ExamList",
@@ -252,12 +271,19 @@ export default {
     },
   },
   components: {
+    ShareLinkDialog,
     SearchExams: defineAsyncComponent(() =>
       import("src/components/exam/SearchExams.vue")
-    ),
+    )
   },
   setup(props) {
     const store = useStore();
+    const dialog=ref(false)
+    const shareDialogData=ref({
+      type:'',
+      id:'',
+      path:''
+    })
     const route = useRoute();
     const { $q } = useQuasar();
     const exams = ref([]);
@@ -277,6 +303,14 @@ export default {
       filter.value = search;
       fetchExams();
     };
+    const copyLink=async (route,id)=>{
+      await navigator.clipboard.writeText(path+route+id);
+      Notify.create({
+        color: "positive",
+        icon: "check",
+        message: "Link copied to clipboard",
+      });
+    }
     const fetchExams = (page = 1) => {
       loading.value = true;
       api
@@ -321,6 +355,13 @@ export default {
           loading.value = false;
         });
     };
+    const openShareDialog=(type,id,path)=>{
+      dialog.value=true
+      shareDialogData.value.type=type
+      shareDialogData.value.path=path
+      shareDialogData.value.id=id
+
+    }
 
     const onRequest = (props) => {
       fetchExams(props.pagination.page);
@@ -335,6 +376,10 @@ export default {
       exams,
       filter,
       onSearch,
+      copyLink,
+      shareDialogData,
+      openShareDialog,
+      dialog
     };
   },
   mounted() {

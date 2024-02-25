@@ -50,6 +50,8 @@
                           v-model="courseData.title"
                           :label="`Title`"
                           :rules="[(val) => !!val || 'Title is required']"
+                          lazy-rules
+
                         />
                       </div>
                       <div class="col-6">
