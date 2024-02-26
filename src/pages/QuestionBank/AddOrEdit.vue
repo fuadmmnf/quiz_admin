@@ -33,6 +33,7 @@
       id="questionBankForm"
       @reset="onReset"
       class="q-gutter-md q-mt-lg"
+      ref="questionBankFormRef"
     >
       <div class="q-pa-none">
         <div class="row q-col-gutter-md">
@@ -54,6 +55,12 @@
                           v-model="questionBankData.title"
                           :label="`Title`"
                           :rules="[(val) => !!val || 'Title is required']"
+                          lazy-rules
+                          :error="!!errors && !!errors.title"
+                          :error-message="
+                        errors && errors.title
+                          ? errors.title[0]
+                          : ''"
                         />
                       </div>
                       <div class="col-6">
@@ -61,6 +68,11 @@
                           filled
                           v-model="questionBankData.code"
                           :label="`Code`"
+                          :error="!!errors && !!errors.code"
+                          :error-message="
+                        errors && errors.code
+                          ? errors.code[0]
+                          : ''"
                         />
                       </div>
                     </div>
@@ -75,6 +87,11 @@
                           :options="categoryStore.getSubjectOptions"
                           emit-value
                           map-options
+                          :error="!!errors && !!errors.subject_id"
+                          :error-message="
+                        errors && errors.subject_id
+                          ? errors.subject_id[0]
+                          : ''"
                         />
                       </div>
                       <div class="col-4">
@@ -86,6 +103,11 @@
                           :options="categoryStore.getCategoryOptions"
                           emit-value
                           map-options
+                          :error="!!errors && !!errors.category_id"
+                          :error-message="
+                        errors && errors.category_id
+                          ? errors.category_id[0]
+                          : ''"
                         />
                       </div>
                       <div class="col-4">
@@ -99,6 +121,11 @@
                           :readonly="route.query.course_id?.length > 0"
                           emit-value
                           map-options
+                          :error="!!errors && !!errors.course_id"
+                          :error-message="
+                        errors && errors.course_id
+                          ? errors.course_id[0]
+                          : ''"
                         />
                       </div>
                     </div>
@@ -141,10 +168,14 @@ export default defineComponent({
     const route = useRoute();
     const categoryStore = useCategoryStore();
     const {$q} = useQuasar();
+    const questionBankFormRef = ref(null);
+    const errors = ref(null);
     return {
       $q,
       route,
       categoryStore,
+      questionBankFormRef,
+      errors
     };
   },
   data() {
@@ -156,39 +187,45 @@ export default defineComponent({
   methods: {
     onSubmit() {
       if (this.$route.params.id) {
-        api
-          .patch(`/questionbanks/${this.$route.params.id}`, this.questionBankData)
-          .then((response) => {
-            console.log(response);
+        if(this.questionBankFormRef.validate()){
+          try{
+            const res = api.patch(`/questionbanks/${this.$route.params.id}`, this.questionBankData)
+
             this.$q.notify({
               message: "Question Bank updated Successfully",
               color: "positive",
               icon: "check",
             });
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-          .finally(() => {
+
             this.onReset();
-          });
+          }catch(err){
+            if (err.response && err.response.status === 422) {
+              this.errors = err.response.data.errors;
+              console.log(err.response)
+            }
+          }
+        }
+
       } else {
-        api
-          .post("/questionbanks", this.questionBankData)
-          .then((response) => {
-            console.log(response);
+        if(this.questionBankFormRef.validate()){
+          try{
+            const res = api.post("/questionbanks", this.questionBankData)
+
             this.$q.notify({
               message: "Question Bank Added Successfully",
               color: "positive",
               icon: "check",
             });
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-          .finally(() => {
+
             this.onReset();
-          });
+          }catch(err){
+            if (err.response && err.response.status === 422) {
+              this.errors = err.response.data.errors;
+              console.log(err.response)
+            }
+          }
+        }
+
       }
     },
     onReset() {
