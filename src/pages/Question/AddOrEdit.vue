@@ -36,6 +36,7 @@
       @submit.prevent="onSubmit()"
       @reset="onReset"
       class="q-gutter-md q-mt-lg"
+      ref="questionFormRef"
     >
       <div class="q-pa-none">
         <div class="row q-col-gutter-md">
@@ -76,6 +77,11 @@
                             lazy-rules
                             emit-value
                             map-options
+                            :error="!!errors && !!errors.type"
+                            :error-message="
+                        errors && errors.type
+                          ? errors.type[0]
+                          : ''"
                           />
                           <q-input
                             filled
@@ -86,6 +92,11 @@
                             :rules="[(val) => !!val || 'Content is required']"
                             lazy-rules
                             readonly
+                            :error="!!errors && !!errors.content"
+                            :error-message="
+                        errors && errors.content
+                          ? errors.content[0]
+                          : ''"
                           >
                             <template v-slot:append>
                               <tiny-mce-modal
@@ -114,6 +125,11 @@
                                 clearable
                                 @update:model-value="(val) => {onCategorySelect(val, index)}"
                                 @clear="(val) => {question.selected_category = null}"
+                                :error="!!errors && !!errors.selected_category"
+                                :error-message="
+                        errors && errors.selected_category
+                          ? errors.selected_category[0]
+                          : ''"
 
                               />
                             </div>
@@ -131,6 +147,11 @@
                                 emit-value
                                 clearable
                                 @clear="(val) => {question.category_id = null}"
+                                :error="!!errors && !!errors.category_id"
+                                :error-message="
+                        errors && errors.category_id
+                          ? errors.category_id[0]
+                          : ''"
                               />
                             </div>
                           </div>
@@ -152,6 +173,11 @@
                                 clearable
                                 @update:model-value="(val) => {onSubjectSelect(val, index)}"
                                 @clear="(val) => {question.selected_subject = null}"
+                                :error="!!errors && !!errors.selected_subject"
+                                :error-message="
+                        errors && errors.selected_subject
+                          ? errors.selected_subject[0]
+                          : ''"
 
                               />
                             </div>
@@ -169,6 +195,11 @@
                                 emit-value
                                 clearable
                                 @clear="(val) => {question.subject_id = null}"
+                                :error="!!errors && !!errors.subject_id"
+                                :error-message="
+                        errors && errors.subject_id
+                          ? errors.subject_id[0]
+                          : ''"
                               />
                             </div>
                           </div>
@@ -183,6 +214,11 @@
                                 label="Score"
                                 lazy-rules
                                 :rules="[(val) => !!val || 'Score is required']"
+                                :error="!!errors && !!errors.score"
+                                :error-message="
+                        errors && errors.score
+                          ? errors.score[0]
+                          : ''"
                               />
                             </div>
                             <div class="col-6">
@@ -195,6 +231,11 @@
                                   (val) =>
                                     !!val || 'Negative marks is required',
                                 ]"
+                                :error="!!errors && !!errors.unit_negative_mark"
+                                :error-message="
+                        errors && errors.unit_negative_mark
+                          ? errors.unit_negative_mark[0]
+                          : ''"
                               />
                             </div>
                           </div>
@@ -267,6 +308,11 @@
                                   :key="idx"
                                   :name="`content${idx}`"
                                   :id="`content${idx}`"
+                                  :error="!!errors && !!errors.content"
+                                  :error-message="
+                        errors && errors.content
+                          ? errors.content[0]
+                          : ''"
                                 >
                                 </q-input>
                                 <q-input
@@ -283,6 +329,11 @@
                                     )
                                   "
                                   readonly
+                                  :error="!!errors && !!errors.explanation"
+                                  :error-message="
+                        errors && errors.explanation
+                          ? errors.explanation[0]
+                          : ''"
                                 >
                                   <template v-slot:append>
                                     <tiny-mce-modal
@@ -358,6 +409,12 @@
                                   :name="`content${idx}`"
                                   :id="`content${idx}`"
                                   readonly
+                                  lazy-rules
+                                  :error="!!errors && !!errors.content"
+                                  :error-message="
+                        errors && errors.content
+                          ? errors.content[0]
+                          : ''"
                                 >
                                   <template v-slot:append>
                                     <tiny-mce-modal
@@ -377,6 +434,12 @@
                                   :name="`negative_mark${idx}`"
                                   :id="`negative_mark${idx}`"
                                   lazy-rules
+                                  :error="!!errors && !!errors.negative_mark"
+                                  :error-message="
+                        errors && errors.negative_mark
+                          ? errors.negative_mark[0]
+                          : ''"
+
                                 />
                                 <!-- same row + delete button-->
                                 <div class="row">
@@ -434,7 +497,7 @@
 
 <script>
 import OptionCard from "src/components/question/OptionCard.vue";
-import {defineAsyncComponent, defineComponent} from "vue";
+import {defineAsyncComponent, defineComponent, ref} from "vue";
 import {useStore} from "src/stores/store";
 import {api} from "boot/axios";
 import {useQuasar} from "quasar";
@@ -456,10 +519,14 @@ export default defineComponent({
     const store = useStore();
     const categoryStore = useCategoryStore();
     const {$q} = useQuasar();
+    const questionFormRef = ref(null);
+    const errors = ref(null);
     return {
       $q,
       store,
       categoryStore,
+      questionFormRef,
+      errors
     };
   },
   data() {
@@ -677,11 +744,11 @@ export default defineComponent({
         ];
       }
       if (this.question_id) {
-        // add id to questions
-        this.questions[0].id = this.question_id;
-        api
-          .put(`/questions/${this.question_id}`, this.questions[0])
-          .then((response) => {
+        if(this.questionFormRef.validate()){
+          try{
+            // add id to questions
+            this.questions[0].id = this.question_id;
+            const res = api.put(`/questions/${this.question_id}`, this.questions[0])
 
             this.$q.notify({
               message: "Question Updated Successfully",
@@ -689,34 +756,55 @@ export default defineComponent({
               icon: "check",
             });
             // this.$router.push("/question");
-          });
+          }catch(err){
+            if (err.response && err.response.status === 422) {
+              this.errors = err.response.data.errors;
+              console.log(err.response)
+            }
+          }
+        }
+
       } else {
         if (this.questions[0].type === "multilayered-type-1") {
           this.questions[0].options = [];
           this.questions[0].content = "";
           console.log(this.questions);
-          api
-            .post("/questions/multilayered", {questions: this.questions})
-            .then((response) => {
-              if (response.status === 201) {
-                this.$q.notify({
-                  message: "Question Added Successfully",
-                  color: "positive",
-                  icon: "check",
-                });
-                this.onContentReset();
-              }
-            })
-            .catch((error) => {
+          if(this.questionFormRef.validate()){
+            try{
+              const res = api.post("/questions/multilayered", {questions: this.questions})
+
               this.$q.notify({
-                message: "Something went wrong",
-                color: "negative",
-                icon: "warning",
+                message: "Question Added Successfully",
+                color: "positive",
+                icon: "check",
               });
-            });
+              this.onContentReset();
+
+
+              // .catch((error) => {
+              //   this.$q.notify({
+              //     message: "Something went wrong",
+              //     color: "negative",
+              //     icon: "warning",
+              //   });
+            }catch(err){
+                this.$q.notify({
+                  message: "Something went wrong",
+                  color: "negative",
+                  icon: "warning",})
+
+              if (err.response && err.response.status === 422) {
+                this.errors = err.response.data.errors;
+                console.log(err.response)
+              }
+            }
+          }
+
         } else {
-          api.post("/questions", this.questions[0]).then((response) => {
-            if (response.status === 201) {
+          if(this.questionFormRef.validate()){
+            try{
+              const res = api.post("/questions", this.questions[0])
+
               this.$q.notify({
                 message: "Question Added Successfully",
                 color: "positive",
@@ -725,11 +813,16 @@ export default defineComponent({
               this.questions = [...origQuestions];
 
               this.onContentReset();
-            }
+            }catch(err){
+              this.questions = [...origQuestions];
 
-          }).catch(e => {
-            this.questions = [...origQuestions];
-          });
+              if (err.response && err.response.status === 422) {
+                this.errors = err.response.data.errors;
+                console.log(err.response)
+              }
+            }
+          }
+
         }
       }
       this.questions = [...origQuestions];
