@@ -60,6 +60,11 @@
                               classMaterialData.course_id = null;
                             }
                           "
+                  :error="!!errors && !!errors.course_id"
+                  :error-message="
+                        errors && errors.course_id
+                          ? errors.course_id[0]
+                          : ''"
                 />
               </div>
             </div>
@@ -92,6 +97,11 @@
                   lazy-rules
                   emit-value
                   map-options
+                  :error="!!errors && !!errors.type"
+                  :error-message="
+                        errors && errors.type
+                          ? errors.type[0]
+                          : ''"
                 />
               </div>
             </div>
@@ -104,6 +114,11 @@
                 :label="`Lecture Description`"
                 @click="openmaterialDescriptionTinyMceModal"
                 readonly
+                :error="!!errors && !!errors.description"
+                :error-message="
+                        errors && errors.description
+                          ? errors.description[0]
+                          : ''"
               >
                 <template v-slot: append>
                   <tiny-mce-modal
@@ -123,6 +138,11 @@
                   :options="categoryStore.getCategoryOptions"
                   emit-value
                   map-options
+                  :error="!!errors && !!errors.category_id"
+                  :error-message="
+                        errors && errors.category_id
+                          ? errors.category_id[0]
+                          : ''"
                 />
               </div>
               <div class="col-4">
@@ -133,6 +153,11 @@
                   :options="categoryStore.getSubjectOptions"
                   emit-value
                   map-options
+                  :error="!!errors && !!errors.subject_id"
+                  :error-message="
+                        errors && errors.subject_id
+                          ? errors.subject_id[0]
+                          : ''"
                 />
               </div>
               <div class="col-4">
@@ -143,6 +168,11 @@
                   :options="categoryStore.getFacultyOptions"
                   emit-value
                   map-options
+                  :error="!!errors && !!errors.faculty_id"
+                  :error-message="
+                        errors && errors.faculty_id
+                          ? errors.faculty_id[0]
+                          : ''"
                 />
               </div>
 
@@ -153,7 +183,14 @@
                 <q-input
                   filled
                   v-model.trim="classMaterialData.time"
+                  :rules="[val => !!val || 'Time is required']"
+                  lazy-rules
                   :label="`Time`"
+                  :error="!!errors && !!errors.time"
+                  :error-message="
+                        errors && errors.time
+                          ? errors.time[0]
+                          : ''"
                 >
                   <template v-slot:append>
                     <q-icon name="event" class="cursor-pointer q-ma-md">
@@ -209,6 +246,11 @@
                   v-model.trim="classMaterialData.link"
                   :label="`Link`"
                   hint="https://example.com"
+                  :error="!!errors && !!errors.link"
+                  :error-message="
+                        errors && errors.link
+                          ? errors.link[0]
+                          : ''"
                 />
               </div>
             </div>
@@ -281,41 +323,45 @@ export default defineComponent({
   methods: {
     onSubmit: _.debounce(async function () {
       if (this.$route.params.id) {
-       try{
-         const res = await api.patch(`/class-materials/${this.$route.params.id}`, this.classMaterialData)
+       if(this.classMaterialFormRef.validate()){
+         try{
+           const res = await api.patch(`/class-materials/${this.$route.params.id}`, this.classMaterialData)
 
-         this.$q.notify({
-           message: "Class Lecture updated Successfully",
-           color: "positive",
-           icon: "check",
-         });
+           this.$q.notify({
+             message: "Class Lecture updated Successfully",
+             color: "positive",
+             icon: "check",
+           });
 
-         this.onReset();
-       }catch(err){
-         if (err.response && err.response.status === 422) {
-           this.errors = err.response.data.errors;
-           console.log(err.response)
+           this.onReset();
+         }catch(err){
+           if (err.response && err.response.status === 422) {
+             this.errors = err.response.data.errors;
+             console.log(err.response)
+           }
          }
        }
 
       } else {
-        try{
-          const {data, status, error} = await createClassMaterial(this.classMaterialData);
+        if(this.classMaterialFormRef.validate()){
+          try{
+            const {data, status, error} = await createClassMaterial(this.classMaterialData);
 
-          if (status === 201) {
-            this.$q.notify({
-              message: "Class Material Added Successfully",
-              color: "positive",
-              icon: "check",
-            });
-            this.onReset();
-          } else {
-            console.error(error);
-          }
-        }catch(err){
-          if (err.response && err.response.status === 422) {
-            this.errors = err.response.data.errors;
-            console.log(err.response)
+            if (status === 201) {
+              this.$q.notify({
+                message: "Class Material Added Successfully",
+                color: "positive",
+                icon: "check",
+              });
+              this.onReset();
+            } else {
+              // console.error(error);
+            }
+          }catch(err){
+            if (err.response && err.response.status === 422) {
+              this.errors = err.response.data.errors;
+              console.log(err.response)
+            }
           }
         }
       }

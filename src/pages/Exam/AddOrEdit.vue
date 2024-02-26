@@ -169,6 +169,11 @@
                           filled
                           v-model.trim="examData.code"
                           :label="`Code`"
+                          :error="!!errors && !!errors.code"
+                          :error-message="
+                        errors && errors.code
+                          ? errors.code[0]
+                          : ''"
                         />
                       </div>
                     </div>
@@ -188,6 +193,11 @@
                               examData.faculty_id = null;
                             }
                           "
+                          :error="!!errors && !!errors.faculty_id"
+                          :error-message="
+                        errors && errors.facullty_id
+                          ? errors.faculty_id[0]
+                          : ''"
                         />
                       </div>
                       <div class="col-4">
@@ -204,6 +214,11 @@
                               examData.category_id = null;
                             }
                           "
+                          :error="!!errors && !!errors.category_id"
+                          :error-message="
+                        errors && errors.category_id
+                          ? errors.category_id[0]
+                          : ''"
                         />
                       </div>
                       <div class="col-4">
@@ -220,6 +235,11 @@
                               examData.subject_id = null;
                             }
                           "
+                          :error="!!errors && !!errors.subject_id"
+                          :error-message="
+                        errors && errors.subject_id
+                          ? errors.subject_id[0]
+                          : ''"
                         />
                       </div>
                     </div>
@@ -355,6 +375,11 @@
                           filled
                           v-model.trim="examData.start_message"
                           :label="`Start Message`"
+                          :error="!!errors && !!errors.start_message"
+                          :error-message="
+                        errors && errors.start_message
+                          ? errors.start_message[0]
+                          : ''"
                         />
                       </div>
                     </div>
@@ -364,6 +389,11 @@
                           filled
                           v-model.trim="examData.end_message"
                           :label="`End Message`"
+                          :error="!!errors && !!errors.end_message"
+                          :error-message="
+                        errors && errors.end_message
+                          ? errors.end_message[0]
+                          : ''"
                         />
                       </div>
                     </div>
@@ -410,6 +440,11 @@
                             (val) => !!val || 'Display type is required',
                           ]"
                           lazy-rules
+                          :error="!!errors && !!errors.examConfiguration?.question_display_type"
+                          :error-message="
+                        errors && errors.examConfiguration?.question_display_type
+                          ? errors.examConfiguration?.question_display_type[0]
+                          : ''"
                         />
                       </div>
                       <div class="col-6">
@@ -423,6 +458,11 @@
                           :options="answer_script_visibility_option"
                           emit-value
                           map-options
+                          :error="!!errors && !!errors.examConfiguration?.answer_script_visibility_time"
+                          :error-message="
+                        errors && errors.examConfiguration?.answer_script_visibility_time
+                          ? errors.examConfiguration?.answer_script_visibility_time[0]
+                          : ''"
                         />
                       </div>
                     </div>
@@ -437,6 +477,11 @@
                           :options="marks_visibility_option"
                           emit-value
                           map-options
+                          :error="!!errors && !!errors.examConfiguration?.marks_visibility_time"
+                          :error-message="
+                        errors && errors.examConfiguration?.marks_visibility_time
+                          ? errors.examConfiguration?.marks_visibility_time[0]
+                          : ''"
                         />
                       </div>
                       <div class="col-6">
@@ -449,6 +494,11 @@
                           :options="merits_visibility_option"
                           emit-value
                           map-options
+                          :error="!!errors && !!errors.examConfiguration?.merit_visibility_time"
+                          :error-message="
+                        errors && errors.examConfiguration?.merit_visibility_time
+                          ? errors.examConfiguration?.merit_visibility_time[0]
+                          : ''"
                         />
                       </div>
                     </div>
@@ -467,6 +517,12 @@
                           :rules="[
                             (val) => !!val || 'Display type is required',
                           ]"
+                          lazy-rules
+                          :error="!!errors && !!errors.examConfiguration?.question_display_type"
+                          :error-message="
+                        errors && errors.examConfiguration?.question_display_type
+                          ? errors.examConfiguration?.question_display_type[0]
+                          : ''"
                         />
                       </div>
                     </div>
@@ -583,14 +639,14 @@
 
 <script>
 import OptionCard from "src/components/question/OptionCard.vue";
-import {defineComponent, defineAsyncComponent} from "vue";
-import {ref} from "@vue/reactivity";
+import {defineComponent, defineAsyncComponent, ref} from "vue";
 import {useStore} from "src/stores/store";
 import {api} from "boot/axios";
 import {useQuasar} from "quasar";
 import _ from "lodash";
 import {useCategoryStore} from "stores/category";
 import {useRoute} from "vue-router";
+
 
 function initExamData() {
   return {
@@ -635,8 +691,8 @@ export default defineComponent({
     const exams = store.exams;
     const {$q} = useQuasar();
     const route = useRoute();
-    const examFormRef = ref(null);
     const errors = ref(null);
+    const examFormRef = ref(null);
 
     return {
       exams,
@@ -683,42 +739,47 @@ export default defineComponent({
   },
   methods: {
     onSubmit: _.debounce(async function () {
+      console.log('test',this.examFormRef, this.examData)
 
       if (this.$route.params.id) {
-       try{
-         const response = await api.put(`/exams/${this.$route.params.id}`, this.examData)
+        if(this.examFormRef.validate()){
+         try{
+           const response = await api.put(`/exams/${this.$route.params.id}`, this.examData)
 
-         this.$q.notify({
-           message: "Exam Updated Successfully",
-           color: "positive",
-           icon: "check",
-         })
-         // this.$router.push("/Exams");
-       }catch(err){
-         if (err.response && err.response.status === 422) {
-           this.errors = err.response.data.errors;
-           console.log(err.response)
-         }
-       }
+           this.$q.notify({
+             message: "Exam Updated Successfully",
+             color: "positive",
+             icon: "check",
+           })
+           // this.$router.push("/Exams");
+         }catch(err){
+           if (err.response && err.response.status === 422) {
+             this.errors = err.response.data.errors;
+             console.log(err.response)
+           }
+       }}
 
       } else {
-        try {
-          const res = await api.post("/exams", this.examData)
+        if(this.examFormRef.validate()){
+          try {
+            const res = await api.post("/exams", this.examData)
 
-          this.$q.notify({
-            message: "Exam Added Successfully",
-            color: "positive",
-            icon: "check",
-          })
-          this.onReset()
+            this.$q.notify({
+              message: "Exam Added Successfully",
+              color: "positive",
+              icon: "check",
+            })
+            this.onReset()
 
-        } catch (err) {
-          if (err.response && err.response.status === 422) {
-            this.errors = err.response.data.errors;
-            console.log(err.response)
+          } catch (err) {
+            if (err.response && err.response.status === 422) {
+              this.errors = err.response.data.errors;
+              console.log(err.response)
+            }
           }
         }
-      }
+        }
+
     }, 2000),
 
     onReset() {

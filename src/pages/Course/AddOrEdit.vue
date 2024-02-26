@@ -66,6 +66,11 @@
                           :label="`Course Description`"
                           @click="openCourseDescriptionTinyMceModal"
                           readonly
+                          :error="!!errors && !!errors.description"
+                          :error-message="
+                        errors && errors.description
+                          ? errors.description[0]
+                          : ''"
                         >
                           <template v-slot: append>
                             <tiny-mce-modal
@@ -83,6 +88,11 @@
                           filled
                           v-model.trim="courseData.coordinator_name"
                           :label="`Co-ordinator Name`"
+                          :error="!!errors && !!errors.coordinator_name"
+                          :error-message="
+                        errors && errors.coordinator_name
+                          ? errors.coordinator_name[0]
+                          : ''"
                         />
                       </div>
                       <div class="col-6">
@@ -90,6 +100,11 @@
                           filled
                           v-model.trim="courseData.coordinator_number"
                           :label="`Co-ordinator Phone number`"
+                          :error="!!errors && !!errors.coordinator_number"
+                          :error-message="
+                        errors && errors.coordinator_number
+                          ? errors.coordinator_numbere[0]
+                          : ''"
                         />
                       </div>
                     </div>
@@ -134,6 +149,11 @@
                             filled
                             v-model="courseData.photo"
                             :label="`Course Cover Image Link`"
+                            :error="!!errors && !!errors.photo"
+                            :error-message="
+                        errors && errors.photo
+                          ? errors.photo[0]
+                          : ''"
                           />
                         </div>
                       </div>
@@ -142,6 +162,11 @@
                           filled
                           v-model="courseData.intro_video"
                           :label="`Course Intro Video Link`"
+                          :error="!!errors && !!errors.intro_video"
+                          :error-message="
+                        errors && errors.intro_video
+                          ? errors.intro_video[0]
+                          : ''"
                         />
                       </div>
                     </div>
@@ -236,6 +261,11 @@
                           :options="categoryOptions"
                           emit-value
                           map-options
+                          :error="!!errors && !!errors.category_id"
+                          :error-message="
+                        errors && errors.category_id
+                          ? errors.category_id[0]
+                          : ''"
                         />
                       </div>
 
@@ -248,6 +278,11 @@
                           :options="subjectOptions"
                           emit-value
                           map-options
+                          :error="!!errors && !!errors.subject_id"
+                          :error-message="
+                        errors && errors.subject_id
+                          ? errors.subject_id[0]
+                          : ''"
                         />
                       </div>
                     </div>
@@ -320,37 +355,41 @@ export default defineComponent({
     async onSubmit() {
       console.log(this.courseData);
       if (this.$route.params.id) {
-      try{
-        const res = await api.patch(`/courses/${this.$route.params.id}`, this.courseData)
+      if(this.courseFormRef.validate()){
+        try{
+          const res = await api.patch(`/courses/${this.$route.params.id}`, this.courseData)
 
-        this.$q.notify({
-          message: "Course updated Successfully",
-          color: "positive",
-          icon: "check",
-        });
+          this.$q.notify({
+            message: "Course updated Successfully",
+            color: "positive",
+            icon: "check",
+          });
 
-        this.onReset();
-      }catch(err){
-        if (err.response && err.response.status === 422) {
-          this.errors = err.response.data.errors;
-          console.log(err.response)
+          this.onReset();
+        }catch(err){
+          if (err.response && err.response.status === 422) {
+            this.errors = err.response.data.errors;
+            console.log(err.response)
+          }
         }
       }
       } else {
-       try{
-         const res = await api.post("/courses", this.courseData)
+       if(this.courseFormRef.validate()){
+         try{
+           const res = await api.post("/courses", this.courseData)
 
-         this.$q.notify({
-           message: "Course Added Successfully",
-           color: "positive",
-           icon: "check",
-         })
+           this.$q.notify({
+             message: "Course Added Successfully",
+             color: "positive",
+             icon: "check",
+           })
 
-         this.onReset();
-       }catch(err){
-         if (err.response && err.response.status === 422) {
-           this.errors = err.response.data.errors;
-           console.log(err.response)
+           this.onReset();
+         }catch(err){
+           if (err.response && err.response.status === 422) {
+             this.errors = err.response.data.errors;
+             console.log(err.response)
+           }
          }
        }
 

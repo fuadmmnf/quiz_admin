@@ -59,6 +59,11 @@
                         :options="catStore.getCategoryOptions"
                         emit-value
                         map-options
+                        :error="!!errors && !!errors.category_id"
+                        :error-message="
+                        errors && errors.category_id
+                          ? errors.category_id[0]
+                          : ''"
                       />
                     </div>
                   </q-card-section>
@@ -131,6 +136,11 @@
                           :label="`Blog Contents`"
                           @click="openBlogDescriptionTinyMceModal"
                           readonly
+                          :error="!!errors && !!errors.description"
+                          :error-message="
+                        errors && errors.description
+                          ? errors.description[0]
+                          : ''"
                         >
                           <template v-slot: append>
                             <tiny-mce-modal
@@ -148,6 +158,11 @@
                         :label="`Author Details`"
                         @click="openBlogAuthorInfoTinyMceModal"
                         readonly
+                        :error="!!errors && !!errors.author_info"
+                        :error-message="
+                        errors && errors.author_info
+                          ? errors.author_info[0]
+                          : ''"
                       >
                         <template v-slot: append>
                           <tiny-mce-modal
@@ -272,39 +287,43 @@ export default defineComponent({
     onSubmit: _.debounce(async function () {
       console.log(this.blogData);
       if (this.$route.params.id) {
-        try{
-          const res = await api.patch(`/blogs/${this.$route.params.id}`, this.blogData)
+        if(this.blogFormRef.validate()){
+          try{
+            const res = await api.patch(`/blogs/${this.$route.params.id}`, this.blogData)
 
-          this.$q.notify({
-            message: "Blog updated Successfully",
-            color: "positive",
-            icon: "check",
-          });
+            this.$q.notify({
+              message: "Blog updated Successfully",
+              color: "positive",
+              icon: "check",
+            });
 
-          this.onReset();
-        }catch (err){
-          if (err.response && err.response.status === 422) {
-            this.errors = err.response.data.errors;
-            console.log(err.response)
+            this.onReset();
+          }catch (err){
+            if (err.response && err.response.status === 422) {
+              this.errors = err.response.data.errors;
+              console.log(err.response)
+            }
           }
         }
       } else {
-        try{
-          const res = await api.post("/blogs", this.blogData)
+       if(this.blogFormRef.validate()){
+         try{
+           const res = await api.post("/blogs", this.blogData)
 
-          this.$q.notify({
-            message: "Blog Added Successfully",
-            color: "positive",
-            icon: "check",
-          });
+           this.$q.notify({
+             message: "Blog Added Successfully",
+             color: "positive",
+             icon: "check",
+           });
 
-          this.onReset();
-        }catch(err){
-          if (err.response && err.response.status === 422) {
-            this.errors = err.response.data.errors;
-            console.log(err.response)
-          }
-        }
+           this.onReset();
+         }catch(err){
+           if (err.response && err.response.status === 422) {
+             this.errors = err.response.data.errors;
+             console.log(err.response)
+           }
+         }
+       }
 
       }
     }),
