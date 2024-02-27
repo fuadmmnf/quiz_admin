@@ -351,14 +351,6 @@ export default defineComponent({
 
     }
 
-    const openShareDialog=(type,id,path)=>{
-      dialog.value=true
-      shareDialogData.value.type=type
-      shareDialogData.value.path=path
-      shareDialogData.value.id=id
-
-    }
-
     const fetchCourses = (page = 1) => {
       console.log(searchData.value);
       loading.value = true;
