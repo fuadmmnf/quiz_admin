@@ -15,11 +15,12 @@
         <q-separator spaced=""/>
         <q-card>
           <q-card-section>
+
             <q-table
               :columns="columns"
               :rows="courses"
               row-key="real_id"
-              rows-per-page-options="[10]"
+              :rows-per-page-options="[10]"
               :loading="loading"
               wrap-cells
               no-data-label="No data available"
@@ -269,10 +270,28 @@
                       flat
                       @click="onDelete(props.row.id)"
                     />
+                    <q-btn
+                      color="teal"
+                      size="md"
+                      icon="share"
+                      round
+                      dense
+                      flat
+                      @click="openShareDialog('course',props.row.id,'courses/')"
+                    >
+                      <q-tooltip
+                        anchor="top middle"
+                        self="bottom middle"
+                        :offset="[10, 10]"
+                      >
+                        <strong class="">Share</strong>
+                      </q-tooltip>
+                    </q-btn>
                   </q-td>
                 </q-tr>
               </template>
             </q-table>
+            <ShareLinkDialog v-if="dialog" :data="shareDialogData" @close="dialog=false"></ShareLinkDialog>
           </q-card-section>
         </q-card>
       </div>
@@ -285,6 +304,7 @@ import {defineComponent, defineAsyncComponent, ref, computed} from "vue";
 import {useStore} from "src/stores/store";
 import {api} from "boot/axios";
 import {useQuasar} from "quasar";
+import ShareLinkDialog from "components/ShareLinkDialog.vue";
 
 export default defineComponent({
   name: "CourseList",
@@ -295,6 +315,7 @@ export default defineComponent({
     },
   },
   components: {
+    ShareLinkDialog,
     SearchCourses: defineAsyncComponent(() =>
       import("src/components/course/SearchCourses.vue")
     ),
@@ -302,6 +323,12 @@ export default defineComponent({
   setup(props) {
     const {$q} = useQuasar();
     const store = useStore();
+    const dialog=ref(false)
+    const shareDialogData=ref({
+      type:'',
+      id:'',
+      path:''
+    })
     const courses = ref([]);
     const pagination = ref({
       page: 1,
@@ -309,18 +336,36 @@ export default defineComponent({
       rowsNumber: 0,
     });
     const loading = ref(true);
-    const searchData = ref({keywords: ""});
+    const searchData = ref(
+      {keywords: "",
+      category: "",
+      subject: "",
+      faculty: ""
+      });
+
+    const openShareDialog=(type,id,path)=>{
+      dialog.value=true
+      shareDialogData.value.type=type
+      shareDialogData.value.path=path
+      shareDialogData.value.id=id
+
+    }
 
     const fetchCourses = (page = 1) => {
       console.log(searchData.value);
       loading.value = true;
       api
         .get(
-          `/courses?search=status:${props.status}${
-            searchData.value.keywords.length
-              ? ";title:" + searchData.value.keywords
-              : ""
-          }&searchJoin=and&orderBy=id&sortedBy=desc&page=${page}`
+          `/courses?search=status:${props.status}
+          ${searchData.value.keywords.length
+          ? ";title:" + searchData.value.keywords
+          : ""}${searchData.value.category.length
+          ? ";category_id:" + searchData.value.category
+          : ""}${searchData.value.subject.length
+          ? ";subject_id:" + searchData.value.subject
+          : ""} ${searchData.value.faculty.length
+          ? ";faculty_id:" + searchData.value.faculty
+          : ""}&searchJoin=and&orderBy=id&sortedBy=desc&page=${page}`
         )
         .then((response) => {
           console.log(`${props.status} courses`, response.data);
@@ -351,6 +396,9 @@ export default defineComponent({
       courses,
       $q,
       searchData,
+      shareDialogData,
+      dialog,
+      openShareDialog
     };
   },
   data() {
@@ -474,7 +522,7 @@ export default defineComponent({
         });
     },
     onSearch(search) {
-      this.searchData.keywords = search.keywords;
+      this.searchData = search;
       this.fetchCourses();
     },
   },

@@ -117,15 +117,18 @@ import { api } from "src/boot/axios";
 import { defineComponent, defineAsyncComponent, ref } from "vue";
 import { useQuasar } from "quasar";
 import { useStore } from "src/stores/store";
+import {useCategoryStore} from "stores/category";
 
 export default defineComponent({
   name: "Category",
   setup() {
     const store = useStore();
+    const categoryStore=useCategoryStore()
     const { $q } = useQuasar();
     return {
       store,
       $q,
+      categoryStore
     };
   },
   data() {
@@ -215,6 +218,7 @@ export default defineComponent({
             this.name = "";
             this.selectedParentCategory = null;
             this.isEditing = null;
+            this.categoryStore.loadCategories();
             this.getCategories();
           });
       } else {
@@ -233,6 +237,7 @@ export default defineComponent({
             this.name = "";
             this.selectedParentCategory = null;
             this.getCategories();
+            this.categoryStore.loadCategories();
           });
       }
     },

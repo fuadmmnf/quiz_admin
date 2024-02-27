@@ -558,7 +558,7 @@ export default defineComponent({
         .then((res) => {
           this.$q.notify({
             color: "positive",
-            message: "Question Added Successfully",
+            message: "Questions List Updated Successfully",
             icon: "check",
           });
           // this.searchResults.splice(this.searchResults.indexOf(item), 1);

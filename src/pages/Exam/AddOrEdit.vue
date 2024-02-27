@@ -607,11 +607,16 @@ export default defineComponent({
     const exams = store.exams;
     const {$q} = useQuasar();
     const route = useRoute();
+    const examFormRef = ref(null);
+    const errors = ref(null);
+
     return {
       exams,
       $q,
       route,
       categoryStore,
+      examFormRef,
+      errors
     };
   },
   data() {
@@ -662,14 +667,18 @@ export default defineComponent({
             // this.$router.push("/Exams");
           });
       } else {
-        api.post("/exams", this.examData).then((response) => {
+        try {
+         const response= api.post("/exams", this.examData)
           this.$q.notify({
             message: "Exam Added Successfully",
             color: "positive",
             icon: "check",
           });
           this.onReset();
-        });
+        }catch (error){
+
+        }
+
       }
     }, 2000),
     onReset() {

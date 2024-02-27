@@ -78,15 +78,18 @@ import { api } from "src/boot/axios";
 import { defineComponent, defineAsyncComponent, ref } from "vue";
 import { useQuasar } from "quasar";
 import { useStore } from "src/stores/store";
+import {useCategoryStore} from "stores/category";
 
 export default defineComponent({
   name: "Faculty",
   setup() {
     const store = useStore();
     const { $q } = useQuasar();
+    const categoryStore=useCategoryStore()
     return {
       $q,
       store,
+      categoryStore
     };
   },
   data() {
@@ -133,6 +136,7 @@ export default defineComponent({
             this.tableData = [];
             this.setDataList();
             this.isEditing = null;
+            this.categoryStore.loadFaculties();
           });
       } else {
         api
@@ -150,6 +154,7 @@ export default defineComponent({
             this.name = "";
             this.tableData = [];
             this.setDataList();
+            this.categoryStore.loadFaculties();
           });
       }
     },
