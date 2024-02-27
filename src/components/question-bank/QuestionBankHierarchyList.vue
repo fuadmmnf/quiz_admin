@@ -116,7 +116,24 @@
                   color="primary"
                   class="q-ml-sm"
                 >
-                  <q-tooltip>Move to Draft</q-tooltip>
+                <q-tooltip>Move to Draft</q-tooltip>
+                </q-btn>
+                <q-btn
+                    color="teal"
+                    size="md"
+                    icon="share"
+                    round
+                    dense
+                    flat
+                    @click="openShareDialog('question-bank',props.item.id,'question-bank/')"
+                >
+                  <q-tooltip
+                      anchor="top middle"
+                      self="bottom middle"
+                      :offset="[10, 10]"
+                  >
+                    <strong class="">Share</strong>
+                  </q-tooltip>
                 </q-btn>
               </td>
             </template>
@@ -186,6 +203,8 @@
         </q-card>
       </div>
     </q-dialog>
+
+    <ShareLinkDialog v-if="dialog" :data="shareDialogData" @close="dialog=false"></ShareLinkDialog>
   </div>
 </template>
 
@@ -201,8 +220,10 @@ import {
 } from "src/services/questionbank_service";
 import {useRouter, useRoute} from "vue-router";
 import {useQuasar} from "quasar";
+import ShareLinkDialog from "components/ShareLinkDialog.vue";
 
 export default {
+  components: {ShareLinkDialog},
   props: {
     status: {
       type: String,
@@ -279,6 +300,19 @@ export default {
     const parentOptions = ref([]);
     const router = useRouter();
     const route = useRoute();
+    const dialog=ref(false)
+    const shareDialogData=ref({
+      type:'',
+      id:'',
+      path:''
+    })
+    const openShareDialog=(type,id,path)=>{
+      dialog.value=true
+      shareDialogData.value.type=type
+      shareDialogData.value.path=path
+      shareDialogData.value.id=id
+
+    }
 
 
     const handleAddButtonClick = (selectedItem) => {
@@ -492,6 +526,9 @@ export default {
       totalPages,
       parentOptions,
       isSelect,
+      shareDialogData,
+      dialog,
+      openShareDialog
     };
   },
 };

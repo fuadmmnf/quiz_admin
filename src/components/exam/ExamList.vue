@@ -242,6 +242,23 @@
                         <strong class="">Share</strong>
                       </q-tooltip>
                     </q-btn>
+                    <q-btn
+                      color="warning"
+                      size="md"
+                      icon="question_answer"
+                      round
+                      dense
+                      flat
+                      :to="`/answer-script/${props.row.id}`"
+                    >
+                      <q-tooltip
+                        anchor="top middle"
+                        self="bottom middle"
+                        :offset="[10, 10]"
+                      >
+                        <strong class="">Answer Script</strong>
+                      </q-tooltip>
+                    </q-btn>
                   </q-td>
                 </q-tr>
               </template>

@@ -336,7 +336,20 @@ export default defineComponent({
       rowsNumber: 0,
     });
     const loading = ref(true);
-    const searchData = ref({keywords: ""});
+    const searchData = ref(
+      {keywords: "",
+      category: "",
+      subject: "",
+      faculty: ""
+      });
+
+    const openShareDialog=(type,id,path)=>{
+      dialog.value=true
+      shareDialogData.value.type=type
+      shareDialogData.value.path=path
+      shareDialogData.value.id=id
+
+    }
 
     const openShareDialog=(type,id,path)=>{
       dialog.value=true
@@ -351,11 +364,16 @@ export default defineComponent({
       loading.value = true;
       api
         .get(
-          `/courses?search=status:${props.status}${
-            searchData.value.keywords.length
-              ? ";title:" + searchData.value.keywords
-              : ""
-          }&searchJoin=and&orderBy=id&sortedBy=desc&page=${page}`
+          `/courses?search=status:${props.status}
+          ${searchData.value.keywords.length
+          ? ";title:" + searchData.value.keywords
+          : ""}${searchData.value.category.length
+          ? ";category_id:" + searchData.value.category
+          : ""}${searchData.value.subject.length
+          ? ";subject_id:" + searchData.value.subject
+          : ""} ${searchData.value.faculty.length
+          ? ";faculty_id:" + searchData.value.faculty
+          : ""}&searchJoin=and&orderBy=id&sortedBy=desc&page=${page}`
         )
         .then((response) => {
           console.log(`${props.status} courses`, response.data);
@@ -512,7 +530,7 @@ export default defineComponent({
         });
     },
     onSearch(search) {
-      this.searchData.keywords = search.keywords;
+      this.searchData = search;
       this.fetchCourses();
     },
   },
