@@ -312,7 +312,7 @@ export default defineComponent({
             if (this.photo) {
               const photoDataToSend = new FormData();
               photoDataToSend.append("photo", this.photo);
-              const response2 = await api.patch(`/courses/${id}/photo`, photoDataToSend, {
+              const response2 = await api.patch(`/courses/${this.$route.params.id}/photo`, photoDataToSend, {
                 headers: {
                   "content-type": "multipart/form-data",
                 },

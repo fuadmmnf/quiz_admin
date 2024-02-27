@@ -8,7 +8,8 @@ const routes = [
         component: () => import("pages/DemoQrCode.vue"),
       },
       {
-        path: "/answer-script",
+        path: "/answer-script/:exam_id",
+        name: 'answer-script',
         component: () => import("components/exam/AnswerScript.vue"),
       },
       { path: "", component: () => import("pages/Dashboard.vue") },

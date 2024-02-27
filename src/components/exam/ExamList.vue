@@ -249,6 +249,7 @@
                       round
                       dense
                       flat
+                      :to="`/answer-script/${props.row.id}`"
                     >
                       <q-tooltip
                         anchor="top middle"

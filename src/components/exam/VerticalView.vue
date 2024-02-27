@@ -50,15 +50,20 @@ export default defineComponent({
   props: {
     examQuestions:{
       required: true,
-    }
+    },
+
+  },
+  mounted() {
+    this.$nextTick(() => {
+      setTimeout(() => {
+        this.$emit("domRendered");
+      }, 4000);
+    });
+
   },
   setup(props) {
     const questionRefs = ref([]);
     const shouldShowAnswer = true;
-    onMounted(()=>{
-      console.log("Exam Questions:")
-      console.log(props.examQuestions)
-    })
     return {
       shouldShowAnswer,
       resolveQuestionComponent,
