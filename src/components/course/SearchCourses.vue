@@ -10,7 +10,6 @@
           >
             <template v-slot:append>
               <!-- filter icon -->
-
               <q-btn
                 flat
                 round
@@ -35,6 +34,54 @@
           </q-input>
 
           <!-- filtering options div -->
+          <q-expansion-item
+            class="q-mt-sm text-grey-6"
+            v-model="expanded"
+            icon="filter_list"
+            label="Filtering Options"
+          >
+            <div class="row q-col-gutter-md q-mt-sm">
+              <div class="col-4">
+                <q-select
+                  filled
+                  v-model="searchData.category"
+                  :options="categoryStore.getCategoryOptions"
+                  :label="`Category`"
+                  lazy-rules
+                  map-options
+                  emit-value
+                  clearable
+                  @clear="searchData.category = ''"
+                />
+              </div>
+              <div class="col-4">
+                <q-select
+                  filled
+                  v-model="searchData.subject"
+                  :options="categoryStore.getSubjectOptions"
+                  :label="`Subject`"
+                  lazy-rules
+                  map-options
+                  emit-value
+                  clearable
+                  @clear="searchData.subject = ''"
+                />
+              </div>
+              <div class="col-4">
+                <q-select
+                  filled
+                  v-model="searchData.faculty"
+                  :options="categoryStore.getFacultyOptions"
+                  :label="`Faculty`"
+                  lazy-rules
+                  map-options
+                  emit-value
+                  clearable
+                  @clear="searchData.faculty = ''"
+                />
+              </div>
+            </div>
+          </q-expansion-item>
         </div>
       </div>
     </q-card-section>
@@ -43,13 +90,15 @@
 
 <script>
 import { useStore } from "src/stores/store";
+import {useCategoryStore} from "stores/category";
 
 export default {
   name: "SearchCourses",
   props: {},
   setup() {
     const store = useStore();
-    return { store };
+    const categoryStore = useCategoryStore();
+    return { store ,categoryStore};
   },
   data() {
     return {
@@ -57,6 +106,9 @@ export default {
       expanded: true,
       searchData: {
         keywords: "",
+        category: "",
+        subject: "",
+        faculty: "",
       },
     };
   },
@@ -67,6 +119,9 @@ export default {
     onReset() {
       this.searchData = {
         keywords: "",
+        category: "",
+        subject: "",
+        faculty: "",
       };
       this.$emit("search", this.searchData);
     },

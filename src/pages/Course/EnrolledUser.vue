@@ -206,7 +206,6 @@ export default defineComponent({
     const initialOptions = ref([]);
     const options = ref([]);
     const course_name=ref(decodeURIComponent(route.query.course_name))
-
     const users = ref([]);
     const pagination = ref({
       page: 1,
