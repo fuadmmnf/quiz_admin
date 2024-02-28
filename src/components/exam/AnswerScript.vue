@@ -64,7 +64,7 @@ export default {
       controlValue: {
         showLayout: false,
         floatLayout: false,
-        enableDownload: false,
+        enableDownload: true,
         previewModal: false,
         manualPagination: true,
         filename: 'AnswerScriptReport.pdf',
@@ -80,7 +80,6 @@ export default {
   computed:{
     htmlToPdfOptions() {
       return {
-        margin:5,
         filename: "AnswerScript.pdf",
         enableLinks: true,
         pagebreak: { mode: ['avoid-all'] },
@@ -96,6 +95,9 @@ export default {
   methods: {
 
     async generateAnswerScript () {
+      this.$q.loading.show({
+        message: "Answer Script Downloading in Progress",
+      });
       this.answerScriptReport=true
     },
 
@@ -178,6 +180,7 @@ export default {
     hasDownloaded (blobPdf) {
       console.log(`PDF has downloaded`)
       this.answerScriptReport=false
+      this.$q.loading.hide();
     },
 
     domRendered() {

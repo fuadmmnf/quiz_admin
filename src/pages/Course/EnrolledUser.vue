@@ -436,6 +436,9 @@ export default defineComponent({
     },
 
     async generateCertificate (courseUserId) {
+      this.$q.loading.show({
+        message: "Certificate Downloading in Progress",
+      });
       const userData=this.users.find((item)=>{ return item.id===courseUserId})
       this.certificateData={
         user_name:userData.user.data.name,
@@ -524,7 +527,7 @@ export default defineComponent({
     hasDownloaded (blobPdf) {
       console.log(`PDF has downloaded`)
       this.certificateReport=false
-      // this.$q.loading.hide()
+      this.$q.loading.hide()
       // this.pdfDownloaded = true
       // console.log(blobPdf)
     },
