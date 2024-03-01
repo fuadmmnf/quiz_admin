@@ -23,8 +23,6 @@
 
 <script>
 
-import ExamList from "src/components/exam/ExamList.vue";
-import SearchExams from "src/components/exam/SearchExams.vue";
 import {useRoute} from "vue-router";
 import CourseList from "components/course/CourseList.vue";
 

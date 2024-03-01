@@ -443,6 +443,8 @@ export default defineComponent({
       this.certificateData={
         user_name:userData.user.data.name,
         course_name:this.course_name,
+        end_date: userData.end_date,
+        start_date: userData.start_date,
       }
       console.log(userData)
       this.certificateReport=true
