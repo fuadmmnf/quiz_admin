@@ -76,11 +76,11 @@
                     filled
                     dense
                     use-input
+                    input-debounce="0"
                     multiple
                     use-chips
-                    emit-value
-                    map-options
                     clearable
+                    @filter="userFilterFn"
                     @clear="
                             (val) => {
                               noticeData.noticeable_ids = [];
@@ -97,13 +97,15 @@
                     :options="examOptions"
                     label="Select Exams"
                     filled
-                    dense
                     use-input
+                    input-debounce="0"
+                    dense
                     multiple
                     use-chips
                     emit-value
                     map-options
                     clearable
+                    @filter="examFilterFn"
                     @clear="
                             (val) => {
                               noticeData.noticeable_ids = [];
@@ -122,11 +124,13 @@
                     filled
                     dense
                     use-input
+                    input-debounce="0"
                     multiple
                     use-chips
                     emit-value
                     map-options
                     clearable
+                    @filter="courseFilterFn"
                     @clear="
                             (val) => {
                               noticeData.noticeable_ids = [];
@@ -144,11 +148,13 @@
                     filled
                     dense
                     use-input
+                    input-debounce="0"
                     multiple
                     use-chips
                     emit-value
                     map-options
                     clearable
+                    @filter="instituteFilterFn"
                     @clear="
                             (val) => {
                               noticeData.noticeable_ids = [];
@@ -242,6 +248,11 @@ export default {
     const courseOptions = ref([]);
     const instituteOptions = ref([]);
 
+    let userData = [];
+    let examData = [];
+    let courseData = [];
+    let instituteData = [];
+
     const onSubmit = _.debounce(function () {
 
       api.post("/notices", noticeData.value).then((response) => {
@@ -275,6 +286,8 @@ export default {
       },
       {deep: true}
     )
+
+
     const fetchStudents = async () => {
       const queryParams = {
         include: "user,institution,faculty",
@@ -290,7 +303,6 @@ export default {
       const {data, status, error} = await getStudents(queryParams);
 
       if (status === 200) {
-        console.log(data);
         userOptions.value = [{
           label: 'all',
           value: '*',
@@ -299,6 +311,7 @@ export default {
           value: student.user.data.id,
         }))];
 
+        userData = userOptions.value;
 
       } else {
         console.error(error.message);
@@ -317,11 +330,11 @@ export default {
       const {data, status, error} = await getExams(queryParams);
 
       if (status === 200) {
-        console.log(data);
         examOptions.value = data.data.map((exam) => ({
           label: `${exam.title} (${exam.code})`,
           value: exam.id,
         }));
+        examData = examOptions.value;
       } else {
         console.error(error.message);
       }
@@ -341,11 +354,11 @@ export default {
       const {data, status, error} = await getCourses(queryParams);
 
       if (status === 200) {
-        console.log(data);
         courseOptions.value = data.data.map((course) => ({
           label: course.title,
           value: course.id,
         }));
+        courseData = courseOptions.value
       } else {
         console.error(error.message);
       }
@@ -361,11 +374,11 @@ export default {
       const {data, status, error} = await getInstution(queryParams);
 
       if (status === 200) {
-        console.log(data);
         instituteOptions.value = data.data.map((institute) => ({
           label: institute.name,
           value: institute.id,
         }));
+        instituteData = instituteOptions.value;
       } else {
         console.error(error.message);
       }
@@ -380,6 +393,53 @@ export default {
 
     });
 
+    function userFilterFn (val, update, abort) {
+      if(val.length > 0 && val.length < 4) {
+        abort()
+        return
+      }
+
+      update(() => {
+        const needle = val.toLowerCase()
+        userOptions.value = userData.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
+      })
+    }
+
+    function examFilterFn (val, update, abort) {
+      if (val.length > 0 && val.length < 3) {
+        abort()
+        return
+      }
+
+      update(() => {
+        const needle = val.toLowerCase()
+        examOptions.value = examData.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
+      })
+    }
+
+    function courseFilterFn (val, update, abort) {
+      if (val.length > 0 && val.length < 3) {
+        abort()
+        return
+      }
+
+      update(() => {
+        const needle = val.toLowerCase()
+        courseOptions.value = courseData.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
+      })
+    }
+
+    function instituteFilterFn (val, update, abort) {
+      if (val.length > 0 && val.length < 3) {
+        abort()
+        return
+      }
+
+      update(() => {
+        const needle = val.toLowerCase()
+        instituteOptions.value = instituteData.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
+      })
+    }
 
     return {
       onSubmit,
@@ -387,7 +447,11 @@ export default {
       userOptions,
       examOptions,
       courseOptions,
-      instituteOptions
+      instituteOptions,
+      userFilterFn,
+      examFilterFn,
+      courseFilterFn,
+      instituteFilterFn,
     };
   },
 
