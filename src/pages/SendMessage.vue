@@ -79,6 +79,8 @@
                     input-debounce="0"
                     multiple
                     use-chips
+                    emit-value
+                    map-options
                     clearable
                     @filter="userFilterFn"
                     @clear="
