@@ -281,7 +281,7 @@ export default {
         orderBy: "id",
         sortedBy: "desc",
         searchJoin: "and",
-        limit: 50,
+        limit: 0,
         filter: "id;name;mobile"
 
       };
