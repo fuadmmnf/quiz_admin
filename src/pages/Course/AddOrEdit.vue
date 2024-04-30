@@ -62,10 +62,10 @@
                           @click="openCourseDescriptionTinyMceModal"
                           readonly
                         >
-                          <template v-slot: append>
+                          <template v-slot:append>
                             <tiny-mce-modal
                               ref="courseDescriptionTinyMceModal"
-                              v-model="courseData.description"
+                              :content="courseData.description"
                               @save="onDescriptionChange"
                             />
                           </template>
