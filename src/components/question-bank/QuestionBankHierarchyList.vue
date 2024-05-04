@@ -42,6 +42,7 @@
               </td>
               <td class="text-center">{{ props.item.description }}</td>
               <td class="text-center">{{ props.item.code }}</td>
+              <td class="text-center">{{ props.item.price }}</td>
               <td class="text-center">{{ props.item.subject }}</td>
               <td class="text-left">
                 <q-btn
@@ -257,6 +258,13 @@ export default {
         align: "center",
       },
       {
+        name: "Price",
+        label: "Price",
+        sortable: true,
+        field: "price",
+        align: "center",
+      },
+      {
         name: "Category",
         label: "Category",
         // sortable: true,
@@ -413,6 +421,7 @@ export default {
         label: item.title,
         description: item.status,
         code: item.code ? item.code : "null",
+        price: item.price ? item.price : "null",
         category: item.category ? item.category.data.name : "null",
         subject: item.subject ? item.subject.data.name : "null",
         course: item.course ? item.course.data.title : "null",
