@@ -6,11 +6,10 @@
     :options="options"
     :label="label"
     color="teal"
-    clearable
     option-value="id"
     option-label="name"
-    map-options
-    emit-value
+    clearable
+    @clear="model = null"
     options-selected-class="text-deep-orange"
   >
     <template v-slot:option="scope">
@@ -32,7 +31,7 @@
             map-options
             emit-value
             @click="model = child"
-            :class="{ 'bg-light-blue-1': model === child }"
+            :class="{ 'bg-light-blue-1': model?.id === child.id }"
           >
             <q-item-section>
               <q-item-label v-html="child.name" class="q-ml-md"></q-item-label>
@@ -61,23 +60,29 @@ export default {
   },
   data() {
     return {
-      model:this.initialValue
+      model: this.initialValue,
     };
   },
   watch: {
     model(newValue, oldValue) {
       if (newValue !== oldValue) {
         this.emitChange()
-        console.log("Modal "+this.model)
       }
     },
-    initialValue(newValue, oldValue){
-      if (newValue !== oldValue) {
-        this.model=this.initialValue
-        console.log("Id:"+this.initialValue)
+    initialValue(nVal, oVal){
+      if(nVal === null){
+        this.model = null
+        return
       }
-    }
 
+      let obj = this.options.reduce((acc, c) => {
+        if(c.children?.data)
+          return [...acc, c, ...c.children?.data]
+        else return [...acc, c]
+      }, []).find(c => c.id === nVal)
+      console.log(obj)
+      this.model = obj? obj: null
+    }
   },
   methods: {
     hasChild (scope) {
@@ -87,8 +92,5 @@ export default {
       this.$emit('change', this.model);
     }
   },
-  mounted() {
-    console.log(this.initialValue)
-  }
 };
 </script>

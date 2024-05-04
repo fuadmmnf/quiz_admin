@@ -100,15 +100,15 @@
                           <!-- category and subcategory in the same row -->
                           <div class="row q-col-gutter-md q-mt-sm">
                             <div class="col-6">
-                              <NestedSelectBox :initial-value="question?.category_id" label="Category" :options="categoryStore.getRawCategoryOptions" @change="(option)=>{
-                                question.category_id=option?.id
+                              <NestedSelectBox :initial-value="questions[index].category_id" label="Category" :options="categoryStore.getRawCategoryOptions" @change="(option)=>{
+                                questions[index].category_id=option?.id
                               }">
                               </NestedSelectBox>
 
                             </div>
                             <div class="col-6">
-                            <NestedSelectBox :initial-value="question?.subject_id" label="Subject" :options="categoryStore.getRawSubjectOptions" @change="(option)=>{
-                              question.subject_id=option?.id
+                            <NestedSelectBox :initial-value="questions[index].subject_id" label="Subject" :options="categoryStore.getRawSubjectOptions" @change="(option)=>{
+                              questions[index].subject_id=option?.id
                             }">
                             </NestedSelectBox>
                             </div>
@@ -494,10 +494,8 @@ export default defineComponent({
       ],
       questionData: {
         content: "",
-        selected_category: null,
         category_id: null,
-        selected_subject: null,
-        subject_id: "",
+        subject_id: null,
         parent_id: null,
         score: "",
         unit_negative_mark: "",
@@ -745,8 +743,8 @@ export default defineComponent({
       event.preventDefault();
       this.questions[0].hints.splice(idx, 1);
     },
-    processQuestion(qData, index) {
-      const question = this.questions[index];
+    processQuestion(qData, index, acc = []) {
+      const question = {...this.questionData};
       const {options, content, category_id, subject_id, type, score, unit_negative_mark} =
         qData;
 
@@ -759,6 +757,8 @@ export default defineComponent({
       //   return acc.concat(s.children.data)
       // }, []).find(sc => sc.id === subject_id)
 
+      console.log(category_id)
+      console.log(subject_id)
       const optionsData = options.data
       question.options = optionsData.filter((option) => !option.is_hint);
       question.hints = optionsData.filter((option) => option.is_hint);
@@ -773,7 +773,9 @@ export default defineComponent({
       });
       if (qData.children.data.length > 0) {
         this.questions.push({...this.questionData});
-        this.processQuestion(qData.children.data[0], index + 1);
+        return this.processQuestion(qData.children.data[0], index + 1, [...acc, question]);
+      } else {
+        return [...acc, question]
       }
     },
     openQuestionContentTinyMceModal(index) {
@@ -815,7 +817,7 @@ export default defineComponent({
 
   },
 
-  async mounted() {
+  mounted() {
     this.questions.push({...this.questionData});
     if (this.$route.params.id) {
       this.question_id = this.$route.params.id;
@@ -824,7 +826,7 @@ export default defineComponent({
           `/questions/${this.$route.params.id}?include=options,children.options`
         )
         .then((response) => {
-          this.processQuestion(response.data.data, 0);
+          this.questions = this.processQuestion(response.data.data, 0);
         });
     }
 
