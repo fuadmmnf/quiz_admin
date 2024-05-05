@@ -120,6 +120,24 @@
                 <q-tooltip>Move to Draft</q-tooltip>
                 </q-btn>
                 <q-btn
+                  class="q-mx-md"
+                  color="primary"
+                  size="md"
+                  icon="people"
+                  round
+                  dense
+                  flat
+                  :to="{name: 'questionbank-users', params: {question_bank_id: props.item.id}, query: { question_bank_name: props.item.label}}"
+                >
+                  <q-tooltip
+                    anchor="top middle"
+                    self="bottom middle"
+                    :offset="[10, 10]"
+                  >
+                    <strong class="">Enrolled users</strong>
+                  </q-tooltip>
+                </q-btn>
+                <q-btn
                     color="teal"
                     size="md"
                     icon="share"
