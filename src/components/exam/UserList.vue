@@ -25,7 +25,7 @@
             <!-- List of users -->
             <q-table
               :columns="
-                route.params.type === 'completed' ? columnsCompleted : columns
+                route.params.status === 'completed' ? columnsCompleted : columns
               "
               :rows="users"
               row-key="real_id"
@@ -69,14 +69,14 @@
                   <q-td
                     key="rank"
                     :props="props"
-                    v-if="route.params.type === 'completed'"
+                    v-if="route.params.status === 'completed'"
                   >
                     {{ props.row.rank }}
                   </q-td>
                   <q-td key="name" :props="props">
                     {{ props.row.name }}
                     {{
-                      route.params.type === "completed"
+                      route.params.status === "completed"
                         ? `(` + props.row.mobile + `)`
                         : null
                     }}
@@ -87,14 +87,14 @@
                   <q-td
                     key="correct_answers"
                     :props="props"
-                    v-if="route.params.type === 'completed'"
+                    v-if="route.params.status === 'completed'"
                   >
                     {{ props.row.correct_answers }}
                   </q-td>
                   <q-td
                     key="marks"
                     :props="props"
-                    v-if="route.params.type === 'completed'"
+                    v-if="route.params.status === 'completed'"
                   >
                     {{ props.row.marks }}
                   </q-td>
@@ -102,14 +102,14 @@
                   <q-td
                     key="attempt_time"
                     :props="props"
-                    v-if="route.params.type === 'completed'"
+                    v-if="route.params.status === 'completed'"
                   >
                     {{ props.row.attempt_time }}
                   </q-td>
                   <q-td
                     key="end_time"
                     :props="props"
-                    v-if="route.params.type === 'completed'"
+                    v-if="route.params.status === 'completed'"
                   >
                     {{ "end_time" }}
                   </q-td>
@@ -277,7 +277,7 @@ export default {
                 color: "green",
                 icon: "check",
               });
-              if (route.params.type === "completed")
+              if (route.params.status === "completed")
                 fetchCompletedUsers(pagination.value.page);
               else fetchusers(pagination.value.page);
             })
@@ -291,7 +291,7 @@ export default {
     };
 
     const onRequest = (props) => {
-      if (route.params.type === "completed")
+      if (route.params.status === "completed")
         fetchCompletedUsers(props.pagination.page);
       else fetchusers(props.pagination.page);
     };
@@ -317,13 +317,13 @@ export default {
     };
   },
   mounted() {
-    if (this.route.params.type === "completed") this.fetchCompletedUsers();
+    if (this.route.params.status === "completed") this.fetchCompletedUsers();
     else this.fetchusers();
   },
   methods: {
     onFilter() {
       console.log(this.filter);
-      if (this.route.params.type === "completed") this.fetchCompletedUsers();
+      if (this.route.params.status === "completed") this.fetchCompletedUsers();
       else this.fetchusers();
     },
   },

@@ -346,7 +346,6 @@ export default defineComponent({
       faculty: ""
       });
 
-
     const openShareDialog=(type,id,path)=>{
       dialog.value=true
       shareDialogData.value.type=type
