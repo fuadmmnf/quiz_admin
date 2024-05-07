@@ -186,9 +186,9 @@ export default {
     },
     methods: {
         async generateStudentExamHistoryReport () {
-            // this.$q.loading.show({
-            //     message: `PDF generation is in progress. Hang on...`
-            // })
+            this.$q.loading.show({
+                message: `PDF generation is in progress. Hang on...`
+            })
           this.data.columns=[
             {
               name: "title",
@@ -342,7 +342,7 @@ export default {
         hasDownloaded (blobPdf) {
             console.log(`PDF has downloaded`)
             this.report=false
-            // this.$q.loading.hide()
+            this.$q.loading.hide()
             // this.pdfDownloaded = true
             // console.log(blobPdf)
         },

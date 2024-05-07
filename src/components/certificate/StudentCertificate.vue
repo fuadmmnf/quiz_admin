@@ -15,9 +15,17 @@
               <div class="col-xs-12">
                 <div class="row">
                   <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
-                  <div class="pm-certificate-name underline margin-0 col-xs-8 text-center">
-                    <span class="pm-credits-text block bold sans q-mb-lg text-h6">This is to clarify that</span>
-                    <span class="pm-earned-text text-bold padding-0 block cursive text-h5">{{data.user_name}}</span>
+                  <div
+                    class="pm-certificate-name underline margin-0 col-xs-8 text-center"
+                  >
+                    <span
+                      class="pm-credits-text block bold sans q-mb-lg text-h6"
+                    >This is to clarify that</span
+                    >
+                    <span
+                      class="pm-earned-text text-bold padding-0 block cursive text-h5"
+                    >{{ data.user_name }}</span
+                    >
                   </div>
                   <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
                 </div>
@@ -27,17 +35,31 @@
                 <div class="row">
                   <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
                   <div class="pm-earned col-xs-8 text-center">
-                    <span class="pm-credits-text block bold sans">Has successfully completed {{ data.course_name }} course from Exclusive Education Aid </span>
+                    <span class="pm-credits-text block bold sans"
+                    >Has successfully completed {{ data.course_name }} course
+                      from Exclusive Education Aid
+                    </span>
                   </div>
                   <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
-                  <div class="col-xs-12 flex justify-center items-center q-px-lg" style="flex-direction: column;font-size: 18px">
-                    <p class="pm-earned-text padding-0 block cursive">Duration:6 month</p>
-                    <p class="pm-earned-text padding-0 block cursive">Awarded:12.5.2024</p>
+                  <div
+                    class="col-xs-12 flex justify-center items-center q-px-lg"
+                    style="flex-direction: column; font-size: 18px"
+                  >
+                    <p
+                      class="pm-earned-text padding-0 block cursive"
+                      v-if="data.start_date && data.end_date"
+                    >
+                      Duration: {{ calculateDuration() }}
+                    </p>
+                    <p
+                      class="pm-earned-text padding-0 block cursive"
+                      v-if="data.end_date"
+                    >
+                      Awarded at: {{ formattedDate(data.end_date) }}
+                    </p>
                   </div>
                 </div>
               </div>
-
-
             </div>
             <div class="col-xs-12">
               <div class="row">
@@ -59,42 +81,54 @@
                 </div>
               </div>
             </div>
-
           </div>
-
         </div>
       </div>
     </div>
   </q-page>
 </template>
 
-<script >
-import {useStore} from "stores/store";
-import {ref} from "vue";
+<script>
+import { differenceInCalendarDays, differenceInMonths } from "date-fns";
 
 export default {
-  name:'StudentCertificate',
-  props: ['data'],
+  name: "StudentCertificate",
+  props: ["data"],
   mounted() {
-    console.log("Hello World")
+    console.log("Hello World");
     this.$nextTick(() => {
       setTimeout(() => {
         this.$emit("domRendered");
       }, 3000);
     });
-  }
+  },
+  methods: {
+    formattedDate(date) {
+      const dateObject = new Date(date);
+      const options = { year: "numeric", month: "long", day: "numeric" };
+      return dateObject.toLocaleDateString("en-US", options);
+    },
+    calculateDuration() {
+      const date1 = new Date(this.data.start_date);
+      const date2 = new Date(this.data.end_date);
+      const daysDifference = differenceInCalendarDays(date2, date1);
+      const monthsDifference = differenceInMonths(date2, date1);
+      const remainingDays = daysDifference % 30;
+      return `${monthsDifference} months and ${remainingDays} days`;
+    },
+  },
 };
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css?family=Open+Sans|Pinyon+Script|Rochester');
+@import url("https://fonts.googleapis.com/css?family=Open+Sans|Pinyon+Script|Rochester");
 
 .cursive {
-  font-family: 'Pinyon Script', cursive;
+  font-family: "Pinyon Script", cursive;
 }
 
 .sans {
-  font-family: 'Open Sans', sans-serif;
+  font-family: "Open Sans", sans-serif;
 }
 
 .bold {
@@ -131,8 +165,8 @@ export default {
   background-color: #618597;
   padding: 30px;
   color: #333;
-  font-family: 'Open Sans', sans-serif;
-  box-shadow: 0 0 5px rgba(0, 0, 0, .5);
+  font-family: "Open Sans", sans-serif;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 
   .outer-border {
     width: 794px;
@@ -141,7 +175,7 @@ export default {
     left: 50%;
     margin-left: -397px;
     top: 50%;
-    margin-top:-297px;
+    margin-top: -297px;
     border: 2px solid #fff;
   }
 
@@ -152,7 +186,7 @@ export default {
     left: 50%;
     margin-left: -365px;
     top: 50%;
-    margin-top:-265px;
+    margin-top: -265px;
     border: 2px solid #fff;
   }
 
@@ -161,7 +195,7 @@ export default {
     width: 720px;
     height: 520px;
     padding: 0;
-    border: 1px solid #E1E5F0;
+    border: 1px solid #e1e5f0;
     background-color: rgba(255, 255, 255, 1);
     background-image: none;
     left: 50%;

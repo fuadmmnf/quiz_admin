@@ -62,10 +62,10 @@
                           @click="openCourseDescriptionTinyMceModal"
                           readonly
                         >
-                          <template v-slot: append>
+                          <template v-slot:append>
                             <tiny-mce-modal
                               ref="courseDescriptionTinyMceModal"
-                              v-model="courseData.description"
+                              :content="courseData.description"
                               @save="onDescriptionChange"
                             />
                           </template>
@@ -236,6 +236,19 @@
                         />
                       </div>
                     </div>
+                    <div class="row q-col-gutter-md q-mt-auto">
+                      <div class="col-6">
+                        <q-checkbox v-model="isFreeCourse" label="Free Course" />
+                        <q-input
+                          filled
+                          v-model="courseData.price"
+                          :label="`Price`"
+                          :rules="[() => !isFreeCourse || (courseData.price > 0) || 'Price must be greater than 0', () => isFreeCourse || !!courseData.price || 'Price is required']"
+                          :disable="isFreeCourse"
+                        />
+                      </div>
+
+                    </div>
                   </q-card-section>
                 </q-card>
               </div>
@@ -266,6 +279,7 @@ function initCourseData() {
     end_date: "",
     coordinator_name: "",
     coordinator_number: "",
+    price:null,
     photo: null,
     intro_video: ref(null),
   };
@@ -297,6 +311,8 @@ export default defineComponent({
       courseData: initCourseData(),
       subjectOptions: [],
       categoryOptions: [],
+      isFreeCourse:false
+
     };
   },
   methods: {

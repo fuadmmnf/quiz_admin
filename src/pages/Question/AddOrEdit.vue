@@ -100,79 +100,19 @@
                           <!-- category and subcategory in the same row -->
                           <div class="row q-col-gutter-md q-mt-sm">
                             <div class="col-6">
-                              <q-select
-                                filled
-                                v-model="question.selected_category"
-                                :options="categoryStore.getCategories"
-                                option-value="id"
-                                option-label="name"
-                                :label="`Category`"
-                                lazy-rules
-                                v-if="index === 0"
-                                map-options
-                                emit-value
-                                clearable
-                                @update:model-value="(val) => {onCategorySelect(val, index)}"
-                                @clear="(val) => {question.selected_category = null}"
+                              <NestedSelectBox :initial-value="questions[index].category_id" label="Category" :options="categoryStore.getRawCategoryOptions" @change="(option)=>{
+                                questions[index].category_id=option?.id
+                              }">
+                              </NestedSelectBox>
 
-                              />
                             </div>
                             <div class="col-6">
-                              <q-select
-                                filled
-                                v-model="question.category_id"
-                                :options="question.selected_category? categoryStore.getCategories.find(c => c.id === question.selected_category).children.data: []"
-                                option-value="id"
-                                option-label="name"
-                                :label="`Subcategory`"
-                                lazy-rules
-                                map-options
-                                v-if="index === 0"
-                                emit-value
-                                clearable
-                                @clear="(val) => {question.category_id = null}"
-                              />
+                            <NestedSelectBox :initial-value="questions[index].subject_id" label="Subject" :options="categoryStore.getRawSubjectOptions" @change="(option)=>{
+                              questions[index].subject_id=option?.id
+                            }">
+                            </NestedSelectBox>
                             </div>
                           </div>
-
-                          <!-- subject and chapter selection -->
-                          <div class="row q-col-gutter-md q-mt-sm">
-                            <div class="col-6">
-                              <q-select
-                                filled
-                                v-model="question.selected_subject"
-                                :options="categoryStore.getSubjects"
-                                option-value="id"
-                                option-label="name"
-                                :label="`Subject`"
-                                lazy-rules
-                                v-if="index === 0"
-                                map-options
-                                emit-value
-                                clearable
-                                @update:model-value="(val) => {onSubjectSelect(val, index)}"
-                                @clear="(val) => {question.selected_subject = null}"
-
-                              />
-                            </div>
-                            <div class="col-6">
-                              <q-select
-                                filled
-                                v-model="question.subject_id"
-                                :options="question.selected_subject? categoryStore.getSubjects.find(s => s.id === question.selected_subject).children.data: []"
-                                option-value="id"
-                                option-label="name"
-                                :label="`Chapter`"
-                                lazy-rules
-                                v-if="index === 0"
-                                map-options
-                                emit-value
-                                clearable
-                                @clear="(val) => {question.subject_id = null}"
-                              />
-                            </div>
-                          </div>
-
 
                           <!-- score and negative marks -->
                           <div class="row q-col-gutter-md q-mt-sm">
@@ -255,7 +195,6 @@
                           >
                             <q-card>
                               <q-card-section>
-                                <!-- inputr -->
                                 <q-input
                                   filled
                                   label="Content"
@@ -283,9 +222,12 @@
                                     )
                                   "
                                   readonly
+                                  lazy-rules
                                 >
                                   <template v-slot:append>
                                     <tiny-mce-modal
+                                      ref="optionExplanationTinyMceModal"
+                                      :id="`optionExplanationTinyMceModal-${index}`"
                                       :content="option.explanation"
                                       :index="idx"
                                       :parentIndex="index"
@@ -440,15 +382,18 @@ import {api} from "boot/axios";
 import {useQuasar} from "quasar";
 import _ from "lodash";
 import {useCategoryStore} from "stores/category";
+import NestedSelectBox from "components/NestedSelectBox.vue";
+import question from "pages/Question/index.vue";
 
 export default defineComponent({
   name: "AddOrEditQuestion",
   components: {
+    NestedSelectBox,
     OptionCard: OptionCard,
     TinyMceModal: defineAsyncComponent(() =>
       import("components/TinyMceModal.vue")
     ),
-    SearchQuestions: defineAsyncComponent(() =>
+    SearchQuestions:  defineAsyncComponent(() =>
       import("components/question/SearchQuestions.vue")
     ),
   },
@@ -549,10 +494,8 @@ export default defineComponent({
       ],
       questionData: {
         content: "",
-        selected_category: null,
         category_id: null,
-        selected_subject: null,
-        subject_id: "",
+        subject_id: null,
         parent_id: null,
         score: "",
         unit_negative_mark: "",
@@ -656,6 +599,12 @@ export default defineComponent({
     };
   },
   methods: {
+    hasChild (scope,default_id) {
+      return scope.opt.children.data.some(c => c.id === default_id)
+    },
+    assignCategory(option){
+
+    },
     onCategorySelect(val, idx) {
       this.questions[idx] = {...this.questions[idx], selected_category: val, category_id: null};
     },
@@ -664,17 +613,20 @@ export default defineComponent({
     },
     onSubmit: _.debounce(function () {
       const origQuestions = [...this.questions];
-      this.questions = this.questions.map((q) => {
-        q.category_id = (q.category_id == null ? q.selected_category : q.category_id)
-        q.subject_id = (q.subject_id == null ? q.selected_subject : q.subject_id)
-        return q;
-      });
+      // this.questions = this.questions.map((q) => {
+      //   q.category_id = (q.category_id == null ? q.selected_category : q.category_id)
+      //   q.subject_id = (q.subject_id == null ? q.selected_subject : q.subject_id)
+      //   return q;
+      // });
+      // console.log()
 
       if (this.questions[0].type === "multilayered-type-2") {
         this.questions[0].options = [
           ...this.questions[0].options,
           ...this.questions[0].hints,
         ];
+
+
       }
       if (this.question_id) {
         // add id to questions
@@ -694,6 +646,7 @@ export default defineComponent({
         if (this.questions[0].type === "multilayered-type-1") {
           this.questions[0].options = [];
           this.questions[0].content = "";
+
           console.log(this.questions);
           api
             .post("/questions/multilayered", {questions: this.questions})
@@ -704,7 +657,7 @@ export default defineComponent({
                   color: "positive",
                   icon: "check",
                 });
-                this.onContentReset();
+                // this.onContentReset();
               }
             })
             .catch((error) => {
@@ -724,7 +677,7 @@ export default defineComponent({
               });
               this.questions = [...origQuestions];
 
-              this.onContentReset();
+              // this.onContentReset();
             }
 
           }).catch(e => {
@@ -790,43 +743,46 @@ export default defineComponent({
       event.preventDefault();
       this.questions[0].hints.splice(idx, 1);
     },
-    processQuestion(qData, index) {
-      const question = this.questions[index];
+    processQuestion(qData, index, acc = []) {
+      const question = {...this.questionData};
       const {options, content, category_id, subject_id, type, score, unit_negative_mark} =
         qData;
 
-      const catData = this.categoryStore.getCategories.reduce((acc, c) => {
-        return acc.concat(c.children.data)
-      }, []).find(sc => sc.id === category_id)
+      // const catData = this.categoryStore.getCategories.reduce((acc, c) => {
+      //   return acc.concat(c.children.data)
+      // }, []).find(sc => sc.id === category_id)
+      //
+      //
+      // const subData = this.categoryStore.getSubjects.reduce((acc, s) => {
+      //   return acc.concat(s.children.data)
+      // }, []).find(sc => sc.id === subject_id)
 
-      const subData = this.categoryStore.getSubjects.reduce((acc, s) => {
-        return acc.concat(s.children.data)
-      }, []).find(sc => sc.id === subject_id)
-
+      console.log(category_id)
+      console.log(subject_id)
       const optionsData = options.data
-
       question.options = optionsData.filter((option) => !option.is_hint);
       question.hints = optionsData.filter((option) => option.is_hint);
 
       Object.assign(question, {
         content,
-        category_id: catData ? catData.id : null,
-        selected_category: (category_id === "" || category_id === null || category_id === undefined) ? null : (catData ? catData.parent_id : this.categoryStore.getCategories.find(c => c.id === category_id).id),
-        subject_id: subData ? subData.id : null,
-        selected_subject: (subject_id === "" || subject_id === null || subject_id === undefined) ? null : (subData ? subData.parent_id : this.categoryStore.getSubjects.find(s => s.id === subject_id).id),
+        category_id,
+        subject_id,
         type,
         score,
         unit_negative_mark,
       });
       if (qData.children.data.length > 0) {
         this.questions.push({...this.questionData});
-        this.processQuestion(qData.children.data[0], index + 1);
+        return this.processQuestion(qData.children.data[0], index + 1, [...acc, question]);
+      } else {
+        return [...acc, question]
       }
     },
     openQuestionContentTinyMceModal(index) {
       this.$refs.questionContentTinyMceModal[index].show = true;
     },
     openOptionExplanationTinyMceModal(questionIndex, optionIndex) {
+      console.log(this.$refs.optionExplanationTinyMceModal)
       const optionExplanationTinyMceModals =
         this.$refs.optionExplanationTinyMceModal;
 
@@ -834,8 +790,8 @@ export default defineComponent({
         (model) =>
           model.index === optionIndex && model.parentIndex === questionIndex
       );
-
       target[0].show = true;
+
     },
     onQuestionTypeChange(question) {
       if (question.type === "single-best-answer") {
@@ -861,9 +817,8 @@ export default defineComponent({
 
   },
 
-  async mounted() {
+  mounted() {
     this.questions.push({...this.questionData});
-
     if (this.$route.params.id) {
       this.question_id = this.$route.params.id;
       api
@@ -871,7 +826,7 @@ export default defineComponent({
           `/questions/${this.$route.params.id}?include=options,children.options`
         )
         .then((response) => {
-          this.processQuestion(response.data.data, 0);
+          this.questions = this.processQuestion(response.data.data, 0);
         });
     }
 

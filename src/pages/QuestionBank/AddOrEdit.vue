@@ -48,7 +48,7 @@
 
                   <q-card-section>
                     <div class="row q-col-gutter-md">
-                      <div class="col-6">
+                      <div class="col-5">
                         <q-input
                           filled
                           v-model="questionBankData.title"
@@ -56,7 +56,7 @@
                           :rules="[(val) => !!val || 'Title is required']"
                         />
                       </div>
-                      <div class="col-6">
+                      <div class="col-5">
                         <q-input
                           filled
                           v-model="questionBankData.code"
@@ -102,6 +102,19 @@
                         />
                       </div>
                     </div>
+                    <div class="row q-col-gutter-md q-mt-lg">
+                      <div class="col-4 q-mx-auto">
+                        <q-checkbox v-model="isFreeQuestionBank" label="Free QuestionBank" />
+                        <q-input
+                          filled
+                          v-model="questionBankData.price"
+                          :label="`Price`"
+                          :rules="[() => !isFreeQuestionBank || (questionBankData.price > 0) || 'Price must be greater than 0', () => isFreeQuestionBank || !!questionBankData.price || 'Price is required']"
+                          :disable="isFreeQuestionBank"
+                        />
+
+                      </div>
+                    </div>
                   </q-card-section>
                 </q-card>
               </div>
@@ -130,6 +143,7 @@ function initQbData() {
     category_id: "",
     course_id: "",
     code: "",
+    price:null
   };
 }
 
@@ -150,6 +164,7 @@ export default defineComponent({
   data() {
     return {
       questionBankData: initQbData(),
+      isFreeQuestionBank:false,
       courseOptions: [],
     };
   },
