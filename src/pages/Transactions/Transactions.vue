@@ -67,7 +67,13 @@ const columns = [
     sortable: true,
     field:'created_at'
   },
-
+  {
+    name: "User",
+    label: "User Name",
+    align: "left",
+    sortable: true,
+    field: (row) => row.user.data.name,
+  },
   {
     name: "TransactionCode",
     label: "TransactionCode",
