@@ -153,6 +153,9 @@
                     </q-btn>
 
                   </q-td>
+                  <q-td key="price" :props="props">
+                    {{ props.row.price? props.row.price:'null'}}
+                  </q-td>
                   <q-td key="action" :props="props">
 
                     <q-btn
@@ -429,6 +432,12 @@ export default defineComponent({
           name: "resources",
           label: "Resources",
           field: "resources",
+          align: "left",
+        },
+        {
+          name: "price",
+          label: "Price",
+          field: "price",
           align: "left",
         },
         {

@@ -4,12 +4,9 @@
       <q-card flat bordered class="my-card" style="width: 60%">
         <q-card-section>
           <div class="text-h6">Enrolled Student</div>
-          <div class="text-subtitle1">{{'Course : '+course_name}}</div>
-
+          <div class="text-subtitle1">{{ 'Question Bank : ' + questionbank_name }}</div>
         </q-card-section>
-
         <q-separator inset />
-
         <q-card-section>
           <div class="q-gutter-sm">
             <q-select
@@ -44,7 +41,7 @@
     <q-card class="no-shadow" bordered>
       <q-card-section class="row items-center justify-between">
         <div class="text-h6 text-indigo-8">
-          Subscribe User
+          Enrolled User
           <div class="text-subtitle2">List of all users are shown here</div>
         </div>
 
@@ -205,7 +202,7 @@ export default defineComponent({
     const showDialog = ref(false);
     const initialOptions = ref([]);
     const options = ref([]);
-    const course_name=ref(decodeURIComponent(route.query.course_name))
+    const questionbank_name=ref(decodeURIComponent(route.query.question_bank_name))
     const users = ref([]);
     const pagination = ref({
       page: 1,
@@ -213,13 +210,13 @@ export default defineComponent({
       rowsNumber: 0,
     });
     const searchData = ref({ type: "", keywords: "" });
-    const courseId = ref("");
+    const questionBankId = computed(()=>route.params.question_bank_id);
     const loading = ref(true);
     const fetchUsers = (page = 1) => {
       loading.value = true;
       api
         .get(
-          `/course-users?search=course_id:${courseId.value}&include=user&orderBy=id&sortedBy=desc&page=${page}`
+          `/questionbank-users?search=questionbank_id:${questionBankId.value}&include=user&orderBy=id&sortedBy=desc&page=${page}`
         )
         .then((response) => {
           users.value = response.data.data;
@@ -272,12 +269,12 @@ export default defineComponent({
       users,
       $q,
       searchData,
-      courseId,
+      questionBankId,
       showDialog,
       selectedStudents: ref([]),
       options,
       initialOptions,
-      course_name,
+      questionbank_name,
       filterFn(val, update) {
         if (val === "") {
           update(() => {
@@ -379,7 +376,7 @@ export default defineComponent({
         })
         .onOk(() => {
           api
-            .delete(`/course-users/${id}`)
+            .delete(`/questionbank-users/${id}`)
             .then((res) => {
               this.$q.notify({
                 message: "User deleted successfully",
@@ -398,12 +395,12 @@ export default defineComponent({
     },
     enrollStudent() {
       const data = {
-        course_id: this.courseId,
+        questionbank_id: this.questionBankId,
         user_ids: this.selectedStudents.map((user) => user.value),
       };
       console.log("data sent to server", data);
       api
-        .post("/course-users/", data)
+        .post("/questionbank-users/", data)
         .then((response) => {
           console.log(response);
           this.$q.notify({
@@ -442,7 +439,7 @@ export default defineComponent({
       const userData=this.users.find((item)=>{ return item.id===courseUserId})
       this.certificateData={
         user_name:userData.user.data.name,
-        course_name:this.course_name,
+        course_name:this.questionbank_name,
         end_date: userData.end_date,
         start_date: userData.start_date,
       }
@@ -543,7 +540,6 @@ export default defineComponent({
   },
 
   mounted() {
-    this.courseId = this.$route.params.courseId;
     this.fetchUsers();
     this.fetchStudents();
   },

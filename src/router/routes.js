@@ -182,6 +182,11 @@ const routes = [
       },
 
       {
+        path: "/questionbank-user/:question_bank_id",
+        name: 'questionbank-users',
+        component: () => import("pages/QuestionBank/EnrolledUser.vue"),
+      },
+      {
         path: "/student-list",
         name: "studentList",
         component: () => import("pages/StudentList.vue"),
@@ -190,6 +195,11 @@ const routes = [
         path: "/student/:id",
         name: "studentEdit",
         component: () => import("pages/RegisteredStudents/edit.vue"),
+      },
+      {
+        path: "/transactions",
+        name: "transactionPage",
+        component: () => import("pages/Transactions/Transactions.vue"),
       },
 
       // Not completed yet

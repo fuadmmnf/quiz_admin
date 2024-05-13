@@ -373,6 +373,19 @@
             <q-item-label>Activity Log</q-item-label>
           </q-item-section>
         </q-item>
+
+        <q-item
+          to="/transactions"
+          active-class="q-item-no-link-highlighting"
+          v-if="user && user.name === 'Super Admin'"
+        >
+          <q-item-section avatar>
+            <q-icon name="list"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Transactions</q-item-label>
+          </q-item-section>
+        </q-item>
         <!-- <q-item
           to="/lecture-classes"
           active-class="q-item-no-link-highlighting"

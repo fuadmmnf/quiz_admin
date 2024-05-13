@@ -42,6 +42,7 @@
               </td>
               <td class="text-center">{{ props.item.description }}</td>
               <td class="text-center">{{ props.item.code }}</td>
+              <td class="text-center">{{ props.item.price }}</td>
               <td class="text-center">{{ props.item.subject }}</td>
               <td class="text-left">
                 <q-btn
@@ -117,6 +118,24 @@
                   class="q-ml-sm"
                 >
                 <q-tooltip>Move to Draft</q-tooltip>
+                </q-btn>
+                <q-btn
+                  class="q-mx-md"
+                  color="primary"
+                  size="md"
+                  icon="people"
+                  round
+                  dense
+                  flat
+                  :to="{name: 'questionbank-users', params: {question_bank_id: props.item.id}, query: { question_bank_name: props.item.label}}"
+                >
+                  <q-tooltip
+                    anchor="top middle"
+                    self="bottom middle"
+                    :offset="[10, 10]"
+                  >
+                    <strong class="">Enrolled users</strong>
+                  </q-tooltip>
                 </q-btn>
                 <q-btn
                     color="teal"
@@ -254,6 +273,13 @@ export default {
         label: "Code",
         // sortable: true,
         field: "code",
+        align: "center",
+      },
+      {
+        name: "Price",
+        label: "Price",
+        sortable: true,
+        field: "price",
         align: "center",
       },
       {
@@ -413,6 +439,7 @@ export default {
         label: item.title,
         description: item.status,
         code: item.code ? item.code : "null",
+        price: item.price ? item.price : "null",
         category: item.category ? item.category.data.name : "null",
         subject: item.subject ? item.subject.data.name : "null",
         course: item.course ? item.course.data.title : "null",

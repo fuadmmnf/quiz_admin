@@ -100,7 +100,7 @@ module.exports = configure(function (/* ctx */) {
       // directives: [],
 
       // Quasar plugins
-      plugins: ["AppFullscreen", "Notify", "Dialog"],
+      plugins: ["AppFullscreen", "Notify", "Dialog",'Loading'],
     },
 
     // animations: 'all', // --- includes all animations

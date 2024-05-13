@@ -57,7 +57,7 @@ export default defineComponent({
     this.$nextTick(() => {
       setTimeout(() => {
         this.$emit("domRendered");
-      }, 4000);
+      }, 1000);
     });
 
   },

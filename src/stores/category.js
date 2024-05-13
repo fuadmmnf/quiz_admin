@@ -33,6 +33,10 @@ export const useCategoryStore = defineStore("category", {
         label: subject.name,
         value: subject.id,
       })),
+    getRawCategoryOptions: (state) =>
+      state.categories,
+    getRawSubjectOptions: (state) =>
+      state.subjects,
     getInstitutionOptions: (state) =>
       state.institutions.map((subject) => ({
         label: subject.name,

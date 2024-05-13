@@ -111,8 +111,7 @@ export default {
       this.$emit("save", this.description, this.index, this.parentIndex);
     }
     ,
-  }
-  ,
+  },
   mounted() {
     console.log(this.content);
     this.description = this.content;
