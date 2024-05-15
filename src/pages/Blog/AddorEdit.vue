@@ -51,21 +51,15 @@
                     <div class="text-h6">Blog Details</div>
                     <div class="col-6">
                       <!-- subject dropdown -->
-                      <q-select
-                        filled
-                        v-model="blogData.category_id"
-                        :label="`Category`"
-                        :options="catStore.getCategoryOptions"
-                        emit-value
-                        map-options
-                      />
+                      <NestedSelectBox :initial-value="blogData.category_id" label="Category" :options="catStore.getRawCategoryOptions" @change="(option)=>{
+                             blogData.category_id=option?.id
+                              }">
+                      </NestedSelectBox>
                     </div>
                   </q-card-section>
 
                   <q-card-section>
                     <div class="row q-col-gutter-md">
-
-
                       <div class="col-8">
                         <q-input
                           filled
@@ -219,6 +213,7 @@ import {api} from "boot/axios";
 import {useQuasar} from "quasar";
 import _ from "lodash";
 import {useCategoryStore} from "stores/category";
+import NestedSelectBox from "components/NestedSelectBox.vue";
 
 function initBlogData() {
   return {
@@ -233,6 +228,7 @@ function initBlogData() {
 export default defineComponent({
   name: "AddOrEdit Blog",
   components: {
+    NestedSelectBox,
     TinyMceModal: defineAsyncComponent(() =>
       import("components/TinyMceModal.vue")
     ),
