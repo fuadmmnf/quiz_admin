@@ -68,25 +68,17 @@
                     <div class="row q-col-gutter-md q-mt-auto">
                       <div class="col-4">
                         <!-- subject dropdown -->
-                        <q-select
-                          filled
-                          v-model="questionBankData.subject_id"
-                          :label="`Subject`"
-                          :options="categoryStore.getSubjectOptions"
-                          emit-value
-                          map-options
-                        />
+                        <NestedSelectBox :initial-value="questionBankData.subject_id" label="Subject" :options="categoryStore.getRawSubjectOptions" @change="(option)=>{
+                             questionBankData.subject_id=option?.id
+                              }">
+                        </NestedSelectBox>
                       </div>
                       <div class="col-4">
                         <!-- subject dropdown -->
-                        <q-select
-                          filled
-                          v-model="questionBankData.category_id"
-                          :label="`Category`"
-                          :options="categoryStore.getCategoryOptions"
-                          emit-value
-                          map-options
-                        />
+                        <NestedSelectBox :initial-value="questionBankData.category_id" label="Category" :options="categoryStore.getRawCategoryOptions" @change="(option)=>{
+                             questionBankData.category_id=option?.id
+                              }">
+                        </NestedSelectBox>
                       </div>
                       <div class="col-4">
                         <!-- subject dropdown -->
@@ -135,6 +127,7 @@ import {useQuasar} from "quasar";
 import _ from "lodash";
 import {useCategoryStore} from "stores/category";
 import {useRoute} from "vue-router";
+import NestedSelectBox from "components/NestedSelectBox.vue";
 
 function initQbData() {
   return {
@@ -149,6 +142,7 @@ function initQbData() {
 
 export default defineComponent({
   name: "AddOrEdit Question Bank",
+  components: {NestedSelectBox},
 
   setup() {
     const store = useStore();

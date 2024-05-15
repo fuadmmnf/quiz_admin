@@ -110,34 +110,22 @@
             </div>
             <div class="row q-col-gutter-md q-mt-sm">
               <div class="col-4">
-                <q-select
-                  filled
-                  v-model="classMaterialData.category_id"
-                  :label="`Category`"
-                  :options="categoryStore.getCategoryOptions"
-                  emit-value
-                  map-options
-                />
+                <NestedSelectBox :initial-value="classMaterialData.category_id" label="Category" :options="categoryStore.getRawCategoryOptions" @change="(option)=>{
+                             classMaterialData.category_id=option?.id
+                              }">
+                </NestedSelectBox>
               </div>
               <div class="col-4">
-                <q-select
-                  filled
-                  v-model="classMaterialData.subject_id"
-                  :label="`Subject`"
-                  :options="categoryStore.getSubjectOptions"
-                  emit-value
-                  map-options
-                />
+                <NestedSelectBox :initial-value="classMaterialData.subject_id" label="Subject" :options="categoryStore.getRawSubjectOptions" @change="(option)=>{
+                             classMaterialData.subject_id=option?.id
+                              }">
+                </NestedSelectBox>
               </div>
               <div class="col-4">
-                <q-select
-                  filled
-                  v-model="classMaterialData.faculty_id"
-                  :label="`Faculty`"
-                  :options="categoryStore.getFacultyOptions"
-                  emit-value
-                  map-options
-                />
+                <NestedSelectBox :initial-value="classMaterialData.faculty_id" label="Faculty" :options="categoryStore.getRawFacultyOptions" @change="(option)=>{
+                             classMaterialData.faculty_id=option?.id
+                              }">
+                </NestedSelectBox>
               </div>
 
             </div>
@@ -225,6 +213,7 @@ import {
 } from "src/services/course_service";
 import {useCategoryStore} from "stores/category";
 import {useRoute} from "vue-router";
+import NestedSelectBox from "components/NestedSelectBox.vue";
 
 function initClassMaterialData() {
   return {
@@ -243,6 +232,7 @@ function initClassMaterialData() {
 export default defineComponent({
   name: "Add Class Material",
   components: {
+    NestedSelectBox,
     TinyMceModal: defineAsyncComponent(() =>
       import("components/TinyMceModal.vue")
     ),
