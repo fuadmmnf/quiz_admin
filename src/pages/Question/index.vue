@@ -203,8 +203,7 @@ export default defineComponent({
   data() {
     return {
       name: "Question",
-      //table header
-
+      customTdRefs: {},
       columns: [
         {
           name: "content",
@@ -298,7 +297,21 @@ export default defineComponent({
   mounted() {
     this.fetchQuestions();
   },
+  updated() {
+
+  },
 });
 </script>
 
-<style></style>
+<style scoped>
+
+.custom-td {
+  font-size: 15px !important;
+  font-weight: normal!important;
+}
+
+.custom-td strong img {
+  width: 100px!important;
+  height: 100px!important;
+}
+</style>
