@@ -214,27 +214,33 @@
                     </div>
                     <div class="row q-col-gutter-md q-mt-auto">
                       <div class="col-6">
-                        <q-select
-                          filled
-                          v-model="courseData.category_id"
-                          :label="`Category`"
-                          :options="categoryOptions"
-                          emit-value
-                          map-options
-                        />
+                        <NestedSelectBox :initial-value="courseData.category_id" label="Category" :options="categoryStore.getRawCategoryOptions" @change="(option)=>{
+                          courseData.category_id=option?.id
+                              }">
+                        </NestedSelectBox>
+
                       </div>
 
                       <div class="col-6">
-                        <!-- subject dropdown -->
-                        <q-select
+
+                        <NestedSelectBox :initial-value="courseData.subject_id" label="Subject" :options="categoryStore.getRawSubjectOptions" @change="(option)=>{
+                          courseData.subject_id=option?.id
+                              }">
+                        </NestedSelectBox>
+                      </div>
+                    </div>
+                    <div class="row q-col-gutter-md q-mt-auto">
+                      <div class="col-6">
+                        <q-checkbox v-model="isFreeCourse" label="Free Course" />
+                        <q-input
                           filled
-                          v-model="courseData.subject_id"
-                          :label="`Subject`"
-                          :options="subjectOptions"
-                          emit-value
-                          map-options
+                          v-model="courseData.price"
+                          :label="`Price`"
+                          :rules="[() => !isFreeCourse || (courseData.price > 0) || 'Price must be greater than 0', () => isFreeCourse || !!courseData.price || 'Price is required']"
+                          :disable="isFreeCourse"
                         />
                       </div>
+
                     </div>
                     <div class="row q-col-gutter-md q-mt-auto">
                       <div class="col-6">
@@ -267,6 +273,8 @@ import {useStore} from "src/stores/store";
 import {api} from "boot/axios";
 import {useQuasar} from "quasar";
 import _ from "lodash";
+import NestedSelectBox from "components/NestedSelectBox.vue";
+import {useCategoryStore} from "stores/category";
 function initCourseData() {
   return {
     title: "",
@@ -287,6 +295,7 @@ function initCourseData() {
 export default defineComponent({
   name: "AddOrEdit Course",
   components: {
+    NestedSelectBox,
     TinyMceModal: defineAsyncComponent(() =>
       import("components/TinyMceModal.vue")
     ),
@@ -295,9 +304,10 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const {$q} = useQuasar();
-
+    const categoryStore=useCategoryStore()
     return {
       $q,
+      categoryStore
     };
   },
   data() {

@@ -43,7 +43,9 @@
               <td class="text-center">{{ props.item.description }}</td>
               <td class="text-center">{{ props.item.code }}</td>
               <td class="text-center">{{ props.item.price }}</td>
+              <td class="text-center">{{ props.item.category }}</td>
               <td class="text-center">{{ props.item.subject }}</td>
+              <td class="text-center">{{ props.item.course }}</td>
               <td class="text-left">
                 <q-btn
                   @click="handleAddButtonClick(props.item)"
@@ -501,7 +503,7 @@ export default {
         search: `status:${props.status}${route.query.course_id?.length ? (";course_id:" + route.query.course_id) : ""}`,
         searchJoin: "and",
         include: "subject,category,children",
-        limit: 50,
+        limit: 20,
         page: newPage,
       };
       //

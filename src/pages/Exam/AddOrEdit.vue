@@ -166,52 +166,22 @@
                     <div class="row q-col-gutter-md q-mt-auto">
                       <!-- 3 coloumn -->
                       <div class="col-4">
-                        <q-select
-                          filled
-                          v-model="examData.faculty_id"
-                          :label="`Faculty`"
-                          :options="categoryStore.getFacultyOptions"
-                          emit-value
-                          map-options
-                          clearable
-                          @clear="
-                            (val) => {
-                              examData.faculty_id = null;
-                            }
-                          "
-                        />
+                        <NestedSelectBox :initial-value="examData.faculty_id" label="Faculty" :options="categoryStore.getRawFacultyOptions" @change="(option)=>{
+                              examData.faculty_id=option?.id
+                              }">
+                        </NestedSelectBox>
                       </div>
                       <div class="col-4">
-                        <q-select
-                          filled
-                          v-model="examData.category_id"
-                          :label="`Category`"
-                          :options="categoryStore.getCategoryOptions"
-                          emit-value
-                          map-options
-                          clearable
-                          @clear="
-                            (val) => {
-                              examData.category_id = null;
-                            }
-                          "
-                        />
+                        <NestedSelectBox :initial-value="examData.category_id" label="Category" :options="categoryStore.getRawCategoryOptions" @change="(option)=>{
+                              examData.category_id=option?.id
+                              }">
+                        </NestedSelectBox>
                       </div>
                       <div class="col-4">
-                        <q-select
-                          filled
-                          v-model="examData.subject_id"
-                          :label="`Subject`"
-                          :options="categoryStore.getSubjectOptions"
-                          emit-value
-                          map-options
-                          clearable
-                          @clear="
-                            (val) => {
-                              examData.subject_id = null;
-                            }
-                          "
-                        />
+                        <NestedSelectBox :initial-value="examData.subject_id" label="Subject" :options="categoryStore.getRawSubjectOptions" @change="(option)=>{
+                             examData.subject_id=option?.id
+                              }">
+                        </NestedSelectBox>
                       </div>
                     </div>
                     <div class="row q-col-gutter-md q-mt-auto">
@@ -563,6 +533,7 @@ import {useQuasar} from "quasar";
 import _ from "lodash";
 import {useCategoryStore} from "stores/category";
 import {useRoute} from "vue-router";
+import NestedSelectBox from "components/NestedSelectBox.vue";
 
 function initExamData() {
   return {
@@ -599,6 +570,7 @@ function initExamData() {
 export default defineComponent({
   name: "AddOrEditEzam",
   components: {
+    NestedSelectBox,
     OptionCard: OptionCard,
   },
   setup() {
