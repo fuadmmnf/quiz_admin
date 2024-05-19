@@ -39,43 +39,24 @@
           >
             <div class="row q-col-gutter-md q-mt-sm">
               <div class="col-4">
-                <q-select
-                  filled
-                  v-model="searchData.category"
-                  :options="categoryStore.getCategoryOptions"
-                  :label="`Category`"
-                  lazy-rules
-                  map-options
-                  emit-value
-                  clearable
-                  @clear="searchData.category = ''"
-                />
+                <NestedSelectBox :initial-value="searchData.category" label="Category" :options="categoryStore.getRawCategoryOptions" @change="(option)=>{
+                                searchData.category=option?.id
+                              }">
+
+                </NestedSelectBox>
               </div>
               <div class="col-4">
-                <q-select
-                  filled
-                  v-model="searchData.subject"
-                  :options="categoryStore.getSubjectOptions"
-                  :label="`Subject`"
-                  lazy-rules
-                  map-options
-                  emit-value
-                  clearable
-                  @clear="searchData.subject = ''"
-                />
+                <NestedSelectBox :initial-value="searchData.subject" label="Subject" :options="categoryStore.getRawSubjectOptions" @change="(option)=>{
+                               searchData.subject=option?.id
+                              }">
+
+                </NestedSelectBox>
               </div>
               <div class="col-4">
-                <q-select
-                  filled
-                  v-model="searchData.faculty"
-                  :options="categoryStore.getFacultyOptions"
-                  :label="`Faculty`"
-                  lazy-rules
-                  map-options
-                  emit-value
-                  clearable
-                  @clear="searchData.faculty = ''"
-                />
+                <NestedSelectBox :initial-value="searchData.faculty" label="Faculty" :options="categoryStore.getRawFacultyOptions" @change="(option)=>{
+                              searchData.faculty=option?.id
+                              }">
+                </NestedSelectBox>
               </div>
             </div>
           </q-expansion-item>
@@ -88,9 +69,11 @@
 <script>
 import {useStore} from "src/stores/store";
 import {useCategoryStore} from "stores/category";
+import NestedSelectBox from "components/NestedSelectBox.vue";
 
 export default {
   name: "SearchExams",
+  components: {NestedSelectBox},
   props: {},
   setup() {
     const store = useStore();

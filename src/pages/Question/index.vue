@@ -146,33 +146,25 @@ export default defineComponent({
     });
     const fetchQuestions = (page = 1) => {
       loading.value = true;
-      // "/questions?include=category,subject&searchJoin=and&search=type:" +
-      //         searchData.value.type.length ? searchData.value.type  +
-      //         ";content:" +
-      //         searchData.value.keywords +
-      //         searchData.value.category.length === 0 ? ";category_id:" + searchData.value.category : "" +
-      //         searchData.value.subject.length === 0 ? ";subject_id:" + searchData.value.subject : ""+
-      //         "&page=" +
-      //         page +
-      //         "&orderBy=id&sortedBy=desc&limit=50"
       console.log(searchData.value);
+      const searchParams = [];
+
+      if (searchData.value.type.length) {
+        searchParams.push("type:" + searchData.value.type);
+      }
+      if (searchData.value.keywords.length) {
+        searchParams.push("content:" + searchData.value.keywords);
+      }
+      if (searchData.value.category && searchData.value.category.length) {
+        searchParams.push("category_id:" + searchData.value.category);
+      }
+      if (searchData.value.subject && searchData.value.subject.length) {
+        searchParams.push("subject_id:" + searchData.value.subject);
+      }
+      const searchQuery = searchParams.length ? `&search=${searchParams.join(";")}` : "";
       api
         .get(
-          `/questions?include=category,subject&searchJoin=and&search=${
-            searchData.value.type.length ? "type:" + searchData.value.type : ""
-          }${
-            searchData.value.keywords.length
-              ? ";content:" + searchData.value.keywords
-              : ""
-          }${
-            searchData.value.category && searchData.value.category.length
-              ? ";category_id:" + searchData.value.category
-              : ""
-          }${
-            searchData.value.subject && searchData.value.subject.length
-              ? ";subject_id:" + searchData.value.subject
-              : ""
-          }&page=${page}&orderBy=id&sortedBy=desc&limit=50`
+          `/questions?include=category,subject&searchJoin=and&${searchQuery}&page=${page}&orderBy=id&sortedBy=desc&limit=50`
         )
         .then((response) => {
           questions.value = response.data.data;
@@ -211,8 +203,7 @@ export default defineComponent({
   data() {
     return {
       name: "Question",
-      //table header
-
+      customTdRefs: {},
       columns: [
         {
           name: "content",
@@ -306,7 +297,21 @@ export default defineComponent({
   mounted() {
     this.fetchQuestions();
   },
+  updated() {
+
+  },
 });
 </script>
 
-<style></style>
+<style scoped>
+
+.custom-td {
+  font-size: 15px !important;
+  font-weight: normal!important;
+}
+
+.custom-td strong img {
+  width: 100px!important;
+  height: 100px!important;
+}
+</style>
