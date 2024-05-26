@@ -263,7 +263,6 @@
                       flat
                       :to="`/course/${props.row.id}`"
                     />
-
                     <q-btn
                       color="negative"
                       size="sm"
@@ -288,6 +287,24 @@
                         :offset="[10, 10]"
                       >
                         <strong class="">Share</strong>
+                      </q-tooltip>
+                    </q-btn>
+                    <q-btn
+                      v-if="status === 'completed'"
+                      color="primary"
+                      size="md"
+                      icon="edit_note"
+                      round
+                      dense
+                      flat
+                      :to="`/course/certificate-config/${props.row.id}`"
+                    >
+                      <q-tooltip
+                        anchor="top middle"
+                        self="bottom middle"
+                        :offset="[10, 10]"
+                      >
+                        <strong class="">Edit Certificate Config</strong>
                       </q-tooltip>
                     </q-btn>
                   </q-td>
@@ -327,6 +344,7 @@ export default defineComponent({
     const {$q} = useQuasar();
     const store = useStore();
     const dialog=ref(false)
+    const editCertificateConfigDialog=ref(false)
     const shareDialogData=ref({
       type:'',
       id:'',
@@ -407,8 +425,6 @@ export default defineComponent({
   data() {
     return {
       name: "Course",
-      //table header
-      //name , mobile , institution, action
       columns: [
         {
           name: "title",
@@ -447,7 +463,6 @@ export default defineComponent({
           align: "left",
         },
       ],
-      //table data
     };
   },
 

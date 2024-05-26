@@ -49,7 +49,6 @@
                 <template v-slot:body="props">
                   <q-tr :props="props">
                     <!-- serial -->
-
                     <!--                    <q-td key="content" :props="props">-->
                     <!--                      {{-->
                     <!--                        props.row.content.length > 50-->

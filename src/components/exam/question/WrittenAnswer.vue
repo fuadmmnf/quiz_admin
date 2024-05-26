@@ -1,12 +1,42 @@
 <template>
   <div class="q-page q-pa-md flex justify-center items-center">
-    <div>
-      <q-card class="my-card" style="width: 100%; max-width: 1000px">
-        <q-card-section>
-          <div class="text-subtitle2" v-html="question.content"></div>
+    <div >
+      <q-card
+        class="my-card"
+        :style="{
+          width:
+            $q.screen.width <= 576
+              ? '100%'
+              : $q.screen.width <= 992
+              ? '80%'
+              : '1000px',
+        }"
+      >
+        <q-card-section class="bg-purple-12 text-white">
+          <div
+            class="text-subtitle2 option-title"
+            v-html="question.content"
+          ></div>
+          <q-btn
+            color="primary"
+            size="md"
+            icon="edit_square"
+            round
+            dense
+            flat
+            :to="`/question/${question.id}`"
+          >
+            <q-tooltip
+              anchor="top middle"
+              self="bottom middle"
+              :offset="[10, 10]"
+            >
+              <strong class="">Edit question</strong>
+            </q-tooltip>
+          </q-btn>
         </q-card-section>
+
         <q-card-actions align="center" vertical>
-          <!-- Input field for answer options -->
           <q-input
             v-model="answer"
             :readonly="
@@ -62,8 +92,13 @@ export default defineComponent({
 });
 </script>
 
-<style>
+<style scoped>
 .unanswered-question {
   border: 2px solid red;
 }
+.option-title {
+  font-size: 22px !important;
+  line-height: 2.2rem;
+}
 </style>
+

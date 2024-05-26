@@ -10,7 +10,7 @@ const routes = [
       {
         path: "/answer-script/:exam_id",
         name: 'answer-script',
-        component: () => import("components/exam/AnswerScript.vue"),
+        component: () => import("pages/Exam/AnswerScript/AnswerScript.vue"),
       },
       { path: "", component: () => import("pages/Dashboard.vue") },
       {
@@ -145,6 +145,10 @@ const routes = [
       {
         path: "/course/:id",
         component: () => import("pages/Course/AddOrEdit.vue"),
+      },
+      {
+        path: "/course/certificate-config/:id",
+        component: () => import("pages/Course/EditCourseCertificateConfig.vue"),
       },
       // {
       //   path: "/course-questionbanks/:courseId",
