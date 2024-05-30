@@ -137,6 +137,7 @@
                       class="q-mx-md"
                       color="primary"
                       size="md"
+                      v-if="isActionAllowed('enroll-student')"
                       icon="people"
                       round
                       dense
@@ -325,6 +326,7 @@ import {useStore} from "src/stores/store";
 import {api} from "boot/axios";
 import {useQuasar} from "quasar";
 import ShareLinkDialog from "components/ShareLinkDialog.vue";
+import {isActionAllowed} from "src/guard/role";
 
 export default defineComponent({
   name: "CourseList",
@@ -467,6 +469,7 @@ export default defineComponent({
   },
 
   methods: {
+    isActionAllowed,
     moveToCompleted(id) {
       api
         .patch(`/courses/${id}/status`, {

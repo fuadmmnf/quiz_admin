@@ -480,6 +480,14 @@
                           :label="`Group Questions By Type`"
                         />
                       </div>
+                      <div class="col-6">
+                        <q-toggle
+                          v-model="
+                            examData.examConfiguration.shuffle_exam_question
+                          "
+                          :label="`Shuffle Exam Questions`"
+                        />
+                      </div>
                       <!--                      <div class="col-6">-->
                       <!--                        <q-toggle-->
                       <!--                          v-model="examData.make_code_public"-->
@@ -558,6 +566,7 @@ function initExamData() {
       can_skip_horizontal_question: false,
       show_answer_between_horizontal_question: false,
       can_change_answer: true,
+      shuffle_exam_question:false,
       can_retake_after_exam: true,
       show_merit_list: true,
       make_code_public: false,

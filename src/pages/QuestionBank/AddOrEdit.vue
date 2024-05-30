@@ -56,12 +56,27 @@
                           :rules="[(val) => !!val || 'Title is required']"
                         />
                       </div>
-                      <div class="col-5">
+                      <div class="col-3">
                         <q-input
                           filled
                           v-model="questionBankData.code"
                           :label="`Code`"
                         />
+                      </div>
+                      <div class="col-4">
+                        <q-file
+                          v-model="questionBankData.image"
+                          clearable
+                          filled
+                          bottom-slots
+                          label="Upload Image"
+                          counter
+                          accept="image/*"
+                        >
+                          <template v-slot:prepend>
+                            <q-icon name="attach_file" />
+                          </template>
+                        </q-file>
                       </div>
                     </div>
 
@@ -136,6 +151,7 @@ function initQbData() {
     category_id: "",
     course_id: "",
     code: "",
+    image:null,
     price:null
   };
 }

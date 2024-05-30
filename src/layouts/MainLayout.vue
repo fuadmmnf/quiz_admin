@@ -83,7 +83,7 @@
       class="bg-primary text-white"
     >
       <q-list>
-        <q-item to="/" active-class="q-item-no-link-highlighting">
+        <q-item to="/" v-if="isNavLinkAllowed('dashboard')" active-class="q-item-no-link-highlighting">
           <q-item-section avatar>
             <q-icon name="dashboard"/>
           </q-item-section>
@@ -99,11 +99,12 @@
         <!--            <q-item-label>CRM Dashboard</q-item-label>-->
         <!--          </q-item-section>-->
         <!--        </q-item>-->
-        <q-expansion-item icon="people" label="Roles">
+        <q-expansion-item  v-if="isNavLinkAllowed('roles')" icon="people" label="Roles">
           <q-item
             to="/Roles/SubAdmin"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
+            v-if="isSubNavLinkAllowed('roles','subadmin')"
           >
             <q-item-section>
               <q-item-label>SubAdmins</q-item-label>
@@ -113,6 +114,7 @@
             to="/roles/moderator"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
+            v-if="isSubNavLinkAllowed('roles','moderators')"
           >
             <q-item-section>
               <q-item-label>Moderators</q-item-label>
@@ -122,6 +124,7 @@
             to="/roles/mentor"
             class="q-ml-xl"
             active-class="q-item-no-link-highlighting"
+            v-if="isSubNavLinkAllowed('roles','mentors')"
           >
             <q-item-section>
               <q-item-label>Mentors</q-item-label>
@@ -137,8 +140,8 @@
             </q-item-section>
           </q-item>
         </q-expansion-item>
-        <q-expansion-item icon="people" label="Resources">
-          <q-item to="/category" class="q-ml-xl" active-class="q-item-no-link-highlighting">
+        <q-expansion-item icon="people" v-if="isNavLinkAllowed('resources')"  label="Resources">
+          <q-item to="/category"  class="q-ml-xl" active-class="q-item-no-link-highlighting">
             <q-item-section avatar>
               <q-icon name="category"/>
             </q-item-section>
@@ -420,6 +423,8 @@ import {
   loadSubjects,
 } from "src/services/category_service";
 import {useRoute} from "vue-router";
+import {isNavLinkAllowed, isSubNavLinkAllowed} from "src/guard/role";
+import {mapGetters} from "pinia";
 
 export default defineComponent({
   name: "MainLayout",
@@ -428,6 +433,7 @@ export default defineComponent({
     EssentialLink,
     Messages,
   },
+
 
   setup() {
     const leftDrawerOpen = ref(false);
@@ -450,7 +456,6 @@ export default defineComponent({
       // Now, you can access the user object
       if (store.user) {
         user.value = store.user;
-        // console.log(user.value.name);
       }
     });
 
@@ -466,6 +471,8 @@ export default defineComponent({
     };
   },
   methods: {
+    isSubNavLinkAllowed,
+    isNavLinkAllowed,
     logout() {
       localStorage.removeItem("user");
       localStorage.removeItem("accessToken");

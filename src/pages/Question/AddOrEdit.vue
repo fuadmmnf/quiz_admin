@@ -813,6 +813,25 @@ export default defineComponent({
         });
       }
     },
+    spreadOptionsContent(event, questionIndex, optionIndex) {
+      const pastedContent = event.target.value;
+      const contentLines = pastedContent.split('\n');
+      if (contentLines.length > 1) {
+        this.questions[questionIndex].options[optionIndex].content = contentLines[0];
+        for (let i = 1; i < contentLines.length; i++) {
+          const targetOptionIndex = optionIndex + i;
+          if (this.questions[questionIndex].options[targetOptionIndex]) {
+            this.questions[questionIndex].options[targetOptionIndex].content = contentLines[i];
+          } else {
+            this.questions[questionIndex].options.push({
+              content: contentLines[i],
+              explanation: '',
+              is_correct: false
+            });
+          }
+        }
+      }
+    }
 
 
   },

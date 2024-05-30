@@ -240,20 +240,6 @@
                           :disable="isFreeCourse"
                         />
                       </div>
-
-                    </div>
-                    <div class="row q-col-gutter-md q-mt-auto">
-                      <div class="col-6">
-                        <q-checkbox v-model="isFreeCourse" label="Free Course" />
-                        <q-input
-                          filled
-                          v-model="courseData.price"
-                          :label="`Price`"
-                          :rules="[() => !isFreeCourse || (courseData.price > 0) || 'Price must be greater than 0', () => isFreeCourse || !!courseData.price || 'Price is required']"
-                          :disable="isFreeCourse"
-                        />
-                      </div>
-
                     </div>
                   </q-card-section>
                 </q-card>

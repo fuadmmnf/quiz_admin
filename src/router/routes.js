@@ -205,6 +205,16 @@ const routes = [
         name: "transactionPage",
         component: () => import("pages/Transactions/Transactions.vue"),
       },
+      {
+        path: "/marquee",
+        name: "marquee-page",
+        component: () => import("pages/Marquee.vue"),
+      },
+      {
+        path: "/materials",
+        name: "materials-page",
+        component: () => import("pages/Materials/AddOrEdit.vue"),
+      },
 
       // Not completed yet
       // {path: '/Taskboard', component: () => import('pages/TaskBoard.vue')},

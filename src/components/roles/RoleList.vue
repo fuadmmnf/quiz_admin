@@ -40,6 +40,7 @@
               size="md"
               icon="delete"
               round
+              v-if="isActionAllowed('delete-user')"
               dense
               flat
               @click="deleteUser(props.row.id)"
@@ -56,6 +57,7 @@ import { defineComponent, ref } from "vue";
 import { api } from "src/boot/axios";
 import { useQuasar } from "quasar";
 import {deleteUser, getUsers} from "src/services/auth_service";
+import {isActionAllowed} from "src/guard/role";
 
 export default {
   name: "RoleList",
@@ -159,6 +161,7 @@ export default {
     this.fetchRoles();
   },
   methods: {
+    isActionAllowed,
     deleteUser(id) {
       // confirm
       this.$q

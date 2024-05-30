@@ -8,6 +8,7 @@ const defaultStore = () => {
     accessToken: null,
     refreshToken: null,
     user: null,
+    userRole:null,
     categories: [],
     faculties: [],
     subjects: [],
@@ -21,6 +22,7 @@ export const useStore = defineStore("store", {
   state: () => defaultStore(),
   getters: {
     doubleCount: (state) => state.counter * 2,
+    getUserRole:(state) => state.userRole
   },
   actions: {
     resetState() {
@@ -104,6 +106,7 @@ export const useStore = defineStore("store", {
         .get("/profile?include=roles", { headers: headers })
         .then((response) => {
           this.user = response.data.data;
+          this.userRole=this.user.roles.data[0].name
           localStorage.setItem("user", JSON.stringify(response.data.data));
           localStorage.setItem(
             "userRole",
