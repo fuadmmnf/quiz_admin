@@ -211,6 +211,16 @@ const routes = [
         component: () => import("pages/Marquee.vue"),
       },
       {
+        path: "/notices",
+        name: "notice-page",
+        component: () => import("pages/Notice/index.vue"),
+      },
+      {
+        path: "/add-notices",
+        name: "notice-create",
+        component: () => import("pages/Notice/AddOrEdit.vue"),
+      },
+      {
         path: "/materials",
         name: "materials-page",
         component: () => import("pages/Materials/AddOrEdit.vue"),
